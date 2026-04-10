@@ -12,8 +12,8 @@ public class Brick extends FallingObject
      * Act - do whatever the Brick wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
-    public void act()
-    {
-        // Add your action code here.
+    public Brick() {
+        super(-2, 0.2, 0.9, Random.Int(1, 5), 640L);
+        
     }
 }

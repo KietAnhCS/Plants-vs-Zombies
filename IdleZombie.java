@@ -16,4 +16,7 @@ public class IdleZombie extends animatedObject
     {
         // Add your action code here.
     }
+    public void addedToWorld(World world) {
+        frame = Random.Int(1,4);
+    }
 }

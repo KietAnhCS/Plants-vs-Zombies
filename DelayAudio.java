@@ -1,19 +1,53 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*;
 
-/**
- * Write a description of class DelayAudio here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
+
 public class DelayAudio extends Actor
 {
-    /**
-     * Act - do whatever the DelayAudio wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
-    public void act()
-    {
-        // Add your action code here.
+    private GreenfootSound music;
+    private GreenfootSound stop;
+    private int volume;
+    private boolean loop;
+    
+    private long startTime;
+    private long delayTime;
+    private boolean started = false;
+    
+    DelayAudio(GreenfootSound music, int volume, boolean loop, long delayTime) {
+        this(music, null, volume, loop , delayTime);
     }
+    
+    DelayAudio(GreenfootSound music, GreenfootSound stop, int volume, boolean loop, long delayTime) {
+        this.music = music;
+        this.stop = stop;
+        this.volume = volume;
+        this.loop = loop;
+        this.delayTime = delayTime;
+    }
+    
+    protected void addedToWorld(World world) {
+        startTime = System.currentTimeMillis();
+        started = true;
+    }
+    
+    public void act() {
+        if (!started) return;
+        
+        
+        long elapsed = System.currentTimeMillis() - startTime;
+        
+        if(elapsed >= delayTime) {
+            if (stop !=null && stop.isPlaying()) {
+                stop.stop();
+            }
+            
+            if (music !=null) {
+                music.setVolume(volume);
+                if (loop) music.playLoop();
+                else music.play();
+            }
+            
+            getWorld().removeObject(this);
+        }
+    }
+    
 }

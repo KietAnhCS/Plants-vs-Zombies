@@ -12,8 +12,17 @@ public class PeashooterPacket extends SeedPacket
      * Act - do whatever the PeashooterPacket wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
-    public void act()
-    {
-        // Add your action code here.
+    public PeashooterPacket() {
+        super(10000L, true, 100, "peashooterpacket");
+        
+    }
+    
+    public TransparentObject addImage() {
+        TransparentObject temp = new TransparentPeashooter(false);
+        ((MyWorld)getWorld()).addObject(temp, Greenfoot.getMouseInfo().getX(), Greenfoot.getMouseInfo().getY());
+        return temp;
+    }
+    public Plant getPlant() {
+        return new Peashooter();
     }
 }

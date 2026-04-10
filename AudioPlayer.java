@@ -1,3 +1,5 @@
+import greenfoot.GreenfootSound;
+
 /**
  * Write a description of class AudioPlayer here.
  * 
@@ -7,13 +9,14 @@
 public class AudioPlayer  
 {
     // instance variables - replace the example below with your own
-    private int x;
+    
 
     /**
      * Constructor for objects of class AudioPlayer
      */
     public AudioPlayer()
     {
+        
     }
 
     /**
@@ -22,9 +25,32 @@ public class AudioPlayer
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
-    public int sampleMethod(int y)
+    public static void play(String... audio)
     {
-        // put your code here
-        return x + y;
+        int index = (int)(Math.random()*audio.length);
+        GreenfootSound temp = new GreenfootSound(audio[index]);
+        temp.play();
+    }
+    public static void play(int volume,String... audio)
+    {
+        int index = (int)(Math.random()*audio.length);
+        GreenfootSound temp = new GreenfootSound(audio[index]);
+        temp.setVolume(volume);
+        temp.play();
+    }
+    public static void play(boolean loop, String... audio)
+    {
+        int index = (int)(Math.random()*audio.length);
+        GreenfootSound temp = new GreenfootSound(audio[index]);
+        if (loop) {
+            temp.playLoop();
+        } else {
+            temp.play();
+        }
+    }
+    public static void stop(GreenfootSound... audio) {
+        for (int i = 0; i < audio.length; i++) {
+            audio[i].stop();
+        }
     }
 }

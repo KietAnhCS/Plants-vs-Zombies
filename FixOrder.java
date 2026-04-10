@@ -1,19 +1,47 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*;
 
 /**
- * Write a description of class FixOrder here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
+ * DelayedOrderFixer - Một lớp tiện ích giúp thực hiện việc sắp xếp lại 
+ * thứ tự các đối tượng sau một khoảng thời gian chờ nhất định.
  */
 public class FixOrder extends Actor
 {
+    private final WaveManager level;
+    private final long delayTimeMillis;
+    private final long startTimeNano;
+
     /**
-     * Act - do whatever the FixOrder wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
+     * @param level Đối tượng quản lý màn chơi cần gọi hàm fixOrder.
+     * @param delayTimeMillis Thời gian chờ tính bằng mili giây (ms).
      */
-    public void act()
+    public FixOrder(WaveManager level, long delayTimeMillis) {
+        this.level = level;
+        this.delayTimeMillis = delayTimeMillis;
+        this.startTimeNano = System.nanoTime();
+      
+        setImage(new GreenfootImage(1, 1)); 
+    }
+
+    @Override
+    public void act() 
     {
-        // Add your action code here.
+        
+        if (getWorld() == null) return;
+
+        
+        long elapsedMillis = (System.nanoTime() - startTimeNano) / 1_000_000;
+
+        if (elapsedMillis >= delayTimeMillis) {
+            executeTask();
+        }
+    }
+
+    private void executeTask() {
+     
+        if (level != null) {
+            level.fixOrder();
+        }
+       
+        getWorld().removeObject(this);
     }
 }

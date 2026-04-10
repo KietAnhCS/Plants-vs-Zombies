@@ -12,8 +12,8 @@ public class Arm extends FallingObject
      * Act - do whatever the Arm wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
-    public void act()
-    {
-        // Add your action code here.
+    public Arm() {
+        super(0, 0.2, 0.2, Random.Int(-1,1), 350L);
     }
+  
 }

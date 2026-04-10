@@ -12,8 +12,16 @@ public class WalnutPacket extends SeedPacket
      * Act - do whatever the WalnutPacket wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
-    public void act()
-    {
-        // Add your action code here.
+     public WalnutPacket() {
+        super(1L, false, 1, "walnutpacket");
+    }
+ 
+    public TransparentObject addImage() {
+        TransparentObject temp = new TransparentWalnut(false);
+        ((MyWorld)getWorld()).addObject(temp, Greenfoot.getMouseInfo().getX(), Greenfoot.getMouseInfo().getY());
+        return temp;
+    }
+    public Plant getPlant() {
+        return new PeaNut();
     }
 }

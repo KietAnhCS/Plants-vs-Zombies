@@ -1,4 +1,5 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import java.util.*;
 
 /**
  * Write a description of class Hitbox here.
@@ -15,5 +16,8 @@ public class Hitbox extends Actor
     public void act()
     {
         // Add your action code here.
+    }
+    public List getTouching() {
+        return getIntersectingObjects(null);
     }
 }

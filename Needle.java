@@ -12,8 +12,9 @@ public class Needle extends Projectile
      * Act - do whatever the Needle wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
-    public void act()
-    {
-        // Add your action code here.
+    public Needle(int yPos) {
+        super("needle", 1, yPos, 15, 6);
+        
+        
     }
 }

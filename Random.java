@@ -22,9 +22,10 @@ public class Random
      * @param  y   a sample parameter for a method
      * @return     the sum of x and y 
      */
-    public int sampleMethod(int y)
-    {
-        // put your code here
-        return x + y;
+    public static int Int(int min, int max) {
+        return (int)((Math.random() * (max - min)) + min);
+    }
+    public static double Double(int min, int max) {
+        return (((Math.random() * (max - min)) + min)/100);
     }
 }
