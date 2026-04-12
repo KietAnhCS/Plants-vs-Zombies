@@ -34,10 +34,13 @@ public class Zombie extends animatedObject
     public void act()
     {
         if (getWorld() != null) {
-        
+            // KIỂM TRA OVERLAY: Nếu có màn hình tối (Pause) thì dừng toàn bộ hành động
+            if (!getWorld().getObjects(Overlay.class).isEmpty()) {
+                return; 
+            }
+            
             if (isLiving()) {
                 update();
-                
             } else {
                 deathAnim();            
             }
@@ -95,11 +98,13 @@ public class Zombie extends animatedObject
     }
     
     public void playEating() {
+        // Chặn âm thanh và trừ máu nếu game đang Pause
+        if (!getWorld().getObjects(Overlay.class).isEmpty()) return;
+
         if (frame == 5 || frame == 2) {
             if (!eatOnce) {
                 eatOnce = true;
                 AudioPlayer.play(70, "chomp.mp3", "chomp2.mp3", "chompsoft.mp3");
-                
                 target.hit(10);
             } 
         } else {
@@ -126,14 +131,20 @@ public class Zombie extends animatedObject
     public void takeDmg(int dmg) {
         hp -= dmg;
         if (hp <= 0) {
+            // Đánh dấu là đã chết để hàm act() chuyển sang gọi deathAnim()
+            isAlive = false; 
+            
+            // Xóa Zombie khỏi danh sách quản lý của WaveManager ngay để 
+            // màn chơi biết con này đã bị tiêu diệt (không tính vào số lượng zombie còn sống)
             for (ArrayList<Zombie> i : MyWorld.level.zombieRow) {
                 if (i.contains(this)) {
                     i.remove(this);                    
                     break;
                 }
             }
-            getWorld().removeObject(this);
-            return;
+            
+            // TUYỆT ĐỐI KHÔNG gọi getWorld().removeObject(this) ở đây.
+            // Nếu xóa ở đây, Zombie sẽ biến mất ngay lập tức, không kịp diễn anim ngã.
         }
     }
     public boolean isEating() {

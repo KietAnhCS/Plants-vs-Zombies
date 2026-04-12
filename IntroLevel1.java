@@ -46,13 +46,11 @@ public class IntroLevel1 extends World
     {    
         
         super(1111, 602, 1, false); 
-        addObject(new Basic(), 800, 200);
-        addObject(new Basic(), 900, 100);
-        addObject(new Basic(), 890, 370);
-        addObject(new Basic(), 822, 241);
-        addObject(new IdleCone(), 890, 210);
-        addObject(new IdleCone(), 850, 70);
-        addObject(new IdleBucket(), 824, 317);
+        addObject(new Basic(), 1176, 227);
+        addObject(new Basic(), 1195, 322);
+        addObject(new Basic(), 1129, 227);
+        addObject(new Basic(), 1162, 325);
+        addObject(new IdleCone(), 1183, 396);
         CYS.setVolume(70);
         
     }

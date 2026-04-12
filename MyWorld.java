@@ -111,10 +111,31 @@ public class MyWorld extends World
         prepareLawnmowers();
         
 
-        setPaintOrder(Transition.class,AHugeWave.class, ReadySetPlant.class, SunCounter.class, clickShovel.class, Shovel.class, Lawnmower.class, TransparentObject.class, SeedPacket.class, FallingSun.class, Sun.class, Dirt.class, Projectile.class, FallingObject.class, Zombie.class, fallingZombie.class, Explosion.class, Plant.class);
+        setPaintOrder(Setting.class,Transition.class,AHugeWave.class, ReadySetPlant.class, SunCounter.class, clickShovel.class, Shovel.class, Lawnmower.class, TransparentObject.class, SeedPacket.class, FallingSun.class, Sun.class, Dirt.class, Projectile.class, FallingObject.class, Zombie.class, fallingZombie.class, Explosion.class, Plant.class);
         
     }
-    
+    private void checkEscape() {
+        String key = Greenfoot.getKey(); 
+        
+        if ("escape".equals(key)) {
+            if (getObjects(Setting.class).isEmpty()) {
+                // 1. Thêm lớp phủ đen cho tối màn hình
+                addObject(new Overlay(getWidth(), getHeight()), getWidth()/2, getHeight()/2);
+                // 2. Thêm bảng Setting lên trên cùng
+                addObject(new Setting(), getWidth() / 2, getHeight() / 2);
+                
+                // Tạm dừng nhạc nếu muốn
+                Grasswalk.pause();
+            } else {
+                // Xóa bảng setting và lớp phủ đen
+                removeObjects(getObjects(Setting.class));
+                removeObjects(getObjects(Overlay.class));
+                
+                // Chơi nhạc tiếp tục
+                Grasswalk.playLoop();
+            }
+        }
+    }
     // --- HÀM THÊM LAWNMOWER ---
     private void prepareLawnmowers() {
         int startX = 220; 
@@ -126,21 +147,32 @@ public class MyWorld extends World
     // ---------------------------
     
     public void act() {
+        // 1. Phải check ESC đầu tiên để biết có mở menu hay không
+        checkEscape();
+        
+        // 2. Kiểm tra: Nếu bảng Setting ĐANG HIỆN, thì dừng mọi thứ ngay lập tức
+        if (!getObjects(Setting.class).isEmpty()) {
+            // Có thể gọi moveHitbox ở đây nếu bạn muốn chuột vẫn đi chuyển được 
+            // để bấm các nút trong Setting (nếu sau này bạn làm nút bấm)
+            moveHitbox(); 
+            return; // DỪNG TOÀN BỘ LOGIC PHÍA DƯỚI
+        }
+        
+        // 3. Nếu KHÔNG có Setting, game chạy bình thường
+        moveHitbox(); 
+    
         if (!isPlaying) {
-            addObject(level,0,0);
-            addObject(new DelayAudio(Grasswalk,CYS, 70, true, 2000L), 0,0);
-            
+            addObject(level, 0, 0);
+            addObject(new DelayAudio(Grasswalk, CYS, 70, true, 2000L), 0, 0);
             level.startLevel();
             isPlaying = true;           
-            
         }
+    
         if (!loseOnce && hasLost()) {
             Grasswalk.stop();
             AudioPlayer.play(80, "losemusic.mp3");
-            
             GreenfootSound scream = new GreenfootSound("scream.mp3");
-            
-            addObject(new DelayAudio(scream, 70, false, 4000L), 0,0);
+            addObject(new DelayAudio(scream, 70, false, 4000L), 0, 0);
             loseOnce = true;
             Greenfoot.delay(250);
             addObject(new Transition(false, new GameOver(restartWorld), "gameover.png", 5), 365, 215);
@@ -148,24 +180,17 @@ public class MyWorld extends World
             winOnce = true;
             addObject(winPlant, Random.Int(SeedBank.x1, SeedBank.x2), 215);
         } else {
+            // Các phím tắt Debug
             if (Greenfoot.isKeyDown("1")) {
-                CYS.stop();
-                Grasswalk.stop();
+                CYS.stop(); Grasswalk.stop();
                 Greenfoot.setWorld(new Intro());
-                    
-                
             } else if (Greenfoot.isKeyDown("2")) {
-                CYS.stop();
-                Grasswalk.stop();
+                CYS.stop(); Grasswalk.stop();
                 Greenfoot.setWorld(new IntroLevel1());
-                    
             } else if (Greenfoot.isKeyDown("3")) {
-                CYS.stop();
-                Grasswalk.stop();
+                CYS.stop(); Grasswalk.stop();
                 Greenfoot.setWorld(new IntroLevel2());
-                    
             }
         }
-        
     }
 }

@@ -20,11 +20,11 @@ public class Intro extends World
         {new BasicZombie(), new BasicZombie()},
         {new BasicZombie(), new BasicZombie()},
         {
-            new BossZombie(), new BossZombie(), new BossZombie(),
-            new BossZombie(), new BossZombie(), new BossZombie(),
-            new BossZombie(), new BossZombie(), new BossZombie(),
-            new BossZombie(), new BossZombie(), new BossZombie(),
-            new BossZombie(), new BossZombie(), new BossZombie()
+            new Conehead(), new Conehead(), new Conehead(),
+            new Conehead(), new Conehead(), new Conehead(),
+            new Conehead(), new Conehead(), new Conehead(),
+            new Conehead(), new Conehead(), new Conehead(),
+            new Conehead(), new Conehead(), new Conehead()
         },
         {new BasicZombie(), new BasicZombie()},
         {new Conehead(), new Conehead()}

@@ -14,6 +14,10 @@ public class Plant extends animatedObject {
         // Chốt chặn 1: Nếu vừa vào mà đã bị xóa (do Lawnmower chạy trước) thì nghỉ luôn
         if (getWorld() == null) return;
 
+        if (!getWorld().getObjects(Overlay.class).isEmpty()) {
+            return; 
+        }
+        
         if (isLiving()) {
             update(); // Gọi logic của Peashooter, Sunflower...
             
@@ -75,6 +79,10 @@ public class Plant extends animatedObject {
     }
 
     public void hit(int dmg) {
+        
+        if (getWorld() != null && !getWorld().getObjects(Overlay.class).isEmpty()) {
+            return;
+        }
         hp -= dmg;
     }
 }

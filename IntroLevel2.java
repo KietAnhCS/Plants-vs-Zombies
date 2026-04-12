@@ -2,57 +2,55 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.util.*;
 
 /**
- * Write a description of class IntroLevel2 here.
+ * Write a description of class IntroLevel1 here.
  * 
  * @author (your name) 
  * @version (a version number or a date)
  */
 public class IntroLevel2 extends World
 {
-    public GreenfootSound CYS = new GreenfootSound("chooseyourseeds.mp3");
+    public GreenfootSound CYS = new GreenfootSound("intro3.mp3");
     public int count = 0;
     public int scrollSpeed = 4;
     public int location = 0;
     public boolean started = false;
     public Zombie n = null;
-    public SeedPacket[] bank = {new SunflowerPacket(), new PeashooterPacket(), new WalnutPacket(), new PotatoPacket(), new RepeaterPacket()};
+    public SeedPacket[] bank = {new SunflowerPacket(), new PeashooterPacket(), new WalnutPacket(), new PotatoPacket()};
     
-    public SeedBank seedbank = new SeedBank(bank); 
-    public Zombie[][] level2 = {
-                {null, n, null, new BasicZombie()},
+    public SeedBank seedbank = new SeedBank(bank);   
+    
+    public Zombie[][] level1 = {
+                {null, new BasicZombie(), null, null},
                 {n},
                 {new BasicZombie(), null, null, null, null}, 
-                {n,n,new BasicZombie()},
-                {null, new BasicZombie(), new BasicZombie(), new BasicZombie()},
-                {new Conehead()},
-                {null, null, new Conehead(), null, null, n, new BasicZombie()},
                 {n},
-                {new BasicZombie(), new Buckethead(), new BasicZombie(), new Conehead(), new BasicZombie(), n,new BasicZombie()}, 
-                {n},
-                {new Conehead(), n, null, new BasicZombie(), null, null, new BasicZombie()},
-                {n,n,n, new Conehead(), null, new Buckethead(), new BasicZombie()},
-                {n, new Brickhead(), null, null, null},
-                {n,new BasicZombie(),new BasicZombie(), new BasicZombie(),new Conehead(), new BasicZombie(), n, new BasicZombie(), new BasicZombie()},
-                {null, new BasicZombie(), new Buckethead(), null, new Conehead(),n,n,new BasicZombie()},
-                {new BasicZombie(), new BasicZombie(), new BasicZombie(),  new Brickhead(), new Conehead()}, 
+                {null, new BasicZombie(), null, new BasicZombie()},
+                {new BasicZombie()},
                 {null, null, new Conehead(), null, null},
                 {n},
-                {new Brickhead(), new Conehead(), new Conehead(), new BasicZombie(), new BasicZombie(), new Buckethead(), null, new BasicZombie(), new Conehead(), new Brickhead()}
+                {new BasicZombie(), new Conehead(), new BasicZombie(), new BasicZombie(), new BasicZombie(), n,new BasicZombie()}, 
+                {n},
+                {new Conehead(), n, null, new BasicZombie(), null, null, new BasicZombie()},
+                {new BasicZombie(),n,n, new BasicZombie(), null, new BasicZombie(), new BasicZombie()},
+                {null, null, null, new Buckethead(), null},
+                {n,new BasicZombie(),n,n,new Conehead(), n, n, new BasicZombie()},
+                {null, new BasicZombie(), null, null, new Conehead(),n,n,new BasicZombie()},
+                {new BasicZombie(), new BasicZombie(), new BasicZombie(),  null, new Conehead()}, 
+                {null, null, new BasicZombie(), null, null},
+                {n},
+                {new Conehead(), new Conehead(), new Conehead(), new BasicZombie(), new BasicZombie(), new Buckethead(), null, new BasicZombie(), new Conehead(), new Buckethead()}
     };
-  
     
-    public WaveManager level = new WaveManager(23500L, level2, 15000L, true, 8, 18);
+    public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 8, 18);
     public IntroLevel2()
     {    
         
         super(1111, 602, 1, false); 
-        addObject(new Basic(), 800, 200);
-        addObject(new IdleCone(), 900, 100);
-        addObject(new IdleCone(), 890, 370);
-        addObject(new Basic(), 822, 241);
-        addObject(new IdleBucket(), 890, 210);
-        addObject(new IdleBucket(), 850, 70);
-        addObject(new IdleBrickhead(), 824, 317);
+        addObject(new Basic(), 1176, 227);
+        addObject(new Basic(), 1195, 322);
+        addObject(new Basic(), 1129, 227);
+        addObject(new Basic(), 1162, 325);
+        addObject(new IdleCone(), 1183, 396);
         CYS.setVolume(70);
         
     }
@@ -92,17 +90,8 @@ public class IntroLevel2 extends World
         }
         else if ( count == 500 )
         {
-            
-            
-            List<IdleZombie> idleZombie = getObjects(IdleZombie.class );
-            for ( IdleZombie zombie : idleZombie ) {
-                
-                removeObject(zombie);
-            }
-            
-            
-            
-            Greenfoot.setWorld(new MyWorld(CYS,level, seedbank, new IntroLevel2(), new WinTwinsunflower()));
+           
+            Greenfoot.setWorld(new MyWorld(CYS, level, seedbank, new IntroLevel1(), new WinRepeater()));
         }
        
     }
@@ -110,7 +99,7 @@ public class IntroLevel2 extends World
     public void scrollBGimage(int offset)
     {
         GreenfootImage bg = getBackground(); 
-        GreenfootImage move = new GreenfootImage("lawn36.png");
+        GreenfootImage move = new GreenfootImage("lawn367.png");
         bg.drawImage(move, offset, 0);  
         
         // get all objects and move them by the offset delta value
@@ -125,9 +114,9 @@ public class IntroLevel2 extends World
             else if ( count > 350 && count < 410)
             {
                 thisObject.setLocation(thisObject.getX() + scrollSpeed , thisObject.getY() );
-            } // end inner if/else
+            } 
             
-        } // end for-each loop
+        } 
         
     }
 }

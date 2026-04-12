@@ -34,12 +34,21 @@ public class Transition extends Actor
 
     // Constructor 3
     public Transition(boolean fadeOut, World world, String image, int speed) {
-        this.fadeSpeed = speed;
-        setImage(new GreenfootImage(image));
-        this.world = world;
-        this.fadeOut = fadeOut;
-        getImage().setTransparency(0);
-    }
+    this.fadeSpeed = speed;
+    this.world = world;
+    this.fadeOut = fadeOut;
+    
+    // 1. Tạo ảnh từ file (đây là lúc ảnh đang có size gốc, bé hơn World)
+    GreenfootImage img = new GreenfootImage(image);
+    
+    // 2. ÉP CÁI ẢNH PHẢI GIÃN RA đúng bằng kích thước của màn hình World
+    // Đây là bước quan trọng nhất để che hết bãi cỏ.
+    img.scale(world.getWidth(), world.getHeight()); 
+    
+    // 3. Gán ảnh đã scale vào Actor
+    setImage(img);
+    getImage().setTransparency(0);
+}
 
     public void act()
     {
