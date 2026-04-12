@@ -10,7 +10,7 @@ public class Intro extends World
     public boolean started = false;
     
     // Tạo 1 lần dùng mãi mãi, không tạo trong act()
-    private GreenfootImage backgroundMap = new GreenfootImage("lawn36.png");
+    private GreenfootImage backgroundMap = new GreenfootImage("lawn367.png");
     private GifImage daveGif = new GifImage("Dave3.gif");
     public GreenfootSound daveVoice = new GreenfootSound("mixi.mp3");
     private boolean daveTalking = true;
@@ -36,14 +36,14 @@ public class Intro extends World
 
     public Intro()
     {    
-        super(733, 430, 1, false); 
+        super(1111, 602, 1, false); 
         getBackground().drawImage(backgroundMap, 0, 0);
         
-        addObject(new Basic(), 800, 200);
-        addObject(new Basic(), 900, 100);
-        addObject(new Basic(), 890, 370);
-        addObject(new Basic(), 822, 241);
-        addObject(new IdleCone(), 890, 210);
+        addObject(new Basic(), 1176, 227);
+        addObject(new Basic(), 1195, 322);
+        addObject(new Basic(), 1129, 227);
+        addObject(new Basic(), 1162, 325);
+        addObject(new IdleCone(), 1183, 396);
     
         CYS.setVolume(70);
         daveVoice.setVolume(80);
@@ -72,7 +72,7 @@ public class Intro extends World
         bg.drawImage(backgroundMap, 0, 0);
         
         GreenfootImage currentDave = daveGif.getCurrentImage();
-        // Scale nhẹ nhàng để không tốn RAM
+        
         if (currentDave.getWidth() != 600) {
             currentDave.scale(600, 400);
         }

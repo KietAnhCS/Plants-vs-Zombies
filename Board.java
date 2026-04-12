@@ -3,10 +3,10 @@ import greenfoot.*;
 public class Board extends Actor
 {
     public Plant[][] Board = new Plant[5][9];
-    public static final int xOffset = 212;
-    public static final int yOffset = 95;
-    public static final int xSpacing = 58;
-    public static final int ySpacing =72;
+    public static final int xOffset = 290;
+    public static final int yOffset = 135;
+    public static final int xSpacing = 82;
+    public static final int ySpacing =100;
     
     public Board() {
     
@@ -14,12 +14,14 @@ public class Board extends Actor
     
     public void placePlant(int x, int y, Plant plant)
     {
-        if (Board[y][x] == null ) {
+        if (y >= 0 && y < 5 && x >= 0 && x < 9) {
+            if (Board[y][x] == null ) {
             Board[y][x] =plant;
-            World MyWorld = getWorld();
             
-            MyWorld.addObject(plant, x*xSpacing+xOffset, y*ySpacing+yOffset);
+            
+            getWorld().addObject(plant, x*xSpacing+xOffset, y*ySpacing+yOffset);
             AudioPlayer.play(80, "plant.mp3", "plant2.mp3");
+            }
         }
     }
     public Plant getPlant(int x, int y) {

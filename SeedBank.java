@@ -21,11 +21,11 @@ public class SeedBank extends Actor
     public TransparentObject image = null;
     public TransparentObject transparent = null;
 
-    public static final int x1 = 182;
-    public static final int x2 = 702;
+    public static final int x1 = 252;
+    public static final int x2 = 994;
     public static final int xSpacing = Board.xSpacing;
-    public static final int y1 = 62;
-    public static final int y2 = 417;
+    public static final int y1 = 81;
+    public static final int y2 = 581;
     public static final int ySpacing = Board.ySpacing;
     
     public SeedBank(SeedPacket[] bank) {
@@ -36,17 +36,20 @@ public class SeedBank extends Actor
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse != null) {
             if (image != null) {
-                if ((mouse.getX() < x1 || mouse.getX() > x2 || mouse.getY() < y1 || mouse.getY() > y2) 
-                    || (MyWorld.board.Board[(int)((mouse.getY()-y1)/ySpacing)][(int)((mouse.getX()-x1)/xSpacing)] != null)) {
+                int x = (int)((mouse.getX() - x1) / xSpacing);
+                int y = (int)((mouse.getY() - y1) / ySpacing);
+
+                boolean insideBoard = (x >= 0 && x < 9 && y >= 0 && y < 5);
+    
+                if (!insideBoard || (mouse.getX() < x1 || mouse.getX() > x2 || mouse.getY() < y1 || mouse.getY() > y2) || MyWorld.board.Board[y][x] != null) {
+        
                     image.setTransparent(false);
                     image.setLocation(mouse.getX(), mouse.getY());
-                } else {
-                    int x = (int)((mouse.getX()-x1)/xSpacing);
-                    int y = (int)((mouse.getY()-y1)/ySpacing);
-                    image.setTransparent(true);
-                    image.setLocation(x*Board.xSpacing+Board.xOffset, y*Board.ySpacing+Board.yOffset);
-                }
             } else {
+        image.setTransparent(true);
+        image.setLocation(x * Board.xSpacing + Board.xOffset, y * Board.ySpacing + Board.yOffset);
+    }
+} else {
                 
             }
             

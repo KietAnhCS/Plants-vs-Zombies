@@ -45,7 +45,7 @@ public class IntroLevel2 extends World
     public IntroLevel2()
     {    
         
-        super(733, 430, 1, false); 
+        super(1111, 602, 1, false); 
         addObject(new Basic(), 800, 200);
         addObject(new IdleCone(), 900, 100);
         addObject(new IdleCone(), 890, 370);

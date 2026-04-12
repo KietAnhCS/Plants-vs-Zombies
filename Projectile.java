@@ -1,26 +1,15 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-
-/**
- * Write a description of class Pea here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
+import greenfoot.*;
 
 public class Projectile extends animatedObject {
-    public int speed = 4;
-    public GreenfootImage[] image;
-    public boolean hit = false;
-    public MyWorld MyWorld;
-    public boolean foundTarget = false;
-    public Zombie hitZombie;
-    public int frameCount;
-    public int yPos;
-    public int damage;
-    /**
-     * Act - do whatever the Pea wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
+    private int speed;
+    private boolean hit = false;
+    private boolean foundTarget = false;
+    private Zombie hitZombie;
+    private int frameCount;
+    private int yPos;
+    private int damage;
+    private GreenfootImage[] image;
+
     public Projectile(String name, int frameCount, int yPos, int dmg, int speed) {
         this.frameCount = frameCount;
         this.image = importSprites(name, frameCount);
@@ -28,55 +17,59 @@ public class Projectile extends animatedObject {
         this.damage = dmg;
         this.speed = speed;
         setImage(image[0]);
-        
-        
-        
     }
-    public void act() {
-        if (getWorld() == null) return;
-        if (getWorld() != null) {
-            MyWorld = (MyWorld)getWorld();
-        
-            // 1. Kiểm tra xóa do hết frame anime
-        if (frame >= frameCount) {
-            MyWorld.removeObject(this);   
-            return; // Thoát ngay lập tức
-        }
-        
-        // 2. Di chuyển hoặc Animate
-        if (!hit) {
-            move(speed);
-        } else {
-            animate(image, 150, false);
-        }
-        
-        // 3. Kiểm tra biên
-        if (isAtEdge()) {
-            MyWorld.removeObject(this);   
-            return; // Thoát ngay lập tức
-        }
-        
-        // 4. Kiểm tra va chạm với Zombie
-        // Dùng phương thức này của Greenfoot sẽ tối ưu và an toàn hơn là tự duyệt list
-        for (Zombie i : MyWorld.level.zombieRow.get(yPos)) {
-            // CỰC KỲ QUAN TRỌNG: Kiểm tra xem viên đạn còn sống không trước khi lấy tọa độ
-            if (getWorld() == null) return; 
 
-            if (Math.abs(i.getX() - getX()) < 30) {
+    public void act() {
+        // CHỐT CHẶN: Luôn kiểm tra đầu tiên
+        if (getWorld() == null) return;
+
+        MyWorld world = (MyWorld) getWorld();
+
+        // 1. Nếu đang animate hit xong → xóa đạn
+        if (hit) {
+            if (frame >= frameCount) {
+                world.removeObject(this);
+                return;
+            }
+            animate(image, 150, false);
+            return; // Khi đang hit, không di chuyển hay check va chạm nữa
+        }
+
+        // 2. Di chuyển bình thường
+        move(speed);
+
+        // 3. Kiểm tra ra ngoài biên
+        if (isAtEdge() || getWorld() == null) {
+            if (getWorld() != null) world.removeObject(this);
+            return;
+        }
+
+        // 4. Kiểm tra va chạm với Zombie trong hàng tương ứng
+        if (world.level == null || world.level.zombieRow == null) return;
+        
+        java.util.List<Zombie> row = world.level.zombieRow.get(yPos);
+        if (row == null) return;
+
+        // Dùng bản sao để tránh ConcurrentModificationException
+        for (Zombie z : new java.util.ArrayList<>(row)) {
+            if (getWorld() == null) return; // Kiểm tra lại sau mỗi bước quan trọng
+
+            // Bỏ qua zombie đã chết / bị xóa
+            if (z == null || z.getWorld() == null) continue;
+
+            if (Math.abs(z.getX() - getX()) < 30) {
                 if (!foundTarget) {
-                    hitZombie = i;
+                    hitZombie = z;
                     foundTarget = true;
-                } 
+                }
                 
+                // Chỉ gây sát thương 1 lần
                 if (!hit) {
                     hitZombie.hit(damage);
                     hit = true;
-                    // Nếu cậu muốn đạn biến mất ngay khi chạm, hãy thêm removeObject ở đây và return luôn
-                } else if (hitZombie.getWorld() != null && getX() < hitZombie.getX()) {
-                    move(speed); 
                 }
+                break; // Đã tìm thấy mục tiêu, không cần duyệt tiếp
             }
         }
     }
-}
 }

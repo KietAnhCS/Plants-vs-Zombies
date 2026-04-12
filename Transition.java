@@ -20,10 +20,12 @@ public class Transition extends Actor
         this.world = world;
         this.fadeOut = fadeOut;
         this.waitDuration = waitDuration;
+        int w = world.getWidth();
+        int h = world.getHeight();
         
         // FIX NHANH: Tạo một tấm ảnh đen xì che màn hình nếu chưa có ảnh
         if (getImage() == null) {
-            setImage(new GreenfootImage(600, 450)); 
+            setImage(new GreenfootImage(w, h)); 
             getImage().setColor(Color.BLACK);
             getImage().fill();
         }

@@ -95,18 +95,18 @@ public class MyWorld extends World
     public MyWorld(GreenfootSound CYS, WaveManager level,  SeedBank seedbank, World restartWorld, FallingObject winPlant)
     {    
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
-        super(733, 430, 1, false); 
+        super(1111, 602, 1, false); 
         this.CYS = CYS;
         this.seedbank = seedbank;
         this.restartWorld = restartWorld;
         this.level = level;
         this.winPlant = winPlant;
         Greenfoot.setSpeed(50);
-        setBackground("lawn36.png");
+        setBackground("lawn367.png");
         addObject(seedbank,0,0);
         addObject(board,0,0);
         addObject(hitbox, 0,0);
-        addObject(shovel, 690,420);
+        addObject(shovel, 1052,537);
         
         prepareLawnmowers();
         
@@ -117,7 +117,7 @@ public class MyWorld extends World
     
     // --- HÀM THÊM LAWNMOWER ---
     private void prepareLawnmowers() {
-        int startX = 145; 
+        int startX = 220; 
         for (int i = 0; i < 5; i++) {
             int yPos = SeedBank.y1 + (i * SeedBank.ySpacing) + (SeedBank.ySpacing / 2);
             addObject(new Lawnmower(), startX, yPos);

@@ -24,57 +24,66 @@ public class clickShovel extends SmoothMover
         if (mouse != null) {
             setLocation(mouse.getX(), mouse.getY());
             
-    
-            if (mouse.getX() < SeedBank.x1 || mouse.getX() > SeedBank.x2 || mouse.getY() < SeedBank.y1 || mouse.getY() > SeedBank.y2)  {
+            // 1. Kiểm tra xem chuột có nằm trong vùng bàn cờ không
+            if (mouse.getX() < SeedBank.x1 || mouse.getX() > SeedBank.x2 || 
+                mouse.getY() < SeedBank.y1 || mouse.getY() > SeedBank.y2)  {
+                
                 if (lastPlant != null) {
                     lastPlant.opaque = false;
+                    lastPlant = null; // Xóa vết cây cũ khi đưa xẻng ra ngoài
                 }
+                
                 if (Greenfoot.mouseClicked(null)) {
-                    
-                    
                     MyWorld.shovel.setSelected(false);
                     MyWorld.removeObject(this);
                     return;
                 }
             } else {
-                  int x = (int)((mouse.getX()-SeedBank.x1)/SeedBank.xSpacing);
-                int y = (int)((mouse.getY()-SeedBank.y1)/SeedBank.ySpacing);
-                Plant current = MyWorld.board.getPlant(x, y);
-                if (current != null) {
-
-                    if (lastPlant != null && lastPlant != current) {
-                        lastPlant.opaque = false;
-                        lastPlant = current;
-                    } else {
-                        lastPlant = current;
-                        lastPlant.opaque = true;
-                    }
-                    
-                } else {
-                    if (lastPlant != null) {
-                        lastPlant.opaque = false;
-                    }
-                }
+                // 2. Tính toán vị trí ô
+                int x = (int)((mouse.getX() - SeedBank.x1) / SeedBank.xSpacing);
+                int y = (int)((mouse.getY() - SeedBank.y1) / SeedBank.ySpacing);
                 
-                
-                
-                if (Greenfoot.mouseClicked(null)) {
+                // 3. THÊM BẢO VỆ CHỐNG LỖI INDEX TẠI ĐÂY
+                if (x >= 0 && x < 9 && y >= 0 && y < 5) {
+                    Plant current = MyWorld.board.getPlant(x, y);
                     
                     if (current != null) {
-                        
-                        MyWorld.board.removePlant(current.getXPos(), current.getYPos());
-                        
+                        if (lastPlant != null && lastPlant != current) {
+                            lastPlant.opaque = false;
+                        }
+                        lastPlant = current;
+                        lastPlant.opaque = true;
                     } else {
-                        AudioPlayer.play(80, "tap.mp3", "tap2.mp3");
-                        
+                        if (lastPlant != null) {
+                            lastPlant.opaque = false;
+                            lastPlant = null;
+                        }
                     }
-                    MyWorld.shovel.setSelected(false);
-                    MyWorld.removeObject(this);
-                    return;
+
+                    if (Greenfoot.mouseClicked(null)) {
+                        if (current != null) {
+                            MyWorld.board.removePlant(x, y); // Sử dụng luôn x, y vừa tính
+                        } else {
+                            AudioPlayer.play(80, "tap.mp3", "tap2.mp3");
+                        }
+                        MyWorld.shovel.setSelected(false);
+                        MyWorld.removeObject(this);
+                        return;
+                    }
+                } else {
+                    // Nếu x, y tính ra bị lố (ví dụ x=9), coi như nằm ngoài vùng
+                    if (lastPlant != null) {
+                        lastPlant.opaque = false;
+                        lastPlant = null;
+                    }
+                    if (Greenfoot.mouseClicked(null)) {
+                        MyWorld.shovel.setSelected(false);
+                        MyWorld.removeObject(this);
+                        return;
+                    }
                 }
             }
         }
-        // Add your action code here.
     }
   
 }

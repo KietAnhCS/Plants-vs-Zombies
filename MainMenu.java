@@ -7,13 +7,13 @@ public class MainMenu extends World
     public MainMenu(GreenfootSound menutheme)
     {    
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
-        super(576, 430, 1, false); 
+        super(803, 602, 1, false); 
         addObject(hitbox,0,0);
-        addObject(new Start(), 412, 132);
-        addObject(new More(), 398, 224);
-        addObject(new Bush(), 459, 394);
-        addObject(new Achievements(), 155, 380);
-        addObject(new SaveBlock(), 150, 175);
+        addObject(new Start(), 555, 198);
+        addObject(new More(), 532, 316);
+        addObject(new Bush(), 743, 560);
+        
+        
         this.menutheme = menutheme;
         Greenfoot.setSpeed(50);
     }

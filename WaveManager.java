@@ -9,9 +9,9 @@ import java.util.*; //HAHAHADIE
 public class WaveManager extends Actor
 {
     public long currentFrame = System.nanoTime();
-    public static final int xOffset = 760;
-    public static final int yOffset = 65;
-    public static final int ySpacing = 73;
+    public static final int xOffset = 1115;
+    public static final int yOffset = 135;
+    public static final int ySpacing = 100;
     public ArrayList<ArrayList<Zombie>> zombieRow = new ArrayList<ArrayList<Zombie>>();
     public ArrayList<Zombie> row1 = new ArrayList<Zombie>();
     public ArrayList<Zombie> row2 = new ArrayList<Zombie>();
@@ -52,7 +52,7 @@ public class WaveManager extends Actor
     public void startLevel() {
         wave = 0;
         AudioPlayer.play(80, "readysetplant.mp3");
-        MyWorld.addObject(new ReadySetPlant(), 400, 230);
+        MyWorld.addObject(new ReadySetPlant(), 620, 295);
     }
     
     //Fix order cause no setPaintOrder for actors :(

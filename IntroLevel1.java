@@ -45,7 +45,7 @@ public class IntroLevel1 extends World
     public IntroLevel1()
     {    
         
-        super(733, 430, 1, false); 
+        super(1111, 602, 1, false); 
         addObject(new Basic(), 800, 200);
         addObject(new Basic(), 900, 100);
         addObject(new Basic(), 890, 370);
@@ -101,7 +101,7 @@ public class IntroLevel1 extends World
     public void scrollBGimage(int offset)
     {
         GreenfootImage bg = getBackground(); 
-        GreenfootImage move = new GreenfootImage("lawn36.png");
+        GreenfootImage move = new GreenfootImage("lawn367.png");
         bg.drawImage(move, offset, 0);  
         
         // get all objects and move them by the offset delta value

@@ -18,7 +18,7 @@ public class PopCap extends World
     public PopCap()
     {    
         // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
-        super(576, 430, 1, false); 
+        super(1111, 602, 1, false); 
         setPaintOrder(EndTransition.class, Transition.class);
         
     }
@@ -29,7 +29,7 @@ public class PopCap extends World
         }
         counter++;
         if (counter > 100) {
-            addObject(new Transition(true, new MainMenu(menutheme), 6), 288, 215);
+            addObject(new Transition(true, new MainMenu(menutheme), 6), getWidth()/2, getHeight()/2);
         }
     }
 }

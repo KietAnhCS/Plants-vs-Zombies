@@ -13,7 +13,7 @@ public class PeaNut extends Plant
     
     private boolean shootOnce = false;
     private boolean shooting = false;
-    private long shootDelay = 17L; 
+    private long shootDelay = 1000L; 
     private long lastFrame2 = System.nanoTime();
     private long deltaTime2;
 
