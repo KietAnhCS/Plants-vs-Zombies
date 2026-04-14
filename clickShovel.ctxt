@@ -1,6 +1,5 @@
 #BlueJ class context
 comment0.target=clickShovel
-comment0.text=\r\n\ clickShovel\:\ \u0110\u1ED1i\ t\u01B0\u1EE3ng\ x\u1EBBng\ \u0111i\ theo\ chu\u1ED9t\ \u0111\u1EC3\ \u0111\u00E0o\ c\u00E2y.\r\n
 comment1.params=world
 comment1.target=void\ addedToWorld(greenfoot.World)
 comment2.params=

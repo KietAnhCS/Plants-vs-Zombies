@@ -44,7 +44,53 @@ public class Intro extends World
         {null, new BasicZombie(), null, new BasicZombie()},
         {new BasicZombie()},
         {null, null, new Conehead(), null, null},
-        
+        {null, new BasicZombie(), null, null},
+        {n},
+        {new BasicZombie(), null, null, null, null}, 
+        {n},
+        {null, new BasicZombie(), null, new BasicZombie()},
+        {new BasicZombie()},
+        {null, null, new Conehead(), null, null},
+        {n},
+        {new BasicZombie(), new Conehead(), new BasicZombie(), new BasicZombie(), new BasicZombie(), n,new BasicZombie()}, 
+        {n},
+        {new Conehead(), n, null, new BasicZombie(), null, null, new BasicZombie()},
+        {new BasicZombie(),n,n, new BasicZombie(), null, new BasicZombie(), new BasicZombie()},
+        {null, null, null, new Buckethead(), null},
+        {n,new BasicZombie(),n,n,new Conehead(), n, n, new BasicZombie()},
+        {null, new BasicZombie(), null, null, new Conehead(),n,n,new BasicZombie()},
+        {new BasicZombie(), new BasicZombie(), new BasicZombie(),  null, new Conehead()}, 
+        {null, null, new BasicZombie(), null, null},
+        {n},
+        {new Conehead(), new Conehead(), new Conehead(), new BasicZombie(), new BasicZombie(), new Buckethead(), null, new BasicZombie(), new Conehead(), new Buckethead()},
+        {new BasicZombie(), new BasicZombie()},
+        {new BasicZombie(), new BasicZombie()},
+        {new BasicZombie(), new BasicZombie()},
+        {
+            new Conehead(), new Conehead(), new Conehead(),
+            new Conehead(), new Conehead(), new Conehead(),
+            new Conehead(), new Conehead(), new Conehead(),
+            new Conehead(), new Conehead(), new Conehead(),
+            new Conehead(), new Conehead(), new Conehead()
+        },
+        {
+            new Buckethead(), new Brickhead(), new Conehead(),
+            new Buckethead(), new Conehead(), new Conehead(),
+            new Conehead(), new Conehead(), new Conehead(),
+            new Buckethead(), new Brickhead(), new Conehead(),
+            new Conehead(), new Conehead(), new Brickhead()
+        },
+        {new BasicZombie(), new BasicZombie()},
+        {new Conehead(), new Conehead()}, 
+        {null, new BasicZombie(), null, null},
+        {n},
+        {new BasicZombie(), null, null, null, null}, 
+        {n},
+        {null, new BasicZombie(), null, new BasicZombie()},
+        {new BasicZombie()},
+        {null, null, new Conehead(), null, null},
+        {null, new BasicZombie(), null, null},
+        {n},
         
         
     };
@@ -119,10 +165,7 @@ public class Intro extends World
         }
         else if (count == 500) {
             CYS.stop(); 
-            /**
-             * CẬP NHẬT: Thêm tham số 'true' vào cuối constructor.
-             * Điều này báo cho MyWorld sử dụng map nước (isWaterMap = true).
-             */
+            
             Greenfoot.setWorld(new MyWorld(CYS, level, seedbank, this, new WinPotato(), true));
         }
     }

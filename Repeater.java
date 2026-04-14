@@ -53,7 +53,7 @@ public class Repeater extends Plant
                 shootCount = 0;
                 resetFrame = false;
             } else {
-                if (shootCount >= 2) {
+                if (shootCount >= 5) {
                     lastFrame2 = currentFrame;
                 }
                 if (!resetFrame) {

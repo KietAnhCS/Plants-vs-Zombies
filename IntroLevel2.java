@@ -1,9 +1,7 @@
 import greenfoot.*; 
 import java.util.*;
 
-/**
- * IntroLevel2: Màn giới thiệu cho Level 2 (Map Cỏ - 5 hàng)
- */
+
 public class IntroLevel2 extends World
 {
     public GreenfootSound CYS = new GreenfootSound("intro3.mp3");
