@@ -1,19 +1,11 @@
 import greenfoot.*;
 
-/**
- * DelayedOrderFixer - Một lớp tiện ích giúp thực hiện việc sắp xếp lại 
- * thứ tự các đối tượng sau một khoảng thời gian chờ nhất định.
- */
 public class FixOrder extends Actor
 {
     private final WaveManager level;
     private final long delayTimeMillis;
     private final long startTimeNano;
 
-    /**
-     * @param level Đối tượng quản lý màn chơi cần gọi hàm fixOrder.
-     * @param delayTimeMillis Thời gian chờ tính bằng mili giây (ms).
-     */
     public FixOrder(WaveManager level, long delayTimeMillis) {
         this.level = level;
         this.delayTimeMillis = delayTimeMillis;

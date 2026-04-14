@@ -1,17 +1,9 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*;  
 
-/**
- * Write a description of class BasicZombie here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
+
 public class Buckethead extends Zombie
 {
-    /**
-     * Act - do whatever the BasicZombie wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
+   
     public boolean bucket = true;
     public GreenfootImage[] idle;
     public GreenfootImage[] walk;

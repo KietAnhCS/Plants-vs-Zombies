@@ -1,9 +1,7 @@
 #BlueJ class context
 comment0.target=FixOrder
-comment0.text=\r\n\ DelayedOrderFixer\ -\ M\u1ED9t\ l\u1EDBp\ ti\u1EC7n\ \u00EDch\ gi\u00FAp\ th\u1EF1c\ hi\u1EC7n\ vi\u1EC7c\ s\u1EAFp\ x\u1EBFp\ l\u1EA1i\ \r\n\ th\u1EE9\ t\u1EF1\ c\u00E1c\ \u0111\u1ED1i\ t\u01B0\u1EE3ng\ sau\ m\u1ED9t\ kho\u1EA3ng\ th\u1EDDi\ gian\ ch\u1EDD\ nh\u1EA5t\ \u0111\u1ECBnh.\r\n
 comment1.params=level\ delayTimeMillis
 comment1.target=FixOrder(WaveManager,\ long)
-comment1.text=\r\n\ @param\ level\ \u0110\u1ED1i\ t\u01B0\u1EE3ng\ qu\u1EA3n\ l\u00FD\ m\u00E0n\ ch\u01A1i\ c\u1EA7n\ g\u1ECDi\ h\u00E0m\ fixOrder.\r\n\ @param\ delayTimeMillis\ Th\u1EDDi\ gian\ ch\u1EDD\ t\u00EDnh\ b\u1EB1ng\ mili\ gi\u00E2y\ (ms).\r\n
 comment2.params=
 comment2.target=void\ act()
 comment3.params=

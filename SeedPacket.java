@@ -1,144 +1,111 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*;
 
-/**
- * Write a description of class SeedPacket here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class SeedPacket extends Actor
 {
-    /**
-     * Act - do whatever the SeedPacket wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
-    
     public long deltaTime;
-    public long deltaTime2;
-    public long lastFrame = System.nanoTime();
-    public long lastFrame2 = System.nanoTime();
-    public long rechargeTime;
-    public long currentFrame = System.nanoTime();
-    public int sunCost;
-    public boolean recharged = false;
-    public GreenfootImage recharge;
-    public String name;
-    public boolean selected = false;
-    public MyWorld MyWorld;
-    public boolean doneRechargeTime = false;
-    public GreenfootImage image1;
-    public GreenfootImage image2;
+    public long rechargeTime; 
+    public long lastFrame; 
     
+    public int sunCost;
+    public String name;
+    
+    public boolean recharged = false; 
+    public boolean selected = false;  
+    
+    private GreenfootImage imageBright; 
+    private GreenfootImage imageDark;   
+    private GreenfootImage rechargeOverlay; 
+    
+    private MyWorld myWorld;
+    private boolean doneRechargeTime = false;
+
     public SeedPacket(long rechargeTime, boolean recharged, int sunCost, String name) {
         this.rechargeTime = rechargeTime;
         this.recharged = recharged;
         this.sunCost = sunCost;
         this.name = name;
-        this.image1 = new GreenfootImage(name+"1.png");     
-        this.image2 = new GreenfootImage(name+"2.png");   
         
+        this.imageBright = new GreenfootImage(name + "1.png"); 
+        this.imageDark = new GreenfootImage(name + "2.png");   
+        
+        this.lastFrame = System.currentTimeMillis();
+        setImage(imageDark);
     }
-    
+
     public void addedToWorld(World world) {
-        setRecharged(recharged);
+        myWorld = (MyWorld)world;
+        rechargeOverlay = new GreenfootImage(imageBright.getWidth(), imageBright.getHeight());
         if (recharged) {
             doneRechargeTime = true;
-            setImage(image1);
-        } else {
-            setImage(image2);
+            updateAppearance();
         }
-        MyWorld = ((MyWorld)getWorld());
-        recharge = new GreenfootImage(getImage().getWidth(), getImage().getHeight());
-        
-        
     }
-    
-    public void act() {
-        currentFrame = System.nanoTime();
-        deltaTime = (currentFrame - lastFrame) / 1000000;
-        deltaTime2 = (currentFrame - lastFrame2) / 1000000;
-        
-        
-        
-        if (deltaTime < rechargeTime && !doneRechargeTime) {
-            if (!recharged && deltaTime2 > 500L) {
-                
-                setImage(name+"2.png");
-                
-                recharge.setColor(Color.BLACK);
-                recharge.clear();
-                int height = getImage().getHeight() - (int)Math.round(getImage().getHeight()*((double)deltaTime/rechargeTime));
-                
-                
-                recharge.setTransparency(110);
-                recharge.fillRect(0, 0, getImage().getWidth(), height);
-               
-                
-                getImage().drawImage(recharge, 0, 0);
-                lastFrame2 = System.nanoTime();
-            }
-            
-           
-        } else if (!recharged && !doneRechargeTime){
-            doneRechargeTime = true;
-            setImage(image2);
-        }
-        
-        
-        
-        if (MyWorld.seedbank.suncounter.sun >= sunCost) {
-            if (!recharged) {
-                if (deltaTime > rechargeTime) {
-                    
-                    setRecharged(true); 
-                } else {
-                    setRecharged(false);
-                }
-            }
-             
-    
-        } else {
-            setRecharged(false);        
-        }
-        
-        // Add your action code here.
-    }
-    public void startRecharge() {
-        lastFrame = currentFrame;
-        doneRechargeTime = false;
-    }
-    public void setRecharged(boolean charge) {
-        if (recharged != charge) {
-            recharged = charge;
-            if (recharged) {
-                setImage(image1);
-                
-            } else {
-                setImage(image2);
-            }
-        }
-        
 
+    public void act() {
+        updateCooldown();
+        updateAppearance();
     }
-    public void setSelected(boolean bool) {
-        selected = bool;
-         if (selected) {
-            setImage(image2);
-        } else {
-            setImage(image1);
+
+    private void updateCooldown() {
+        if (!doneRechargeTime) {
+            deltaTime = System.currentTimeMillis() - lastFrame;
+            
+            if (deltaTime >= rechargeTime) {
+                doneRechargeTime = true;
+                recharged = true;
+            }
         }
     }
-    
-    public boolean getCharge() {
-        return recharged;
+
+    public void updateAppearance() {
+        if (myWorld == null || myWorld.seedbank == null) return;
+
+        // Nếu đang hồi chiêu
+        if (!doneRechargeTime) {
+            GreenfootImage tempImage = new GreenfootImage(imageDark);
+            rechargeOverlay.clear();
+            rechargeOverlay.setColor(new Color(0, 0, 0, 150)); 
+            
+            double progress = (double)deltaTime / rechargeTime;
+            int height = (int)(tempImage.getHeight() * (1.0 - progress));
+            
+            rechargeOverlay.fillRect(0, 0, tempImage.getWidth(), height);
+            tempImage.drawImage(rechargeOverlay, 0, 0);
+            setImage(tempImage);
+            recharged = false;
+        } 
+        // Nếu đã hồi xong
+        else {
+            // SỬA LỖI Ở ĐÂY: Đổi suncounter thành sunCounter cho khớp với lớp SeedBank
+            int currentSun = myWorld.seedbank.sunCounter.sun; 
+
+            if (currentSun < sunCost || selected) {
+                setImage(imageDark);
+                // Vẫn giữ trạng thái recharged = true nếu đủ tiền để SeedBank biết mà cho chọn
+                recharged = (currentSun >= sunCost); 
+            } else {
+                setImage(imageBright);
+                recharged = true;
+            }
+        }
     }
-    public boolean getSelected() {
-        return selected;
+
+    public void startRecharge() {
+        lastFrame = System.currentTimeMillis();
+        doneRechargeTime = false;
+        recharged = false;
     }
+
+    public void setSelected(boolean bool) {
+        this.selected = bool;
+    }
+
     public TransparentObject addImage() {
-        return null;
+        return null; 
     }
+
     public Plant getPlant() {
+        // Hàm này sẽ được override ở các lớp con
         return null;
     }
 }

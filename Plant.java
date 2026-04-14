@@ -11,78 +11,74 @@ public class Plant extends animatedObject {
     public Plant() {}
 
     public void act() {
-        // Chốt chặn 1: Nếu vừa vào mà đã bị xóa (do Lawnmower chạy trước) thì nghỉ luôn
         if (getWorld() == null) return;
 
-        if (!getWorld().getObjects(Overlay.class).isEmpty()) {
-            return; 
-        }
+        // Kiểm tra Overlay (Pause game)
+        if (!getWorld().getObjects(Overlay.class).isEmpty()) return; 
         
         if (isLiving()) {
-            update(); // Gọi logic của Peashooter, Sunflower...
-            
-            // Chốt chặn 2: Sau khi update, nhỡ đâu bị xóa trong lúc update thì dừng
+            update(); 
             if (getWorld() == null) return;
 
+            // Xử lý độ trong suốt (đặt cây/xẻng)
             if (!opaque) {
                 getImage().setTransparency(255);
             } else {
                 getImage().setTransparency(125);
             }
         } else {
-            // Cây hết máu hoặc bị xóa chủ động
             die();
         }
     }
 
-    public void die() {
-        if (getWorld() != null) {
-            MyWorld = (MyWorld)getWorld();
+        public void die() {
+        // Chốt chặn quan trọng nhất: Kiểm tra xem cây còn ở trong World không
+        World world = getWorld(); 
+        if (world != null) {
+            MyWorld = (MyWorld)world;
             AudioPlayer.play(80, "gulp.mp3");
             
-            // Lưu tọa độ vào biến tạm TRƯỚC khi xóa đối tượng
+            // Lưu tọa độ ô lưới trước khi thực hiện các lệnh khác
             int xPos = getXPos();
             int yPos = getYPos();
             
-            MyWorld.board.removePlant(xPos, yPos);
-            MyWorld.removeObject(this);
+            // Chỉ xóa trong mảng quản lý của Board nếu Board tồn tại
+            if (MyWorld.board != null) {
+                MyWorld.board.removePlant(xPos, yPos);
+            }
+            
+            // Xóa chính nó khỏi World (chỉ khi world != null)
+            world.removeObject(this);
         }
     }
 
-    public void update() {
-        // Lớp con sẽ override hàm này
-    }
+    public void update() {}
 
     public int getXPos() {
-        if (getWorld() == null) return 0; 
+        if (getWorld() == null) return -1; 
         return ((getX() - Board.xOffset) / Board.xSpacing);
     }   
 
     public int getYPos() {
-        if (getWorld() == null) return 0;
+        if (getWorld() == null) return -1;
         return ((getY() - Board.yOffset) / Board.ySpacing);
     }
 
     @Override
     public void addedToWorld(World world) {
-        MyWorld = (MyWorld)getWorld();
-        MyWorld.addObject(new Dirt(), getX(), getY() + 30);
+        MyWorld = (MyWorld)world;
+        // Thêm hiệu ứng đất khi trồng
+        world.addObject(new Dirt(), getX(), getY() + 30);
     }
 
     public boolean isLiving() {
-        if (hp <= 0) {
-            isAlive = false;
-        } else {
-            isAlive = true;
-        }
-        return isAlive;
+        if (hp <= 0) isAlive = false;
+        return isAlive && getWorld() != null;
     }
 
     public void hit(int dmg) {
-        
-        if (getWorld() != null && !getWorld().getObjects(Overlay.class).isEmpty()) {
-            return;
-        }
+        if (getWorld() == null) return;
+        if (!getWorld().getObjects(Overlay.class).isEmpty()) return;
         hp -= dmg;
     }
 }

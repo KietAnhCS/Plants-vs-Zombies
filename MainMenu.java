@@ -6,7 +6,7 @@ public class MainMenu extends World
     GreenfootSound menutheme = new GreenfootSound("menutheme.mp3");
     public MainMenu(GreenfootSound menutheme)
     {    
-        // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
+        
         super(803, 602, 1, false); 
         addObject(hitbox,0,0);
         addObject(new Start(), 555, 198);
@@ -42,7 +42,7 @@ public class MainMenu extends World
     }
     public void started() {
         if (!menutheme.isPlaying()) {
-            menutheme.setVolume(70);
+            menutheme.setVolume(0);
             menutheme.playLoop();
         }
     

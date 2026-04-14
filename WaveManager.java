@@ -1,23 +1,17 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-import java.util.*; //HAHAHADIE
-/**
- * Write a description of class WaveManager here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
+import greenfoot.*;
+import java.util.*;
+
 public class WaveManager extends Actor
 {
     public long currentFrame = System.nanoTime();
     public static final int xOffset = 1115;
     public static final int yOffset = 135;
-    public static final int ySpacing = 100;
+    
+    // Đổi ySpacing thành biến để lấy giá trị từ Board cho đồng bộ
+    public int ySpacing = Board.ySpacing; 
+    
+    // SỬA: Không khai báo row1, row2... thủ công nữa
     public ArrayList<ArrayList<Zombie>> zombieRow = new ArrayList<ArrayList<Zombie>>();
-    public ArrayList<Zombie> row1 = new ArrayList<Zombie>();
-    public ArrayList<Zombie> row2 = new ArrayList<Zombie>();
-    public ArrayList<Zombie> row3 = new ArrayList<Zombie>();
-    public ArrayList<Zombie> row4 = new ArrayList<Zombie>();
-    public ArrayList<Zombie> row5 = new ArrayList<Zombie>();
     
     public long lastFrame = System.nanoTime();
     public Zombie[][] level;
@@ -25,220 +19,133 @@ public class WaveManager extends Actor
     public long waveTime;
     public long firstWave;
     public long deltaTime;
-    public long deltaTime2;
 
     public boolean won = false;
-    public World MyWorld;
+    public MyWorld MyWorld;
     public int wave = -1;
     public boolean first = false;
     public boolean finishedSending = false;
     public int[] hugeWaves;
     
-    
     public WaveManager(long timeBetweenWaves, Zombie[][] level, long firstWave, boolean first, int... hugeWaves) {
         this.level = level;
-        this.levelTime = levelTime;
         this.waveTime = timeBetweenWaves;
         this.firstWave = firstWave;
         this.hugeWaves = hugeWaves;
         this.first = first;
-        zombieRow.add(row1);
-        zombieRow.add(row2);
-        zombieRow.add(row3);
-        zombieRow.add(row4);
-        zombieRow.add(row5);
+
+        // SỬA QUAN TRỌNG: Khởi tạo zombieRow dựa trên số hàng thực tế (6 hàng cho map nước)
+        // Dùng vòng lặp để tạo túi chứa Zombie cho mỗi hàng
+        for (int i = 0; i < 6; i++) { 
+            zombieRow.add(new ArrayList<Zombie>());
+        }
     }
     
     public void startLevel() {
         wave = 0;
         AudioPlayer.play(80, "readysetplant.mp3");
-        MyWorld.addObject(new ReadySetPlant(), 620, 295);
+        if (getWorld() != null) {
+            getWorld().addObject(new ReadySetPlant(), 620, 295);
+        }
     }
     
-    //Fix order cause no setPaintOrder for actors :(
+    // Sửa lại fixOrder để chạy hết 6 hàng
     public void fixOrder() {
-       
         List<Zombie> zombies = MyWorld.getObjects(Zombie.class);
-        for (int r = 0; r < 5; r++) {
-            for (int i = 0; i < zombies.size(); i++) {
-                if (zombies.get(i).getWorld() != null && zombies.get(i).getYPos() == r) {
-                    int x = zombies.get(i).getX();
-                    int y = zombies.get(i).getY();
-                    try {
-                        MyWorld.removeObject(zombies.get(i));
-                    
-                        MyWorld.addObject(zombies.get(i), x, y);
-                    } catch (Exception ex) {
-                        System.out.println("Fix Order Error");
-                    }
-                    
-                        
-                    
+        for (int r = 0; r < 6; r++) { // Sửa từ 5 thành 6
+            for (Zombie z : zombies) {
+                if (z.getWorld() != null && z.getYPos() == r) {
+                    int x = z.getX();
+                    int y = z.getY();
+                    MyWorld.removeObject(z);
+                    MyWorld.addObject(z, x, y);
                 }
             }
         }
     }
     
-    
-    public void act()
-    {
-        
-        
+    public void act() {
         if (wave != -1) {
             currentFrame = System.nanoTime();
             deltaTime = (currentFrame - lastFrame) / 1000000;
         } else {
             lastFrame = System.nanoTime();
         }
-        if (wave > level.length-1) {
-                MyWorld.addObject(new finishedSending(this, 15000L), 0,0);
-                wave = -1;
+
+        if (wave != -1 && wave > level.length - 1) {
+            MyWorld.addObject(new finishedSending(this, 15000L), 0, 0);
+            wave = -1;
+            return;
         }
         
-        if (deltaTime >= firstWave && wave != -1 && first == true) {
-            AudioPlayer.play(80, "awooga.mp3");
-            checkSendWave();
-            
-            wave++;
-            lastFrame = System.nanoTime();
-            first =false;
-        }
-        if (first == false && wave != -1) {
-            if ((deltaTime >= waveTime) || MyWorld.getObjects(Zombie.class).size() == 0) {
+        if (wave != -1) {
+            long targetTime = first ? firstWave : waveTime;
+            if (deltaTime >= targetTime || MyWorld.getObjects(Zombie.class).size() == 0) {
+                if (first) AudioPlayer.play(80, "awooga.mp3");
                 checkSendWave();
-                
                 wave++;
                 lastFrame = System.nanoTime();
-                
+                first = false;
             }
         }
     }
+
     public void checkSendWave() {
+        if (wave >= level.length) return;
+        
         for (int i : hugeWaves) {
             if (i == wave) {
-                if (wave == level.length-1) {
-                    AudioPlayer.play(70, "hugewave.mp3");
-                    finishedSending = false;
-                    sendHugeWave(level[wave]);
-                    MyWorld.addObject(new AHugeWave(true),360,215);
-                    return;       
-                } else {
-                    AudioPlayer.play(70, "hugewave.mp3");
-                    finishedSending = false;
-                    sendHugeWave(level[wave]);
-                    MyWorld.addObject(new AHugeWave(false),360,215);
-                    return;     
-                }
+                AudioPlayer.play(70, "hugewave.mp3");
+                finishedSending = false;
+                sendHugeWave(level[wave]);
+                MyWorld.addObject(new AHugeWave(wave == level.length - 1), 360, 215);
+                return;       
             }
         }
         sendWave(level[wave]);
     }
     
-     @Override
+    // Sửa logic gửi Zombie để chia hàng chuẩn (dùng modulo 6 thay vì 5)
+    public void sendWave(Zombie[] waveData) {
+        int rows = 6; // Số hàng của map nước
+        for (int i = 0; i < waveData.length; i++) {
+            if (waveData[i] != null) {
+                int rowIndex = i % rows; // Chia đều zombie vào 6 hàng
+                int wait = i / rows;
+                int offset = xOffset + wait * 20;
+                
+                MyWorld.addObject(waveData[i], offset, rowIndex * ySpacing + yOffset);
+                zombieRow.get(rowIndex).add(waveData[i]);
+                finishedSending = false;
+            }
+        }
+        MyWorld.addObject(new FixOrder(this, 1000L), 0, 0);
+    }
+
+    public void sendHugeWave(Zombie[] waveData) {
+        int rows = 6;
+        for (int i = 0; i < waveData.length; i++) {
+            if (waveData[i] != null) {
+                int rowIndex = i % rows;
+                int wait = i / rows;
+                int offset = xOffset + 50 + wait * 20;
+                
+                MyWorld.addObject(waveData[i], offset, rowIndex * ySpacing + yOffset);
+                zombieRow.get(rowIndex).add(waveData[i]);
+            }
+        }
+        MyWorld.addObject(new FixOrder(this, 1000L), 0, 0);
+    }
+
+    public boolean hasWon() {
+        return (wave == -1 && MyWorld.getObjects(Zombie.class).size() == 0);
+    }
+
+    @Override
     protected void addedToWorld(World world) {
-        MyWorld = (MyWorld)getWorld();
+        MyWorld = (MyWorld)world;
         lastFrame = System.nanoTime();
         currentFrame = System.nanoTime();
-        
-        Progress progressBar = new Progress(this);
-        getWorld().addObject(progressBar, 490, 25);
-        
+        getWorld().addObject(new Progress(this), 490, 25);
     }
-    public boolean hasWon() {
-        if (wave == -1 && finishedSending && MyWorld.getObjects(Zombie.class).size() == 0) {
-            won = true;
-        } else {
-            won = false;
-        }
-        return won;
-    }
-    
-    public void sendWave(Zombie[] wave) {
-        
-        for (int i = 0; i < wave.length; i++) {
-            if (i < 5) {
-                if (wave[i]!=null) {
-                    //Send!
-                    
-                    MyWorld.addObject(wave[i], xOffset, (i%5)*ySpacing+yOffset);
-                    zombieRow.get(i%5).add(wave[i]);
-                }
-            } else {
-                
-                //If more then 1 zombie per row, delay depending on how many
-                if (wave[i] != null) {
-                    finishedSending = false;
-                    int wait = (int)(i/5);
-                    int offset = xOffset+wait*20;
-                    MyWorld.addObject(wave[i], offset, (i%5)*ySpacing+yOffset);
-                    zombieRow.get(i%5).add(wave[i]);
-                    
-                }
-                
-                /* Deprecated
-                *if (wave[i] != null) {
-                    finishedSending = false;
-                    int wait = (int)(i/5);
-                    long delayTime = (long)(wait*4000L);
-                    Timer delay = new Timer();
-                    delay.schedule(new DelayWave(wave, i, this), delayTime);
-                }*/
-            }
-        }
-        
-        /* Deprecated
-         * long fixTime = (long)(1000L+(wave.length-1)/5*4000L);
-        Timer fix = new Timer();
-        fix.schedule(new FixOrder(this), fixTime);*/
-        
-        
-        
-    
-        MyWorld.addObject(new FixOrder(this, 1000L), 0,0);
-    }
-        public void sendHugeWave(Zombie[] wave) {
-        
-        for (int i = 0; i < wave.length; i++) {
-            if (i < 5) {
-                if (wave[i]!=null) {
-                    //Send!
-                    
-                    MyWorld.addObject(wave[i], xOffset+50, (i%5)*ySpacing+yOffset);
-                    zombieRow.get(i%5).add(wave[i]);
-                }
-            } else {
-                
-                //If more then 1 zombie per row, delay depending on how many
-                if (wave[i] != null) {
-                    finishedSending = false;
-                    int wait = (int)(i/5);
-                    int offset = xOffset+50+wait*20;
-                    MyWorld.addObject(wave[i], offset, (i%5)*ySpacing+yOffset);
-                    zombieRow.get(i%5).add(wave[i]);
-                    
-                }
-                
-                /* Deprecated
-                *if (wave[i] != null) {
-                    finishedSending = false;
-                    int wait = (int)(i/5);
-                    long delayTime = (long)(wait*4000L);
-                    Timer delay = new Timer();
-                    delay.schedule(new DelayWave(wave, i, this), delayTime);
-                }*/
-            }
-        }
-        
-        /* Deprecated
-         * long fixTime = (long)(1000L+(wave.length-1)/5*4000L);
-        Timer fix = new Timer();
-        fix.schedule(new FixOrder(this), fixTime);*/
-        
-        
-        
-    
-        MyWorld.addObject(new FixOrder(this, 1000L), 0,0);
-    }
-    
-    
 }

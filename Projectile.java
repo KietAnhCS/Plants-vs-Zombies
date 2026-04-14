@@ -1,4 +1,6 @@
 import greenfoot.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Projectile extends animatedObject {
     private int speed;
@@ -6,7 +8,7 @@ public class Projectile extends animatedObject {
     private boolean foundTarget = false;
     private Zombie hitZombie;
     private int frameCount;
-    private int yPos;
+    private int yPos; // Đây là CHỈ SỐ HÀNG (0, 1, 2, 3, 4)
     private int damage;
     private GreenfootImage[] image;
 
@@ -16,60 +18,76 @@ public class Projectile extends animatedObject {
         this.yPos = yPos;
         this.damage = dmg;
         this.speed = speed;
-        setImage(image[0]);
+        if (image != null && image.length > 0) {
+            setImage(image[0]);
+        }
     }
 
     public void act() {
-        // CHỐT CHẶN: Luôn kiểm tra đầu tiên
-        if (getWorld() == null) return;
-
+        // 1. Kiểm tra an toàn thế giới
         MyWorld world = (MyWorld) getWorld();
+        if (world == null) return;
 
-        // 1. Nếu đang animate hit xong → xóa đạn
+        // 2. Xử lý khi đạn đã trúng (hiệu ứng nổ)
         if (hit) {
-            if (frame >= frameCount) {
-                world.removeObject(this);
-                return;
-            }
-            animate(image, 150, false);
-            return; // Khi đang hit, không di chuyển hay check va chạm nữa
-        }
-
-        // 2. Di chuyển bình thường
-        move(speed);
-
-        // 3. Kiểm tra ra ngoài biên
-        if (isAtEdge() || getWorld() == null) {
-            if (getWorld() != null) world.removeObject(this);
+            handleHitAnimation(world);
             return;
         }
 
-        // 4. Kiểm tra va chạm với Zombie trong hàng tương ứng
+        // 3. Di chuyển
+        move(speed);
+
+        // 4. Kiểm tra biên hoặc biến mất
+        if (isAtEdge()) {
+            world.removeObject(this);
+            return;
+        }
+
+        // 5. Kiểm tra va chạm với Zombie
+        checkCollision(world);
+    }
+
+    private void handleHitAnimation(MyWorld world) {
+        // Nếu frame chạy hết mảng ảnh thì xóa đạn
+        if (frame >= frameCount - 1) {
+            world.removeObject(this);
+        } else {
+            animate(image, 150, false);
+        }
+    }
+
+    private void checkCollision(MyWorld world) {
+        // Kiểm tra tính hợp lệ của hệ thống hàng lối
         if (world.level == null || world.level.zombieRow == null) return;
-        
-        java.util.List<Zombie> row = world.level.zombieRow.get(yPos);
-        if (row == null) return;
 
-        // Dùng bản sao để tránh ConcurrentModificationException
-        for (Zombie z : new java.util.ArrayList<>(row)) {
-            if (getWorld() == null) return; // Kiểm tra lại sau mỗi bước quan trọng
+        // CHỐT CHẶN: Nếu yPos > 10 (chắc chắn là tọa độ Y chứ không phải hàng) 
+        // thì ta không check va chạm để tránh crash IndexOutOfBounds
+        if (yPos < 0 || yPos >= world.level.zombieRow.size()) {
+            return; 
+        }
 
-            // Bỏ qua zombie đã chết / bị xóa
+        List<Zombie> row = world.level.zombieRow.get(yPos);
+        if (row == null || row.isEmpty()) return;
+
+        // Duyệt danh sách zombie (dùng bản sao để tránh lỗi ConcurrentModification)
+        for (Zombie z : new ArrayList<>(row)) {
+            if (getWorld() == null) return;
             if (z == null || z.getWorld() == null) continue;
 
+            // Kiểm tra va chạm theo khoảng cách X
             if (Math.abs(z.getX() - getX()) < 30) {
-                if (!foundTarget) {
-                    hitZombie = z;
-                    foundTarget = true;
-                }
-                
-                // Chỉ gây sát thương 1 lần
                 if (!hit) {
-                    hitZombie.hit(damage);
-                    hit = true;
+                    z.hit(damage);
+                    this.hit = true;
+                    this.frame = 0; // Bắt đầu chạy animation nổ
                 }
-                break; // Đã tìm thấy mục tiêu, không cần duyệt tiếp
+                break;
             }
         }
+    }
+
+    // Getter cực kỳ quan trọng để Torchwood gọi
+    public int getYPos() {
+        return this.yPos;
     }
 }

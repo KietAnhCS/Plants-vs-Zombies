@@ -1,80 +1,71 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*;
 
-/**
- * Write a description of class SunCounter here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class SunCounter extends Actor
 {
-    public static final int x = 120;
-    public static final int y = 50;
-    public int sun = 10000;
+    // THÊM 2 DÒNG NÀY: Để lớp Sun gọi được SunCounter.x và SunCounter.y
+    public static int x = 120; 
+    public static int y = 50;
+    
+    public int sun = 2000; 
     public static final int textY = 45;
-    public long currentFrame = System.nanoTime();
-    public long lastFrame = System.nanoTime();
-    public long deltaTime;    
-    /**
-     * Act - do whatever the SunCounter wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
     
-    MyWorld MyWorld;
+    private long lastFrame = System.currentTimeMillis();
+    private MyWorld myWorld;
     
+    public SunCounter() {
+        setImage("suncounter.png");
+        updateText();
+    }
+
     public void act()
     {
-        currentFrame = System.nanoTime();
-        deltaTime = (currentFrame - lastFrame) / 1000000;
-        if (deltaTime >= 10000L) {
-            MyWorld.addObject(new FallingSun(), Random.Int(SeedBank.x1, SeedBank.x2), 0);
-            lastFrame = System.nanoTime();
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastFrame >= 10000) {
+            if (getWorld() != null) {
+                int spawnX = Greenfoot.getRandomNumber(700) + 250; 
+                getWorld().addObject(new FallingSun(), spawnX, 0);
+            }
+            lastFrame = currentTime;
         }
-        
-        // Add your action code here.
     }
     
     public void addedToWorld(World world) {
-        MyWorld = (MyWorld)getWorld();
-        currentFrame = System.nanoTime();
-        lastFrame = System.nanoTime();
+        myWorld = (MyWorld)world;
+        // Cập nhật tọa độ thực tế vào biến static khi object được thêm vào thế giới
+        x = getX();
+        y = getY();
+        lastFrame = System.currentTimeMillis();
         updateText();
     }
+
     public void updateText() {
-        String number = ""+sun;
-        char[] text = number.toCharArray();
-        getImage().clear();
-        setImage("suncounter.png");
-        for (int i = 0; i < text.length; i++) {
-            if (text.length > 5) {
-                sun = 99999;
-                System.out.println("hacker");
-            } else if (text.length > 4) {
-                getImage().drawImage(new GreenfootImage("text"+text[i]+".png"), 20+i*12,textY);
-            } else if (text.length > 3) {
-                getImage().drawImage(new GreenfootImage("text"+text[i]+".png"), 26+i*12,textY);
-            }else if (text.length > 2) {
-                getImage().drawImage(new GreenfootImage("text"+text[i]+".png"), 33+i*12,textY);
-            }else if (text.length > 1) {
-                
-                getImage().drawImage(new GreenfootImage("text"+text[i]+".png"), 38+i*12,textY);
-            }else if (text.length == 1) {
-                
-                getImage().drawImage(new GreenfootImage("text"+text[i]+".png"), 44,textY);
-            } else {
-                
-                
-                //Nothing
-            }
+        if (sun > 9990) sun = 9990;
+        if (sun < 0) sun = 0;
+
+        GreenfootImage bg = new GreenfootImage("suncounter.png");
+        String sunStr = String.valueOf(sun);
+        int len = sunStr.length();
+        
+        int charWidth = 12; 
+        int startX = (bg.getWidth() / 2) - ((len * charWidth) / 2) + 5; 
+
+        for (int i = 0; i < len; i++) {
+            char c = sunStr.charAt(i);
+            try {
+                GreenfootImage numImg = new GreenfootImage("text" + c + ".png");
+                bg.drawImage(numImg, startX + (i * charWidth), textY);
+            } catch (Exception e) {}
         }
+        setImage(bg);
     }
-    public void addSun(int sun) {
-        this.sun += sun;
+
+    public void addSun(int amount) {
+        this.sun += amount;
         updateText();
     }
-    public void removeSun(int sun) {
-        this.sun -= sun;
+
+    public void removeSun(int amount) {
+        this.sun -= amount;
         updateText();
     }
-    
 }

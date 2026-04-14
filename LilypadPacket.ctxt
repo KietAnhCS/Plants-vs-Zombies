@@ -1,0 +1,10 @@
+#BlueJ class context
+comment0.target=LilypadPacket
+comment0.text=\r\n\ SeedPacket\ d\u00E0nh\ ri\u00EAng\ cho\ Lilypad.\r\n
+comment1.params=
+comment1.target=LilypadPacket()
+comment2.params=
+comment2.target=TransparentObject\ addImage()
+comment3.params=
+comment3.target=Plant\ getPlant()
+numComments=4

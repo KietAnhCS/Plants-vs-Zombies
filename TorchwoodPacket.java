@@ -8,12 +8,12 @@ public class TorchwoodPacket extends SeedPacket
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
     public TorchwoodPacket() {
-        super(11000L, true, 225, "firewoodtest");
+        super(8000L, true, 75, "firewoodtest");
         
     }
     
     public TransparentObject addImage() {
-        TransparentObject temp = new TransparentRepeater(false);
+        TransparentObject temp = new TransparentTorchwood(false);
         ((MyWorld)getWorld()).addObject(temp, Greenfoot.getMouseInfo().getX(), Greenfoot.getMouseInfo().getY());
         return temp;
     }

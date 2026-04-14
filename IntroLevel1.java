@@ -1,12 +1,6 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*;  
 import java.util.*;
 
-/**
- * Write a description of class IntroLevel1 here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class IntroLevel1 extends World
 {
     public GreenfootSound CYS = new GreenfootSound("intro3.mp3");
@@ -41,10 +35,11 @@ public class IntroLevel1 extends World
                 {new Conehead(), new Conehead(), new Conehead(), new BasicZombie(), new BasicZombie(), new Buckethead(), null, new BasicZombie(), new Conehead(), new Buckethead()}
     };
     
+   
     public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 8, 18);
+
     public IntroLevel1()
     {    
-        
         super(1111, 602, 1, false); 
         addObject(new Basic(), 1176, 227);
         addObject(new Basic(), 1195, 322);
@@ -53,7 +48,10 @@ public class IntroLevel1 extends World
         addObject(new IdleCone(), 1183, 396);
         CYS.setVolume(70);
         
+        
+        setBackground(new GreenfootImage("mapwater.png")); 
     }
+
     public void act() {
         if (!started) {
             started = true;
@@ -61,50 +59,44 @@ public class IntroLevel1 extends World
         }
         count++;
         bgScrollAnimate();
-        
     }
+
     public void bgScrollAnimate()
     {
-        if (count == 100 )
-        {
-            //removeObject(message);
-        }
-        if ( count > 100 && count < 160)
+        if (count > 100 && count < 160)
         {
             location -= scrollSpeed;
-            
             scrollBGimage(location);
         }
         else if (count > 350 && count < 410)
         {
             location += scrollSpeed;
-            
             scrollBGimage(location);
         }
         else if (count == 450) {
             List<IdleZombie> idleZombie = getObjects(IdleZombie.class );
             for ( IdleZombie zombie : idleZombie ) {
-                
                 removeObject(zombie);
             }
         }
         else if ( count == 500 )
         {
-           
-            Greenfoot.setWorld(new MyWorld(CYS, level, seedbank, new IntroLevel1(), new WinRepeater()));
+            /**
+             * CẬP NHẬT QUAN TRỌNG:
+             * Thêm tham số 'true' vào cuối để báo cho MyWorld đây là Map Nước.
+             */
+            Greenfoot.setWorld(new MyWorld(CYS, level, seedbank, new IntroLevel1(), new WinRepeater(), true));
         }
-       
     }
     
     public void scrollBGimage(int offset)
     {
         GreenfootImage bg = getBackground(); 
-        GreenfootImage move = new GreenfootImage("lawn367.png");
+       
+        GreenfootImage move = new GreenfootImage("mapwater.png");
         bg.drawImage(move, offset, 0);  
         
-        // get all objects and move them by the offset delta value
         List<Actor> currentObjects = getObjects(null);
-        
         for ( Actor thisObject : currentObjects )
         {
             if ( count > 100 && count < 160)
@@ -115,8 +107,6 @@ public class IntroLevel1 extends World
             {
                 thisObject.setLocation(thisObject.getX() + scrollSpeed , thisObject.getY() );
             } 
-            
         } 
-        
     }
 }

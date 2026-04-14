@@ -8,14 +8,16 @@ public class Intro extends World
     public int scrollSpeed = 4;
     public int location = 0;
     public boolean started = false;
+    public Zombie n = null;
     
-    // Tạo 1 lần dùng mãi mãi, không tạo trong act()
-    private GreenfootImage backgroundMap = new GreenfootImage("lawn367.png");
+    private GreenfootImage backgroundMap = new GreenfootImage("mapwater.png");
     private GifImage daveGif = new GifImage("Dave3.gif");
     public GreenfootSound daveVoice = new GreenfootSound("mixi.mp3");
     private boolean daveTalking = true;
 
-    public Zombie[][] level1 = {
+    
+    public Zombie[][] level1 = 
+    {
         {new BasicZombie(), new BasicZombie()},
         {new BasicZombie(), new BasicZombie()},
         {new BasicZombie(), new BasicZombie()},
@@ -26,13 +28,30 @@ public class Intro extends World
             new Conehead(), new Conehead(), new Conehead(),
             new Conehead(), new Conehead(), new Conehead()
         },
+        {
+            new Buckethead(), new Brickhead(), new Conehead(),
+            new Buckethead(), new Conehead(), new Conehead(),
+            new Conehead(), new Conehead(), new Conehead(),
+            new Buckethead(), new Brickhead(), new Conehead(),
+            new Conehead(), new Conehead(), new Brickhead()
+        },
         {new BasicZombie(), new BasicZombie()},
-        {new Conehead(), new Conehead()}
+        {new Conehead(), new Conehead()}, 
+        {null, new BasicZombie(), null, null},
+        {n},
+        {new BasicZombie(), null, null, null, null}, 
+        {n},
+        {null, new BasicZombie(), null, new BasicZombie()},
+        {new BasicZombie()},
+        {null, null, new Conehead(), null, null},
+        
+        
+        
     };
     
-    public SeedPacket[] bank = {new SunflowerPacket(), new PeashooterPacket(), new WalnutPacket(), new TorchwoodPacket()};
+    public SeedPacket[] bank = {new SunflowerPacket(), new PeashooterPacket(), new WalnutPacket(), new TorchwoodPacket(), new PotatoPacket(), new RepeaterPacket(), new LilypadPacket()};
     public SeedBank seedbank = new SeedBank(bank);   
-    public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 8);
+    public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 8, 18);
 
     public Intro()
     {    
@@ -46,7 +65,7 @@ public class Intro extends World
         addObject(new IdleCone(), 1183, 396);
     
         CYS.setVolume(70);
-        daveVoice.setVolume(80);
+        daveVoice.setVolume(70);
     }
 
     public void act() {
@@ -99,8 +118,12 @@ public class Intro extends World
             removeObjects(getObjects(IdleZombie.class));
         }
         else if (count == 500) {
-            CYS.stop(); // Tắt nhạc intro trước khi vào game
-            Greenfoot.setWorld(new MyWorld(CYS, level, seedbank, this, new WinPotato()));
+            CYS.stop(); 
+            /**
+             * CẬP NHẬT: Thêm tham số 'true' vào cuối constructor.
+             * Điều này báo cho MyWorld sử dụng map nước (isWaterMap = true).
+             */
+            Greenfoot.setWorld(new MyWorld(CYS, level, seedbank, this, new WinPotato(), true));
         }
     }
     

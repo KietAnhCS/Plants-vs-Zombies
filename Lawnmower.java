@@ -1,9 +1,7 @@
 import greenfoot.*;
 import java.util.List;
+import java.util.ArrayList;
 
-/**
- * Lớp Lawnmower - Tối ưu hóa va chạm và xử lý an toàn bộ nhớ.
- */
 public class Lawnmower extends Actor
 {
     private int speed = 0;
@@ -16,7 +14,6 @@ public class Lawnmower extends Actor
 
     public void act()
     {
-        // CHỐT CHẶN 1: Nếu máy không còn trong World, không chạy bất cứ logic nào
         if (getWorld() == null) return;
 
         if (isMoving) {
@@ -25,53 +22,55 @@ public class Lawnmower extends Actor
             checkActivation();
         }
 
-        // CHỐT CHẶN 2: Kiểm tra biên và tự xóa chính nó
-        // Lưu ý: Phải để ở cuối act()
+        // Kiểm tra biên
         handleBoundaries();
     }
 
-    /**
-     * Di chuyển máy và tiêu diệt tất cả Zombie chạm phải
-     */
     private void handleMovement()
     {
-        if (getWorld() == null) return; // Kiểm tra máy cắt cỏ còn trong World không
-    
+        if (getWorld() == null) return;
+        
         move(speed);
-    
+        
         // Lấy danh sách Zombie va chạm
         List<Zombie> targets = getIntersectingObjects(Zombie.class);
-            for (Zombie z : targets) {
+        
+        // Sử dụng một bản sao danh sách để duyệt, tránh lỗi bộ nhớ
+        for (Zombie z : new ArrayList<>(targets)) {
+            if (z != null && z.getWorld() != null) {
+                // QUAN TRỌNG: Gọi hàm tự hủy của Zombie để nó tự xóa khỏi zombieRow
+                // thay vì chỉ xóa mỗi Actor khỏi World.
+                z.takeDmg(9999); // Ép Zombie chết để nó chạy logic xóa trong class Zombie
                 
-            if (getWorld() != null && z != null && z.getWorld() != null) {
-                getWorld().removeObject(z);
+                // Nếu sau khi takeDmg mà Zombie vẫn còn (do đang diễn anim chết), 
+                // thì máy cắt cỏ "nghiền" nát luôn:
+                if (z.getWorld() != null) {
+                    getWorld().removeObject(z);
+                }
             }
         }
     }
 
-    /**
-     * Kiểm tra xem có Zombie nào chạm vào máy để kích hoạt không
-     */
     private void checkActivation()
     {
+        // Kiểm tra va chạm với Zombie để kích hoạt
         if (isTouching(Zombie.class))
         {
-            // Có thể thêm âm thanh khởi động ở đây
-            // Greenfoot.playSound("lawnmower.mp3");
-            
             setImage("lawn_mower2.png"); 
             speed = 8; 
             isMoving = true;
+            
+            // Phát âm thanh nếu có
+            // AudioPlayer.play(100, "lawnmower.mp3");
         }
     }
 
-    /**
-     * Xử lý khi máy chạy ra khỏi màn hình
-     */
     private void handleBoundaries()
     {
-        // Nếu máy đã chạy quá sát mép phải hoặc ra ngoài
-        if (getWorld() != null && getX() >= getWorld().getWidth() - 5) {
+        if (getWorld() == null) return;
+
+        // Nếu đi quá biên phải màn hình
+        if (getX() >= getWorld().getWidth() - 2) {
             getWorld().removeObject(this);
         }
     }

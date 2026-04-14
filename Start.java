@@ -62,9 +62,9 @@ public class Start extends Button
                     world.menutheme.stop();
                     
                     // Chạy âm thanh rùng rợn
-                    AudioPlayer.play(100, "gravebutton.mp3");
-                    AudioPlayer.play(70, "losemusic.mp3");
-                    getWorld().addObject(new DelayAudio(new GreenfootSound("evillaugh.mp3"), 70, false, 1000L), 0, 0);
+                    AudioPlayer.play(0, "gravebutton.mp3");
+                    AudioPlayer.play(0, "losemusic.mp3");
+                    getWorld().addObject(new DelayAudio(new GreenfootSound("evillaugh.mp3"), 0, false, 1000L), 0, 0);
                     
                     // Hiện cái tay Zombie (Cũng nên scale 1.5 trong class ZombieHand cho khớp)
                     getWorld().addObject(new ZombieHand(), 300, 500);

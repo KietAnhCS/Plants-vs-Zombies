@@ -1,35 +1,24 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*; 
 
-/**
- * Write a description of class PopCap here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class PopCap extends World
 {
-
-    /**
-     * Constructor for objects of class PopCap.
-     * 
-     */
     public int counter = 0;
     public GreenfootSound menutheme = new GreenfootSound("menutheme.mp3");
     public PopCap()
     {    
-        // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
-        super(1050, 602, 1, false); 
+        
+        super(1111, 602, 1, false); 
         setPaintOrder(EndTransition.class, Transition.class);
         
     }
     public void act() {
         if (!menutheme.isPlaying()) {
-            menutheme.setVolume(70);
+            menutheme.setVolume(0);
             menutheme.playLoop();
         }
         counter++;
         if (counter > 100) {
-            addObject(new Transition(true, new MainMenu(menutheme), 6), 540, 300);
+            addObject(new Transition(true, new MainMenu(menutheme), 6), getWidth()/2, getHeight()/2);
         }
     }
 }

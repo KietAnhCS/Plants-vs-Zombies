@@ -1,9 +1,7 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*;
 import java.util.*;
 
-
-public class Zombie extends animatedObject
-{
+public class Zombie extends animatedObject {
     public boolean fallen = false;
     public boolean eating = false;
     public boolean eatOnce = false;
@@ -12,7 +10,7 @@ public class Zombie extends animatedObject
     public double walkSpeed;
     public MyWorld MyWorld;
     public boolean spawnHead = false;
-    public Plant target;
+    public Plant target; // Mục tiêu đang bị ăn
     public int eatSpeed;
     public boolean isAlive = true;
     public GreenfootImage[] headless;
@@ -21,162 +19,162 @@ public class Zombie extends animatedObject
     public boolean resetAnim = false;
     public boolean finalDeath = false;
     public boolean fixAnim = false;
-    /**
-     * Act - do whatever the Zombie wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
+
     public Zombie() {
-    
         headless = importSprites("zombieheadless", 7);
-        fall = importSprites("zombiefall",6);
+        fall = importSprites("zombiefall", 6);
         headlesseating = importSprites("headlesszombieeating", 7);
     }
-    public void act()
-    {
-        if (getWorld() != null) {
-            // KIỂM TRA OVERLAY: Nếu có màn hình tối (Pause) thì dừng toàn bộ hành động
-            if (!getWorld().getObjects(Overlay.class).isEmpty()) {
-                return; 
-            }
-            
-            if (isLiving()) {
-                update();
-            } else {
-                deathAnim();            
-            }
+
+    public void act() {
+        if (getWorld() == null) return;
+
+        // KIỂM TRA OVERLAY: Pause game
+        if (!getWorld().getObjects(Overlay.class).isEmpty()) {
+            return;
+        }
+
+        if (isLiving()) {
+            update();
+        } else {
+            deathAnim();
         }
     }
-    
+
     public void update() {
-        
+        // Class con (BasicZombie, Conehead...) sẽ override hàm này
     }
-    
+
     public void deathAnim() {
         if (!resetAnim) {
-                frame = 0;    
-                resetAnim = true;
+            frame = 0;
+            resetAnim = true;
         }
-        if (frame <=6) {
+
+        if (frame <= 6) {
             if (finalDeath) {
                 if (!fixAnim) {
                     fixAnim = true;
                     AudioPlayer.play(80, "zombie_falling_1.mp3", "zombie_falling_2.mp3");
-                    
-                    MyWorld.addObject(new fallingZombie(fall), getX()-12, getY()+20);
+                    MyWorld.addObject(new fallingZombie(fall), getX() - 12, getY() + 20);
                     MyWorld.removeObject(this);
                     return;
                 }
-                
-                
             } else {
                 if (!spawnHead) {
                     spawnHead = true;
                     AudioPlayer.play(80, "limbs_pop.mp3");
-                    getWorld().addObject(new Head(), getX(), getY()-10);
+                    getWorld().addObject(new Head(), getX(), getY() - 10);
                 }
+                
                 if (!eating) {
                     animate(headless, 350, false);
                     move(-walkSpeed);
                 } else {
                     animate(headlesseating, 350, false);
                 }
-                
             }
         } else if (!finalDeath) {
             resetAnim = false;
             finalDeath = true;
-            
-            for (ArrayList<Zombie> i : MyWorld.level.zombieRow) {
-                if (i.contains(this)) {
-                    i.remove(this);                    
-                    break;
-                }
-            }
-            
-        } 
-
+            removeFromRow();
+        }
     }
-    
+
     public void playEating() {
-        // Chặn âm thanh và trừ máu nếu game đang Pause
-        if (!getWorld().getObjects(Overlay.class).isEmpty()) return;
+        if (getWorld() == null || !getWorld().getObjects(Overlay.class).isEmpty()) return;
+        
+        // CHỐT CHẶN: Nếu mục tiêu đã biến mất khỏi World (bị ăn xong), ngừng ăn
+        if (target == null || target.getWorld() == null) {
+            eating = false;
+            target = null;
+            return;
+        }
 
         if (frame == 5 || frame == 2) {
             if (!eatOnce) {
                 eatOnce = true;
                 AudioPlayer.play(70, "chomp.mp3", "chomp2.mp3", "chompsoft.mp3");
                 target.hit(10);
-            } 
+            }
         } else {
             eatOnce = false;
         }
     }
+
     @Override
     protected void addedToWorld(World world) {
-        MyWorld = (MyWorld)getWorld();
-        
+        MyWorld = (MyWorld) world;
     }
+
     public boolean isLiving() {
-        if (hp <=0) {
-            isAlive = false;
-        } else {
-            isAlive = true;
-        }
-        return isAlive;
+        return hp > 0;
     }
-    public void hit(int dmg) {
-        
-    }
-    
+
     public void takeDmg(int dmg) {
+        if (!isAlive) return;
         hp -= dmg;
         if (hp <= 0) {
-            // Đánh dấu là đã chết để hàm act() chuyển sang gọi deathAnim()
-            isAlive = false; 
-            
-            // Xóa Zombie khỏi danh sách quản lý của WaveManager ngay để 
-            // màn chơi biết con này đã bị tiêu diệt (không tính vào số lượng zombie còn sống)
-            for (ArrayList<Zombie> i : MyWorld.level.zombieRow) {
-                if (i.contains(this)) {
-                    i.remove(this);                    
-                    break;
-                }
-            }
-            
-            // TUYỆT ĐỐI KHÔNG gọi getWorld().removeObject(this) ở đây.
-            // Nếu xóa ở đây, Zombie sẽ biến mất ngay lập tức, không kịp diễn anim ngã.
+            isAlive = false;
+            removeFromRow();
         }
     }
+
+    // Hàm phụ để xóa zombie khỏi danh sách quản lý hàng
+    private void removeFromRow() {
+        if (MyWorld == null || MyWorld.level == null) return;
+        for (ArrayList<Zombie> i : MyWorld.level.zombieRow) {
+            if (i.contains(this)) {
+                i.remove(this);
+                break;
+            }
+        }
+    }
+
     public boolean isEating() {
-        var row = MyWorld.board.Board[getYPos()];
-        for (int i = 0; i < MyWorld.board.Board[0].length; i++) {
-            if (row[i] != null) {
-                
-                if (Math.abs(row[i].getX() - getX()+5) < 35) {
-                    if (row[i] instanceof PotatoMine) {
-                        if (((PotatoMine)row[i]).armed == true) {
+        if (MyWorld == null || MyWorld.board == null) return false;
+        
+        int yIdx = getYPos();
+        // Kiểm tra biên yIdx để tránh crash mảng Board
+        if (yIdx < 0 || yIdx >= MyWorld.board.Board.length) return false;
+
+        var row = MyWorld.board.Board[yIdx];
+        for (int i = 0; i < row.length; i++) {
+            Plant p = row[i];
+            
+            // CHỐT CHẶN: Chỉ check nếu cây tồn tại trong World
+            if (p != null && p.getWorld() != null) {
+                if (Math.abs(p.getX() - getX() + 5) < 35) {
+                    // Đặc thù PotatoMine
+                    if (p instanceof PotatoMine) {
+                        if (((PotatoMine) p).armed) {
                             eating = false;
                             return false;
                         }
                     }
                     
                     eating = true;
-                    target = row[i];
-                    return eating;
+                    target = p;
+                    return true;
                 }
-                
             }
         }
-        
+
         eating = false;
-        return eating;
-    
+        target = null;
+        return false;
     }
+
     public int getYPos() {
-        return ((getY()-MyWorld.level.yOffset)/MyWorld.level.ySpacing);
+        if (Board.ySpacing == 0) return 0; // Hoặc một giá trị mặc định an toàn
+        return (getY() - Board.yOffset) / Board.ySpacing;
     }
+
     public int getXPos() {
         return getX();
     }
     
+    public void hit(int dmg) {
+        takeDmg(dmg);
+    }
 }

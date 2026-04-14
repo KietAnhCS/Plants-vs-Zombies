@@ -1,18 +1,9 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*; 
 import java.util.Timer;
 import java.io.*;
-/**
- * Write a description of class animatedObject here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
+
 public class animatedObject extends SmoothMover
 {
-    /**
-     * Act - do whatever the animatedObject wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
     
     public long deltaTime;
     public long lastFrame = System.nanoTime();
@@ -20,8 +11,6 @@ public class animatedObject extends SmoothMover
     public GreenfootImage[] previousSprites = null;
     
     public int frame = 0;
-    //In milliseconds (ms)
-    
     
     public GreenfootImage[] importSprites(String filename, int frames) {
         GreenfootImage[] temp = new GreenfootImage[frames];

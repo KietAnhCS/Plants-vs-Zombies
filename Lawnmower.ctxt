@@ -1,17 +1,13 @@
 #BlueJ class context
 comment0.target=Lawnmower
-comment0.text=\r\n\ L\u1EDBp\ Lawnmower\ -\ T\u1ED1i\ \u01B0u\ h\u00F3a\ va\ ch\u1EA1m\ v\u00E0\ x\u1EED\ l\u00FD\ an\ to\u00E0n\ b\u1ED9\ nh\u1EDB.\r\n
 comment1.params=
 comment1.target=Lawnmower()
 comment2.params=
 comment2.target=void\ act()
 comment3.params=
 comment3.target=void\ handleMovement()
-comment3.text=\r\n\ Di\ chuy\u1EC3n\ m\u00E1y\ v\u00E0\ ti\u00EAu\ di\u1EC7t\ t\u1EA5t\ c\u1EA3\ Zombie\ ch\u1EA1m\ ph\u1EA3i\r\n
 comment4.params=
 comment4.target=void\ checkActivation()
-comment4.text=\r\n\ Ki\u1EC3m\ tra\ xem\ c\u00F3\ Zombie\ n\u00E0o\ ch\u1EA1m\ v\u00E0o\ m\u00E1y\ \u0111\u1EC3\ k\u00EDch\ ho\u1EA1t\ kh\u00F4ng\r\n
 comment5.params=
 comment5.target=void\ handleBoundaries()
-comment5.text=\r\n\ X\u1EED\ l\u00FD\ khi\ m\u00E1y\ ch\u1EA1y\ ra\ kh\u1ECFi\ m\u00E0n\ h\u00ECnh\r\n
 numComments=6

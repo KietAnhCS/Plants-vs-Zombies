@@ -1,53 +1,93 @@
-import greenfoot.*; 
+import greenfoot.*;
+import java.util.*;
 
-public class Board extends Actor
-{
-    public Plant[][] Board = new Plant[5][9];
-    public static final int xOffset = 290;
-    public static final int yOffset = 135;
-    public static final int xSpacing = 82;
-    public static final int ySpacing =100;
+public class Board extends Actor {
+    public Plant[][] Board = new Plant[6][9];
+    public Lilypad[][] WaterBoard = new Lilypad[6][9];
     
+    public static int xOffset = 290;
+    public static int yOffset = 135; 
+    public static int xSpacing = 82;
+    public static int ySpacing = 85;
+    
+    public int currentRowCount = 6;
+    private boolean isWaterMap = false; 
+
     public Board() {
-    
+        getImage().setTransparency(0);
     }
-    
-    public void placePlant(int x, int y, Plant plant)
-    {
-        if (y >= 0 && y < 5 && x >= 0 && x < 9) {
-            if (Board[y][x] == null ) {
-            Board[y][x] =plant;
-            
-            
-            getWorld().addObject(plant, x*xSpacing+xOffset, y*ySpacing+yOffset);
-            AudioPlayer.play(80, "plant.mp3", "plant2.mp3");
+
+    public void setupLayout(boolean isWater) {
+        this.isWaterMap = isWater; 
+        
+        if (isWater) {
+            currentRowCount = 6;
+            yOffset = 135;
+            ySpacing = 85; 
+        } else {
+            currentRowCount = 5;
+            yOffset = 110;
+            ySpacing = 100;
+        }
+
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 9; j++) {
+                Board[i][j] = null;
+                WaterBoard[i][j] = null;
             }
         }
     }
-    public Plant getPlant(int x, int y) {
-        return Board[y][x];
+
+  
+    public boolean isWaterRow(int y) {
+        return isWaterMap && (y == 2 || y == 3);
     }
+
+    public boolean canPlace(int x, int y, Plant plant) {
+        if (y < 0 || y >= currentRowCount || x < 0 || x >= 9) return false;
+        
+        boolean isWater = isWaterRow(y);
+
+        if (plant instanceof Lilypad) {
+            
+            return isWater && WaterBoard[y][x] == null && Board[y][x] == null;
+        } else {
+            if (isWater) {
+               
+                return WaterBoard[y][x] != null && Board[y][x] == null;
+            } else {
+               
+                return Board[y][x] == null;
+            }
+        }
+    }
+
+    public boolean placePlant(int x, int y, Plant plant) {
+        if (canPlace(x, y, plant)) {
+            int posX = x * xSpacing + xOffset;
+            int posY = y * ySpacing + yOffset;
+            
+            if (plant instanceof Lilypad) {
+                WaterBoard[y][x] = (Lilypad)plant;
+                getWorld().addObject(plant, posX, posY + 10);
+            } else {
+                Board[y][x] = plant;
+                getWorld().addObject(plant, posX, posY);
+            }
+            return true;
+        }
+        return false; 
+    }
+
     public void removePlant(int x, int y) {
-        if (Board[y][x] !=null) {
-            getWorld().removeObject(Board[y][x]);
-            Board[y][x] = null;
-        }
-        AudioPlayer.play(80,"plant2.mp3");
-    }
-    public void updateBoard(){
-        for (int i=0; i< Board.length;i++) {
-            for (int k=0; k<Board[0].length;k++ ) {
-                if (Board[i][k] !=null) {
-                    World MyWorld = getWorld();
-                    Plant temp = Board[i][k];
-                    MyWorld.addObject(temp, k*xSpacing+xOffset, i*ySpacing+yOffset);
-                    
-                }
+        if (y >= 0 && y < currentRowCount && x >= 0 && x < 9) {
+            if (Board[y][x] != null) {
+                getWorld().removeObject(Board[y][x]);
+                Board[y][x] = null;
+            } else if (WaterBoard[y][x] != null) {
+                getWorld().removeObject(WaterBoard[y][x]);
+                WaterBoard[y][x] = null;
             }
         }
-    }
-    
-    public void act(){
-    
     }
 }

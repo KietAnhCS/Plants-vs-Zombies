@@ -13,7 +13,7 @@ public class WalnutPacket extends SeedPacket
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
      public WalnutPacket() {
-        super(1L, false, 1, "walnutpacket");
+        super(12000L, false, 50, "walnutpacket");
     }
  
     public TransparentObject addImage() {
@@ -22,6 +22,6 @@ public class WalnutPacket extends SeedPacket
         return temp;
     }
     public Plant getPlant() {
-        return new PeaNut();
+        return new Walnut();
     }
 }

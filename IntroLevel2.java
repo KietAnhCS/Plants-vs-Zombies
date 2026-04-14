@@ -1,11 +1,8 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*; 
 import java.util.*;
 
 /**
- * Write a description of class IntroLevel1 here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
+ * IntroLevel2: Màn giới thiệu cho Level 2 (Map Cỏ - 5 hàng)
  */
 public class IntroLevel2 extends World
 {
@@ -15,9 +12,17 @@ public class IntroLevel2 extends World
     public int location = 0;
     public boolean started = false;
     public Zombie n = null;
-    public SeedPacket[] bank = {new SunflowerPacket(), new PeashooterPacket(), new WalnutPacket(), new PotatoPacket()};
+    
+    
+    public SeedPacket[] bank = {
+        new SunflowerPacket(), 
+        new PeashooterPacket(), 
+        new WalnutPacket(), 
+        new PotatoPacket()
+    };
     
     public SeedBank seedbank = new SeedBank(bank);   
+    
     
     public Zombie[][] level1 = {
                 {null, new BasicZombie(), null, null},
@@ -41,19 +46,23 @@ public class IntroLevel2 extends World
                 {new Conehead(), new Conehead(), new Conehead(), new BasicZombie(), new BasicZombie(), new Buckethead(), null, new BasicZombie(), new Conehead(), new Buckethead()}
     };
     
+    
     public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 8, 18);
+
     public IntroLevel2()
     {    
-        
         super(1111, 602, 1, false); 
+        
+        setBackground(new GreenfootImage("lawn367.png"));
+        
         addObject(new Basic(), 1176, 227);
         addObject(new Basic(), 1195, 322);
         addObject(new Basic(), 1129, 227);
         addObject(new Basic(), 1162, 325);
         addObject(new IdleCone(), 1183, 396);
         CYS.setVolume(70);
-        
     }
+
     public void act() {
         if (!started) {
             started = true;
@@ -61,50 +70,45 @@ public class IntroLevel2 extends World
         }
         count++;
         bgScrollAnimate();
-        
     }
+
     public void bgScrollAnimate()
     {
-        if (count == 100 )
-        {
-            //removeObject(message);
-        }
         if ( count > 100 && count < 160)
         {
             location -= scrollSpeed;
-            
             scrollBGimage(location);
         }
         else if (count > 350 && count < 410)
         {
             location += scrollSpeed;
-            
             scrollBGimage(location);
         }
         else if (count == 450) {
             List<IdleZombie> idleZombie = getObjects(IdleZombie.class );
             for ( IdleZombie zombie : idleZombie ) {
-                
                 removeObject(zombie);
             }
         }
         else if ( count == 500 )
         {
-           
-            Greenfoot.setWorld(new MyWorld(CYS, level, seedbank, new IntroLevel1(), new WinRepeater()));
+            /**
+             * CẬP NHẬT QUAN TRỌNG:
+             * Tham số cuối cùng là 'false' vì đây là màn cỏ (Màn 2).
+             * Đồng thời truyền 'new IntroLevel2()' vào restartWorld để chơi lại đúng màn này nếu thua.
+             */
+            Greenfoot.setWorld(new MyWorld(CYS, level, seedbank, new IntroLevel2(), new WinRepeater(), false));
         }
-       
     }
     
     public void scrollBGimage(int offset)
     {
         GreenfootImage bg = getBackground(); 
+       
         GreenfootImage move = new GreenfootImage("lawn367.png");
         bg.drawImage(move, offset, 0);  
         
-        // get all objects and move them by the offset delta value
         List<Actor> currentObjects = getObjects(null);
-        
         for ( Actor thisObject : currentObjects )
         {
             if ( count > 100 && count < 160)
@@ -115,8 +119,6 @@ public class IntroLevel2 extends World
             {
                 thisObject.setLocation(thisObject.getX() + scrollSpeed , thisObject.getY() );
             } 
-            
         } 
-        
     }
 }

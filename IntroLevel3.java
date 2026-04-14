@@ -2,10 +2,7 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.util.*;
 
 /**
- * Write a description of class IntroLevel1 here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
+ * IntroLevel3: Màn giới thiệu cho Level 3
  */
 public class IntroLevel3 extends World
 {
@@ -15,10 +12,19 @@ public class IntroLevel3 extends World
     public int location = 0;
     public boolean started = false;
     public Zombie n = null;
-    public SeedPacket[] bank = {new SunflowerPacket(), new PeashooterPacket(), new WalnutPacket(), new PotatoPacket()};
+    
+    // Bank hạt giống cho màn 3
+    public SeedPacket[] bank = {
+        new SunflowerPacket(), 
+        new PeashooterPacket(), 
+        new WalnutPacket(), 
+        new PotatoPacket(),
+        new LilypadPacket()
+    };
     
     public SeedBank seedbank = new SeedBank(bank);   
     
+    // Định nghĩa Zombie cho Level 3 (Bạn có thể tùy chỉnh lại mảng này cho khó hơn)
     public Zombie[][] level1 = {
                 {null, new BasicZombie(), null, null},
                 {n},
@@ -41,19 +47,23 @@ public class IntroLevel3 extends World
                 {new Conehead(), new Conehead(), new Conehead(), new BasicZombie(), new BasicZombie(), new Buckethead(), null, new BasicZombie(), new Conehead(), new Buckethead()}
     };
     
+    // WaveManager khởi tạo (Tham số cuối là số hàng, 18 là giá trị từ code gốc của bạn)
     public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 8, 18);
+
     public IntroLevel3()
     {    
-        
         super(1111, 602, 1, false); 
+        // Thiết lập hình nền ban đầu (lawn367 cho map cỏ)
+        setBackground(new GreenfootImage("lawn367.png"));
+        
         addObject(new Basic(), 1176, 227);
         addObject(new Basic(), 1195, 322);
         addObject(new Basic(), 1129, 227);
         addObject(new Basic(), 1162, 325);
         addObject(new IdleCone(), 1183, 396);
         CYS.setVolume(70);
-        
     }
+
     public void act() {
         if (!started) {
             started = true;
@@ -61,50 +71,45 @@ public class IntroLevel3 extends World
         }
         count++;
         bgScrollAnimate();
-        
     }
+
     public void bgScrollAnimate()
     {
-        if (count == 100 )
-        {
-            //removeObject(message);
-        }
         if ( count > 100 && count < 160)
         {
             location -= scrollSpeed;
-            
             scrollBGimage(location);
         }
         else if (count > 350 && count < 410)
         {
             location += scrollSpeed;
-            
             scrollBGimage(location);
         }
         else if (count == 450) {
             List<IdleZombie> idleZombie = getObjects(IdleZombie.class );
             for ( IdleZombie zombie : idleZombie ) {
-                
                 removeObject(zombie);
             }
         }
         else if ( count == 500 )
         {
-           
-            Greenfoot.setWorld(new MyWorld(CYS, level, seedbank, new IntroLevel1(), new WinRepeater()));
+            /**
+             * CẬP NHẬT: 
+             * 1. restartWorld: truyền new IntroLevel3() để khi thua sẽ chơi lại đúng màn này.
+             * 2. winPlant: thay bằng cây bạn muốn tặng khi thắng (VD: new WinCherryBomb()).
+             * 3. isWater: để false nếu là map cỏ, true nếu là map nước.
+             */
+            Greenfoot.setWorld(new MyWorld(CYS, level, seedbank, new IntroLevel3(), new WinRepeater(), false));
         }
-       
     }
     
     public void scrollBGimage(int offset)
     {
-        GreenfootImage bg = getBackground(); 
-        GreenfootImage move = new GreenfootImage("lawn367.png");
-        bg.drawImage(move, offset, 0);  
+         GreenfootImage bg = getBackground(); 
+         GreenfootImage move = new GreenfootImage("lawn367.png"); // Map cỏ
+         bg.drawImage(move, offset, 0);  
         
-        // get all objects and move them by the offset delta value
         List<Actor> currentObjects = getObjects(null);
-        
         for ( Actor thisObject : currentObjects )
         {
             if ( count > 100 && count < 160)
@@ -115,8 +120,6 @@ public class IntroLevel3 extends World
             {
                 thisObject.setLocation(thisObject.getX() + scrollSpeed , thisObject.getY() );
             } 
-            
         } 
-        
     }
 }

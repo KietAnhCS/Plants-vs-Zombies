@@ -1,46 +1,55 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 
 /**
- * Write a description of class Sunflower here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
+ * Torchwood: Biến Pea thường thành FirePea khi đi xuyên qua.
  */
 public class Torchwood extends Plant
 {
     private GreenfootImage[] idle;
-    private boolean test = false;
-    private long lastFrame2 = System.nanoTime();
-    private long deltaTime2;
+    
     public Torchwood() {
         idle = importSprites("firewood", 5);
-        maxHp = 60;
+        maxHp = 100; // Torchwood thường trâu hơn Sunflower một chút
         hp = maxHp;
     }
-    /**
-     * Act - do whatever the Sunflower wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
-    public void update(){
-        produceSun();
-        animate(idle, 200, true);
 
+    /**
+     * Update được gọi liên tục từ lớp cha hoặc phương thức act
+     */
+    public void update() {
+        animate(idle, 200, true);
+        checkAndUpgradePea(); // Logic biến đổi đạn
     }
+
+        /**
+         * Kiểm tra xem có viên đạn thường nào chạm vào không
+         */
+        private void checkAndUpgradePea() {
+        
+        Pea p = (Pea) getOneIntersectingObject(Pea.class);
+        
+        if (p != null && p.getWorld() != null) {
+            int curX = p.getX();
+            int curY = p.getY();
+            int rowIdx = p.getYPos(); 
+            
+            getWorld().removeObject(p);
+            
+            
+            FirePea fp = new FirePea(rowIdx); 
+            getWorld().addObject(fp, curX, curY);
+        }
+    }
+
     public void hit(int dmg) {
         if (isLiving()) {
-            hitFlash(idle, "walnut");
             
-            hp = hp-dmg;
+            hitFlash(idle, "firewood");
+            hp = hp - dmg;
+            
+            if (hp <= 0) {
+                getWorld().removeObject(this);
+            }
         }
     }
-    public void produceSun() {
-        deltaTime2 = (currentFrame - lastFrame2) / 1000000;
-        if (deltaTime2 > 20000L) {
-            lastFrame2 = System.nanoTime();
-            hitFlash(idle, "walnut");
-            test= true;
-            MyWorld.addObject(new Sun(), getX(), getY()-10);
-        }
-    }
-  
 }

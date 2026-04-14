@@ -1,14 +1,15 @@
 #BlueJ class context
 comment0.target=SunCounter
-comment0.text=\r\n\ Write\ a\ description\ of\ class\ SunCounter\ here.\r\n\ \r\n\ @author\ (your\ name)\ \r\n\ @version\ (a\ version\ number\ or\ a\ date)\r\n
 comment1.params=
-comment1.target=void\ act()
-comment2.params=world
-comment2.target=void\ addedToWorld(greenfoot.World)
-comment3.params=
-comment3.target=void\ updateText()
-comment4.params=sun
-comment4.target=void\ addSun(int)
-comment5.params=sun
-comment5.target=void\ removeSun(int)
-numComments=6
+comment1.target=SunCounter()
+comment2.params=
+comment2.target=void\ act()
+comment3.params=world
+comment3.target=void\ addedToWorld(greenfoot.World)
+comment4.params=
+comment4.target=void\ updateText()
+comment5.params=amount
+comment5.target=void\ addSun(int)
+comment6.params=amount
+comment6.target=void\ removeSun(int)
+numComments=7

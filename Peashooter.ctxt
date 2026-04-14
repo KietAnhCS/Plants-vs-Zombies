@@ -1,6 +1,5 @@
 #BlueJ class context
 comment0.target=Peashooter
-comment0.text=\r\n\ L\u1EDBp\ Peashooter\ -\ \u0110\u00E3\ \u0111\u01B0\u1EE3c\ fix\ l\u1ED7i\ "Actor\ removed\ from\ world"\r\n
 comment1.params=
 comment1.target=Peashooter()
 comment2.params=dmg

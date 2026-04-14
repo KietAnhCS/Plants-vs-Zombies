@@ -13,7 +13,7 @@ public class PotatoPacket extends SeedPacket
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
     public PotatoPacket() {
-        super(17L, false, 1, "potatopacket");
+        super(3000L, false, 25, "potatopacket");
     }
  
     public TransparentObject addImage() {

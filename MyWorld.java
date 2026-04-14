@@ -1,173 +1,130 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*; 
 import java.util.*;
 
 public class MyWorld extends World
-{   
-    
+{    
     private boolean isPlaying = false;
     public boolean lose = false;
     public boolean loseOnce = false;
     public boolean winOnce = false;
+    
+    
+    private boolean isWaterMap = true; 
+    
+    
     public Board board = new Board();
+    
     public GreenfootSound Grasswalk = new GreenfootSound("intro3.mp3");
     public GreenfootSound CYS;
-    public Zombie n = null;
     public World restartWorld;
     public FallingObject winPlant;
     
     
+    public Zombie n = null;
     public Zombie[][] level1 = {
-                {null, new BasicZombie(), null, null},
-                {n},
-                {new BasicZombie(), null, null, null, null}, 
-                {n},
-                {null, new BasicZombie(), null, new BasicZombie()},
-                {new BasicZombie()},
-                {null, null, new Conehead(), null, null},
-                {n},
-                {new BasicZombie(), new Conehead(), new BasicZombie(), new BasicZombie(), new BasicZombie(), n,new BasicZombie()}, 
-                {n},
-                {new Conehead(), n, null, new BasicZombie(), null, null, new BasicZombie()},
-                {new BasicZombie(),n,n, new BasicZombie(), null, new BasicZombie(), new BasicZombie()},
-                {new Buckethead(), null, null, null, null},
-                {n,new BasicZombie(),n,n,new Conehead(), n, n, new BasicZombie()},
-                {null, new BasicZombie(), null, null, new Conehead(),n,n,new BasicZombie()},
-                {new BasicZombie(), new BasicZombie(), new BasicZombie(),  null, new Conehead()}, 
-                {null, null, new BasicZombie(), null, null},
-                {n},
-                {new Conehead(), new Conehead(), new Conehead(), new BasicZombie(), new BasicZombie(), new Buckethead(), null, new BasicZombie(), new Conehead(), new Buckethead()}
+        {null, new BasicZombie(), null, null},
+        {n},
+        {new BasicZombie(), null, null, null, null}, 
+        {n},
+        {null, new BasicZombie(), null, new BasicZombie()},
+        {new BasicZombie()},
+        {null, null, new Conehead(), null, null},
+        {n},
+        {new BasicZombie(), new Conehead(), new BasicZombie(), new BasicZombie(), new BasicZombie(), n, new BasicZombie()}, 
+        {n},
+        {new Conehead(), n, null, new BasicZombie(), null, null, new BasicZombie()},
+        {new BasicZombie(), n, n, new BasicZombie(), null, new BasicZombie(), new BasicZombie()},
+        {new Buckethead(), null, null, null, null},
+        {n, new BasicZombie(), n, n, new Conehead(), n, n, new BasicZombie()},
+        {null, new BasicZombie(), null, null, new Conehead(), n, n, new BasicZombie()},
+        {new BasicZombie(), new BasicZombie(), new BasicZombie(), null, new Conehead()}, 
+        {null, null, new BasicZombie(), null, null},
+        {n},
+        {new Conehead(), new Conehead(), new Conehead(), new BasicZombie(), new BasicZombie(), new Buckethead(), null, new BasicZombie(), new Conehead(), new Buckethead()}
     };
- 
+
+    public SeedPacket[] bank = {
+        new SunflowerPacket(), 
+        new PeashooterPacket(), 
+        new WalnutPacket(), 
+        new CactusPacket(), 
+        new TwinSunflowerPacket()
+    };
     
-    public SeedPacket[] bank = {new SunflowerPacket(), new PeashooterPacket(), new WalnutPacket(), new CactusPacket(), new TwinSunflowerPacket()};
     public SeedBank seedbank = new SeedBank(bank);   
     public Hitbox hitbox = new Hitbox();
     public Shovel shovel = new Shovel();
     
     
-    public WaveManager level = new WaveManager(23500L, level1, 20000L, true, 8, 18);
-    
-    
-    public void stopped() {
-        if (Grasswalk.isPlaying()) {
-            Grasswalk.pause();
-        }
-        
-    }
-    public void started() {
-        if (!Grasswalk.isPlaying()) {
-            Grasswalk.playLoop();
-        }
-        Greenfoot.setSpeed(50);        
-        
-    }
-    public void moveHitbox() {
-        MouseInfo mouse = Greenfoot.getMouseInfo();
-        if (mouse != null) {
-            hitbox.setLocation(mouse.getX(), mouse.getY());
-        }
-    }
-    public void finishLevel() {
-        Grasswalk.stop();
-        AudioPlayer.play(70, "winmusic.mp3");
-        
-        
-    }
+    public WaveManager level;
 
-    public boolean hasLost() {
-        for (Zombie i : getObjects(Zombie.class)) {
-        
-            
-            if (i.getWorld() != null && i.getX() < 125) {
-                lose = true;
-                return lose;
-            } else {
-                lose = false;
-            }
-            
-        }
-        return lose;
-    }
-    public boolean hasWon() {
-        return level.hasWon();
-    }
-
-    public MyWorld(GreenfootSound CYS, WaveManager level,  SeedBank seedbank, World restartWorld, FallingObject winPlant)
+    
+    public MyWorld(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater)
     {    
-        // Create a new world with 600x400 cells with a cell size of 1x1 pixels.
         super(1111, 602, 1, false); 
+        this.isWaterMap = isWater;
         this.CYS = CYS;
         this.seedbank = seedbank;
         this.restartWorld = restartWorld;
         this.level = level;
         this.winPlant = winPlant;
+        
         Greenfoot.setSpeed(50);
-        setBackground("lawn367.png");
-        addObject(seedbank,0,0);
-        addObject(board,0,0);
-        addObject(hitbox, 0,0);
-        addObject(shovel, 1052,537);
+        
+        
+        if(isWaterMap) {
+            setBackground("mapwater.png");
+        } else {
+            setBackground("lawn367.png");
+        }
+        
+        
+        addObject(seedbank, 0, 0);
+        addObject(board, 0, 0);
+        board.setupLayout(isWater);
+        addObject(hitbox, 0, 0);
+        addObject(shovel, 1052, 537);
         
         prepareLawnmowers();
-        
 
-        setPaintOrder(Setting.class,Transition.class,AHugeWave.class, ReadySetPlant.class, SunCounter.class, clickShovel.class, Shovel.class, Lawnmower.class, TransparentObject.class, SeedPacket.class, FallingSun.class, Sun.class, Dirt.class, Projectile.class, FallingObject.class, Zombie.class, fallingZombie.class, Explosion.class, Plant.class);
         
+        setPaintOrder(
+            Setting.class, Transition.class, AHugeWave.class, ReadySetPlant.class, 
+            SunCounter.class, clickShovel.class, Shovel.class, Lawnmower.class, 
+            TransparentObject.class, SeedPacket.class, FallingSun.class, 
+            Sun.class, Dirt.class, Projectile.class, FallingObject.class, 
+            Zombie.class, fallingZombie.class, Explosion.class, Plant.class
+        );
     }
-    private void checkEscape() {
-        String key = Greenfoot.getKey(); 
-        
-        if ("escape".equals(key)) {
-            if (getObjects(Setting.class).isEmpty()) {
-                // 1. Thêm lớp phủ đen cho tối màn hình
-                addObject(new Overlay(getWidth(), getHeight()), getWidth()/2, getHeight()/2);
-                // 2. Thêm bảng Setting lên trên cùng
-                addObject(new Setting(), getWidth() / 2, getHeight() / 2);
-                
-                // Tạm dừng nhạc nếu muốn
-                Grasswalk.pause();
-            } else {
-                // Xóa bảng setting và lớp phủ đen
-                removeObjects(getObjects(Setting.class));
-                removeObjects(getObjects(Overlay.class));
-                
-                // Chơi nhạc tiếp tục
-                Grasswalk.playLoop();
-            }
-        }
-    }
-    // --- HÀM THÊM LAWNMOWER ---
-    private void prepareLawnmowers() {
-        int startX = 220; 
-        for (int i = 0; i < 5; i++) {
-            int yPos = SeedBank.y1 + (i * SeedBank.ySpacing) + (SeedBank.ySpacing / 2);
-            addObject(new Lawnmower(), startX, yPos);
-        }
-    }
-    // ---------------------------
-    
+
     public void act() {
-        // 1. Phải check ESC đầu tiên để biết có mở menu hay không
         checkEscape();
         
-        // 2. Kiểm tra: Nếu bảng Setting ĐANG HIỆN, thì dừng mọi thứ ngay lập tức
+        
         if (!getObjects(Setting.class).isEmpty()) {
-            // Có thể gọi moveHitbox ở đây nếu bạn muốn chuột vẫn đi chuyển được 
-            // để bấm các nút trong Setting (nếu sau này bạn làm nút bấm)
             moveHitbox(); 
-            return; // DỪNG TOÀN BỘ LOGIC PHÍA DƯỚI
+            return; 
         }
         
-        // 3. Nếu KHÔNG có Setting, game chạy bình thường
         moveHitbox(); 
-    
+
+        
         if (!isPlaying) {
             addObject(level, 0, 0);
+            
             addObject(new DelayAudio(Grasswalk, CYS, 70, true, 2000L), 0, 0);
             level.startLevel();
-            isPlaying = true;           
+            isPlaying = true;            
         }
-    
+
+        
+        handleWinLoss();
+        
+        
+        checkDebugKeys();
+    }
+
+    private void handleWinLoss() {
         if (!loseOnce && hasLost()) {
             Grasswalk.stop();
             AudioPlayer.play(80, "losemusic.mp3");
@@ -178,19 +135,90 @@ public class MyWorld extends World
             addObject(new Transition(false, new GameOver(restartWorld), "gameover.png", 5), 365, 215);
         } else if (!winOnce && hasWon()) {
             winOnce = true;
+            finishLevel();
             addObject(winPlant, Random.Int(SeedBank.x1, SeedBank.x2), 215);
-        } else {
-            // Các phím tắt Debug
-            if (Greenfoot.isKeyDown("1")) {
-                CYS.stop(); Grasswalk.stop();
-                Greenfoot.setWorld(new Intro());
-            } else if (Greenfoot.isKeyDown("2")) {
-                CYS.stop(); Grasswalk.stop();
-                Greenfoot.setWorld(new IntroLevel1());
-            } else if (Greenfoot.isKeyDown("3")) {
-                CYS.stop(); Grasswalk.stop();
-                Greenfoot.setWorld(new IntroLevel2());
+        }
+    }
+
+    private void prepareLawnmowers() {
+        int startX = 220; 
+        int rowCount = isWaterMap ? 6 : 5; 
+
+        for (int i = 0; i < rowCount; i++) {
+            
+            int yPos = SeedBank.y1 + (i * Board.ySpacing) + (Board.ySpacing / 2);
+            addObject(new Lawnmower(), startX, yPos); 
+        }
+    }
+
+    
+    public boolean tryPlacePlant(int gridX, int gridY, Plant newPlant) {
+        if (newPlant == null) return false;
+        
+        return board.placePlant(gridX, gridY, newPlant);
+    }
+
+    public boolean hasLost() {
+        List<Zombie> zombies = getObjects(Zombie.class);
+        for (Zombie i : zombies) {
+            if (i.getWorld() != null && i.getX() < 125) {
+                return true;
             }
         }
+        return false;
+    }
+
+    public boolean hasWon() {
+        return level.hasWon();
+    }
+
+    public void moveHitbox() {
+        MouseInfo mouse = Greenfoot.getMouseInfo();
+        if (mouse != null) {
+            hitbox.setLocation(mouse.getX(), mouse.getY());
+        }
+    }
+
+    private void checkEscape() {
+        if ("escape".equals(Greenfoot.getKey())) {
+            if (getObjects(Setting.class).isEmpty()) {
+                addObject(new Overlay(getWidth(), getHeight()), getWidth()/2, getHeight()/2);
+                addObject(new Setting(), getWidth() / 2, getHeight() / 2);
+                Grasswalk.pause();
+            } else {
+                removeObjects(getObjects(Setting.class));
+                removeObjects(getObjects(Overlay.class));
+                Grasswalk.playLoop();
+            }
+        }
+    }
+
+    private void checkDebugKeys() {
+        String key = Greenfoot.getKey();
+        if (key == null) return;
+        
+        if (key.equals("1")) { CYS.stop(); Grasswalk.stop(); Greenfoot.setWorld(new Intro()); }
+        if (key.equals("2")) { 
+            CYS.stop(); Grasswalk.stop(); 
+        
+        }
+        if (key.equals("3")) { 
+            CYS.stop(); Grasswalk.stop(); 
+            
+        }
+    }
+
+    public void finishLevel() {
+        Grasswalk.stop();
+        AudioPlayer.play(70, "winmusic.mp3");
+    }
+
+    public void started() {
+        if (!Grasswalk.isPlaying()) Grasswalk.playLoop();
+        Greenfoot.setSpeed(50);        
+    }
+
+    public void stopped() {
+        if (Grasswalk.isPlaying()) Grasswalk.pause();
     }
 }
