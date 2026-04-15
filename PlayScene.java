@@ -54,6 +54,7 @@ public class PlayScene extends World
     public SeedBank seedbank = new SeedBank(bank);   
     public Hitbox hitbox = new Hitbox();
     public Shovel shovel = new Shovel();
+    public PlantFood plantfood = new PlantFood();
     
     
     public WaveManager level;
@@ -84,6 +85,7 @@ public class PlayScene extends World
         board.setupLayout(isWater);
         addObject(hitbox, 0, 0);
         addObject(shovel, 1052, 537);
+        addObject(plantfood, 125, 550);
         
         prepareLawnmowers();
 

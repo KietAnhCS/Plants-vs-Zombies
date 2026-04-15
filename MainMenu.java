@@ -11,7 +11,7 @@ public class MainMenu extends World
         addObject(hitbox,0,0);
         addObject(new Start(), 555, 198);
         addObject(new More(), 532, 316);
-        addObject(new Bush(), 743, 560);
+        addObject(new Bush(), 743, 565);
         
         
         this.menutheme = menutheme;

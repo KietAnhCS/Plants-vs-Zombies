@@ -23,14 +23,14 @@ public class Shovel extends SmoothMover
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse != null) {
             if (Greenfoot.mouseClicked(null)) {
-                PlayScene MyWorld = (PlayScene)getWorld();
-                MyWorld.moveHitbox();
-                if (intersects(MyWorld.hitbox)) {
+                PlayScene PlayScene = (PlayScene)getWorld();
+                PlayScene.moveHitbox();
+                if (intersects(PlayScene.hitbox)) {
                     if (!selected) {
                         selected = true;
                         setImage("shovel2.png");
                         AudioPlayer.play(80, "shovel.mp3");
-                        MyWorld.addObject(new clickShovel(), mouse.getX(), mouse.getY());
+                        PlayScene.addObject(new clickShovel(), mouse.getX(), mouse.getY());
                     }
                 }
             }

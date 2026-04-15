@@ -72,6 +72,6 @@ public class Start extends Button
 
     public void update() {
         
-        getWorld().addObject(new Transition(false, new CinematicIntro(), 4), 365, 215);
+        getWorld().addObject(new Transition(false, new CinematicIntro(), 4), 365, 315);
     }
 }
