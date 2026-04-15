@@ -31,7 +31,7 @@ public class Peashooter extends Plant
     @Override
     public void update() {
         if (getWorld() == null) return;
-        MyWorld = (MyWorld)getWorld();
+        PlayScene = (PlayScene)getWorld();
         currentFrame = System.nanoTime();
 
         handleAnimationAndShooting();
@@ -60,7 +60,7 @@ public class Peashooter extends Plant
                     int myRow = getYPos();
                     if (getWorld() != null && myRow != -1) {
                         AudioPlayer.play(80, "throw.mp3", "throw2.mp3");
-                        MyWorld.addObject(new Pea(myRow), getX() + 25, getY() - 17);
+                        PlayScene.addObject(new Pea(myRow), getX() + 25, getY() - 17);
                         lastFrame2 = currentFrame;
                         shootOnce = false; // Bắn xong 1 viên thì đợi delay
                     }
@@ -72,15 +72,15 @@ public class Peashooter extends Plant
 
     private void checkZombieInRow() {
         int myRow = getYPos(); 
-        if (myRow == -1 || MyWorld.level == null) return;
+        if (myRow == -1 || PlayScene.level == null) return;
 
         // Kiểm tra xem hàng hiện tại có Zombie không
-        if (MyWorld.level.zombieRow.get(myRow).isEmpty()) {
+        if (PlayScene.level.zombieRow.get(myRow).isEmpty()) {
             shooting = false;
         } else {
             boolean found = false;
-            for (Zombie i : MyWorld.level.zombieRow.get(myRow)) {
-                if (i.getWorld() != null && i.getX() > getX() && i.getX() <= MyWorld.getWidth() + 10) {
+            for (Zombie i : PlayScene.level.zombieRow.get(myRow)) {
+                if (i.getWorld() != null && i.getX() > getX() && i.getX() <= PlayScene.getWidth() + 10) {
                     found = true;
                     break;
                 }

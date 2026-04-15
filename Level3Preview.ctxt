@@ -1,8 +1,7 @@
 #BlueJ class context
-comment0.target=IntroLevel3
-comment0.text=\r\n\ IntroLevel3\:\ M\u00E0n\ gi\u1EDBi\ thi\u1EC7u\ cho\ Level\ 3\r\n
+comment0.target=Level3Preview
 comment1.params=
-comment1.target=IntroLevel3()
+comment1.target=Level3Preview()
 comment2.params=
 comment2.target=void\ act()
 comment3.params=

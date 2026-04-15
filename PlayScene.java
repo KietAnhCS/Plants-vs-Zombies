@@ -1,7 +1,7 @@
 import greenfoot.*; 
 import java.util.*;
 
-public class MyWorld extends World
+public class PlayScene extends World
 {    
     private boolean isPlaying = false;
     public boolean lose = false;
@@ -59,7 +59,7 @@ public class MyWorld extends World
     public WaveManager level;
 
     
-    public MyWorld(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater)
+    public PlayScene(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater)
     {    
         super(1111, 602, 1, false); 
         this.isWaterMap = isWater;
@@ -132,7 +132,7 @@ public class MyWorld extends World
             addObject(new DelayAudio(scream, 70, false, 4000L), 0, 0);
             loseOnce = true;
             Greenfoot.delay(250);
-            addObject(new Transition(false, new GameOver(restartWorld), "gameover.png", 5), 365, 215);
+            addObject(new Transition(false, new ResultScreen(restartWorld), "gameover.png", 5), 365, 215);
         } else if (!winOnce && hasWon()) {
             winOnce = true;
             finishLevel();
@@ -197,7 +197,7 @@ public class MyWorld extends World
         String key = Greenfoot.getKey();
         if (key == null) return;
         
-        if (key.equals("1")) { CYS.stop(); Grasswalk.stop(); Greenfoot.setWorld(new Intro()); }
+        if (key.equals("1")) { CYS.stop(); Grasswalk.stop(); Greenfoot.setWorld(new CinematicIntro()); }
         if (key.equals("2")) { 
             CYS.stop(); Grasswalk.stop(); 
         

@@ -25,7 +25,7 @@ public class Lilypad extends Plant
     @Override
     public void update() {
         if (getWorld() == null) return;
-        MyWorld = (MyWorld)getWorld();
+        PlayScene = (PlayScene)getWorld();
 
         // Đảm bảo Lilypad luôn vẽ dưới cây khác tại cùng một ô
         ensureLayering();

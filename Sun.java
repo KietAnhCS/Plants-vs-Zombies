@@ -2,7 +2,7 @@ import greenfoot.*;
 
 public class Sun extends FallingObject
 {
-    private MyWorld myWorld;
+    private PlayScene PlayScene;
     private GreenfootImage[] sunSprites;
     private boolean beenClicked = false;
     
@@ -42,8 +42,8 @@ public class Sun extends FallingObject
         // AudioPlayer.play(90, "points.mp3");
         
         // Cập nhật điểm an toàn hơn
-        if (myWorld != null && myWorld.seedbank != null) {
-            myWorld.seedbank.sunCounter.addSun(25);
+        if (PlayScene != null && PlayScene.seedbank != null) {
+            PlayScene.seedbank.sunCounter.addSun(25);
         }
         setRotation(0); 
     }
@@ -102,9 +102,9 @@ public class Sun extends FallingObject
         // Click thông qua hitbox (nếu click hụt một tí vẫn ăn)
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse != null && Greenfoot.mouseClicked(null)) {
-            if (myWorld != null && myWorld.hitbox != null) {
-                myWorld.moveHitbox();
-                return intersects(myWorld.hitbox);
+            if (PlayScene != null && PlayScene.hitbox != null) {
+                PlayScene.moveHitbox();
+                return intersects(PlayScene.hitbox);
             }
         }
         return false;
@@ -112,7 +112,7 @@ public class Sun extends FallingObject
 
     @Override
     public void addedToWorld(World world) {
-        myWorld = (MyWorld)world;
+        PlayScene = (PlayScene)world;
         lastFrame = System.nanoTime(); 
         lifetimeStart = System.currentTimeMillis(); 
     }

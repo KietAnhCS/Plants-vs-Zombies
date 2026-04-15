@@ -38,7 +38,7 @@ public class Cactus extends Plant
         }
     }
     public void update() {
-        MyWorld = (MyWorld)getWorld();
+        PlayScene = (PlayScene)getWorld();
         currentFrame = System.nanoTime();
         if (!shooting) {
             animate(idle, 150, true);
@@ -58,7 +58,7 @@ public class Cactus extends Plant
                 
                 if (frame >= 2) {
                     
-                    MyWorld.addObject(new Needle(getYPos()), getX()+30,getY()-8);
+                    PlayScene.addObject(new Needle(getYPos()), getX()+30,getY()-8);
                     lastFrame2 = currentFrame;
                 }
                 animate(shoot, 150, false);
@@ -68,12 +68,12 @@ public class Cactus extends Plant
             
             
         }
-        if (MyWorld.level.zombieRow.get(getYPos()).size() == 0) {
+        if (PlayScene.level.zombieRow.get(getYPos()).size() == 0) {
             shooting = false;
         } else {
             
-            for (Zombie i : MyWorld.level.zombieRow.get(getYPos())) {
-                if (i.getX() > getX() && i.getX()<=MyWorld.getWidth()+10){
+            for (Zombie i : PlayScene.level.zombieRow.get(getYPos())) {
+                if (i.getX() > getX() && i.getX()<=PlayScene.getWidth()+10){
                     shooting = true;
                     break;
                 } else {

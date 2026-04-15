@@ -2,7 +2,7 @@ import greenfoot.*;
 
 public class SunCounter extends Actor
 {
-    // THÊM 2 DÒNG NÀY: Để lớp Sun gọi được SunCounter.x và SunCounter.y
+    
     public static int x = 120; 
     public static int y = 50;
     
@@ -10,7 +10,7 @@ public class SunCounter extends Actor
     public static final int textY = 45;
     
     private long lastFrame = System.currentTimeMillis();
-    private MyWorld myWorld;
+    private PlayScene PlayScene;
     
     public SunCounter() {
         setImage("suncounter.png");
@@ -30,8 +30,8 @@ public class SunCounter extends Actor
     }
     
     public void addedToWorld(World world) {
-        myWorld = (MyWorld)world;
-        // Cập nhật tọa độ thực tế vào biến static khi object được thêm vào thế giới
+        PlayScene = (PlayScene)world;
+        
         x = getX();
         y = getY();
         lastFrame = System.currentTimeMillis();

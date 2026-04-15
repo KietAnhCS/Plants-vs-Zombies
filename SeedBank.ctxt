@@ -1,6 +1,5 @@
 #BlueJ class context
 comment0.target=SeedBank
-comment0.text=\r\n\ SeedBank\:\ Qu\u1EA3n\ l\u00FD\ thanh\ ch\u1ECDn\ h\u1EA1t\ gi\u1ED1ng,\ s\u1ED1\ l\u01B0\u1EE3ng\ m\u1EB7t\ tr\u1EDDi\ \r\n\ v\u00E0\ logic\ k\u00E9o\ th\u1EA3\ c\u00E2y\ m\u1EDD\ (ghost\ image).\r\n
 comment1.params=bank
 comment1.target=SeedBank(SeedPacket[])
 comment2.params=

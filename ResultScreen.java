@@ -1,10 +1,10 @@
 import greenfoot.*;  
 
-public class GameOver extends World
+public class ResultScreen extends World
 {
     Hitbox hitbox = new Hitbox();
     
-    public GameOver(World restart)
+    public ResultScreen(World restart)
     {    
         super(1111, 602, 1, false); 
         

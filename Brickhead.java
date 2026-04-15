@@ -66,7 +66,7 @@ public class Brickhead extends Zombie
         } else {
             if (brick) {
                 brick = false;
-                MyWorld.addObject(new Brick(), getX(), getY()-25);
+                PlayScene.addObject(new Brick(), getX(), getY()-25);
             }
             
             if (hp > 50) {
@@ -82,7 +82,7 @@ public class Brickhead extends Zombie
                 if (!fallen) {
                     fallen = true;
                     AudioPlayer.play(80, "limbs_pop.mp3");
-                    MyWorld.addObject(new Arm(), getX()+8, getY()+20);
+                    PlayScene.addObject(new Arm(), getX()+8, getY()+20);
                 }
                 if (!isEating()) {
                     animate(armless, 350, true);

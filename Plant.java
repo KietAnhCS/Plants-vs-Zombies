@@ -6,21 +6,19 @@ public class Plant extends animatedObject {
     public int hp;
     public int damage;
     public boolean opaque = false;
-    public MyWorld MyWorld;
+    public PlayScene PlayScene;
 
     public Plant() {}
 
     public void act() {
         if (getWorld() == null) return;
 
-        // Kiểm tra Overlay (Pause game)
         if (!getWorld().getObjects(Overlay.class).isEmpty()) return; 
         
         if (isLiving()) {
             update(); 
             if (getWorld() == null) return;
 
-            // Xử lý độ trong suốt (đặt cây/xẻng)
             if (!opaque) {
                 getImage().setTransparency(255);
             } else {
@@ -32,22 +30,19 @@ public class Plant extends animatedObject {
     }
 
         public void die() {
-        // Chốt chặn quan trọng nhất: Kiểm tra xem cây còn ở trong World không
+        
         World world = getWorld(); 
         if (world != null) {
-            MyWorld = (MyWorld)world;
+            PlayScene = (PlayScene)world;
             AudioPlayer.play(80, "gulp.mp3");
             
-            // Lưu tọa độ ô lưới trước khi thực hiện các lệnh khác
             int xPos = getXPos();
             int yPos = getYPos();
             
-            // Chỉ xóa trong mảng quản lý của Board nếu Board tồn tại
-            if (MyWorld.board != null) {
-                MyWorld.board.removePlant(xPos, yPos);
+            if (PlayScene.board != null) {
+                PlayScene.board.removePlant(xPos, yPos);
             }
-            
-            // Xóa chính nó khỏi World (chỉ khi world != null)
+           
             world.removeObject(this);
         }
     }
@@ -66,8 +61,8 @@ public class Plant extends animatedObject {
 
     @Override
     public void addedToWorld(World world) {
-        MyWorld = (MyWorld)world;
-        // Thêm hiệu ứng đất khi trồng
+        PlayScene = (PlayScene)world;
+        
         world.addObject(new Dirt(), getX(), getY() + 30);
     }
 

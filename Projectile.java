@@ -25,7 +25,7 @@ public class Projectile extends animatedObject {
 
     public void act() {
         // 1. Kiểm tra an toàn thế giới
-        MyWorld world = (MyWorld) getWorld();
+        PlayScene world = (PlayScene) getWorld();
         if (world == null) return;
 
         // 2. Xử lý khi đạn đã trúng (hiệu ứng nổ)
@@ -47,7 +47,7 @@ public class Projectile extends animatedObject {
         checkCollision(world);
     }
 
-    private void handleHitAnimation(MyWorld world) {
+    private void handleHitAnimation(PlayScene world) {
         // Nếu frame chạy hết mảng ảnh thì xóa đạn
         if (frame >= frameCount - 1) {
             world.removeObject(this);
@@ -56,7 +56,7 @@ public class Projectile extends animatedObject {
         }
     }
 
-    private void checkCollision(MyWorld world) {
+    private void checkCollision(PlayScene world) {
         // Kiểm tra tính hợp lệ của hệ thống hàng lối
         if (world.level == null || world.level.zombieRow == null) return;
 

@@ -1,7 +1,7 @@
 import greenfoot.*;  
 import java.util.*;
 
-public class Intro extends World
+public class CinematicIntro extends World
 {
     public GreenfootSound CYS = new GreenfootSound("intro3.mp3");
     public int count = 0;
@@ -18,7 +18,7 @@ public class Intro extends World
     
     public Zombie[][] level1 = 
     {
-        {new BasicZombie(), new BasicZombie()},
+        {new Buckethead(), new Buckethead()},
         {new BasicZombie(), new BasicZombie()},
         {new BasicZombie(), new BasicZombie()},
         {
@@ -99,7 +99,7 @@ public class Intro extends World
     public SeedBank seedbank = new SeedBank(bank);   
     public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 8, 18);
 
-    public Intro()
+    public CinematicIntro()
     {    
         super(1111, 602, 1, false); 
         getBackground().drawImage(backgroundMap, 0, 0);
@@ -166,7 +166,7 @@ public class Intro extends World
         else if (count == 500) {
             CYS.stop(); 
             
-            Greenfoot.setWorld(new MyWorld(CYS, level, seedbank, this, new WinPotato(), true));
+            Greenfoot.setWorld(new PlayScene(CYS, level, seedbank, this, new WinPotato(), true));
         }
     }
     

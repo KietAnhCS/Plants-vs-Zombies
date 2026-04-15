@@ -39,7 +39,7 @@ public class Sunflower extends Plant
             lastFrame2 = System.nanoTime();
             hitFlash(idle, "sunfloweridle");
             test= true;
-            MyWorld.addObject(new Sun(), getX(), getY()-10);
+            PlayScene.addObject(new Sun(), getX(), getY()-10);
         }
     }
   

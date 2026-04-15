@@ -8,9 +8,9 @@ public class Zombie extends animatedObject {
     public int hp;
     public int maxHp;
     public double walkSpeed;
-    public MyWorld MyWorld;
+    public PlayScene PlayScene;
     public boolean spawnHead = false;
-    public Plant target; // Mục tiêu đang bị ăn
+    public Plant target;
     public int eatSpeed;
     public boolean isAlive = true;
     public GreenfootImage[] headless;
@@ -29,7 +29,7 @@ public class Zombie extends animatedObject {
     public void act() {
         if (getWorld() == null) return;
 
-        // KIỂM TRA OVERLAY: Pause game
+        
         if (!getWorld().getObjects(Overlay.class).isEmpty()) {
             return;
         }
@@ -42,7 +42,7 @@ public class Zombie extends animatedObject {
     }
 
     public void update() {
-        // Class con (BasicZombie, Conehead...) sẽ override hàm này
+        
     }
 
     public void deathAnim() {
@@ -56,8 +56,8 @@ public class Zombie extends animatedObject {
                 if (!fixAnim) {
                     fixAnim = true;
                     AudioPlayer.play(80, "zombie_falling_1.mp3", "zombie_falling_2.mp3");
-                    MyWorld.addObject(new fallingZombie(fall), getX() - 12, getY() + 20);
-                    MyWorld.removeObject(this);
+                    PlayScene.addObject(new fallingZombie(fall), getX() - 12, getY() + 20);
+                    PlayScene.removeObject(this);
                     return;
                 }
             } else {
@@ -84,7 +84,7 @@ public class Zombie extends animatedObject {
     public void playEating() {
         if (getWorld() == null || !getWorld().getObjects(Overlay.class).isEmpty()) return;
         
-        // CHỐT CHẶN: Nếu mục tiêu đã biến mất khỏi World (bị ăn xong), ngừng ăn
+        
         if (target == null || target.getWorld() == null) {
             eating = false;
             target = null;
@@ -104,7 +104,7 @@ public class Zombie extends animatedObject {
 
     @Override
     protected void addedToWorld(World world) {
-        MyWorld = (MyWorld) world;
+        PlayScene = (PlayScene) world;
     }
 
     public boolean isLiving() {
@@ -120,10 +120,10 @@ public class Zombie extends animatedObject {
         }
     }
 
-    // Hàm phụ để xóa zombie khỏi danh sách quản lý hàng
+    
     private void removeFromRow() {
-        if (MyWorld == null || MyWorld.level == null) return;
-        for (ArrayList<Zombie> i : MyWorld.level.zombieRow) {
+        if (PlayScene == null || PlayScene.level == null) return;
+        for (ArrayList<Zombie> i : PlayScene.level.zombieRow) {
             if (i.contains(this)) {
                 i.remove(this);
                 break;
@@ -132,20 +132,19 @@ public class Zombie extends animatedObject {
     }
 
     public boolean isEating() {
-        if (MyWorld == null || MyWorld.board == null) return false;
+        if (PlayScene == null || PlayScene.board == null) return false;
         
         int yIdx = getYPos();
-        // Kiểm tra biên yIdx để tránh crash mảng Board
-        if (yIdx < 0 || yIdx >= MyWorld.board.Board.length) return false;
+        
+        if (yIdx < 0 || yIdx >= PlayScene.board.Board.length) return false;
 
-        var row = MyWorld.board.Board[yIdx];
+        var row = PlayScene.board.Board[yIdx];
         for (int i = 0; i < row.length; i++) {
             Plant p = row[i];
             
-            // CHỐT CHẶN: Chỉ check nếu cây tồn tại trong World
             if (p != null && p.getWorld() != null) {
                 if (Math.abs(p.getX() - getX() + 5) < 35) {
-                    // Đặc thù PotatoMine
+                    
                     if (p instanceof PotatoMine) {
                         if (((PotatoMine) p).armed) {
                             eating = false;
@@ -166,7 +165,7 @@ public class Zombie extends animatedObject {
     }
 
     public int getYPos() {
-        if (Board.ySpacing == 0) return 0; // Hoặc một giá trị mặc định an toàn
+        if (Board.ySpacing == 0) return 0; 
         return (getY() - Board.yOffset) / Board.ySpacing;
     }
 

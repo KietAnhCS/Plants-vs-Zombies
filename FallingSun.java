@@ -2,7 +2,7 @@ import greenfoot.*;
 
 public class FallingSun extends FallingObject
 {
-    private MyWorld myWorld;
+    private PlayScene PlayScene;
     private GreenfootImage[] sunSprites;
     private boolean beenClicked = false;
     
@@ -55,8 +55,8 @@ public class FallingSun extends FallingObject
     private void collectSun() {
         beenClicked = true;
         AudioPlayer.play(90, "points.mp3");
-        if (myWorld != null && myWorld.seedbank != null) {
-            myWorld.seedbank.sunCounter.addSun(25);
+        if (PlayScene != null && PlayScene.seedbank != null) {
+            PlayScene.seedbank.sunCounter.addSun(25);
         }
     }
 
@@ -90,16 +90,16 @@ public class FallingSun extends FallingObject
         
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse != null && Greenfoot.mouseClicked(null)) {
-            myWorld.moveHitbox();
-            return intersects(myWorld.hitbox);
+            PlayScene.moveHitbox();
+            return intersects(PlayScene.hitbox);
         }
         return false;
     }
 
     @Override
     public void addedToWorld(World world) {
-        myWorld = (MyWorld)world;
-        lastFrame = System.nanoTime(); // Bắt đầu tính thời gian rơi
+        PlayScene = (PlayScene)world;
+        lastFrame = System.nanoTime(); 
         lifetimeStart = System.currentTimeMillis(); 
     }
 }

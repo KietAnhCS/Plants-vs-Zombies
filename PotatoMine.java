@@ -55,15 +55,15 @@ public class PotatoMine extends Plant
         }
     }
     public void checkExplosion() {
-        if (MyWorld.level.zombieRow.get(getYPos()).size() == 0) {
+        if (PlayScene.level.zombieRow.get(getYPos()).size() == 0) {
             
         } else {
             
-            for (Zombie i : MyWorld.level.zombieRow.get(getYPos())) {
+            for (Zombie i : PlayScene.level.zombieRow.get(getYPos())) {
                 if (Math.abs(i.getX() - getX()) < 28) {
                     
-                    getWorld().addObject(new Explosion(MyWorld.level.zombieRow.get(getYPos())), getX(), getY()-25);
-                    ((MyWorld)getWorld()).board.removePlant(getXPos(), getYPos());
+                    getWorld().addObject(new Explosion(PlayScene.level.zombieRow.get(getYPos())), getX(), getY()-25);
+                    ((PlayScene)getWorld()).board.removePlant(getXPos(), getYPos());
                     return;
                 } 
             }

@@ -6,7 +6,6 @@ comment2.params=
 comment2.target=void\ act()
 comment3.params=current
 comment3.target=void\ handleHighlight(Plant)
-comment3.text=\r\n\ Hi\u1EC7u\ \u1EE9ng\ l\u00E0m\ m\u1EDD\ c\u00E2y\ khi\ x\u1EBBng\ \u0111i\ ngang\ qua\r\n
 comment4.params=
 comment4.target=void\ resetOpaque()
 comment5.params=

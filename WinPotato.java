@@ -36,7 +36,7 @@ public class WinPotato extends FallingObject
             } else {
                 if (!addTrans) {
                     addTrans=true;
-                    getWorld().addObject(new Transition(false, new IntroLevel1(), "whitetransition.png", 1), 360, 215);
+                    getWorld().addObject(new Transition(false, new Level1Preview(), "whitetransition.png", 1), 360, 215);
                     AudioPlayer.play(70, "lightfill.mp3");
                 }
             }
@@ -58,7 +58,7 @@ public class WinPotato extends FallingObject
         if (Greenfoot.mouseClicked(this) && !move) {
             
             move = true;
-            ((MyWorld)getWorld()).finishLevel();
+            ((PlayScene)getWorld()).finishLevel();
         }
     }
     

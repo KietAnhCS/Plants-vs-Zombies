@@ -39,8 +39,8 @@ public class TwinSunflower extends Plant
             lastFrame2 = System.nanoTime();
             hitFlash(idle, "twinsunflower");
             test= true;
-            MyWorld.addObject(new Sun(), getX()+10, getY()-10);
-            MyWorld.addObject(new Sun(), getX()-10, getY()-10);
+            PlayScene.addObject(new Sun(), getX()+10, getY()-10);
+            PlayScene.addObject(new Sun(), getX()-10, getY()-10);
         }
     }
   

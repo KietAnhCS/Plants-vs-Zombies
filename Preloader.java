@@ -1,13 +1,13 @@
 import greenfoot.*;  
 
-public class First extends World
+public class Preloader extends World
 {
 
     /**
      * Constructor for objects of class First.
      * 
      */
-    public First()
+    public Preloader()
     {    
         super(1111, 602, 1, false); 
         setBackground(new GreenfootImage("transition.png"));

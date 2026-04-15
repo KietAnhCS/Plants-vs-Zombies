@@ -35,7 +35,7 @@ public class WinRepeater extends FallingObject
             } else {
                 if (!addTrans) {
                     addTrans=true;
-                    getWorld().addObject(new Transition(false, new IntroLevel2(), "whitetransition.png", 1), 360, 215);
+                    getWorld().addObject(new Transition(false, new Level2Preview(), "whitetransition.png", 1), 360, 215);
                     AudioPlayer.play(70, "lightfill.mp3");
                 }
             }
@@ -57,7 +57,7 @@ public class WinRepeater extends FallingObject
         if (Greenfoot.mouseClicked(this) && !move) {
             
             move = true;
-            ((MyWorld)getWorld()).finishLevel();
+            ((PlayScene)getWorld()).finishLevel();
         }
     }
     

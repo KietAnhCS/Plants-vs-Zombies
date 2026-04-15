@@ -1,10 +1,8 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.util.*;
 
-/**
- * IntroLevel3: Màn giới thiệu cho Level 3
- */
-public class IntroLevel3 extends World
+
+public class Level3Preview extends World
 {
     public GreenfootSound CYS = new GreenfootSound("intro3.mp3");
     public int count = 0;
@@ -13,7 +11,7 @@ public class IntroLevel3 extends World
     public boolean started = false;
     public Zombie n = null;
     
-    // Bank hạt giống cho màn 3
+
     public SeedPacket[] bank = {
         new SunflowerPacket(), 
         new PeashooterPacket(), 
@@ -24,7 +22,7 @@ public class IntroLevel3 extends World
     
     public SeedBank seedbank = new SeedBank(bank);   
     
-    // Định nghĩa Zombie cho Level 3 (Bạn có thể tùy chỉnh lại mảng này cho khó hơn)
+    
     public Zombie[][] level1 = {
                 {null, new BasicZombie(), null, null},
                 {n},
@@ -47,13 +45,13 @@ public class IntroLevel3 extends World
                 {new Conehead(), new Conehead(), new Conehead(), new BasicZombie(), new BasicZombie(), new Buckethead(), null, new BasicZombie(), new Conehead(), new Buckethead()}
     };
     
-    // WaveManager khởi tạo (Tham số cuối là số hàng, 18 là giá trị từ code gốc của bạn)
+    
     public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 8, 18);
 
-    public IntroLevel3()
+    public Level3Preview()
     {    
         super(1111, 602, 1, false); 
-        // Thiết lập hình nền ban đầu (lawn367 cho map cỏ)
+        
         setBackground(new GreenfootImage("lawn367.png"));
         
         addObject(new Basic(), 1176, 227);
@@ -93,20 +91,14 @@ public class IntroLevel3 extends World
         }
         else if ( count == 500 )
         {
-            /**
-             * CẬP NHẬT: 
-             * 1. restartWorld: truyền new IntroLevel3() để khi thua sẽ chơi lại đúng màn này.
-             * 2. winPlant: thay bằng cây bạn muốn tặng khi thắng (VD: new WinCherryBomb()).
-             * 3. isWater: để false nếu là map cỏ, true nếu là map nước.
-             */
-            Greenfoot.setWorld(new MyWorld(CYS, level, seedbank, new IntroLevel3(), new WinRepeater(), false));
+            Greenfoot.setWorld(new PlayScene(CYS, level, seedbank, new Level3Preview(), new WinRepeater(), false));
         }
     }
     
     public void scrollBGimage(int offset)
     {
          GreenfootImage bg = getBackground(); 
-         GreenfootImage move = new GreenfootImage("lawn367.png"); // Map cỏ
+         GreenfootImage move = new GreenfootImage("lawn367.png");
          bg.drawImage(move, offset, 0);  
         
         List<Actor> currentObjects = getObjects(null);

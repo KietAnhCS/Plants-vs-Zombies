@@ -1,7 +1,8 @@
-import greenfoot.*;  
+import greenfoot.*; 
 import java.util.*;
 
-public class IntroLevel1 extends World
+
+public class Level2Preview extends World
 {
     public GreenfootSound CYS = new GreenfootSound("intro3.mp3");
     public int count = 0;
@@ -9,9 +10,17 @@ public class IntroLevel1 extends World
     public int location = 0;
     public boolean started = false;
     public Zombie n = null;
-    public SeedPacket[] bank = {new SunflowerPacket(), new PeashooterPacket(), new WalnutPacket(), new PotatoPacket()};
+    
+    
+    public SeedPacket[] bank = {
+        new SunflowerPacket(), 
+        new PeashooterPacket(), 
+        new WalnutPacket(), 
+        new PotatoPacket()
+    };
     
     public SeedBank seedbank = new SeedBank(bank);   
+    
     
     public Zombie[][] level1 = {
                 {null, new BasicZombie(), null, null},
@@ -35,21 +44,21 @@ public class IntroLevel1 extends World
                 {new Conehead(), new Conehead(), new Conehead(), new BasicZombie(), new BasicZombie(), new Buckethead(), null, new BasicZombie(), new Conehead(), new Buckethead()}
     };
     
-   
+    
     public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 8, 18);
 
-    public IntroLevel1()
+    public Level2Preview()
     {    
         super(1111, 602, 1, false); 
+        
+        setBackground(new GreenfootImage("lawn367.png"));
+        
         addObject(new Basic(), 1176, 227);
         addObject(new Basic(), 1195, 322);
         addObject(new Basic(), 1129, 227);
         addObject(new Basic(), 1162, 325);
         addObject(new IdleCone(), 1183, 396);
         CYS.setVolume(70);
-        
-        
-        setBackground(new GreenfootImage("mapwater.png")); 
     }
 
     public void act() {
@@ -63,7 +72,7 @@ public class IntroLevel1 extends World
 
     public void bgScrollAnimate()
     {
-        if (count > 100 && count < 160)
+        if ( count > 100 && count < 160)
         {
             location -= scrollSpeed;
             scrollBGimage(location);
@@ -81,11 +90,8 @@ public class IntroLevel1 extends World
         }
         else if ( count == 500 )
         {
-            /**
-             * CẬP NHẬT QUAN TRỌNG:
-             * Thêm tham số 'true' vào cuối để báo cho MyWorld đây là Map Nước.
-             */
-            Greenfoot.setWorld(new MyWorld(CYS, level, seedbank, new IntroLevel1(), new WinRepeater(), true));
+        
+            Greenfoot.setWorld(new PlayScene(CYS, level, seedbank, new Level2Preview(), new WinRepeater(), false));
         }
     }
     
@@ -93,7 +99,7 @@ public class IntroLevel1 extends World
     {
         GreenfootImage bg = getBackground(); 
        
-        GreenfootImage move = new GreenfootImage("mapwater.png");
+        GreenfootImage move = new GreenfootImage("lawn367.png");
         bg.drawImage(move, offset, 0);  
         
         List<Actor> currentObjects = getObjects(null);

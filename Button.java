@@ -22,7 +22,7 @@ public class Button extends animatedObject
     public void act()
     {
         MouseInfo mouse = Greenfoot.getMouseInfo();
-        GameOver world = (GameOver)getWorld();
+        ResultScreen world = (ResultScreen)getWorld();
         if (mouse != null) {
             world.moveHitbox();
             if (this.intersects(world.hitbox)) {

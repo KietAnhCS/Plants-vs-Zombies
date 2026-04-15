@@ -1,17 +1,8 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*; 
 
-/**
- * Write a description of class MoneyBag here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class WinTwinsunflower extends FallingObject
 {
-    /**
-     * Act - do whatever the MoneyBag wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
+    
     public GreenfootImage[] sprites = importSprites("stwinsunflowerpacket", 2);
     public boolean move = false;    
     public boolean addTrans = false;
@@ -35,7 +26,7 @@ public class WinTwinsunflower extends FallingObject
             } else {
                 if (!addTrans) {
                     addTrans=true;
-                    getWorld().addObject(new Transition(false, new IntroLevel3(), "whitetransition.png", 1), 360, 215);
+                    getWorld().addObject(new Transition(false, new Level3Preview(), "whitetransition.png", 1), 360, 215);
                     AudioPlayer.play(70, "lightfill.mp3");
                 }
             }
@@ -57,7 +48,7 @@ public class WinTwinsunflower extends FallingObject
         if (Greenfoot.mouseClicked(this) && !move) {
             
             move = true;
-            ((MyWorld)getWorld()).finishLevel();
+            ((PlayScene)getWorld()).finishLevel();
         }
     }
     

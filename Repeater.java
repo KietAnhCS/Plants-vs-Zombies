@@ -40,7 +40,7 @@ public class Repeater extends Plant
         }
     }
     public void update() {
-        MyWorld = (MyWorld)getWorld();
+        PlayScene = (PlayScene)getWorld();
         currentFrame = System.nanoTime();
         if (!shooting) {
             animate(idle, 225, true);
@@ -53,7 +53,7 @@ public class Repeater extends Plant
                 shootCount = 0;
                 resetFrame = false;
             } else {
-                if (shootCount >= 5) {
+                if (shootCount >= 3) {
                     lastFrame2 = currentFrame;
                 }
                 if (!resetFrame) {
@@ -63,7 +63,7 @@ public class Repeater extends Plant
                 
                 if (frame >= 3) {
                     AudioPlayer.play(80, "throw.mp3", "throw2.mp3");
-                    MyWorld.addObject(new Pea(getYPos()), getX()+25,getY()-17);
+                    PlayScene.addObject(new Pea(getYPos()), getX()+25,getY()-17);
                     setFrame(1);
                     setImage("repeatershoot1.png");
                     shootCount++;
@@ -75,12 +75,12 @@ public class Repeater extends Plant
             
             
         }
-        if (MyWorld.level.zombieRow.get(getYPos()).size() == 0) {
+        if (PlayScene.level.zombieRow.get(getYPos()).size() == 0) {
             shooting = false;
         } else {
             
-            for (Zombie i : MyWorld.level.zombieRow.get(getYPos())) {
-                if (i.getX() > getX() && i.getX()<=MyWorld.getWidth()+10){
+            for (Zombie i : PlayScene.level.zombieRow.get(getYPos())) {
+                if (i.getX() > getX() && i.getX()<=PlayScene.getWidth()+10){
                     shooting = true;
                     break;
                 } else {

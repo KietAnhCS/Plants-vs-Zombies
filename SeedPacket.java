@@ -16,7 +16,7 @@ public class SeedPacket extends Actor
     private GreenfootImage imageDark;   
     private GreenfootImage rechargeOverlay; 
     
-    private MyWorld myWorld;
+    private PlayScene PlayScene;
     private boolean doneRechargeTime = false;
 
     public SeedPacket(long rechargeTime, boolean recharged, int sunCost, String name) {
@@ -33,7 +33,7 @@ public class SeedPacket extends Actor
     }
 
     public void addedToWorld(World world) {
-        myWorld = (MyWorld)world;
+        PlayScene = (PlayScene)world;
         rechargeOverlay = new GreenfootImage(imageBright.getWidth(), imageBright.getHeight());
         if (recharged) {
             doneRechargeTime = true;
@@ -58,7 +58,7 @@ public class SeedPacket extends Actor
     }
 
     public void updateAppearance() {
-        if (myWorld == null || myWorld.seedbank == null) return;
+        if (PlayScene == null || PlayScene.seedbank == null) return;
 
         // Nếu đang hồi chiêu
         if (!doneRechargeTime) {
@@ -77,7 +77,7 @@ public class SeedPacket extends Actor
         // Nếu đã hồi xong
         else {
             // SỬA LỖI Ở ĐÂY: Đổi suncounter thành sunCounter cho khớp với lớp SeedBank
-            int currentSun = myWorld.seedbank.sunCounter.sun; 
+            int currentSun = PlayScene.seedbank.sunCounter.sun; 
 
             if (currentSun < sunCost || selected) {
                 setImage(imageDark);

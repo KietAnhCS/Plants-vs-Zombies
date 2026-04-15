@@ -67,7 +67,7 @@ public class Buckethead extends Zombie
         } else {
             if (bucket) {
                 bucket = false;
-                MyWorld.addObject(new Bucket(), getX(), getY()-25);
+                PlayScene.addObject(new Bucket(), getX(), getY()-25);
             }
             
             if (hp > 50) {
@@ -83,7 +83,7 @@ public class Buckethead extends Zombie
                 if (!fallen) {
                     fallen = true;
                     AudioPlayer.play(80, "limbs_pop.mp3");
-                    MyWorld.addObject(new Arm(), getX()+8, getY()+20);
+                    PlayScene.addObject(new Arm(), getX()+8, getY()+20);
                 }
                 if (!isEating()) {
                     animate(armless, 350, true);

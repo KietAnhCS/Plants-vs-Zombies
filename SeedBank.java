@@ -1,18 +1,15 @@
 import greenfoot.*;
 import java.util.*;
 
-/**
- * SeedBank: Quản lý thanh chọn hạt giống, số lượng mặt trời 
- * và logic kéo thả cây mờ (ghost image).
- */
+
 public class SeedBank extends Actor
 {
-    // Các hằng số tọa độ dùng chung cho World (như trao thưởng khi thắng)
+    
     public static final int x1 = 252; 
     public static final int x2 = 994;
     public static final int y1 = 81;
 
-    private MyWorld myWorld;
+    private PlayScene PlayScene;
     public SunCounter sunCounter = new SunCounter();
     private SeedPacket[] bank;
     private SeedPacket selectedPacket = null;
@@ -23,15 +20,15 @@ public class SeedBank extends Actor
     }
 
     public void act() {
-        // Khởi tạo tham chiếu World an toàn
-        if (myWorld == null) {
-            myWorld = (MyWorld)getWorld();
-            if (myWorld == null) return; 
+       
+        if (PlayScene == null) {
+            PlayScene = (PlayScene)getWorld();
+            if (PlayScene == null) return; 
         }
         
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse != null) {
-            // Chỉ chạy logic khi Board đã được MyWorld setup thông số xong
+            
             if (Board.xSpacing > 0 && Board.ySpacing > 0) {
                 handleGhostImage(mouse);
                 handleMouseClick(mouse);
@@ -44,14 +41,14 @@ public class SeedBank extends Actor
      */
     private void handleGhostImage(MouseInfo mouse) {
         if (ghostImage != null && selectedPacket != null) {
-            // Tính toán vị trí ô (Grid)
+            
             int gridX = (mouse.getX() - Board.xOffset) / Board.xSpacing;
             int gridY = (mouse.getY() - Board.yOffset) / Board.ySpacing;
 
             Plant p = selectedPacket.getPlant();
             
             // Kiểm tra xem vị trí chuột có nằm trong bàn cờ và đặt được cây không
-            if (myWorld.board != null && p != null && myWorld.board.canPlace(gridX, gridY, p)) {
+            if (PlayScene.board != null && p != null && PlayScene.board.canPlace(gridX, gridY, p)) {
                 ghostImage.setTransparent(true); // Làm mờ nhẹ khi đặt được cây
                 
                 // "Hút" ảnh mờ vào tâm ô đất
@@ -77,15 +74,15 @@ public class SeedBank extends Actor
      */
     private void handleMouseClick(MouseInfo mouse) {
         if (Greenfoot.mouseClicked(null)) {
-            if (myWorld.hitbox == null) return;
-            myWorld.moveHitbox();
+            if (PlayScene.hitbox == null) return;
+            PlayScene.moveHitbox();
             
             // 1. Logic Đặt cây (Nếu đang cầm cây)
             if (selectedPacket != null && ghostImage != null) {
                 int gridX = (mouse.getX() - Board.xOffset) / Board.xSpacing;
                 int gridY = (mouse.getY() - Board.yOffset) / Board.ySpacing;
 
-                if (myWorld.board != null && myWorld.board.placePlant(gridX, gridY, selectedPacket.getPlant())) {
+                if (PlayScene.board != null && PlayScene.board.placePlant(gridX, gridY, selectedPacket.getPlant())) {
                     // Đặt thành công
                     sunCounter.removeSun(selectedPacket.sunCost);
                     getWorld().removeObject(ghostImage);
@@ -124,8 +121,8 @@ public class SeedBank extends Actor
      * Kiểm tra xem chuột có đang chạm vào một SeedPacket khác không
      */
     private boolean isClickingAnotherPacket() {
-        if (myWorld.hitbox == null) return false;
-        List<Actor> touching = myWorld.hitbox.getTouching();
+        if (PlayScene.hitbox == null) return false;
+        List<Actor> touching = PlayScene.hitbox.getTouching();
         for (Actor a : touching) {
             if (a instanceof SeedPacket) return true;
         }
@@ -136,8 +133,8 @@ public class SeedBank extends Actor
      * Quét các thẻ bài để xử lý việc chọn/đổi cây
      */
     private void checkPacketSelection() {
-        if (myWorld.hitbox == null) return;
-        List<Actor> touching = myWorld.hitbox.getTouching();
+        if (PlayScene.hitbox == null) return;
+        List<Actor> touching = PlayScene.hitbox.getTouching();
         for (Actor a : touching) {
             if (a instanceof SeedPacket) {
                 SeedPacket clicked = (SeedPacket)a;
@@ -165,15 +162,15 @@ public class SeedBank extends Actor
 
     @Override
     public void addedToWorld(World world) {
-        myWorld = (MyWorld)world;
+        PlayScene = (PlayScene)world;
         
         // Thêm bảng đếm mặt trời vào góc trái thanh SeedBank
-        myWorld.addObject(sunCounter, 67, 50);
+        PlayScene.addObject(sunCounter, 67, 50);
         
         // Tự động sắp xếp các thẻ bài theo chiều dọc
         for (int i = 0; i < bank.length; i++) {
             if (bank[i] != null) {
-                myWorld.addObject(bank[i], 67, 120 + i * 50);
+                PlayScene.addObject(bank[i], 67, 120 + i * 50);
             }
         }
         
