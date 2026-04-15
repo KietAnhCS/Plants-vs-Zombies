@@ -5,9 +5,6 @@ public class WaveManager extends Actor
 {
     public long currentFrame = System.nanoTime();
     public static final int xOffset = 1115;
-    public static final int yOffset = 135;
-    
-    public int ySpacing = Board.ySpacing; 
     
     public ArrayList<ArrayList<Zombie>> zombieRow = new ArrayList<ArrayList<Zombie>>();
     
@@ -46,8 +43,9 @@ public class WaveManager extends Actor
     }
     
     public void fixOrder() {
+        Board board = (Board)PlayScene.getObjects(Board.class).get(0);
         List<Zombie> zombies = PlayScene.getObjects(Zombie.class);
-        for (int r = 0; r < 6; r++) { 
+        for (int r = 0; r < board.currentRowCount; r++) { 
             for (Zombie z : zombies) {
                 if (z.getWorld() != null && z.getYPos() == r) {
                     int x = z.getX();
@@ -101,14 +99,16 @@ public class WaveManager extends Actor
     }
     
     public void sendWave(Zombie[] waveData) {
-        int rows = 6; 
+        Board board = (Board)PlayScene.getObjects(Board.class).get(0);
+        int rows = board.currentRowCount; 
         for (int i = 0; i < waveData.length; i++) {
             if (waveData[i] != null) {
                 int rowIndex = i % rows; 
                 int wait = i / rows;
                 int offset = xOffset + wait * 20;
+                int targetY = rowIndex * board.ySpacing + board.yOffset;
                 
-                PlayScene.addObject(waveData[i], offset, rowIndex * ySpacing + yOffset);
+                PlayScene.addObject(waveData[i], offset, targetY);
                 zombieRow.get(rowIndex).add(waveData[i]);
                 finishedSending = false;
             }
@@ -117,14 +117,16 @@ public class WaveManager extends Actor
     }
 
     public void sendHugeWave(Zombie[] waveData) {
-        int rows = 6;
+        Board board = (Board)PlayScene.getObjects(Board.class).get(0);
+        int rows = board.currentRowCount;
         for (int i = 0; i < waveData.length; i++) {
             if (waveData[i] != null) {
                 int rowIndex = i % rows;
                 int wait = i / rows;
                 int offset = xOffset + 50 + wait * 20;
+                int targetY = rowIndex * board.ySpacing + board.yOffset;
                 
-                PlayScene.addObject(waveData[i], offset, rowIndex * ySpacing + yOffset);
+                PlayScene.addObject(waveData[i], offset, targetY);
                 zombieRow.get(rowIndex).add(waveData[i]);
             }
         }

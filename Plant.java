@@ -1,11 +1,5 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*;  
 
-/**
- * Write a description of class Plant here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class Plant extends animatedObject
 {
     public int maxHp;
@@ -16,12 +10,8 @@ public class Plant extends animatedObject
     public PlayScene PlayScene;
  
     public Plant() {
-        
     }
-    /**
-     * Act - do whatever the Plant wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
+
     public void act()
     {
         if (getWorld() != null) {
@@ -36,45 +26,46 @@ public class Plant extends animatedObject
                 PlayScene = (PlayScene)getWorld();
                 AudioPlayer.play(80,"gulp.mp3");
                 
+                // Gọi hàm xóa cây với vị trí chính xác
                 PlayScene.board.removePlant(getXPos(), getYPos());
                 PlayScene.removeObject(this);
-                
                 return;
-            } 
+            }  
         }
-    
     }
+
     public void update() {
-        
     }
     
-    
-    public void activatePlantFood() {
-                                 
-        this.hp = maxHp;                                  
-                                 
+    public void activatePlantFood() {                                 
+        this.hp = maxHp;                                           
     }
+
+    // SỬA LẠI HÀM LẤY VỊ TRÍ X
     public int getXPos() {
-        return ((getX()-Board.xOffset)/Board.xSpacing);
+        if (PlayScene == null || PlayScene.board == null) return (getX() - 290) / 82;
+        double calcX = (double)(getX() - PlayScene.board.xOffset) / PlayScene.board.xSpacing;
+        return (int)Math.round(calcX);
     }   
+
+    // SỬA LẠI HÀM LẤY VỊ TRÍ Y
     public int getYPos() {
-        return ((getY()-Board.yOffset)/Board.ySpacing);
+        if (PlayScene == null || PlayScene.board == null) return (getY() - 135) / 85;
+        double calcY = (double)(getY() - PlayScene.board.yOffset) / PlayScene.board.ySpacing;
+        return (int)Math.round(calcY);
     }
+
     @Override
     public void addedToWorld(World world) {
-        PlayScene = (PlayScene)getWorld();
-        PlayScene.addObject(new Dirt(), getX(), getY()+30);
+        PlayScene = (PlayScene)world;
+        PlayScene.addObject(new Dirt(), getX(), getY() + 30);
     }
+
     public boolean isLiving() {
-        if (hp <=0) {
-            isAlive = false;
-        } else {
-            isAlive = true;
-        }
-        return isAlive;
+        return hp > 0;
     }
+
     public void hit(int dmg) {
-        
+        hp -= dmg;
     }
-    
 }

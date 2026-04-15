@@ -5,10 +5,10 @@ public class Board extends Actor {
     public Plant[][] Board = new Plant[6][9];
     public Lilypad[][] WaterBoard = new Lilypad[6][9];
     
-    public static int xOffset = 290;
-    public static int yOffset = 135; 
-    public static int xSpacing = 82;
-    public static int ySpacing = 85;
+    public int xOffset = 290;
+    public int yOffset = 135; 
+    public int xSpacing = 82;
+    public int ySpacing = 85;
     
     public int currentRowCount = 6;
     private boolean isWaterMap = false; 
@@ -20,6 +20,13 @@ public class Board extends Actor {
     public void setupLayout(boolean isWater) {
         this.isWaterMap = isWater; 
         
+        for (int i = 0; i < 6; i++) {
+            for (int j = 0; j < 9; j++) {
+                Board[i][j] = null;
+                WaterBoard[i][j] = null;
+            }
+        }
+
         if (isWater) {
             currentRowCount = 6;
             yOffset = 135;
@@ -29,16 +36,8 @@ public class Board extends Actor {
             yOffset = 110;
             ySpacing = 100;
         }
-
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 9; j++) {
-                Board[i][j] = null;
-                WaterBoard[i][j] = null;
-            }
-        }
     }
 
-  
     public boolean isWaterRow(int y) {
         return isWaterMap && (y == 2 || y == 3);
     }
@@ -49,14 +48,11 @@ public class Board extends Actor {
         boolean isWater = isWaterRow(y);
 
         if (plant instanceof Lilypad) {
-            
             return isWater && WaterBoard[y][x] == null && Board[y][x] == null;
         } else {
             if (isWater) {
-               
                 return WaterBoard[y][x] != null && Board[y][x] == null;
             } else {
-               
                 return Board[y][x] == null;
             }
         }
@@ -80,7 +76,7 @@ public class Board extends Actor {
     }
 
     public void removePlant(int x, int y) {
-        if (y >= 0 && y < currentRowCount && x >= 0 && x < 9) {
+        if (y >= 0 && y < 6 && x >= 0 && x < 9) {
             if (Board[y][x] != null) {
                 getWorld().removeObject(Board[y][x]);
                 Board[y][x] = null;

@@ -1,7 +1,6 @@
 import greenfoot.*;  
 import java.util.*;
 
-
 public class clickShovel extends SmoothMover
 {
     private PlayScene PlayScene;
@@ -17,36 +16,38 @@ public class clickShovel extends SmoothMover
         if (mouse != null) {
             setLocation(mouse.getX(), mouse.getY());
             
-            if (Board.xSpacing == 0 || Board.ySpacing == 0) return;
+            // KIỂM TRA THÔNG SỐ TỪ BOARD CỤ THỂ
+            if (PlayScene.board == null || PlayScene.board.xSpacing == 0) return;
 
-            int x = (mouse.getX() - Board.xOffset) / Board.xSpacing;
-            int y = (mouse.getY() - Board.yOffset) / Board.ySpacing;
+            // SỬA LỖI: Dùng double và Math.round để xác định ô lưới chính xác
+            double calcX = (double)(mouse.getX() - PlayScene.board.xOffset) / PlayScene.board.xSpacing;
+            double calcY = (double)(mouse.getY() - PlayScene.board.yOffset) / PlayScene.board.ySpacing;
             
-            int currentRowCount = (PlayScene.board != null) ? (PlayScene.board.Board.length) : 5; 
+            int x = (int)Math.round(calcX);
+            int y = (int)Math.round(calcY);
             
-            boolean isInsideGrid = (x >= 0 && x < 9 && y >= 0 && y < (PlayScene.board.Board.length));
+            // Kiểm tra giới hạn hàng dựa trên currentRowCount của map hiện tại
+            boolean isInsideGrid = (x >= 0 && x < 9 && y >= 0 && y < PlayScene.board.currentRowCount);
 
             if (isInsideGrid) {
-                
+                // Lấy cây từ mảng Board
                 Plant current = PlayScene.board.Board[y][x]; 
                 if (current == null) {
                     current = PlayScene.board.WaterBoard[y][x];
                 }
-                
                 
                 handleHighlight(current);
 
                 if (Greenfoot.mouseClicked(null)) {
                     if (current != null) {
                         PlayScene.board.removePlant(x, y); 
+                        AudioPlayer.play(80, "plant.mp3"); // Âm thanh khi nhổ cây
                     } else {
-                        
                         AudioPlayer.play(80, "tap.mp3");
                     }
                     exitShovel();
                 }
             } else {
-                
                 resetOpaque();
                 if (Greenfoot.mouseClicked(null)) {
                     exitShovel();
@@ -55,7 +56,6 @@ public class clickShovel extends SmoothMover
         }
     }
 
-    
     private void handleHighlight(Plant current) {
         if (current != null) {
             if (lastPlant != null && lastPlant != current) {

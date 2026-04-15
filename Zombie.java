@@ -165,8 +165,19 @@ public class Zombie extends animatedObject {
     }
 
     public int getYPos() {
-        if (Board.ySpacing == 0) return 0; 
-        return (getY() - Board.yOffset) / Board.ySpacing;
+        if (PlayScene == null || PlayScene.board == null) return 0;
+        
+        // Sử dụng double để tính toán chính xác trước khi làm tròn
+        double calculateY = (double)(getY() - PlayScene.board.yOffset) / PlayScene.board.ySpacing;
+        
+        // Làm tròn số gần nhất (ví dụ 4.9 -> 5, 5.1 -> 5)
+        int row = (int)Math.round(calculateY);
+        
+        // Đảm bảo không bị văng khỏi mảng (Index out of bounds)
+        if (row < 0) return 0;
+        if (row >= PlayScene.board.currentRowCount) return PlayScene.board.currentRowCount - 1;
+        
+        return row;
     }
 
     public int getXPos() {

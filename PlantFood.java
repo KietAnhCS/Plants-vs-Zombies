@@ -5,7 +5,7 @@ public class PlantFood extends SmoothMover
     public boolean selected = false;
     
     public void addedToWorld(World world) {
-        setImage("shovel1.png"); // Ảnh cái lá trên menu
+        setImage("plantfood.png"); // Ảnh cái lá trên menu
         selected = false;
     }
 

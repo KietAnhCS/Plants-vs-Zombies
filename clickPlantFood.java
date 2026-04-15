@@ -6,7 +6,7 @@ public class clickPlantFood extends Actor
 
     public clickPlantFood(PlantFood master) {
         this.master = master;
-        setImage("shovel1.png"); // Ảnh cái lá nhỏ theo chuột
+        setImage("plantfood.png"); // Ảnh cái lá nhỏ theo chuột
     }
 
     public void act() {

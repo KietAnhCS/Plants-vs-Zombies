@@ -143,15 +143,20 @@ public class PlayScene extends World
     }
 
     private void prepareLawnmowers() {
-        int startX = 220; 
-        int rowCount = isWaterMap ? 6 : 5; 
-
-        for (int i = 0; i < rowCount; i++) {
-            
-            int yPos = SeedBank.y1 + (i * Board.ySpacing) + (Board.ySpacing / 2);
-            addObject(new Lawnmower(), startX, yPos); 
-        }
+    int startX = 220; 
+    
+    // 1. Xác định số hàng dựa trên map nước hay map thường
+    int rowCount = isWaterMap ? 6 : 5; 
+    
+    // 2. Vòng lặp tạo máy cắt cỏ đúng số hàng
+    for (int i = 0; i < rowCount; i++) {
+        // Tọa độ Y của máy cắt cỏ phải khớp với tọa độ Y của cây/zombie ở mỗi hàng
+        // Công thức: yOffset (bắt đầu hàng 1) + (thứ tự hàng * khoảng cách hàng)
+        int yPos = board.yOffset + (i * board.ySpacing);
+        
+        addObject(new Lawnmower(), startX, yPos); 
     }
+}
 
     
     public boolean tryPlacePlant(int gridX, int gridY, Plant newPlant) {
