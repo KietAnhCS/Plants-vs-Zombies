@@ -68,7 +68,7 @@ public class Peashooter extends Plant
         boolean activeShooting = shooting || isPoweredUp;
 
         if (!activeShooting) {
-            animate(idle, 150, true);
+            animate(idle, 300, true);
             lastFrame2 = System.nanoTime();
         } else {
             deltaTime2 = (currentFrame - lastFrame2) / 1000000;

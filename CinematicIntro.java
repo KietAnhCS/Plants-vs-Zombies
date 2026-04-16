@@ -95,7 +95,7 @@ public class CinematicIntro extends World
         
     };
     
-    public SeedPacket[] bank = {new SunflowerPacket(), new PeashooterPacket(), new WalnutPacket(), new TorchwoodPacket(), new PotatoPacket(), new RepeaterPacket(), new LilypadPacket(), new BonkchoyPacket(), new TwinSunflowerPacket(), new CactusPacket()};
+    public SeedPacket[] bank = {new SunflowerPacket(), new TwinSunflowerPacket(), new PeashooterPacket(), new WalnutPacket(), new TorchwoodPacket(), new PotatoPacket(), new RepeaterPacket(), new LilypadPacket(), new BonkchoyPacket(), new CactusPacket()};
     public SeedBank seedbank = new SeedBank(bank);   
     public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 8, 18);
 

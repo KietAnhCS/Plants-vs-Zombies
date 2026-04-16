@@ -106,7 +106,7 @@ public class WaveManager extends Actor
                 int rowIndex = i % rows; 
                 int wait = i / rows;
                 int offset = xOffset + wait * 20;
-                int targetY = rowIndex * board.ySpacing + board.yOffset;
+                int targetY = rowIndex * board.ySpacing + board.yOffset - 20;
                 
                 PlayScene.addObject(waveData[i], offset, targetY);
                 zombieRow.get(rowIndex).add(waveData[i]);
