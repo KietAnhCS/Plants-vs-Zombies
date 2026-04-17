@@ -8,7 +8,7 @@ public class TorchwoodPacket extends SeedPacket
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
     public TorchwoodPacket() {
-        super(8000L, true, 75, "firewoodtest");
+        super(8L, true, 75, "firewoodtest");
         
     }
     

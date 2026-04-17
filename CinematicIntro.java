@@ -18,7 +18,7 @@ public class CinematicIntro extends World
     
     public Zombie[][] level1 = 
     {
-        {new BossZombie(), new BossZombie()},
+        {new BasicZombie(), new BasicZombie()},
         {new BasicZombie(), new BasicZombie()},
         {new BasicZombie(), new BasicZombie()},
         {
