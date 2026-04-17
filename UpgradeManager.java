@@ -11,6 +11,9 @@ public class UpgradeManager {
         if (handPlant instanceof Repeater && boardPlant instanceof Repeater) {
             return true;
         }
+        if (handPlant instanceof Sunflower && boardPlant instanceof Sunflower) {
+            return true;
+        }
         
         return false;
     }
@@ -22,6 +25,10 @@ public class UpgradeManager {
         if (handPlant instanceof Repeater && boardPlant instanceof Repeater) {
             return new GatlingPea();
         }
+        if (handPlant instanceof Sunflower && boardPlant instanceof Sunflower) {
+            return new TwinSunflower();
+        }
+        
         return null;
     }
     

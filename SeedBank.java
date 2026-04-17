@@ -6,55 +6,76 @@ public class SeedBank extends Actor
     public static final int x1 = 252; 
     public static final int x2 = 994;
     public static final int y1 = 81;
-
-    private PlayScene PlayScene;
+    
+    private PlayScene playScene;
     public SunCounter sunCounter = new SunCounter();
     private SeedPacket[] bank;
     private SeedPacket selectedPacket = null;
     private TransparentObject ghostImage = null;
+
+    private final int START_X = 387;
+    private final int START_Y = 761;
+    private final int SPACING_X = 128;
 
     public SeedBank(SeedPacket[] bank) {
         this.bank = bank;
     }
 
     public void act() {
-        if (PlayScene == null) {
-            PlayScene = (PlayScene)getWorld();
-            if (PlayScene == null) return; 
+        if (playScene == null) {
+            playScene = (PlayScene)getWorld();
+            if (playScene == null) return; 
         }
         
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse != null) {
-            // Kiểm tra thông số từ đối tượng board cụ thể, KHÔNG dùng static
-            if (PlayScene.board != null && PlayScene.board.xSpacing > 0) {
+            if (playScene.board != null && playScene.board.xSpacing > 0) {
                 handleGhostImage(mouse);
                 handleMouseClick(mouse);
             }
         }
     }
 
+    public int getSun() {
+        return sunCounter.sun;
+    }
+
+    public void addSun(int amount) {
+        if (amount >= 0) sunCounter.addSun(amount);
+        else sunCounter.removeSun(Math.abs(amount));
+    }
+
+    public void updateBank(SeedPacket[] newBank) {
+        for (SeedPacket oldPacket : this.bank) {
+            if (oldPacket != null && oldPacket.getWorld() != null) {
+                getWorld().removeObject(oldPacket);
+            }
+        }
+        
+        this.bank = newBank;
+        
+        for (int i = 0; i < bank.length; i++) {
+            if (bank[i] != null) {
+                getWorld().addObject(bank[i], START_X + (i * SPACING_X), START_Y);
+            }
+        }
+    }
+
     private void handleGhostImage(MouseInfo mouse) {
         if (ghostImage != null && selectedPacket != null) {
-            // SỬA LỖI: Sử dụng double và Math.round để tính grid chính xác
-            double calcX = (double)(mouse.getX() - PlayScene.board.xOffset) / PlayScene.board.xSpacing;
-            double calcY = (double)(mouse.getY() - PlayScene.board.yOffset) / PlayScene.board.ySpacing;
+            double calcX = (double)(mouse.getX() - playScene.board.xOffset) / playScene.board.xSpacing;
+            double calcY = (double)(mouse.getY() - playScene.board.yOffset) / playScene.board.ySpacing;
             
             int gridX = (int)Math.round(calcX);
             int gridY = (int)Math.round(calcY);
 
             Plant p = selectedPacket.getPlant();
             
-            if (PlayScene.board.canPlace(gridX, gridY, p)) {
+            if (playScene.board.canPlace(gridX, gridY, p)) {
                 ghostImage.setTransparent(true); 
-                
-                // Tọa độ đặt cây phải lấy từ đối tượng board hiện tại
-                int posX = gridX * PlayScene.board.xSpacing + PlayScene.board.xOffset;
-                int posY = gridY * PlayScene.board.ySpacing + PlayScene.board.yOffset;
-
-                if (p.getClass().getSimpleName().equals("Lilypad")) {
-                    posY += 10; 
-                }
-                
+                int posX = gridX * playScene.board.xSpacing + playScene.board.xOffset;
+                int posY = gridY * playScene.board.ySpacing + playScene.board.yOffset;
+                if (p.getClass().getSimpleName().equals("Lilypad")) posY += 10; 
                 ghostImage.setLocation(posX, posY);
             } else {
                 ghostImage.setTransparent(false);
@@ -65,23 +86,23 @@ public class SeedBank extends Actor
 
     private void handleMouseClick(MouseInfo mouse) {
         if (Greenfoot.mouseClicked(null)) {
-            if (PlayScene.hitbox == null) return;
-            PlayScene.moveHitbox();
+            if (playScene.hitbox == null) return;
+            playScene.moveHitbox();
             
             if (selectedPacket != null && ghostImage != null) {
-                // SỬA LỖI: Đồng bộ logic tính toán grid với hàm hiển thị ghost image
-                double calcX = (double)(mouse.getX() - PlayScene.board.xOffset) / PlayScene.board.xSpacing;
-                double calcY = (double)(mouse.getY() - PlayScene.board.yOffset) / PlayScene.board.ySpacing;
+                double calcX = (double)(mouse.getX() - playScene.board.xOffset) / playScene.board.xSpacing;
+                double calcY = (double)(mouse.getY() - playScene.board.yOffset) / playScene.board.ySpacing;
                 
                 int gridX = (int)Math.round(calcX);
                 int gridY = (int)Math.round(calcY);
 
-                if (PlayScene.board.placePlant(gridX, gridY, selectedPacket.getPlant())) {
+                if (playScene.board.placePlant(gridX, gridY, selectedPacket.getPlant())) {
                     sunCounter.removeSun(selectedPacket.sunCost);
+                    selectedPacket.startRecharge(); 
+                    
                     getWorld().removeObject(ghostImage);
                     ghostImage = null;
                     
-                    selectedPacket.startRecharge();
                     selectedPacket.setSelected(false);
                     selectedPacket = null;
                     return; 
@@ -93,32 +114,15 @@ public class SeedBank extends Actor
         }
     }
 
-    private void cancelSelection() {
-        if (selectedPacket != null) {
-            if (ghostImage != null && ghostImage.getWorld() != null) {
-                getWorld().removeObject(ghostImage);
-            }
-            ghostImage = null;
-            selectedPacket.setSelected(false);
-            selectedPacket = null;
-        }
-    }
-
-    private boolean isClickingAnotherPacket() {
-        if (PlayScene.hitbox == null) return false;
-        List<Actor> touching = PlayScene.hitbox.getTouching();
-        for (Actor a : touching) {
-            if (a instanceof SeedPacket) return true;
-        }
-        return false;
-    }
-
     private void checkPacketSelection() {
-        if (PlayScene.hitbox == null) return;
-        List<Actor> touching = PlayScene.hitbox.getTouching();
+        if (playScene.hitbox == null) return;
+        List<Actor> touching = playScene.hitbox.getTouching();
         for (Actor a : touching) {
             if (a instanceof SeedPacket) {
                 SeedPacket clicked = (SeedPacket)a;
+                
+                if (clicked.isUsed && !clicked.name.toLowerCase().contains("lilypad")) return; 
+
                 if (selectedPacket == clicked) {
                     cancelSelection();
                 } else {
@@ -137,13 +141,32 @@ public class SeedBank extends Actor
         }
     }
 
+    private void cancelSelection() {
+        if (selectedPacket != null) {
+            if (ghostImage != null && ghostImage.getWorld() != null) {
+                getWorld().removeObject(ghostImage);
+            }
+            ghostImage = null;
+            selectedPacket.setSelected(false);
+            selectedPacket = null;
+        }
+    }
+
+    private boolean isClickingAnotherPacket() {
+        List<Actor> touching = playScene.hitbox.getTouching();
+        for (Actor a : touching) {
+            if (a instanceof SeedPacket) return true;
+        }
+        return false;
+    }
+
     @Override
     public void addedToWorld(World world) {
-        PlayScene = (PlayScene)world;
-        PlayScene.addObject(sunCounter, 67, 50);
+        playScene = (PlayScene)world;
+        playScene.addObject(sunCounter, 630, 705);
         for (int i = 0; i < bank.length; i++) {
             if (bank[i] != null) {
-                PlayScene.addObject(bank[i], 67, 120 + i * 50);
+                playScene.addObject(bank[i], START_X + (i * SPACING_X), START_Y);
             }
         }
         getImage().setTransparency(0);

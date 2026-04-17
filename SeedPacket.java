@@ -19,6 +19,8 @@ public class SeedPacket extends Actor
     private PlayScene PlayScene;
     private boolean doneRechargeTime = false;
 
+    public boolean isUsed = false; 
+
     public SeedPacket(long rechargeTime, boolean recharged, int sunCost, String name) {
         this.rechargeTime = rechargeTime;
         this.recharged = recharged;
@@ -35,24 +37,34 @@ public class SeedPacket extends Actor
     public void addedToWorld(World world) {
         PlayScene = (PlayScene)world;
         rechargeOverlay = new GreenfootImage(imageBright.getWidth(), imageBright.getHeight());
-        if (recharged) {
+        
+        
+        if (name.toLowerCase().contains("lilypad")) {
+            doneRechargeTime = false;
+            recharged = false;
+        } else {
             doneRechargeTime = true;
-            updateAppearance();
+            recharged = true;
         }
+        updateAppearance();
     }
 
     public void act() {
-        updateCooldown();
+        if (name.toLowerCase().contains("lilypad")) {
+            updateCooldown(); 
+        } else if (!isUsed) {
+            doneRechargeTime = true;
+            recharged = true;
+        }
         updateAppearance();
     }
 
     private void updateCooldown() {
         if (!doneRechargeTime) {
             deltaTime = System.currentTimeMillis() - lastFrame;
-            
             if (deltaTime >= rechargeTime) {
                 doneRechargeTime = true;
-                recharged = true;
+                recharged = true; // Cho phép chọn thẻ khi hồi xong
             }
         }
     }
@@ -60,8 +72,16 @@ public class SeedPacket extends Actor
     public void updateAppearance() {
         if (PlayScene == null || PlayScene.seedbank == null) return;
 
-        // Nếu đang hồi chiêu
-        if (!doneRechargeTime) {
+        
+        if (isUsed && !name.toLowerCase().contains("lilypad")) {
+            setImage(imageDark);
+            getImage().setTransparency(130);
+            recharged = false; 
+            return;
+        }
+
+        
+        if (!doneRechargeTime && name.toLowerCase().contains("lilypad")) {
             GreenfootImage tempImage = new GreenfootImage(imageDark);
             rechargeOverlay.clear();
             rechargeOverlay.setColor(new Color(0, 0, 0, 150)); 
@@ -71,41 +91,42 @@ public class SeedPacket extends Actor
             
             rechargeOverlay.fillRect(0, 0, tempImage.getWidth(), height);
             tempImage.drawImage(rechargeOverlay, 0, 0);
-            setImage(tempImage);
-            recharged = false;
-        } 
-        // Nếu đã hồi xong
-        else {
-            // SỬA LỖI Ở ĐÂY: Đổi suncounter thành sunCounter cho khớp với lớp SeedBank
-            int currentSun = PlayScene.seedbank.sunCounter.sun; 
 
+            setImage(tempImage);
+            recharged = false; 
+        } 
+        
+        else {
+            int currentSun = PlayScene.seedbank.sunCounter.sun; 
             if (currentSun < sunCost || selected) {
                 setImage(imageDark);
-                // Vẫn giữ trạng thái recharged = true nếu đủ tiền để SeedBank biết mà cho chọn
                 recharged = (currentSun >= sunCost); 
             } else {
                 setImage(imageBright);
+                getImage().setTransparency(255); 
                 recharged = true;
             }
         }
     }
 
-    public void startRecharge() {
-        lastFrame = System.currentTimeMillis();
-        doneRechargeTime = false;
-        recharged = false;
+        public void startRecharge() {
+        if (name.toLowerCase().contains("lilypad")) {
+            this.lastFrame = System.currentTimeMillis();
+            this.deltaTime = 0;
+            this.doneRechargeTime = false;
+            this.recharged = false; 
+            this.isUsed = false; 
+        } else {
+            this.isUsed = true; 
+            this.recharged = false;
+        }
+        updateAppearance();
     }
 
     public void setSelected(boolean bool) {
         this.selected = bool;
     }
 
-    public TransparentObject addImage() {
-        return null; 
-    }
-
-    public Plant getPlant() {
-        // Hàm này sẽ được override ở các lớp con
-        return null;
-    }
+    public TransparentObject addImage() { return null; }
+    public Plant getPlant() { return null; }
 }

@@ -16,21 +16,17 @@ public class clickShovel extends SmoothMover
         if (mouse != null) {
             setLocation(mouse.getX(), mouse.getY());
             
-            // KIỂM TRA THÔNG SỐ TỪ BOARD CỤ THỂ
             if (PlayScene.board == null || PlayScene.board.xSpacing == 0) return;
 
-            // SỬA LỖI: Dùng double và Math.round để xác định ô lưới chính xác
             double calcX = (double)(mouse.getX() - PlayScene.board.xOffset) / PlayScene.board.xSpacing;
             double calcY = (double)(mouse.getY() - PlayScene.board.yOffset) / PlayScene.board.ySpacing;
             
             int x = (int)Math.round(calcX);
             int y = (int)Math.round(calcY);
             
-            // Kiểm tra giới hạn hàng dựa trên currentRowCount của map hiện tại
             boolean isInsideGrid = (x >= 0 && x < 9 && y >= 0 && y < PlayScene.board.currentRowCount);
 
             if (isInsideGrid) {
-                // Lấy cây từ mảng Board
                 Plant current = PlayScene.board.Board[y][x]; 
                 if (current == null) {
                     current = PlayScene.board.WaterBoard[y][x];
@@ -40,8 +36,15 @@ public class clickShovel extends SmoothMover
 
                 if (Greenfoot.mouseClicked(null)) {
                     if (current != null) {
+                        // Xóa cây khỏi mảng logic và thế giới
                         PlayScene.board.removePlant(x, y); 
-                        AudioPlayer.play(80, "plant.mp3"); // Âm thanh khi nhổ cây
+                        
+                        // ĐỀN BÙ 30 MẶT TRỜI
+                        if (PlayScene.seedbank != null) {
+                            PlayScene.seedbank.addSun(30);
+                        }
+                        
+                        AudioPlayer.play(80, "plant.mp3"); 
                     } else {
                         AudioPlayer.play(80, "tap.mp3");
                     }

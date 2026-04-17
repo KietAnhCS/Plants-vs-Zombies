@@ -67,18 +67,18 @@ public class CinematicIntro extends World
         {new BasicZombie(), new BasicZombie()},
         {new BasicZombie(), new BasicZombie()},
         {
-            new Conehead(), new Conehead(), new Conehead(),
-            new Conehead(), new Conehead(), new Conehead(),
-            new Conehead(), new Conehead(), new Conehead(),
-            new Conehead(), new Conehead(), new Conehead(),
-            new Conehead(), new Conehead(), new Conehead()
+            new Conehead(),
+            new Conehead(),
+            new Conehead(),
+            new Conehead(),
+            new Conehead()
         },
         {
-            new Buckethead(), new Brickhead(), new Conehead(),
-            new Buckethead(), new Conehead(), new Conehead(),
-            new Conehead(), new Conehead(), new Conehead(),
-            new Buckethead(), new Brickhead(), new Conehead(),
-            new Conehead(), new Conehead(), new Brickhead()
+            new Buckethead(),
+            new Buckethead(),
+            new Conehead(),
+            new Buckethead(),
+            new Conehead()
         },
         {new BasicZombie(), new BasicZombie()},
         {new Conehead(), new Conehead()}, 
@@ -95,13 +95,13 @@ public class CinematicIntro extends World
         
     };
     
-    public SeedPacket[] bank = {new SunflowerPacket(), new TwinSunflowerPacket(), new PeashooterPacket(), new WalnutPacket(), new TorchwoodPacket(), new PotatoPacket(), new RepeaterPacket(), new LilypadPacket(), new BonkchoyPacket(), new CactusPacket()};
+    public SeedPacket[] bank = {new SunflowerPacket(),new SunflowerPacket(),new SunflowerPacket(),new PeashooterPacket(), new PeashooterPacket()};
     public SeedBank seedbank = new SeedBank(bank);   
     public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 8, 18);
 
     public CinematicIntro()
     {    
-        super(1111, 602, 1, false); 
+        super(1111, 808, 1, false); 
         getBackground().drawImage(backgroundMap, 0, 0);
         
         addObject(new Basic(), 1176, 227);
@@ -109,6 +109,7 @@ public class CinematicIntro extends World
         addObject(new Basic(), 1129, 227);
         addObject(new Basic(), 1162, 325);
         addObject(new IdleCone(), 1183, 396);
+         
     
         CYS.setVolume(70);
         daveVoice.setVolume(70);

@@ -1,45 +1,34 @@
 import greenfoot.*; 
 import java.util.*;
 
-public class PlayScene extends World
-{    
+public class PlayScene extends World {    
     private boolean isPlaying = false;
     public boolean lose = false;
     public boolean loseOnce = false;
     public boolean winOnce = false;
-    
-    
     private boolean isWaterMap = true; 
     
-    
     public Board board = new Board();
-    
     public GreenfootSound Grasswalk = new GreenfootSound("intro3.mp3");
+    
     public GreenfootSound CYS;
     public World restartWorld;
     public FallingObject winPlant;
     
-    
     public Zombie n = null;
     public Zombie[][] level1 = {
-        {null, new BasicZombie(), null, null},
-        {n},
-        {new BasicZombie(), null, null, null, null}, 
-        {n},
-        {null, new BasicZombie(), null, new BasicZombie()},
-        {new BasicZombie()},
-        {null, null, new Conehead(), null, null},
-        {n},
-        {new BasicZombie(), new Conehead(), new BasicZombie(), new BasicZombie(), new BasicZombie(), n, new BasicZombie()}, 
-        {n},
+        {null, new BasicZombie(), null, null}, {n},
+        {new BasicZombie(), null, null, null, null}, {n},
+        {null, new BasicZombie(), null, new BasicZombie()}, {new BasicZombie()},
+        {null, null, new Conehead(), null, null}, {n},
+        {new BasicZombie(), new Conehead(), new BasicZombie(), new BasicZombie(), new BasicZombie(), n, new BasicZombie()}, {n},
         {new Conehead(), n, null, new BasicZombie(), null, null, new BasicZombie()},
         {new BasicZombie(), n, n, new BasicZombie(), null, new BasicZombie(), new BasicZombie()},
         {new Buckethead(), null, null, null, null},
         {n, new BasicZombie(), n, n, new Conehead(), n, n, new BasicZombie()},
         {null, new BasicZombie(), null, null, new Conehead(), n, n, new BasicZombie()},
         {new BasicZombie(), new BasicZombie(), new BasicZombie(), null, new Conehead()}, 
-        {null, null, new BasicZombie(), null, null},
-        {n},
+        {null, null, new BasicZombie(), null, null}, {n},
         {new Conehead(), new Conehead(), new Conehead(), new BasicZombie(), new BasicZombie(), new Buckethead(), null, new BasicZombie(), new Conehead(), new Buckethead()}
     };
 
@@ -50,19 +39,37 @@ public class PlayScene extends World
         new CactusPacket(), 
         new TwinSunflowerPacket()
     };
+
+    private class RarityEntry {
+        Class packetClass;
+        int weight;
+        RarityEntry(Class packetClass, int weight) {
+            this.packetClass = packetClass;
+            this.weight = weight;
+        }
+    }
+
+    private RarityEntry[] weightedPool = {
+        new RarityEntry(SunflowerPacket.class, 5),
+        new RarityEntry(PeashooterPacket.class, 6),
+        new RarityEntry(WalnutPacket.class, 3),
+        new RarityEntry(CactusPacket.class, 10),
+        new RarityEntry(TwinSunflowerPacket.class, 2),
+        new RarityEntry(RepeaterPacket.class, 1),
+        new RarityEntry(BonkchoyPacket.class, 5),
+        new RarityEntry(TorchwoodPacket.class, 8)
+    };
     
     public SeedBank seedbank = new SeedBank(bank);   
     public Hitbox hitbox = new Hitbox();
     public Shovel shovel = new Shovel();
     public PlantFood plantfood = new PlantFood();
-    
-    
+    public RollButton rollbutton = new RollButton();
+    public LilypadPacket lilypad = new LilypadPacket();
     public WaveManager level;
 
-    
-    public PlayScene(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater)
-    {    
-        super(1111, 602, 1, false); 
+    public PlayScene(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater) {    
+        super(1111, 808, 1, false); 
         this.isWaterMap = isWater;
         this.CYS = CYS;
         this.seedbank = seedbank;
@@ -72,58 +79,76 @@ public class PlayScene extends World
         
         Greenfoot.setSpeed(50);
         
-        
         if(isWaterMap) {
             setBackground("mapwater.png");
         } else {
             setBackground("lawn367.png");
         }
-        
-        
+        Hero myHero = new Hero();
+        addObject(myHero, 500, 400);
         addObject(seedbank, 0, 0);
         addObject(board, 0, 0);
         board.setupLayout(isWater);
         addObject(hitbox, 0, 0);
         addObject(shovel, 1052, 537);
         addObject(plantfood, 125, 550);
+        addObject(rollbutton, 260, 783);
+        addObject(lilypad, 70, 400);
         
         prepareLawnmowers();
 
-        
         setPaintOrder(
             Setting.class, Transition.class, AHugeWave.class, ReadySetPlant.class, 
             SunCounter.class, clickShovel.class, Shovel.class, Lawnmower.class, 
             TransparentObject.class, SeedPacket.class, FallingSun.class, 
             Sun.class, Dirt.class, Projectile.class, FallingObject.class, 
-            Zombie.class, fallingZombie.class, Explosion.class, Plant.class
+            Zombie.class, fallingZombie.class, Explosion.class, Plant.class, Board.class
         );
     }
 
     public void act() {
         checkEscape();
-        
-        
         if (!getObjects(Setting.class).isEmpty()) {
             moveHitbox(); 
             return; 
         }
-        
         moveHitbox(); 
-
-        
         if (!isPlaying) {
             addObject(level, 0, 0);
-            
             addObject(new DelayAudio(Grasswalk, CYS, 70, true, 2000L), 0, 0);
             level.startLevel();
-            isPlaying = true;            
+            isPlaying = true;                
         }
-
-        
         handleWinLoss();
-        
-        
         checkDebugKeys();
+    }
+    
+    public void rollPackets() {
+        int currentSuns = seedbank.getSun(); 
+        if (currentSuns >= 25) {
+            seedbank.addSun(-25); 
+            SeedPacket[] newBank = new SeedPacket[5]; 
+            int totalWeight = 0;
+            for (RarityEntry entry : weightedPool) totalWeight += entry.weight;
+
+            for (int i = 0; i < 5; i++) {
+                int randomNumber = Greenfoot.getRandomNumber(totalWeight);
+                int cursor = 0;
+                for (RarityEntry entry : weightedPool) {
+                    cursor += entry.weight;
+                    if (randomNumber < cursor) {
+                        try {
+                            newBank[i] = (SeedPacket) entry.packetClass.getDeclaredConstructor().newInstance();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    }
+                }
+            }
+            this.bank = newBank;
+            seedbank.updateBank(newBank); 
+        }
     }
 
     private void handleWinLoss() {
@@ -143,34 +168,23 @@ public class PlayScene extends World
     }
 
     private void prepareLawnmowers() {
-    int startX = 220; 
-    
-    // 1. Xác định số hàng dựa trên map nước hay map thường
-    int rowCount = isWaterMap ? 6 : 5; 
-    
-    // 2. Vòng lặp tạo máy cắt cỏ đúng số hàng
-    for (int i = 0; i < rowCount; i++) {
-        // Tọa độ Y của máy cắt cỏ phải khớp với tọa độ Y của cây/zombie ở mỗi hàng
-        // Công thức: yOffset (bắt đầu hàng 1) + (thứ tự hàng * khoảng cách hàng)
-        int yPos = board.yOffset + (i * board.ySpacing);
-        
-        addObject(new Lawnmower(), startX, yPos); 
+        int startX = 220; 
+        int rowCount = isWaterMap ? 6 : 5; 
+        for (int i = 0; i < rowCount; i++) {
+            int yPos = board.yOffset + (i * board.ySpacing);
+            addObject(new Lawnmower(), startX, yPos); 
+        }
     }
-}
 
-    
     public boolean tryPlacePlant(int gridX, int gridY, Plant newPlant) {
         if (newPlant == null) return false;
-        
         return board.placePlant(gridX, gridY, newPlant);
     }
 
     public boolean hasLost() {
         List<Zombie> zombies = getObjects(Zombie.class);
         for (Zombie i : zombies) {
-            if (i.getWorld() != null && i.getX() < 125) {
-                return true;
-            }
+            if (i.getWorld() != null && i.getX() < 125) return true;
         }
         return false;
     }
@@ -181,9 +195,7 @@ public class PlayScene extends World
 
     public void moveHitbox() {
         MouseInfo mouse = Greenfoot.getMouseInfo();
-        if (mouse != null) {
-            hitbox.setLocation(mouse.getX(), mouse.getY());
-        }
+        if (mouse != null) hitbox.setLocation(mouse.getX(), mouse.getY());
     }
 
     private void checkEscape() {
@@ -203,16 +215,8 @@ public class PlayScene extends World
     private void checkDebugKeys() {
         String key = Greenfoot.getKey();
         if (key == null) return;
-        
         if (key.equals("1")) { CYS.stop(); Grasswalk.stop(); Greenfoot.setWorld(new CinematicIntro()); }
-        if (key.equals("2")) { 
-            CYS.stop(); Grasswalk.stop(); 
-        
-        }
-        if (key.equals("3")) { 
-            CYS.stop(); Grasswalk.stop(); 
-            
-        }
+        if (key.equals("r")) rollPackets(); 
     }
 
     public void finishLevel() {
@@ -222,7 +226,7 @@ public class PlayScene extends World
 
     public void started() {
         if (!Grasswalk.isPlaying()) Grasswalk.playLoop();
-        Greenfoot.setSpeed(50);        
+        Greenfoot.setSpeed(50);         
     }
 
     public void stopped() {

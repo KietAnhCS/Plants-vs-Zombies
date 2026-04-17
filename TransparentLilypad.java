@@ -1,17 +1,7 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*; 
 
-/**
- * Write a description of class TransparentCactus here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class TransparentLilypad extends TransparentObject
 {
-    /**
-     * Act - do whatever the TransparentPeashooter wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
     public TransparentLilypad(boolean bool) {
         if (bool) {
             getImage().setTransparency(125);
@@ -21,6 +11,6 @@ public class TransparentLilypad extends TransparentObject
     }
     public void act()
     {
-        // Add your action code here.
+
     }
 }
