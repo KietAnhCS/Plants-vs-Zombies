@@ -1,8 +1,4 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-
-/**
- * Class Start đã được scale 1.5x và tối ưu logic.
- */
+import greenfoot.*;  
 public class Start extends Button
 {
     public boolean clicked = false;

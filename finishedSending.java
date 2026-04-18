@@ -1,12 +1,5 @@
 
 import greenfoot.*;
-
-/**
- * Write a description of class Timer2 here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 class finishedSending extends Actor
 {
     public long deltaTime;

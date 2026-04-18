@@ -81,7 +81,7 @@ public class animatedObject extends SmoothMover
             frame = 0;
             setImage(sprite[frame]);
         } else {
-            //do nothing
+            
         }
         if (!sprite.equals(previousSprites)) {
             if (frame < sprite.length) {

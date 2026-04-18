@@ -9,7 +9,7 @@ public class BonkchoyPacket extends SeedPacket
     }
     
     public TransparentObject addImage() {
-        TransparentObject temp = new TransparentPeashooter(false);
+        TransparentObject temp = new TransparentBonkchoy(false);
         ((PlayScene)getWorld()).addObject(temp, Greenfoot.getMouseInfo().getX(), Greenfoot.getMouseInfo().getY());
         return temp;
     }

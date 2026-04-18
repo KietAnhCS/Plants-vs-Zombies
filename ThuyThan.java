@@ -4,7 +4,7 @@ import java.util.List;
 public class ThuyThan extends Actor {
     private int targetX, targetY;
     private boolean isMoving = false;
-    private int speed = 5; 
+    private int speed = 10; 
     private int pickupRange = 60; 
 
     private GreenfootImage imageRight;
@@ -65,19 +65,18 @@ public class ThuyThan extends Actor {
         private void autoCollectSun() {
         List<Sun> suns = getObjectsInRange(pickupRange, Sun.class);
         for (Sun s : suns) {
-            // Chỉ xử lý nếu mặt trời CÒN TRONG THẾ GIỚI và CHƯA BỊ NHẶT
+           
             if (s.getWorld() != null && !s.isPickedUp()) {
                 
-                // 1. Khóa mặt trời lại ngay lập tức
+                
                 s.collectByHero(); 
                 
-                // 2. Cộng tiền dựa trên giá trị của viên mặt trời đó (25 hoặc 125)
+                
                 PlayScene world = (PlayScene) getWorld();
                 if (world.seedbank != null && world.seedbank.sunCounter != null) {
                     world.seedbank.sunCounter.addSun(s.sunValue);
                 }
                 
-                // 3. Âm thanh
                 AudioPlayer.play(80, "points.mp3");
             }
         }

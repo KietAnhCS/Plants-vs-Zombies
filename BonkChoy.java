@@ -54,7 +54,7 @@ public class BonkChoy extends Plant {
     }
 
     private void handleNormalCombat() {
-        // PVZ Bonk Choy gốc chỉ đấm 1 hướng hoặc ưu tiên, ở đây ta tối giản theo code cũ của bạn
+        
         List<Zombie> targets = getObjectsAtOffset(40, 0, Zombie.class);
         boolean isKO = (punchCount >= 3);
 

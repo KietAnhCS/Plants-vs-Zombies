@@ -16,7 +16,6 @@ public class FallingSun extends FallingObject
         if (getWorld() == null) return;
         animate(sunSprites, 200, true);
 
-        // CHẶN ĐỨNG: Chỉ khi chạm Hero mới cho collect
         if (!beenClicked) {
             if (isTouching(ThuyThan.class)) {
                 collectSun();
@@ -30,13 +29,12 @@ public class FallingSun extends FallingObject
         checkRemoval();
     }
 
-    // Hàm này để Hero gọi khi đi ngang qua (hoặc dùng isTouching ở trên)
     public void collectSun() {
         if (beenClicked) return;
         beenClicked = true;
         AudioPlayer.play(90, "points.mp3");
         if (PlayScene != null && PlayScene.seedbank != null) {
-            PlayScene.seedbank.sunCounter.addSun(25);
+            PlayScene.seedbank.sunCounter.addSun(10);
         }
     }
 

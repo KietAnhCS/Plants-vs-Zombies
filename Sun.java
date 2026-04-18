@@ -5,7 +5,7 @@ public class Sun extends FallingObject {
     public int sunValue = 25; 
     private PlayScene PlayScene;
     private GreenfootImage[] sunSprites;
-    private boolean beenClicked = false; // Cái khóa nằm ở đây
+    private boolean beenClicked = false; 
     private long lifetimeStart; 
 
     public Sun() {

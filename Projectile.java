@@ -8,7 +8,7 @@ public class Projectile extends animatedObject {
     private boolean foundTarget = false;
     private Zombie hitZombie;
     private int frameCount;
-    private int yPos; // Đây là CHỈ SỐ HÀNG (0, 1, 2, 3, 4)
+    private int yPos; 
     private int damage;
     private GreenfootImage[] image;
 
@@ -24,31 +24,27 @@ public class Projectile extends animatedObject {
     }
 
     public void act() {
-        // 1. Kiểm tra an toàn thế giới
+        
         PlayScene world = (PlayScene) getWorld();
         if (world == null) return;
 
-        // 2. Xử lý khi đạn đã trúng (hiệu ứng nổ)
         if (hit) {
             handleHitAnimation(world);
             return;
         }
 
-        // 3. Di chuyển
         move(speed);
 
-        // 4. Kiểm tra biên hoặc biến mất
         if (isAtEdge()) {
             world.removeObject(this);
             return;
         }
 
-        // 5. Kiểm tra va chạm với Zombie
         checkCollision(world);
     }
 
     private void handleHitAnimation(PlayScene world) {
-        // Nếu frame chạy hết mảng ảnh thì xóa đạn
+        
         if (frame >= frameCount - 1) {
             world.removeObject(this);
         } else {
@@ -57,11 +53,9 @@ public class Projectile extends animatedObject {
     }
 
     private void checkCollision(PlayScene world) {
-        // Kiểm tra tính hợp lệ của hệ thống hàng lối
+        
         if (world.level == null || world.level.zombieRow == null) return;
 
-        // CHỐT CHẶN: Nếu yPos > 10 (chắc chắn là tọa độ Y chứ không phải hàng) 
-        // thì ta không check va chạm để tránh crash IndexOutOfBounds
         if (yPos < 0 || yPos >= world.level.zombieRow.size()) {
             return; 
         }
@@ -69,24 +63,21 @@ public class Projectile extends animatedObject {
         List<Zombie> row = world.level.zombieRow.get(yPos);
         if (row == null || row.isEmpty()) return;
 
-        // Duyệt danh sách zombie (dùng bản sao để tránh lỗi ConcurrentModification)
         for (Zombie z : new ArrayList<>(row)) {
             if (getWorld() == null) return;
             if (z == null || z.getWorld() == null) continue;
 
-            // Kiểm tra va chạm theo khoảng cách X
             if (Math.abs(z.getX() - getX()) < 30) {
                 if (!hit) {
                     z.hit(damage);
                     this.hit = true;
-                    this.frame = 0; // Bắt đầu chạy animation nổ
+                    this.frame = 0;
                 }
                 break;
             }
         }
     }
 
-    // Getter cực kỳ quan trọng để Torchwood gọi
     public int getYPos() {
         return this.yPos;
     }

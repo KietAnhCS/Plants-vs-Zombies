@@ -14,7 +14,7 @@ public class TwinSunflower extends Plant
     }
 
     public void update() {
-        currentFrame = System.nanoTime(); // Cập nhật thời gian thực
+        currentFrame = System.nanoTime();
         produceSun();
         animate(idle, 150, true);
     }
@@ -34,8 +34,8 @@ public class TwinSunflower extends Plant
             hitFlash(idle, "twinsunflower");
             test = true;
             
-            // Tạo ra 2 mặt trời, mỗi cái trị giá 125 điểm
-            PlayScene.addObject(new Sun(75), getX() + 20, getY() - 10);
+            
+            PlayScene.addObject(new Sun(65), getX() + 20, getY() - 10);
             PlayScene.addObject(new Sun(25), getX() - 20, getY() - 10);
         }
     }

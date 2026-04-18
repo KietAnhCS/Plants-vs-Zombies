@@ -1,7 +1,10 @@
 import greenfoot.*; 
 import java.util.*;
 
-public class PlayScene extends World {    
+public class PlayScene extends World {  
+    
+    private int rollLevel = 1;
+    
     private boolean isPlaying = false;
     public boolean lose = false;
     public boolean loseOnce = false;
@@ -48,16 +51,19 @@ public class PlayScene extends World {
             this.weight = weight;
         }
     }
-
+    
     private RarityEntry[] weightedPool = {
-        new RarityEntry(SunflowerPacket.class, 5),
-        new RarityEntry(PeashooterPacket.class, 6),
-        new RarityEntry(WalnutPacket.class, 3),
+        new RarityEntry(SunflowerPacket.class, -5),
+        new RarityEntry(PeashooterPacket.class, 3),
+        new RarityEntry(WalnutPacket.class, 2),
         new RarityEntry(CactusPacket.class, 10),
-        new RarityEntry(TwinSunflowerPacket.class, 2),
+        new RarityEntry(TwinSunflowerPacket.class, -6),
         new RarityEntry(RepeaterPacket.class, 1),
-        new RarityEntry(BonkchoyPacket.class, 5),
-        new RarityEntry(TorchwoodPacket.class, 8)
+        new RarityEntry(BonkchoyPacket.class, 2),
+        new RarityEntry(TorchwoodPacket.class, 1),
+        new RarityEntry(GatlingPeaPacket.class, 1),
+        new RarityEntry(PotatoPacket.class, 10) 
+    
     };
     
     public SeedBank seedbank = new SeedBank(bank);   
@@ -65,8 +71,11 @@ public class PlayScene extends World {
     public Shovel shovel = new Shovel();
     public PlantFood plantfood = new PlantFood();
     public RollButton rollbutton = new RollButton();
+    public RupButton rupbutton = new RupButton();
     public LilypadPacket lilypad = new LilypadPacket();
     public WaveManager level;
+    
+    
 
     public PlayScene(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater) {    
         super(1111, 698, 1, false); 
@@ -93,13 +102,14 @@ public class PlayScene extends World {
         addObject(shovel, 1052, 537);
         addObject(plantfood, 125, 550);
         addObject(rollbutton, 277, 679);
+        addObject(rupbutton, 278, 638);
         addObject(lilypad, 70, 400);
         
         prepareLawnmowers();
 
         setPaintOrder(
             Setting.class, Transition.class, AHugeWave.class, ReadySetPlant.class, 
-            SunCounter.class, clickShovel.class, Shovel.class, Lawnmower.class, 
+            SunCounter.class, ThuyThan.class, clickShovel.class, Shovel.class, Lawnmower.class, 
             TransparentObject.class, SeedPacket.class, FallingSun.class, 
             Sun.class, Dirt.class, Projectile.class, FallingObject.class, 
             Zombie.class, fallingZombie.class, Explosion.class, Plant.class, Board.class
@@ -148,6 +158,28 @@ public class PlayScene extends World {
             }
             this.bank = newBank;
             seedbank.updateBank(newBank); 
+        }
+    }
+    
+    public void upgradeProbabilities() {
+        if (rollLevel < 9) { 
+            rollLevel++;
+            
+            
+            for (RarityEntry entry : weightedPool) {
+                
+                if (entry.packetClass == CactusPacket.class || entry.packetClass == PotatoPacket.class ) {
+                    if (entry.weight > 1) entry.weight -= 1; 
+                }
+                
+                if (entry.packetClass == TwinSunflowerPacket.class || entry.packetClass == RepeaterPacket.class ||entry.packetClass == SunflowerPacket.class ||entry.packetClass == WalnutPacket.class ||entry.packetClass == BonkchoyPacket.class ) {
+                    entry.weight += 2;
+                }
+                if (entry.packetClass == GatlingPeaPacket.class || entry.packetClass == TorchwoodPacket.class) {
+                    entry.weight += 1;
+                }
+            }
+            
         }
     }
 

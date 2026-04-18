@@ -1,14 +1,11 @@
 #BlueJ class context
 comment0.target=Torchwood
-comment0.text=\r\n\ Torchwood\:\ Bi\u1EBFn\ Pea\ th\u01B0\u1EDDng\ th\u00E0nh\ FirePea\ khi\ \u0111i\ xuy\u00EAn\ qua.\r\n
 comment1.params=
 comment1.target=Torchwood()
 comment2.params=
 comment2.target=void\ update()
-comment2.text=\r\n\ Update\ \u0111\u01B0\u1EE3c\ g\u1ECDi\ li\u00EAn\ t\u1EE5c\ t\u1EEB\ l\u1EDBp\ cha\ ho\u1EB7c\ ph\u01B0\u01A1ng\ th\u1EE9c\ act\r\n
 comment3.params=
 comment3.target=void\ checkAndUpgradePea()
-comment3.text=\r\n\ Ki\u1EC3m\ tra\ xem\ c\u00F3\ vi\u00EAn\ \u0111\u1EA1n\ th\u01B0\u1EDDng\ n\u00E0o\ ch\u1EA1m\ v\u00E0o\ kh\u00F4ng\r\n
 comment4.params=dmg
 comment4.target=void\ hit(int)
 numComments=5

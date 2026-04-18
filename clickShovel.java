@@ -36,10 +36,9 @@ public class clickShovel extends SmoothMover
 
                 if (Greenfoot.mouseClicked(null)) {
                     if (current != null) {
-                        // Xóa cây khỏi mảng logic và thế giới
+                        
                         PlayScene.board.removePlant(x, y); 
                         
-                        // ĐỀN BÙ 30 MẶT TRỜI
                         if (PlayScene.seedbank != null) {
                             PlayScene.seedbank.addSun(30);
                         }

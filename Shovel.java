@@ -1,17 +1,6 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-
-/**
- * Write a description of class Shovel here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
+import greenfoot.*;  
 public class Shovel extends SmoothMover
 {
-    /**
-     * Act - do whatever the Shovel wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
     public boolean selected = false;
     
     public void addedToWorld(World world) {
@@ -35,7 +24,7 @@ public class Shovel extends SmoothMover
                 }
             }
         }
-        // Add your action code here.
+        
     }
     public void setSelected(boolean bool) {
         if (!bool) {

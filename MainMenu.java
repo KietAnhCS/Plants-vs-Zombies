@@ -7,7 +7,7 @@ public class MainMenu extends World
     public MainMenu(GreenfootSound menutheme)
     {    
         
-        super(803, 602, 1, false); 
+        super(1111, 705, 1, false); 
         addObject(hitbox,0,0);
         addObject(new Start(), 555, 198);
         addObject(new More(), 532, 316);

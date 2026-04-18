@@ -18,24 +18,8 @@ public class CinematicIntro extends World
     
     public Zombie[][] level1 = 
     {
-        {new BasicZombie(), new BasicZombie()},
-        {new BasicZombie(), new BasicZombie()},
-        {new BasicZombie(), new BasicZombie()},
-        {
-            new Conehead(), new Conehead(), new Conehead(),
-            new Conehead(), new Conehead(), new Conehead(),
-            new Conehead(), new Conehead(), new Conehead(),
-            new Conehead(), new Conehead(), new Conehead(),
-            new Conehead(), new Conehead(), new Conehead()
-        },
-        {
-            new Buckethead(), new Brickhead(), new Conehead(),
-            new Buckethead(), new Conehead(), new Conehead(),
-            new Conehead(), new Conehead(), new Conehead(),
-            new Buckethead(), new Brickhead(), new Conehead(),
-            new Conehead(), new Conehead(), new Brickhead()
-        },
-        {new BasicZombie(), new BasicZombie()},
+
+        
         {new Conehead(), new Conehead()}, 
         {null, new BasicZombie(), null, null},
         {n},

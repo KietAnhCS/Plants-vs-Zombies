@@ -9,7 +9,7 @@ public class RollButton extends Actor
     }
 
     public void act() {
-        // Kiểm tra nếu người dùng click vào nút
+        
         if (Greenfoot.mouseClicked(this)) {
             World world = getWorld();
             if (world instanceof PlayScene) {

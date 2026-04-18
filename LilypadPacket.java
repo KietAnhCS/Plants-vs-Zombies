@@ -1,11 +1,5 @@
-import greenfoot.*; 
+import greenfoot.*;
 
-/**
- * Write a description of class CactusPacket here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class LilypadPacket extends SeedPacket
 {
     public LilypadPacket() {

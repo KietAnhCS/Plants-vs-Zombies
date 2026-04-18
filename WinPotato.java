@@ -1,17 +1,6 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-
-/**
- * Write a description of class MoneyBag here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
+import greenfoot.*; 
 public class WinPotato extends FallingObject
 {
-    /**
-     * Act - do whatever the MoneyBag wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
     public GreenfootImage[] sprites = importSprites("spotatopacket", 2);
     public boolean move = false;    
     public boolean addTrans = false;

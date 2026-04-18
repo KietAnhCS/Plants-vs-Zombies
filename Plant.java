@@ -26,7 +26,6 @@ public class Plant extends animatedObject
                 PlayScene = (PlayScene)getWorld();
                 AudioPlayer.play(80,"gulp.mp3");
                 
-                // Gọi hàm xóa cây với vị trí chính xác
                 PlayScene.board.removePlant(getXPos(), getYPos());
                 PlayScene.removeObject(this);
                 return;
@@ -41,14 +40,12 @@ public class Plant extends animatedObject
         this.hp = maxHp;                                           
     }
 
-    // SỬA LẠI HÀM LẤY VỊ TRÍ X
     public int getXPos() {
         if (PlayScene == null || PlayScene.board == null) return (getX() - 290) / 82;
         double calcX = (double)(getX() - PlayScene.board.xOffset) / PlayScene.board.xSpacing;
         return (int)Math.round(calcX);
     }   
 
-    // SỬA LẠI HÀM LẤY VỊ TRÍ Y
     public int getYPos() {
         if (PlayScene == null || PlayScene.board == null) return (getY() - 135) / 85;
         double calcY = (double)(getY() - PlayScene.board.yOffset) / PlayScene.board.ySpacing;

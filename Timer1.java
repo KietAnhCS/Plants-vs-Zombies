@@ -2,12 +2,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import greenfoot.*;
 
-/**
- * Write a description of class Timer1 here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 class Timer1 extends TimerTask
 {
     public GreenfootImage[] image;

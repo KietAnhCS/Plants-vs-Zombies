@@ -1,29 +1,19 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-
-/**
- * Torchwood: Biến Pea thường thành FirePea khi đi xuyên qua.
- */
+import greenfoot.*; 
 public class Torchwood extends Plant
 {
     private GreenfootImage[] idle;
     
     public Torchwood() {
         idle = importSprites("firewood", 5);
-        maxHp = 100; // Torchwood thường trâu hơn Sunflower một chút
+        maxHp = 100; 
         hp = maxHp;
     }
 
-    /**
-     * Update được gọi liên tục từ lớp cha hoặc phương thức act
-     */
     public void update() {
         animate(idle, 200, true);
-        checkAndUpgradePea(); // Logic biến đổi đạn
+        checkAndUpgradePea(); 
     }
 
-        /**
-         * Kiểm tra xem có viên đạn thường nào chạm vào không
-         */
         private void checkAndUpgradePea() {
         
         Pea p = (Pea) getOneIntersectingObject(Pea.class);

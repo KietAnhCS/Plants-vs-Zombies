@@ -6,11 +6,10 @@ public class Peashooter extends Plant
     private GreenfootImage[] shoot;
     private boolean shootOnce = false;
     private boolean shooting = false;
-    
-    // Logic cho Plant Food
+   
     private boolean isPoweredUp = false;
     private long powerUpStartTime;
-    private final long POWER_UP_DURATION = 3000L; // 3 giây
+    private final long POWER_UP_DURATION = 3000L;
     private long baseShootDelay = 1500L; 
     private long shootDelay = 1500L; 
 
@@ -64,7 +63,7 @@ public class Peashooter extends Plant
     }
 
     private void handleAnimationAndShooting() {
-        // Khi có lá, ép buộc trạng thái shooting để xả đạn liên tục
+        
         boolean activeShooting = shooting || isPoweredUp;
 
         if (!activeShooting) {
@@ -73,11 +72,11 @@ public class Peashooter extends Plant
         } else {
             deltaTime2 = (currentFrame - lastFrame2) / 1000000;
             if (deltaTime2 < shootDelay) {
-                // Nếu đang chờ nạp đạn
+               
                 if (!isPoweredUp) {
                     animate(idle, 1, true); 
                 } else {
-                    // Trong trạng thái Plant Food, cho animation mượt hơn không đứng yên
+                    
                     animate(shoot, 1, false); 
                 }
                 shootOnce = false;
@@ -87,7 +86,6 @@ public class Peashooter extends Plant
                     frame = 0; 
                 }
                 
-                // Bắn đạn
                 if (frame >= 1 && shootOnce) {
                     int myRow = getYPos();
                     if (getWorld() != null && myRow != -1) {
@@ -98,7 +96,6 @@ public class Peashooter extends Plant
                     }
                 }
                 
-                // Tăng tốc độ animation khi có lá (delay thấp hơn = nhanh hơn)
                 int animDelay = isPoweredUp ? 2 : 10;
                 animate(shoot, animDelay, false);
             }

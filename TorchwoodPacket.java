@@ -1,12 +1,8 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*;  
 
 
 public class TorchwoodPacket extends SeedPacket
 {
-    /**
-     * Act - do whatever the RepeaterPacket wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
     public TorchwoodPacket() {
         super(8L, true, 75, "firewoodtest");
         
