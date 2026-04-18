@@ -64,7 +64,7 @@ public class SeedPacket extends Actor
             deltaTime = System.currentTimeMillis() - lastFrame;
             if (deltaTime >= rechargeTime) {
                 doneRechargeTime = true;
-                recharged = true; // Cho phép chọn thẻ khi hồi xong
+                recharged = true; 
             }
         }
     }

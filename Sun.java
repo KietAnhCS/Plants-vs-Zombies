@@ -2,13 +2,19 @@ import greenfoot.*;
 import java.util.*;
 
 public class Sun extends FallingObject {
+    public int sunValue = 25; 
     private PlayScene PlayScene;
     private GreenfootImage[] sunSprites;
-    private boolean beenClicked = false;
+    private boolean beenClicked = false; // Cái khóa nằm ở đây
     private long lifetimeStart; 
 
     public Sun() {
+        this(25);
+    }
+
+    public Sun(int value) {
         super(-3.5, 0.15, Random.Int(-1, 1), 1, 800L); 
+        this.sunValue = value;
         sunSprites = importSprites("sun", 2);
     }
 
@@ -16,7 +22,6 @@ public class Sun extends FallingObject {
         if (getWorld() == null) return;
         animate(sunSprites, 200, true);
 
-        // CHỈ cho phép bay khi đã được Hero nhặt (beenClicked = true)
         if (!beenClicked) {
             handleAutoFadeOut();
             applyFallingPhysics();
@@ -27,7 +32,10 @@ public class Sun extends FallingObject {
         checkRemoval();
     }
 
-    // Hàm này bây giờ CHỈ được gọi từ class Hero
+    public boolean isPickedUp() {
+        return beenClicked;
+    }
+
     public void collectByHero() {
         if (beenClicked) return;
         beenClicked = true;

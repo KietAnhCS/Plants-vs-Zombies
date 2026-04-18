@@ -4,7 +4,7 @@ public class Preloader extends World
 {
     public Preloader()
     {    
-        super(1111, 602, 1, false); 
+        super(1111, 705, 1, false); 
         setBackground(new GreenfootImage("transition.png"));
         
         

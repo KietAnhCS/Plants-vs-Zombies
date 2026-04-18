@@ -3,9 +3,9 @@ import java.util.*;
 
 public class SeedBank extends Actor
 {
-    public static final int x1 = 252; 
-    public static final int x2 = 994;
-    public static final int y1 = 81;
+    public static final int x1 = 400; 
+    public static final int x2 = 666;
+    public static final int y1 = 32;
     
     private PlayScene playScene;
     public SunCounter sunCounter = new SunCounter();
@@ -13,9 +13,9 @@ public class SeedBank extends Actor
     private SeedPacket selectedPacket = null;
     private TransparentObject ghostImage = null;
 
-    private final int START_X = 387;
-    private final int START_Y = 761;
-    private final int SPACING_X = 128;
+    private final int START_X = 400;
+    private final int START_Y = 666;
+    private final int SPACING_X = 105;
 
     public SeedBank(SeedPacket[] bank) {
         this.bank = bank;
@@ -163,7 +163,7 @@ public class SeedBank extends Actor
     @Override
     public void addedToWorld(World world) {
         playScene = (PlayScene)world;
-        playScene.addObject(sunCounter, 630, 705);
+        playScene.addObject(sunCounter, 606, 616);
         for (int i = 0; i < bank.length; i++) {
             if (bank[i] != null) {
                 playScene.addObject(bank[i], START_X + (i * SPACING_X), START_Y);

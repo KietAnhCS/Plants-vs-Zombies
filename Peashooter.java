@@ -34,19 +34,19 @@ public class Peashooter extends Plant
         }
     }
 
-    // Hàm để clickPlantFood gọi vào
+    
     public void activatePlantFood() {
         this.isPoweredUp = true;
         this.powerUpStartTime = System.currentTimeMillis();
-        this.shootDelay = 60L; // Bắn siêu nhanh (0.15s một viên)
-        this.hp = maxHp; // Hồi máu như bản gốc
+        this.shootDelay = 300L; 
+        
     }
 
     @Override
     public void update() {
         if (getWorld() == null) return;
         
-        // Kiểm tra thời gian hết buff
+        
         if (isPoweredUp) {
             if (System.currentTimeMillis() - powerUpStartTime > POWER_UP_DURATION) {
                 isPoweredUp = false;

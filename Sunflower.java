@@ -8,6 +8,7 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
  */
 public class Sunflower extends Plant
 {
+    private int sunProductionTime = 10000;
     private GreenfootImage[] idle;
     private boolean test = false;
     private long lastFrame2 = System.nanoTime();
@@ -34,13 +35,19 @@ public class Sunflower extends Plant
         }
     }
     public void produceSun() {
-        deltaTime2 = (currentFrame - lastFrame2) / 1000000;
-        if (deltaTime2 > 20000L) {
-            lastFrame2 = System.nanoTime();
-            hitFlash(idle, "sunfloweridle");
-            test= true;
-            PlayScene.addObject(new Sun(), getX(), getY()-10);
-        }
+    
+    deltaTime2 = (System.nanoTime() - lastFrame2) / 1000000;
+    
+    
+    if (deltaTime2 > sunProductionTime) {
+        lastFrame2 = System.nanoTime(); 
+        
+        hitFlash(idle, "sunfloweridle");
+        test = true;
+        
+        
+        PlayScene.addObject(new Sun(25), getX(), getY() - 10);
     }
+}
   
 }

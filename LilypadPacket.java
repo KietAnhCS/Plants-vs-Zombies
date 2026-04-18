@@ -1,4 +1,4 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*; 
 
 /**
  * Write a description of class CactusPacket here.
@@ -9,7 +9,7 @@ import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 public class LilypadPacket extends SeedPacket
 {
     public LilypadPacket() {
-        super(4000L, false, 125, "LilypadPacket");
+        super(4000L, false, 125, "Lilypadpacket");
         
     }
     

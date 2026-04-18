@@ -101,7 +101,7 @@ public class CinematicIntro extends World
 
     public CinematicIntro()
     {    
-        super(1111, 808, 1, false); 
+        super(1111, 698, 1, false); 
         getBackground().drawImage(backgroundMap, 0, 0);
         
         addObject(new Basic(), 1176, 227);

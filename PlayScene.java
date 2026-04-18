@@ -69,7 +69,7 @@ public class PlayScene extends World {
     public WaveManager level;
 
     public PlayScene(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater) {    
-        super(1111, 808, 1, false); 
+        super(1111, 698, 1, false); 
         this.isWaterMap = isWater;
         this.CYS = CYS;
         this.seedbank = seedbank;
@@ -84,15 +84,15 @@ public class PlayScene extends World {
         } else {
             setBackground("lawn367.png");
         }
-        Hero myHero = new Hero();
-        addObject(myHero, 500, 400);
+        ThuyThan myHero = new ThuyThan();
+        addObject(myHero, 110, 642);
         addObject(seedbank, 0, 0);
         addObject(board, 0, 0);
         board.setupLayout(isWater);
         addObject(hitbox, 0, 0);
         addObject(shovel, 1052, 537);
         addObject(plantfood, 125, 550);
-        addObject(rollbutton, 260, 783);
+        addObject(rollbutton, 277, 679);
         addObject(lilypad, 70, 400);
         
         prepareLawnmowers();

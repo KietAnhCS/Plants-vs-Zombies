@@ -18,7 +18,7 @@ public class FallingSun extends FallingObject
 
         // CHẶN ĐỨNG: Chỉ khi chạm Hero mới cho collect
         if (!beenClicked) {
-            if (isTouching(Hero.class)) {
+            if (isTouching(ThuyThan.class)) {
                 collectSun();
             } else {
                 handleFallingAndWaiting();
