@@ -62,9 +62,7 @@ public class SeedBank extends Actor
         
         
         if (isTDActive) {
-            for (int i = 0; i < newBank.length; i++) {
-                newBank[i] = new BonkchoyPacket(); 
-            }
+            newBank[0] = new BonkchoyPacket(); 
             isTDActive = false; 
         }
 

@@ -12,14 +12,20 @@ public class CinematicIntro extends World
     
     private GreenfootImage backgroundMap = new GreenfootImage("mapwater.png");
     private GifImage daveGif = new GifImage("Dave3.gif");
-    public GreenfootSound daveVoice = new GreenfootSound("yasuo.mp3");
+    public GreenfootSound daveVoice = new GreenfootSound("awooga.mp3");
     private boolean daveTalking = true;
 
     
     public Zombie[][] level1 = 
     {
 
-        
+        {
+            new Conehead(),new Conehead(),new Conehead(),new Conehead(),new Conehead(),
+            new Conehead(),new Conehead(),new Conehead(),new Conehead(),new Conehead(),
+            new Conehead(),new Conehead(),new Conehead(),new Conehead(),new Conehead(),
+            new Conehead(),new Conehead(),new Conehead(),new Conehead(),new Conehead(),
+            new Conehead(),new Conehead(),new Conehead(),new Conehead(),new Conehead(),
+        },
         {new Conehead(), new Conehead()}, 
         {null, new BasicZombie(), null, null},
         {n},

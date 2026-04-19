@@ -19,7 +19,6 @@ public class clickPlantFood extends SmoothMover
     public void act() {
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse != null) {
-            
             setLocation(mouse.getX(), mouse.getY());
 
             if (playScene.board == null || playScene.board.xSpacing == 0) return;
@@ -33,7 +32,6 @@ public class clickPlantFood extends SmoothMover
             boolean isInsideGrid = (x >= 0 && x < 9 && y >= 0 && y < playScene.board.currentRowCount);
 
             if (isInsideGrid) {
-                
                 Plant current = playScene.board.Board[y][x]; 
                 if (current == null) {
                     current = playScene.board.WaterBoard[y][x];
@@ -43,17 +41,15 @@ public class clickPlantFood extends SmoothMover
 
                 if (Greenfoot.mouseClicked(null)) {
                     if (current != null) {
-                        
                         current.activatePlantFood(); 
-                        
+                        master.usePlantFood();
+                        exitPlantFood();
                     } else {
-                        
                         AudioPlayer.play(80, "tap.mp3");
+                        exitPlantFood(); 
                     }
-                    exitPlantFood(); 
                 }
             } else {
-               
                 resetOpaque();
                 if (Greenfoot.mouseClicked(null)) {
                     exitPlantFood();
@@ -62,20 +58,18 @@ public class clickPlantFood extends SmoothMover
         }
     }
 
-    // Hàm xử lý highlight (làm mờ/sáng cây)
     private void handleHighlight(Plant current) {
         if (current != null) {
             if (lastPlant != null && lastPlant != current) {
                 lastPlant.opaque = false; 
             }
             lastPlant = current;
-            lastPlant.opaque = true; // Biến này điều khiển độ sáng trong class Plant
+            lastPlant.opaque = true;
         } else {
             resetOpaque();
         }
     }
 
-    // Reset lại trạng thái cây cũ khi chuột di chuyển đi chỗ khác
     private void resetOpaque() {
         if (lastPlant != null) {
             lastPlant.opaque = false;
@@ -83,7 +77,6 @@ public class clickPlantFood extends SmoothMover
         }
     }
 
-    // Hàm kết thúc: trả trạng thái selected về false và xóa object theo chuột
     private void exitPlantFood() {
         resetOpaque();
         master.setSelected(false);

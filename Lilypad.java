@@ -9,7 +9,7 @@ public class Lilypad extends Plant
     public Lilypad() {
         maxHp = 100; 
         hp = maxHp;
-        idle = importSprites("LilyPad", 1); 
+        idle = importSprites("Lilypad", 1); 
         setImage(idle[0]);
     }
    
@@ -17,7 +17,7 @@ public class Lilypad extends Plant
     public void hit(int dmg) {
         
         if (!isOccupied() && isLiving()) {
-            hitFlash(idle, "LilyPad");
+            hitFlash(idle, "Lilypad");
             hp = hp - dmg;
         }
     }

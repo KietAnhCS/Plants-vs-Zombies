@@ -3,7 +3,6 @@ import greenfoot.*;
 public class PlantFood extends SmoothMover
 {
     public boolean selected = false;
-    
     private long rechargeTime = 20000; 
     private long lastUsedTime;
     private long deltaTime;
@@ -11,14 +10,11 @@ public class PlantFood extends SmoothMover
 
     private GreenfootImage imageBright;
     private GreenfootImage imageDark;
-    private GreenfootImage rechargeOverlay;
 
     public void addedToWorld(World world) {
         imageBright = new GreenfootImage("plantfood.png");
         imageDark = new GreenfootImage("plantfood.png");
         imageDark.setTransparency(100); 
-        
-        rechargeOverlay = new GreenfootImage(imageBright.getWidth(), imageBright.getHeight());
         
         setImage(imageBright);
         selected = false;
@@ -36,29 +32,35 @@ public class PlantFood extends SmoothMover
             deltaTime = System.currentTimeMillis() - lastUsedTime;
             if (deltaTime >= rechargeTime) {
                 recharged = true;
+                setImage(imageBright);
             }
         }
     }
 
     private void updateAppearance() {
         if (!recharged) {
-            GreenfootImage tempImage = new GreenfootImage(imageDark);
-            rechargeOverlay.clear();
-            rechargeOverlay.setColor(new Color(0, 0, 0, 150));
+           
+            GreenfootImage base = new GreenfootImage(imageDark);
             
             double progress = (double)deltaTime / rechargeTime;
-            int height = (int)(tempImage.getHeight() * (1.0 - progress));
+            if (progress > 1.0) progress = 1.0;
             
-            rechargeOverlay.fillRect(0, 0, tempImage.getWidth(), height);
-            tempImage.drawImage(rechargeOverlay, 0, 0);
-            setImage(tempImage);
-        } else {
-            setImage(imageBright);
+            int overlayHeight = (int)(base.getHeight() * (1.0 - progress));
+            
+            if (overlayHeight > 0) {
+                GreenfootImage overlay = new GreenfootImage(base.getWidth(), overlayHeight);
+                overlay.setColor(new Color(0, 0, 0, 180));
+                overlay.fill();
+                
+                base.drawImage(overlay, 0, 0);
+            }
+            
+            setImage(base);
         }
     }
 
     private void handleMouse() {
-        if (!recharged) return;
+        if (!recharged || selected) return;
 
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse != null) {
@@ -67,7 +69,8 @@ public class PlantFood extends SmoothMover
                 myWorld.moveHitbox(); 
                 
                 if (intersects(myWorld.hitbox)) {
-                    if (!selected) {
+                    SunCounter sc = (SunCounter)myWorld.getObjects(SunCounter.class).get(0);
+                    if (sc != null && sc.sun >= 500) {
                         selected = true;
                         myWorld.addObject(new clickPlantFood(this), mouse.getX(), mouse.getY());
                     }
@@ -77,6 +80,15 @@ public class PlantFood extends SmoothMover
     }
 
     public void usePlantFood() {
+        PlayScene myWorld = (PlayScene)getWorld();
+        if (myWorld != null) {
+            java.util.List<SunCounter> counters = myWorld.getObjects(SunCounter.class);
+            if (!counters.isEmpty()) {
+                SunCounter sc = counters.get(0);
+                sc.sun -= 500;
+                sc.updateText();
+            }
+        }
         this.recharged = false;
         this.lastUsedTime = System.currentTimeMillis();
         this.selected = false;

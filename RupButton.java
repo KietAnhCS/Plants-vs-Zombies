@@ -12,8 +12,11 @@ public class RupButton extends Actor {
             World world = getWorld();
             if (world instanceof PlayScene) {
                 PlayScene ps = (PlayScene) world;
-                if (ps.seedbank.getSun() >= 50 && currentLevel < 9) {
-                    ps.seedbank.addSun(-50);
+            
+                int upgradeCost = currentLevel * 50;
+
+                if (ps.seedbank.getSun() >= upgradeCost && currentLevel < 9) {
+                    ps.seedbank.addSun(-upgradeCost); 
                     ps.upgradeProbabilities();
                     currentLevel++;
                     updateAppearance();
@@ -24,13 +27,24 @@ public class RupButton extends Actor {
     }
 
     private void updateAppearance() {
+        
         GreenfootImage bg = new GreenfootImage("Up", 24, Color.WHITE, new Color(0, 0, 0, 150));
+        
+        int nextCost = currentLevel * 50;
+        String displayLevel = (currentLevel < 9) ? String.valueOf(currentLevel) : "MAX";
+        
         try {
             GreenfootImage numImg = new GreenfootImage("text" + currentLevel + ".png");
             bg.drawImage(numImg, 5, 5);
         } catch (Exception e) {
             bg.setColor(Color.YELLOW);
-            bg.drawString(String.valueOf(currentLevel), 5, 20);
+            
+            bg.drawString(displayLevel, 5, 20); 
+            
+            if (currentLevel < 9) {
+                bg.setFont(new Font("Arial", false, false, 12));
+                bg.drawString("$" + nextCost, 5, 35);
+            }
         }
         setImage(bg);
     }
