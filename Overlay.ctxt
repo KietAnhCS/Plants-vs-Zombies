@@ -2,4 +2,8 @@
 comment0.target=Overlay
 comment1.params=width\ height
 comment1.target=Overlay(int,\ int)
-numComments=2
+comment2.params=
+comment2.target=void\ act()
+comment3.params=world
+comment3.target=void\ addedToWorld(greenfoot.World)
+numComments=4

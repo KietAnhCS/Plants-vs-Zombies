@@ -4,7 +4,6 @@ import java.util.*;
 public class PlayScene extends World {  
     
     private int rollLevel = 1;
-    
     private boolean isPlaying = false;
     public boolean lose = false;
     public boolean loseOnce = false;
@@ -74,8 +73,6 @@ public class PlayScene extends World {
     public RupButton rupbutton = new RupButton();
     public LilypadPacket lilypad = new LilypadPacket();
     public WaveManager level;
-    
-    
 
     public PlayScene(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater) {    
         super(1111, 698, 1, false); 
@@ -93,8 +90,8 @@ public class PlayScene extends World {
         } else {
             setBackground("lawn367.png");
         }
-        ThuyThan myHero = new ThuyThan();
-        addObject(myHero, 110, 642);
+        
+        addObject(new ThuyThan(), 110, 642);
         addObject(seedbank, 0, 0);
         addObject(board, 0, 0);
         board.setupLayout(isWater);
@@ -108,7 +105,7 @@ public class PlayScene extends World {
         prepareLawnmowers();
 
         setPaintOrder(
-            Setting.class, Transition.class, AHugeWave.class, ReadySetPlant.class, 
+            AugmentCard.class, Overlay.class, Setting.class, Transition.class, AHugeWave.class, ReadySetPlant.class, 
             SunCounter.class, ThuyThan.class, clickShovel.class, Shovel.class, Lawnmower.class, 
             TransparentObject.class, SeedPacket.class, FallingSun.class, 
             Sun.class, Dirt.class, Projectile.class, FallingObject.class, 
@@ -118,10 +115,12 @@ public class PlayScene extends World {
 
     public void act() {
         checkEscape();
-        if (!getObjects(Setting.class).isEmpty()) {
+        
+        if (!getObjects(Setting.class).isEmpty() || level.choosingCard) {
             moveHitbox(); 
             return; 
         }
+
         moveHitbox(); 
         if (!isPlaying) {
             addObject(level, 0, 0);
@@ -164,14 +163,10 @@ public class PlayScene extends World {
     public void upgradeProbabilities() {
         if (rollLevel < 9) { 
             rollLevel++;
-            
-            
             for (RarityEntry entry : weightedPool) {
-                
                 if (entry.packetClass == CactusPacket.class || entry.packetClass == PotatoPacket.class ) {
                     if (entry.weight > 1) entry.weight -= 1; 
                 }
-                
                 if (entry.packetClass == TwinSunflowerPacket.class || entry.packetClass == RepeaterPacket.class ||entry.packetClass == SunflowerPacket.class ||entry.packetClass == WalnutPacket.class ||entry.packetClass == BonkchoyPacket.class ) {
                     entry.weight += 2;
                 }
@@ -179,7 +174,6 @@ public class PlayScene extends World {
                     entry.weight += 1;
                 }
             }
-            
         }
     }
 
@@ -187,8 +181,7 @@ public class PlayScene extends World {
         if (!loseOnce && hasLost()) {
             Grasswalk.stop();
             AudioPlayer.play(80, "losemusic.mp3");
-            GreenfootSound scream = new GreenfootSound("scream.mp3");
-            addObject(new DelayAudio(scream, 70, false, 4000L), 0, 0);
+            addObject(new DelayAudio(new GreenfootSound("scream.mp3"), 70, false, 4000L), 0, 0);
             loseOnce = true;
             Greenfoot.delay(250);
             addObject(new Transition(false, new ResultScreen(restartWorld), "gameover.png", 5), 365, 215);
@@ -209,7 +202,7 @@ public class PlayScene extends World {
     }
 
     public boolean tryPlacePlant(int gridX, int gridY, Plant newPlant) {
-        if (newPlant == null) return false;
+        if (newPlant == null || level.choosingCard) return false;
         return board.placePlant(gridX, gridY, newPlant);
     }
 
@@ -258,10 +251,11 @@ public class PlayScene extends World {
 
     public void started() {
         if (!Grasswalk.isPlaying()) Grasswalk.playLoop();
-        Greenfoot.setSpeed(50);         
+        Greenfoot.setSpeed(50);          
     }
 
     public void stopped() {
         if (Grasswalk.isPlaying()) Grasswalk.pause();
     }
+
 }

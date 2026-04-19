@@ -4,7 +4,7 @@ import greenfoot.*;
 public class BonkchoyPacket extends SeedPacket
 {
     public BonkchoyPacket() {
-        super(1L, true, 100, "peashooterpacket");
+        super(1L, true, 175, "bonkchoypacket");
         
     }
     

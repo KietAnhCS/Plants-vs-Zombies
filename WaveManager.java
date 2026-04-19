@@ -3,45 +3,163 @@ import java.util.*;
 
 public class WaveManager extends Actor
 {
-    public long currentFrame = System.nanoTime();
-    public static final int xOffset = 1115;
+    public boolean choosingCard = false;
+    public boolean finishedSending = false; 
+    public long lastFrame = System.nanoTime();
+    public long currentFrame, deltaTime;
+    
+    public Zombie[][] level;
+    public long waveTime, firstWave;
+    public int wave = -1;
+    public int[] hugeWaves;
+    public PlayScene PlayScene;
+    public boolean isFirstWave; 
     
     public ArrayList<ArrayList<Zombie>> zombieRow = new ArrayList<ArrayList<Zombie>>();
-    
-    public long lastFrame = System.nanoTime();
-    public Zombie[][] level;
-    public long levelTime;
-    public long waveTime;
-    public long firstWave;
-    public long deltaTime;
+    public static final int xOffset = 1115;
 
-    public boolean won = false;
-    public PlayScene PlayScene;
-    public int wave = -1;
-    public boolean first = false;
-    public boolean finishedSending = false;
-    public int[] hugeWaves;
-    
-    public WaveManager(long timeBetweenWaves, Zombie[][] level, long firstWave, boolean first, int... hugeWaves) {
+    public WaveManager(long timeBetweenWaves, Zombie[][] level, long firstWave, boolean startAsFirst, int... hugeWaves) {
         this.level = level;
         this.waveTime = timeBetweenWaves;
         this.firstWave = firstWave;
         this.hugeWaves = hugeWaves;
-        this.first = first;
-
-        for (int i = 0; i < 6; i++) { 
+        this.isFirstWave = startAsFirst;
+        for (int i = 0; i < 6; i++) {
             zombieRow.add(new ArrayList<Zombie>());
         }
     }
-    
+
     public void startLevel() {
         wave = 0;
         AudioPlayer.play(80, "readysetplant.mp3");
         if (getWorld() != null) {
             getWorld().addObject(new ReadySetPlant(), 620, 295);
         }
+        lastFrame = System.nanoTime();
     }
+
+    public void act() {
+        if (choosingCard || wave == -1) {
+            lastFrame = System.nanoTime(); 
+            return;
+        }
+
+        currentFrame = System.nanoTime();
+        deltaTime = (currentFrame - lastFrame) / 1000000;
+
+        if (wave > level.length - 1) {
+            if (PlayScene.getObjects(finishedSending.class).isEmpty()) {
+                PlayScene.addObject(new finishedSending(this, 15000L), 0, 0);
+            }
+            wave = -1;
+            return;
+        }
+
+        long targetTime = isFirstWave ? firstWave : waveTime;
+
+        if (deltaTime >= targetTime || PlayScene.getObjects(Zombie.class).isEmpty()) {
+            if (isFirstWave) {
+                AudioPlayer.play(80, "awooga.mp3");
+                isFirstWave = false;
+            }
+            checkSendWave();
+            wave++;
+            lastFrame = System.nanoTime();
+        }
+    }
+
+    public void checkSendWave() {
+        if (wave >= level.length) return;
     
+        boolean isHuge = false;
+        for (int i : hugeWaves) {
+            if (i == wave) {
+                isHuge = true;
+                break;
+            }
+        }
+    
+        if (isHuge) {
+            if (wave == level.length - 1) {
+                sendHugeWave(level[wave]);
+                PlayScene.addObject(new AHugeWave(true), 360, 215);
+                
+                PlayScene.addObject(new FixOrder(this, 15000L) {
+                    private long start = System.currentTimeMillis();
+                    @Override
+                    public void act() {
+                        if (System.currentTimeMillis() - start >= 15000L) {
+                            triggerCardSelection();
+                            getWorld().removeObject(this);
+                        }
+                    }
+                }, 0, 0);
+            } else {
+                PlayScene.addObject(new AHugeWave(false), 360, 215);
+                PlayScene.addObject(new FixOrder(this, 5000L) {
+                private long start = System.currentTimeMillis();
+                @Override
+                public void act() {
+                    if (System.currentTimeMillis() - start >= 5000L) {
+                        triggerCardSelection();
+                        getWorld().removeObject(this);
+                    }
+                }
+                }, 0, 0);
+            }
+        } else {
+            sendWave(level[wave]);
+        }
+    }
+
+    private void triggerCardSelection() {
+        choosingCard = true;
+        finishedSending = false; 
+        PlayScene.addObject(new Overlay(PlayScene.getWidth(), PlayScene.getHeight()), PlayScene.getWidth()/2, PlayScene.getHeight()/2);
+        
+        PlayScene.addObject(new AugmentCard(this, "rerollcard"), 150, 350);
+        PlayScene.addObject(new AugmentCard(this, "TD"), 450, 350);
+        PlayScene.addObject(new AugmentCard(this, "HM"), 750, 350);
+        
+        AudioPlayer.play(70, "hugewave.mp3");
+    }
+
+    public void resumeAfterSelection() {
+        PlayScene.removeObjects(PlayScene.getObjects(Overlay.class));
+        PlayScene.removeObjects(PlayScene.getObjects(AugmentCard.class));
+        
+        sendHugeWave(level[wave]);
+        PlayScene.addObject(new AHugeWave(wave == level.length - 1), 360, 215);
+        
+        choosingCard = false;
+        lastFrame = System.nanoTime();
+    }
+
+    public void sendWave(Zombie[] waveData) {
+        finishedSending = false;
+        spawnZombies(waveData, false);
+    }
+
+    public void sendHugeWave(Zombie[] waveData) {
+        finishedSending = false;
+        spawnZombies(waveData, true);
+    }
+
+    private void spawnZombies(Zombie[] waveData, boolean isHuge) {
+        Board board = (Board)PlayScene.getObjects(Board.class).get(0);
+        int rows = board.currentRowCount;
+        for (int i = 0; i < waveData.length; i++) {
+            if (waveData[i] != null) {
+                int rowIndex = i % rows;
+                int offset = xOffset + (isHuge ? 50 : 0) + (i / rows) * 20;
+                int targetY = rowIndex * board.ySpacing + board.yOffset - (isHuge ? 0 : 20);
+                PlayScene.addObject(waveData[i], offset, targetY);
+                zombieRow.get(rowIndex).add(waveData[i]);
+            }
+        }
+        PlayScene.addObject(new FixOrder(this, 1000L), 0, 0);
+    }
+
     public void fixOrder() {
         Board board = (Board)PlayScene.getObjects(Board.class).get(0);
         List<Zombie> zombies = PlayScene.getObjects(Zombie.class);
@@ -56,92 +174,14 @@ public class WaveManager extends Actor
             }
         }
     }
-    
-    public void act() {
-        if (wave != -1) {
-            currentFrame = System.nanoTime();
-            deltaTime = (currentFrame - lastFrame) / 1000000;
-        } else {
-            lastFrame = System.nanoTime();
-        }
-
-        if (wave != -1 && wave > level.length - 1) {
-            PlayScene.addObject(new finishedSending(this, 15000L), 0, 0);
-            wave = -1;
-            return;
-        }
-        
-        if (wave != -1) {
-            long targetTime = first ? firstWave : waveTime;
-            if (deltaTime >= targetTime || PlayScene.getObjects(Zombie.class).size() == 0) {
-                if (first) AudioPlayer.play(80, "awooga.mp3");
-                checkSendWave();
-                wave++;
-                lastFrame = System.nanoTime();
-                first = false;
-            }
-        }
-    }
-
-    public void checkSendWave() {
-        if (wave >= level.length) return;
-        
-        for (int i : hugeWaves) {
-            if (i == wave) {
-                AudioPlayer.play(70, "hugewave.mp3");
-                finishedSending = false;
-                sendHugeWave(level[wave]);
-                PlayScene.addObject(new AHugeWave(wave == level.length - 1), 360, 215);
-                return;       
-            }
-        }
-        sendWave(level[wave]);
-    }
-    
-    public void sendWave(Zombie[] waveData) {
-        Board board = (Board)PlayScene.getObjects(Board.class).get(0);
-        int rows = board.currentRowCount; 
-        for (int i = 0; i < waveData.length; i++) {
-            if (waveData[i] != null) {
-                int rowIndex = i % rows; 
-                int wait = i / rows;
-                int offset = xOffset + wait * 20;
-                int targetY = rowIndex * board.ySpacing + board.yOffset - 20;
-                
-                PlayScene.addObject(waveData[i], offset, targetY);
-                zombieRow.get(rowIndex).add(waveData[i]);
-                finishedSending = false;
-            }
-        }
-        PlayScene.addObject(new FixOrder(this, 1000L), 0, 0);
-    }
-
-    public void sendHugeWave(Zombie[] waveData) {
-        Board board = (Board)PlayScene.getObjects(Board.class).get(0);
-        int rows = board.currentRowCount;
-        for (int i = 0; i < waveData.length; i++) {
-            if (waveData[i] != null) {
-                int rowIndex = i % rows;
-                int wait = i / rows;
-                int offset = xOffset + 50 + wait * 20;
-                int targetY = rowIndex * board.ySpacing + board.yOffset;
-                
-                PlayScene.addObject(waveData[i], offset, targetY);
-                zombieRow.get(rowIndex).add(waveData[i]);
-            }
-        }
-        PlayScene.addObject(new FixOrder(this, 1000L), 0, 0);
-    }
-
-    public boolean hasWon() {
-        return (wave == -1 && PlayScene.getObjects(Zombie.class).size() == 0);
-    }
 
     @Override
     protected void addedToWorld(World world) {
         PlayScene = (PlayScene)world;
-        lastFrame = System.nanoTime();
-        currentFrame = System.nanoTime();
         getWorld().addObject(new Progress(this), 490, 25);
+    }
+
+    public boolean hasWon() {
+        return (wave == -1 && finishedSending && PlayScene.getObjects(Zombie.class).isEmpty());
     }
 }

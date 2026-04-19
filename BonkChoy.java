@@ -7,6 +7,9 @@ public class BonkChoy extends Plant {
     private boolean adjusted = false, isUsingPF = false;
     private long lastAttackTime = System.currentTimeMillis(), pfTimer = 0, lastFrameTime = 0;
 
+    private long idleTimer = System.currentTimeMillis();
+    private final long DEATH_DELAY = 14000; 
+
     public BonkChoy() {
         maxHp = 300; hp = maxHp;
     
@@ -30,8 +33,32 @@ public class BonkChoy extends Plant {
         if (getWorld() == null) return;
         if (!adjusted) { setLocation(getX(), getY() - 15); adjusted = true; } 
         
-        if (isUsingPF) handlePlantFood();
-        else handleNormalCombat();
+        if (isUsingPF) {
+            handlePlantFood();
+            resetIdleTimer();
+        } else {
+            handleNormalCombat();
+        }
+
+        checkIdleDeath();
+    }
+
+    private void checkIdleDeath() {
+        if (System.currentTimeMillis() - idleTimer > DEATH_DELAY) {
+            spawnSunsAndDie();
+        }
+    }
+
+    private void resetIdleTimer() {
+        idleTimer = System.currentTimeMillis();
+    }
+
+    private void spawnSunsAndDie() {
+        PlayScene world = (PlayScene) getWorld();
+        if (world != null) {
+            PlayScene.addObject(new Sun(100), getX(), getY() - 10);
+            world.removeObject(this);
+        }
     }
 
     public void activatePlantFood() {
@@ -54,13 +81,13 @@ public class BonkChoy extends Plant {
     }
 
     private void handleNormalCombat() {
-        
         List<Zombie> targets = getObjectsAtOffset(40, 0, Zombie.class);
         boolean isKO = (punchCount >= 3);
 
         if (!targets.isEmpty()) {
             playLoop(isKO ? kRight : pRight, 40);
             applyDmg(targets, 400, isKO ? 30 : 15, isKO);
+            resetIdleTimer();
         } else {
             playLoop(idle, 40);
             if (System.currentTimeMillis() - lastAttackTime > 1000) punchCount = 0;
@@ -98,7 +125,8 @@ public class BonkChoy extends Plant {
 
     @Override
     public void hit(int dmg) {
-        if (getWorld() == null || !getObjectsAtOffset(-40, 0, Zombie.class).isEmpty()) return; 
+        if (getWorld() == null) return;
+        resetIdleTimer();
         hp -= dmg;
         if (hp <= 0) getWorld().removeObject(this);
     }

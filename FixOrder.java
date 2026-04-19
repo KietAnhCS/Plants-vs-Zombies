@@ -2,38 +2,35 @@ import greenfoot.*;
 
 public class FixOrder extends Actor
 {
-    private final WaveManager level;
-    private final long delayTimeMillis;
-    private final long startTimeNano;
+    private WaveManager level;
+    private long delayTimeMillis;
+    private long startTimeNano;
 
     public FixOrder(WaveManager level, long delayTimeMillis) {
         this.level = level;
         this.delayTimeMillis = delayTimeMillis;
         this.startTimeNano = System.nanoTime();
-      
         setImage(new GreenfootImage(1, 1)); 
     }
 
     @Override
     public void act() 
     {
-        
         if (getWorld() == null) return;
 
-        
-        long elapsedMillis = (System.nanoTime() - startTimeNano) / 1_000_000;
+        if (level != null && level.choosingCard) {
+            startTimeNano = System.nanoTime() - (startTimeNano); 
+            startTimeNano = System.nanoTime() - (startTimeNano); 
+            return;
+        }
+
+        long elapsedMillis = (System.nanoTime() - startTimeNano) / 1000000;
 
         if (elapsedMillis >= delayTimeMillis) {
-            executeTask();
+            if (level != null) {
+                level.fixOrder();
+            }
+            getWorld().removeObject(this);
         }
-    }
-
-    private void executeTask() {
-     
-        if (level != null) {
-            level.fixOrder();
-        }
-       
-        getWorld().removeObject(this);
     }
 }

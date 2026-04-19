@@ -17,9 +17,17 @@ public class SeedBank extends Actor
     private final int START_Y = 666;
     private final int SPACING_X = 105;
 
+  
+    private boolean isTDActive = false;
+
     public SeedBank(SeedPacket[] bank) {
         this.bank = bank;
     }
+
+    public void setTD(boolean active) {
+        this.isTDActive = active;
+    }
+
 
     public void act() {
         if (playScene == null) {
@@ -52,6 +60,14 @@ public class SeedBank extends Actor
             }
         }
         
+        
+        if (isTDActive) {
+            for (int i = 0; i < newBank.length; i++) {
+                newBank[i] = new BonkchoyPacket(); 
+            }
+            isTDActive = false; 
+        }
+
         this.bank = newBank;
         
         for (int i = 0; i < bank.length; i++) {
