@@ -1,7 +1,6 @@
 import greenfoot.*;
 import java.util.*;
 
-
 public class Level3Preview extends World
 {
     public GreenfootSound CYS = new GreenfootSound("intro3.mp3");
@@ -10,50 +9,45 @@ public class Level3Preview extends World
     public int location = 0;
     public boolean started = false;
     public Zombie n = null;
-    
 
     public SeedPacket[] bank = {
         new SunflowerPacket(), 
         new PeashooterPacket(), 
-        new WalnutPacket(), 
-        new PotatoPacket(),
-        new LilypadPacket()
+        new SunflowerPacket(), 
+        new PeashooterPacket(),
+        new PeashooterPacket()
     };
     
     public SeedBank seedbank = new SeedBank(bank);   
     
-    
     public Zombie[][] level1 = {
-                {null, new BasicZombie(), null, null},
-                {n},
-                {new BasicZombie(), null, null, null, null}, 
-                {n},
-                {null, new BasicZombie(), null, new BasicZombie()},
-                {new BasicZombie()},
-                {null, null, new Conehead(), null, null},
-                {n},
-                {new BasicZombie(), new Conehead(), new BasicZombie(), new BasicZombie(), new BasicZombie(), n,new BasicZombie()}, 
-                {n},
-                {new Conehead(), n, null, new BasicZombie(), null, null, new BasicZombie()},
-                {new BasicZombie(),n,n, new BasicZombie(), null, new BasicZombie(), new BasicZombie()},
-                {null, null, null, new Buckethead(), null},
-                {n,new BasicZombie(),n,n,new Conehead(), n, n, new BasicZombie()},
-                {null, new BasicZombie(), null, null, new Conehead(),n,n,new BasicZombie()},
-                {new BasicZombie(), new BasicZombie(), new BasicZombie(),  null, new Conehead()}, 
-                {null, null, new BasicZombie(), null, null},
-                {n},
-                {new Conehead(), new Conehead(), new Conehead(), new BasicZombie(), new BasicZombie(), new Buckethead(), null, new BasicZombie(), new Conehead(), new Buckethead()}
+        { null, new BasicZombie(), null, null, null},
+        {n},
+        {new BasicZombie(), null, null, null, null}, 
+        {n},
+        {null, new BasicZombie(), null, new BasicZombie()},
+        {new BasicZombie()},
+        {null, null, new Conehead(), null, null},
+        {n},
+        {new BasicZombie(), new Conehead(), new BasicZombie(), new BasicZombie(), new BasicZombie(), n, new BasicZombie()}, 
+        {n},
+        {new Conehead(), n, null, new BasicZombie(), null, null, new BasicZombie()},
+        {new BasicZombie(), n, n, new BasicZombie(), null, new BasicZombie(), new BasicZombie()},
+        {null, null, null, new Buckethead(), null},
+        {n, new BasicZombie(), n, n, new Conehead(), n, n, new BasicZombie()},
+        {null, new BasicZombie(), null, null, new Conehead(), n, n, new BasicZombie()},
+        {new BasicZombie(), new BasicZombie(), new BasicZombie(), null, new Conehead()}, 
+        {null, null, new BasicZombie(), null, null},
+        {n},
+        {new Conehead(), new Conehead(), new Conehead(), new BasicZombie(), new BasicZombie(), new Buckethead(), null, new BasicZombie(), new Conehead(), new Buckethead()}
     };
     
-    
-    public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 8, 18);
+    public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 2, 18);
 
     public Level3Preview()
     {    
-        super(1111, 602, 1, false); 
-        
-        setBackground(new GreenfootImage("lawn367.png"));
-        
+        super(1111, 698, 1, false); 
+        setBackground(new GreenfootImage("maptft.png"));
         addObject(new Basic(), 1176, 227);
         addObject(new Basic(), 1195, 322);
         addObject(new Basic(), 1129, 227);
@@ -73,7 +67,7 @@ public class Level3Preview extends World
 
     public void bgScrollAnimate()
     {
-        if ( count > 100 && count < 160)
+        if (count > 100 && count < 160)
         {
             location -= scrollSpeed;
             scrollBGimage(location);
@@ -84,12 +78,12 @@ public class Level3Preview extends World
             scrollBGimage(location);
         }
         else if (count == 450) {
-            List<IdleZombie> idleZombie = getObjects(IdleZombie.class );
-            for ( IdleZombie zombie : idleZombie ) {
+            List<IdleZombie> idleZombie = getObjects(IdleZombie.class);
+            for (IdleZombie zombie : idleZombie) {
                 removeObject(zombie);
             }
         }
-        else if ( count == 500 )
+        else if (count == 500)
         {
             Greenfoot.setWorld(new PlayScene(CYS, level, seedbank, new Level3Preview(), new WinRepeater(), false));
         }
@@ -97,20 +91,20 @@ public class Level3Preview extends World
     
     public void scrollBGimage(int offset)
     {
-         GreenfootImage bg = getBackground(); 
-         GreenfootImage move = new GreenfootImage("lawn367.png");
-         bg.drawImage(move, offset, 0);  
+        GreenfootImage bg = getBackground(); 
+        GreenfootImage move = new GreenfootImage("maptft.png");
+        bg.drawImage(move, offset, 0);  
         
         List<Actor> currentObjects = getObjects(null);
-        for ( Actor thisObject : currentObjects )
+        for (Actor thisObject : currentObjects)
         {
-            if ( count > 100 && count < 160)
+            if (count > 100 && count < 160)
             {
-                thisObject.setLocation(thisObject.getX() - scrollSpeed , thisObject.getY() );
+                thisObject.setLocation(thisObject.getX() - scrollSpeed, thisObject.getY());
             }
-            else if ( count > 350 && count < 410)
+            else if (count > 350 && count < 410)
             {
-                thisObject.setLocation(thisObject.getX() + scrollSpeed , thisObject.getY() );
+                thisObject.setLocation(thisObject.getX() + scrollSpeed, thisObject.getY());
             } 
         } 
     }

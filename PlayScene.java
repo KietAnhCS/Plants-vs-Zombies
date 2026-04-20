@@ -58,7 +58,7 @@ public class PlayScene extends World {
         new RarityEntry(CactusPacket.class, 10),
         new RarityEntry(TwinSunflowerPacket.class, -6),
         new RarityEntry(RepeaterPacket.class, 1),
-        new RarityEntry(BonkchoyPacket.class, -5),
+        new RarityEntry(BonkchoyPacket.class, 10),
         new RarityEntry(TorchwoodPacket.class, 1),
         new RarityEntry(GatlingPeaPacket.class, 1),
         new RarityEntry(PotatoPacket.class, 10),
@@ -89,7 +89,7 @@ public class PlayScene extends World {
         if(isWaterMap) {
             setBackground("mapwater.png");
         } else {
-            setBackground("lawn367.png");
+            setBackground("maptft.png");
         }
         
         addObject(new ThuyThan(), 110, 642);
@@ -101,7 +101,8 @@ public class PlayScene extends World {
         addObject(plantfood, 125, 550);
         addObject(rollbutton, 277, 679);
         addObject(rupbutton, 278, 638);
-        addObject(lilypad, 70, 400);
+        
+        
         
         prepareLawnmowers();
 
@@ -194,11 +195,28 @@ public class PlayScene extends World {
     }
 
     private void prepareLawnmowers() {
-        int startX = 220; 
+        
+        int[][] coordinates = {
+            {250, 175}, 
+            {238, 228}, 
+            {226, 293}, 
+            {214, 375}, 
+            {202, 436}  
+        };
+    
+
         int rowCount = isWaterMap ? 6 : 5; 
+    
         for (int i = 0; i < rowCount; i++) {
-            int yPos = board.yOffset + (i * board.ySpacing);
-            addObject(new Lawnmower(), startX, yPos); 
+            
+            if (i < coordinates.length) {
+                int xPos = coordinates[i][0];
+                int yPos = coordinates[i][1];
+                addObject(new Lawnmower(), xPos, yPos);
+            } else if (isWaterMap) {
+                
+                addObject(new Lawnmower(), 170, 510); 
+            }
         }
     }
 

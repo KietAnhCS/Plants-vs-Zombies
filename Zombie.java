@@ -102,9 +102,10 @@ public class Zombie extends animatedObject {
         }
     }
 
-    @Override
-    protected void addedToWorld(World world) {
-        PlayScene = (PlayScene) world;
+    public void addedToWorld(World world) {
+        if (world instanceof PlayScene) {
+            this.PlayScene = (PlayScene) world;
+        }
     }
 
     public boolean isLiving() {

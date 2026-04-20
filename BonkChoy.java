@@ -10,6 +10,7 @@ public class BonkChoy extends Plant {
     private int pfStage = 0, frameIndex = 0, punchCount = 0;
     private boolean adjusted = false, isUsingPF = false, pfSoundPlayed = false, bgActive = false;
     private long lastAttackTime = System.currentTimeMillis(), pfTimer = 0, lastFrameTime = 0;
+    private long idleStartTime = 0;
 
     public BonkChoy() {
         maxHp = 300; 
@@ -64,42 +65,35 @@ public class BonkChoy extends Plant {
     private void handlePlantFood() {
         long now = System.currentTimeMillis();
     
-    if (pfStage == -1) {
-        setImage(pfTransformImg);
-
-        if (!pfSoundPlayed) {
-            AudioPlayer.play(100, "awooga.mp3");
-            
-            if (getWorld() != null) {
-                originalWorldBg = new GreenfootImage(getWorld().getBackground());
-                GreenfootImage fullBg = new GreenfootImage(deathBg);
-                fullBg.scale(getWorld().getWidth(), getWorld().getHeight());
-                getWorld().setBackground(fullBg);
+        if (pfStage == -1) {
+            setImage(pfTransformImg);
+            if (!pfSoundPlayed) {
+                AudioPlayer.play(100, "awooga.mp3");
+                if (getWorld() != null) {
+                    originalWorldBg = new GreenfootImage(getWorld().getBackground());
+                    GreenfootImage fullBg = new GreenfootImage(deathBg);
+                    fullBg.scale(getWorld().getWidth(), getWorld().getHeight());
+                    getWorld().setBackground(fullBg);
+                }
+                pfSoundPlayed = true;
+                bgActive = true;
             }
-            
-            pfSoundPlayed = true;
-            bgActive = true;
-        }
-
-        if (now - pfTimer > 2000) { 
-            
-            if (bgActive && getWorld() != null && originalWorldBg != null) {
-                getWorld().setBackground(originalWorldBg);
+            if (now - pfTimer > 2000) { 
+                if (bgActive && getWorld() != null && originalWorldBg != null) {
+                    getWorld().setBackground(originalWorldBg);
+                }
+                bgActive = false;
+                pfStage = 0;
+                frameIndex = 0;
             }
-            bgActive = false;
-
-            pfStage = 0;
-            frameIndex = 0;
-        }
-    } else if (pfStage == 0) {
-        
-        playOnce(pfStart, 40);
-        if (frameIndex >= pfStart.length - 1) { 
-            pfStage = 1; 
-            frameIndex = 0; 
-            pfTimer = now; 
-        }
-    } else if (pfStage == 1) {
+        } else if (pfStage == 0) {
+            playOnce(pfStart, 40);
+            if (frameIndex >= pfStart.length - 1) { 
+                pfStage = 1; 
+                frameIndex = 0; 
+                pfTimer = now; 
+            }
+        } else if (pfStage == 1) {
             playLoop(pfLoop, 30);
             List<Zombie> targets = getObjectsInRange(900, Zombie.class);
             for (Zombie z : targets) {
@@ -122,12 +116,33 @@ public class BonkChoy extends Plant {
         boolean isKO = (punchCount >= 3);
 
         if (!targets.isEmpty()) {
+            idleStartTime = 0;
             playLoop(isKO ? kRight : pRight, 40);
             applyDmg(targets, 400, isKO ? 30 : 15, isKO);
         } else {
             playLoop(idle, 40);
             if (System.currentTimeMillis() - lastAttackTime > 1000) punchCount = 0;
+            
+            if (idleStartTime == 0) {
+                idleStartTime = System.currentTimeMillis();
+            }
+            if (System.currentTimeMillis() - idleStartTime > 20000) {
+                spawnSunRefund();
+                removeWithCleanup();
+            }
         }
+    }
+
+    private void spawnSunRefund() {
+        if (getWorld() == null) return;
+            getWorld().addObject(new Sun(175), getX() + Greenfoot.getRandomNumber(60) - 30, getY() - 10);
+    }
+
+    private void removeWithCleanup() {
+        if (bgActive && originalWorldBg != null) {
+            getWorld().setBackground(originalWorldBg);
+        }
+        getWorld().removeObject(this);
     }
 
     private void applyDmg(List<Zombie> targets, int delay, int dmg, boolean ko) {
@@ -167,10 +182,8 @@ public class BonkChoy extends Plant {
         if (getWorld() == null) return;
         hp -= dmg;
         if (hp <= 0) {
-            if (bgActive && originalWorldBg != null) {
-                getWorld().setBackground(originalWorldBg);
-            }
-            getWorld().removeObject(this);
+            spawnSunRefund();
+            removeWithCleanup();
         }
     }
 }

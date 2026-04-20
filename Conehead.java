@@ -32,7 +32,7 @@ public class Conehead extends Zombie
         
         
         walkSpeed = Random.Double(11, 14);
-        maxHp = 300;
+        maxHp = 1000;
         hp = maxHp;
     }
 

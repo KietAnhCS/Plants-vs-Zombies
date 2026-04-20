@@ -6,7 +6,7 @@ public class SunCounter extends Actor
     public static int x = 120; 
     public static int y = 50;
     
-    public int sun = 700; 
+    public int sun = 99999; 
     public static final int textY = 45;
     
     private long lastFrame = System.currentTimeMillis();
@@ -39,7 +39,7 @@ public class SunCounter extends Actor
     }
 
     public void updateText() {
-        if (sun > 9990) sun = 9990;
+        if (sun > 999999) sun = 999999;
         if (sun < 0) sun = 0;
 
         GreenfootImage bg = new GreenfootImage("suncounter.png");
