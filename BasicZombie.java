@@ -17,7 +17,7 @@ public class BasicZombie extends Zombie
         armlesseat = importSprites("armlesszombieeating", 7);
         armless = importSprites("armlesszombie", 7);
         walkSpeed = Random.Double(11, 14);
-        maxHp = 650;
+        maxHp = 1000;
         hp = maxHp;
     }
 

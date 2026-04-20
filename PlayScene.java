@@ -52,17 +52,17 @@ public class PlayScene extends World {
     }
     
     private RarityEntry[] weightedPool = {
-        new RarityEntry(SunflowerPacket.class, -5),
+        new RarityEntry(SunflowerPacket.class, 0),
         new RarityEntry(PeashooterPacket.class, 3),
-        new RarityEntry(WalnutPacket.class, 2),
+        new RarityEntry(WalnutPacket.class, 0),
         new RarityEntry(CactusPacket.class, 10),
-        new RarityEntry(TwinSunflowerPacket.class, -6),
+        new RarityEntry(TwinSunflowerPacket.class, 0),
         new RarityEntry(RepeaterPacket.class, 1),
-        new RarityEntry(BonkchoyPacket.class, 10),
+        new RarityEntry(BonkchoyPacket.class, 0),
         new RarityEntry(TorchwoodPacket.class, 1),
-        new RarityEntry(GatlingPeaPacket.class, 1),
-        new RarityEntry(PotatoPacket.class, 10),
-        new RarityEntry(GatlingPeaPacket.class, 10)
+        
+        new RarityEntry(PotatoPacket.class, 2),
+        new RarityEntry(GatlingPeaPacket.class, 0)
     
     };
     
