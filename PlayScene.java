@@ -61,7 +61,8 @@ public class PlayScene extends World {
         new RarityEntry(BonkchoyPacket.class, -5),
         new RarityEntry(TorchwoodPacket.class, 1),
         new RarityEntry(GatlingPeaPacket.class, 1),
-        new RarityEntry(PotatoPacket.class, 10) 
+        new RarityEntry(PotatoPacket.class, 10),
+        new RarityEntry(GatlingPeaPacket.class, 10)
     
     };
     
