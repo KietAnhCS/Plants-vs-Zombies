@@ -22,7 +22,7 @@ public class Level3Preview extends World
     
     public Zombie[][] level1 = {
         
-        { null, new BasicZombie(), null, null, null, null }, 
+         
         { null, null, null, new BasicZombie(), null, null },
         { new BasicZombie(), new Conehead(), new BasicZombie(), new Conehead(), new BasicZombie(), null },
         { new BasicZombie(), null, null, null, new BasicZombie(), null },
