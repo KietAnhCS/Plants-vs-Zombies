@@ -53,23 +53,23 @@ public class PlayScene extends World {
     
     private RarityEntry[] weightedPool = {
         new RarityEntry(SunflowerPacket.class, 0),
-        new RarityEntry(PeashooterPacket.class, 3),
-        new RarityEntry(WalnutPacket.class, 0),
+        new RarityEntry(PeashooterPacket.class, 10),
+        new RarityEntry(WalnutPacket.class, 3),
         new RarityEntry(CactusPacket.class, 10),
-        new RarityEntry(TwinSunflowerPacket.class, 0),
-        new RarityEntry(RepeaterPacket.class, 1),
-        new RarityEntry(BonkchoyPacket.class, 0),
+        
+        
+        new RarityEntry(BonkchoyPacket.class, 10),
         new RarityEntry(TorchwoodPacket.class, 1),
         
         new RarityEntry(PotatoPacket.class, 2),
-        new RarityEntry(GatlingPeaPacket.class, 0)
+        
     
     };
     
     public SeedBank seedbank = new SeedBank(bank);   
     public Hitbox hitbox = new Hitbox();
     public Shovel shovel = new Shovel();
-    public PlantFood plantfood = new PlantFood();
+    
     public RollButton rollbutton = new RollButton();
     public RupButton rupbutton = new RupButton();
     public LilypadPacket lilypad = new LilypadPacket();
@@ -98,7 +98,7 @@ public class PlayScene extends World {
         board.setupLayout(isWater);
         addObject(hitbox, 0, 0);
         addObject(shovel, 1052, 537);
-        addObject(plantfood, 125, 550);
+       
         addObject(rollbutton, 277, 679);
         addObject(rupbutton, 278, 638);
         

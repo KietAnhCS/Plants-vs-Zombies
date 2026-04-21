@@ -12,8 +12,8 @@ public class MegaGatlingPea extends Plant
     private boolean isPoweredUp = false;
     private long powerUpStartTime;
     private final long POWER_UP_DURATION = 3000L;
-    private long baseShootDelay = 1700L; 
-    private long shootDelay = 1700L;
+    private long baseShootDelay = 600L; 
+    private long shootDelay = 600L;
     
     private long lastFrame2 = System.nanoTime();
     private long deltaTime2;
@@ -29,9 +29,7 @@ public class MegaGatlingPea extends Plant
 
     @Override
     public void addedToWorld(World world) {
-        
         super.addedToWorld(world); 
-        
         setLocation(getX() + 15, getY() - 15);
     }
 
@@ -95,7 +93,7 @@ public class MegaGatlingPea extends Plant
                     executeShootingLogic();
                 }
             } else {
-                if (shootCount >= 6 && !isPoweredUp) {
+                if (shootCount >= 7 && !isPoweredUp) {
                     lastFrame2 = currentFrame;
                 }
                 executeShootingLogic();
@@ -109,20 +107,17 @@ public class MegaGatlingPea extends Plant
             resetFrame = true;
         }
         
-        if (frame >= 3) {
+        if (frame >= 12) {
             int myRow = getYPos();
             if (getWorld() != null && myRow != -1) {
                 AudioPlayer.play(80, "throw.mp3", "throw2.mp3");
-                
-                
-                PlayScene.addObject(new Pea(myRow), getX() + 20, getY());
-                
+                PlayScene.addObject(new FirePea(myRow), getX() + 20, getY());
                 setFrame(1);
                 shootCount++;
             }
         }
         
-        int animSpeed = isPoweredUp ? 30 : 70;
+        int animSpeed = isPoweredUp ? 20 : 40;
         animate(shoot, animSpeed, false);
     }
 

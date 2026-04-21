@@ -35,9 +35,9 @@ public class TwinSunflower extends Plant
             test = true;
             
             
-            PlayScene.addObject(new Sun(25), getX() + 20, getY() - 10);
-            PlayScene.addObject(new Sun(15), getX() - 20, getY() - 10);
-            PlayScene.addObject(new Sun(15), getX() - 20, getY() - 10);
+            PlayScene.addObject(new Sun(5), getX() + 20, getY() - 10);
+            PlayScene.addObject(new Sun(5), getX() - 20, getY() - 10);
+            PlayScene.addObject(new Sun(5), getX() - 20, getY() - 10);
         }
     }
 }

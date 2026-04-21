@@ -22,7 +22,6 @@ public class Conehead extends Zombie
         armlesseat = importSprites("armlesszombieeating", 7);
         armless = importSprites("armlesszombie", 7);
         
-        //Conehead
         coneheadwalk = importSprites("coneheadwalk", 7);
         coneheadwalkd = importSprites("coneheadwalkd", 7);
         coneheadwalkdd = importSprites("coneheadwalkdd", 7);
@@ -32,7 +31,7 @@ public class Conehead extends Zombie
         
         
         walkSpeed = Random.Double(11, 14);
-        maxHp = 2600;
+        maxHp = 950;
         hp = maxHp;
     }
 

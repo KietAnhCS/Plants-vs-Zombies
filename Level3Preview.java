@@ -12,47 +12,62 @@ public class Level3Preview extends World
 
     public SeedPacket[] bank = {
         new SunflowerPacket(), 
-        new PeashooterPacket(), 
         new SunflowerPacket(), 
-        new PeashooterPacket(),
+        new PotatoPacket(), 
+        new PotatoPacket(),
         new PeashooterPacket()
     };
     
     public SeedBank seedbank = new SeedBank(bank);   
     
     public Zombie[][] level1 = {
-        { null, new BasicZombie(), null, null, null},
-        {n},
-        {new BasicZombie(), null, null, null, null}, 
-        {n},
-        {n},
-        {null, new BasicZombie(), null, new BasicZombie()},
-        {new BasicZombie()},
-        {n},
-        {null, null, new Conehead(), null, null},
-        {n},
-        {null, null, null, new Buckethead(), null},
-        {new BasicZombie(), new Conehead(), new BasicZombie(), new BasicZombie(), new BasicZombie(), n, new BasicZombie()}, 
-        {n},
-        {n},
-        {n},
-        {new Conehead(), n, null, new BasicZombie(), null, null, new BasicZombie()},
-        {new BasicZombie(), n, n, new BasicZombie(), null, new BasicZombie(), new BasicZombie()},
-        {n},
-        {n},
-        {null, null, null, new Buckethead(), null},
-        {n, new BasicZombie(), n, n, new Conehead(), n, n, new BasicZombie()},
-        {n},
-        {null, new BasicZombie(), null, null, new Conehead(), n, n, new BasicZombie()},
-        {n},
-        {n},
-        {new BasicZombie(), new BasicZombie(), new BasicZombie(), null, new Conehead()}, 
-        {null, null, new BasicZombie(), null, null},
-        {n},
-        {new Conehead(), new Conehead(), new Conehead(), new BasicZombie(), new BasicZombie(), new Buckethead(), null, new BasicZombie(), new Conehead(), new Buckethead()}
-    };
+        
+        { null, new BasicZombie(), null, null, null, null }, 
+        { null, null, null, new BasicZombie(), null, null },
+        { new BasicZombie(), new Conehead(), new BasicZombie(), new Conehead(), new BasicZombie(), null },
+        { new BasicZombie(), null, null, null, new BasicZombie(), null },
+        { null, new BasicZombie(), new BasicZombie(), null, null, null },
+        { new BasicZombie(), new Conehead(), new BasicZombie(), new Conehead(), new BasicZombie(), null },
+        { new BasicZombie(), null, new BasicZombie(), null, new BasicZombie(), null },
+        { null, new BasicZombie(), null, new BasicZombie(), null, null },
+        { new BasicZombie(), new BasicZombie(), new BasicZombie(), new BasicZombie(), new BasicZombie(), null },
+        { null, null, null, null, null, null },
     
-    public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 2, 18);
+        
+        { null, null, new Conehead(), null, null, null },
+        { new BasicZombie(), null, null, null, new BasicZombie(), null },
+        { null, new Conehead(), null, new Conehead(), null, null },
+        { new BasicZombie(), new Conehead(), new BasicZombie(), new Conehead(), new BasicZombie(), null },
+        { new BasicZombie(), new BasicZombie(), new Conehead(), new BasicZombie(), new BasicZombie(), null },
+        { new Conehead(), new Conehead(), new Conehead(), new Conehead(), new Conehead(), null },
+        { new BasicZombie(), new Conehead(), new BasicZombie(), new Conehead(), new BasicZombie(), null }, 
+        { new BasicZombie(), new Conehead(), new BasicZombie(), new Conehead(), new BasicZombie(), null },
+        { new Conehead(), new Conehead(), new Conehead(), new Conehead(), new Conehead(), null },
+        { new BasicZombie(), new Conehead(), new BasicZombie(), new Conehead(), new BasicZombie(), null },
+    
+        
+        { new BasicZombie(), new BasicZombie(), new BasicZombie(), new BasicZombie(), new BasicZombie(), null },
+        { new Conehead(), new Conehead(), new Conehead(), new Conehead(), new Conehead(), null },
+        { new BasicZombie(), new Conehead(), new BasicZombie(), new Conehead(), new BasicZombie(), null },
+        { new BasicZombie(), null, new Conehead(), null, new BasicZombie(), null },
+        { new Conehead(), new BasicZombie(), new Conehead(), new BasicZombie(), new Conehead(), null },
+        { new BasicZombie(), new Conehead(), new BasicZombie(), new Conehead(), new BasicZombie(), null },
+        { new BasicZombie(), new BasicZombie(), new BasicZombie(), new BasicZombie(), new BasicZombie(), null },
+        { new Conehead(), new Conehead(), new Conehead(), new Conehead(), new Conehead(), null },
+        { new BasicZombie(), new Conehead(), new BasicZombie(), new Conehead(), new BasicZombie(), null },
+        { new BasicZombie(), new Conehead(), new BasicZombie(), new Conehead(), new BasicZombie(), null },
+    
+        
+        { new BasicZombie(), new BasicZombie(), new BasicZombie(), new BasicZombie(), new BasicZombie(), null },
+        { new Conehead(), new Conehead(), new Conehead(), new Conehead(), new Conehead(), null },
+        { new BasicZombie(), new Conehead(), new BasicZombie(), new Conehead(), new BasicZombie(), null },        
+        { new BasicZombie(), new Conehead(), new BasicZombie(), new Conehead(), new BasicZombie(), null },
+        { new Conehead(), new Conehead(), new Conehead(), new Conehead(), new Conehead(), null },
+        { new BasicZombie(), new Conehead(), new BasicZombie(), new Conehead(), new BasicZombie(), null },
+        { new Conehead(), new Conehead(), new Conehead(), new Conehead(), new Conehead(), null }
+    };
+        
+    public WaveManager level = new WaveManager(23500L, level1, 15000L, true);
 
     public Level3Preview()
     {    

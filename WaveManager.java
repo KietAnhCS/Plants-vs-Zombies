@@ -15,6 +15,8 @@ public class WaveManager extends Actor
     public PlayScene PlayScene;
     public boolean isFirstWave; 
     
+    private boolean sunSpawnedForThisWave = false;
+    
     public ArrayList<ArrayList<Zombie>> zombieRow = new ArrayList<ArrayList<Zombie>>();
     public static final int xOffset = 1115;
 
@@ -55,16 +57,42 @@ public class WaveManager extends Actor
             return;
         }
 
-        long targetTime = isFirstWave ? firstWave : waveTime;
-
-        if (deltaTime >= targetTime || PlayScene.getObjects(Zombie.class).isEmpty()) {
-            if (isFirstWave) {
-                AudioPlayer.play(80, "awooga.mp3");
-                isFirstWave = false;
+        boolean currentWaveIsEmpty = true;
+        for (Zombie z : level[wave]) {
+            if (z != null) {
+                currentWaveIsEmpty = false;
+                break;
             }
-            checkSendWave();
-            wave++;
+        }
+
+        long dynamicTargetTime;
+        if (isFirstWave) {
+            dynamicTargetTime = firstWave;
+        } else if (currentWaveIsEmpty) {
+            dynamicTargetTime = 10000L; 
+        } else {
+            dynamicTargetTime = 6000L; 
+        }
+
+        if (PlayScene.getObjects(Zombie.class).isEmpty()) {
+            if (deltaTime >= 1000 && !sunSpawnedForThisWave && !isFirstWave && wave >= 0) {
+                PlayScene.addObject(new Sun(50), 900, 300);
+                sunSpawnedForThisWave = true;
+            }
+
+            if (deltaTime >= dynamicTargetTime) {
+                if (isFirstWave) {
+                    AudioPlayer.play(80, "awooga.mp3");
+                    isFirstWave = false;
+                }
+                checkSendWave();
+                wave++;
+                sunSpawnedForThisWave = false;
+                lastFrame = System.nanoTime();
+            }
+        } else {
             lastFrame = System.nanoTime();
+            sunSpawnedForThisWave = false;
         }
     }
 

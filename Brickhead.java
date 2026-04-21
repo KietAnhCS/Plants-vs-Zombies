@@ -34,7 +34,7 @@ public class Brickhead extends Zombie
         
         
         walkSpeed = Random.Double(11, 14);
-        maxHp = 4000;
+        maxHp = 900;
         hp = maxHp;
     }
 
