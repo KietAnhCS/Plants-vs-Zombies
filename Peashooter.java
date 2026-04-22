@@ -1,122 +1,109 @@
 import greenfoot.*;
+import java.util.List;
 
-public class Peashooter extends Plant
-{
+public class Peashooter extends Plant {
     private GreenfootImage[] idle;
     private GreenfootImage[] shoot;
     private boolean shootOnce = false;
     private boolean shooting = false;
-   
     private boolean isPoweredUp = false;
     private long powerUpStartTime;
-    private final long POWER_UP_DURATION = 3000L;
-    private long baseShootDelay = 1500L; 
-    private long shootDelay = 1500L; 
-
     private long lastFrame2 = System.nanoTime();
     private long deltaTime2;
+    private final long POWER_UP_DURATION = 3000L;
+    private final long BASE_SHOOT_DELAY = 1500L;
+    private long shootDelay = 1500L;
+    private PlayScene cachedPlayScene;
     
     public Peashooter() {
         maxHp = 60;
         hp = maxHp;
-        shoot = importSprites("peashootershoot", 3);
-        idle = importSprites("peashooter", 9);
+        shoot = importSprites("peashootershoot",3);
+        idle = importSprites("peashooter",9);
         setImage(idle[0]);
     }
-   
+    
     @Override
-    public void hit(int dmg) {
-        if (getWorld() != null && isLiving()) {
-            if (!shootOnce) hitFlash(idle, "peashooter");
-            else hitFlash(shoot, "peashootershoot");  
-            hp -= dmg;
+    public void addedToWorld(World world) {
+        super.addedToWorld(world);
+        if (world instanceof PlayScene) {
+            this.cachedPlayScene = (PlayScene) world;
         }
     }
-
+    
+    @Override
+    public void hit (int dmg) {
+        if (getWorld() != null && isLiving()) {
+            hitFlash(shootOnce ? shoot : idle, shootOnce ? "peashootershoot" : "peashooter");
+        }
+    }
     
     public void activatePlantFood() {
         this.isPoweredUp = true;
         this.powerUpStartTime = System.currentTimeMillis();
-        this.shootDelay = 300L; 
-        
+        this.shootDelay = 300L;
     }
-
+    
     @Override
     public void update() {
         if (getWorld() == null) return;
-        
-        
-        if (isPoweredUp) {
-            if (System.currentTimeMillis() - powerUpStartTime > POWER_UP_DURATION) {
-                isPoweredUp = false;
-                shootDelay = baseShootDelay;
-            }
-        }
-
-        PlayScene = (PlayScene)getWorld();
+        updatePowerUpStatus();
         currentFrame = System.nanoTime();
-
-        handleAnimationAndShooting();
-        
-        if (getWorld() == null) return;
-        checkZombieInRow();
+        handleAction();
+        if (getWorld() != null) checkZombieInRow();
     }
-
-    private void handleAnimationAndShooting() {
-        
-        boolean activeShooting = shooting || isPoweredUp;
-
-        if (!activeShooting) {
+    
+    private void updatePowerUpStatus() {
+        if (isPoweredUp && (System.currentTimeMillis() - powerUpStartTime > POWER_UP_DURATION)) {
+            isPoweredUp = false;
+            shootDelay = BASE_SHOOT_DELAY;
+        }
+    }
+    
+    private void handleAction() {
+        if (!(shooting || isPoweredUp)) {
             animate(idle, 300, true);
-            lastFrame2 = System.nanoTime();
+            lastFrame2 = currentFrame;
+            shootOnce = false;
+            return;
+        }
+
+        deltaTime2 = (currentFrame - lastFrame2) / 1000000;
+
+        if (deltaTime2 < shootDelay) {
+            animate(isPoweredUp ? shoot : idle, isPoweredUp ? 2 : 200, !isPoweredUp);
+            shootOnce = false;
         } else {
-            deltaTime2 = (currentFrame - lastFrame2) / 1000000;
-            if (deltaTime2 < shootDelay) {
-               
-                if (!isPoweredUp) {
-                    animate(idle, 1, true); 
-                } else {
-                    
-                    animate(shoot, 1, false); 
-                }
-                shootOnce = false;
-            } else {
-                if (!shootOnce) {
-                    shootOnce = true;
-                    frame = 0; 
-                }
-                
-                if (frame >= 1 && shootOnce) {
-                    int myRow = getYPos();
-                    if (getWorld() != null && myRow != -1) {
-                        AudioPlayer.play(80, "throw.mp3", "throw2.mp3");
-                        PlayScene.addObject(new Pea(myRow), getX() + 25, getY() - 17);
-                        lastFrame2 = currentFrame;
-                        shootOnce = false; 
-                    }
-                }
-                
-                int animDelay = isPoweredUp ? 2 : 10;
-                animate(shoot, animDelay, false);
+            if (!shootOnce) {
+                shootOnce = true;
+                frame = 0;
             }
+            if (frame >= 1 && shootOnce) executeShoot();
+            animate(shoot, isPoweredUp ? 2 : 10, false);
         }
     }
-
-    private void checkZombieInRow() {
-        int myRow = getYPos(); 
-        if (myRow == -1 || PlayScene.level == null) return;
-
-        if (PlayScene.level.zombieRow.get(myRow).isEmpty()) {
-            shooting = false;
-        } else {
-            boolean found = false;
-            for (Zombie i : PlayScene.level.zombieRow.get(myRow)) {
-                if (i.getWorld() != null && i.getX() > getX() && i.getX() <= PlayScene.getWidth() + 10) {
-                    found = true;
-                    break;
-                }
-            }
-            shooting = found;
+    
+    private void executeShoot() {
+        int myRow = getYPos();
+        if (myRow != -1) {
+            AudioPlayer.play(80, "throw.mp3", "throw2.mp3");
+            cachedPlayScene.addObject(new Pea(myRow), getX() + 25, getY() - 17);
+            lastFrame2 = currentFrame;
+            shootOnce = false;
         }
+    }
+    
+    
+    
+    private void checkZombieInRow() {
+        int myRow = getYPos();
+        if (myRow == -1 || cachedPlayScene.level == null) {
+            shooting = false;
+            return;
+        }
+
+        List<Zombie> rowZombies = cachedPlayScene.level.zombieRow.get(myRow);
+        shooting = rowZombies.stream().anyMatch(z -> z.getWorld() != null && z.getX() > getX() && z.getX() <= cachedPlayScene.getWidth() + 10);
+        
     }
 }

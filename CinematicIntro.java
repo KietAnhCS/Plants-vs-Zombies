@@ -20,11 +20,11 @@ public class CinematicIntro extends World
     {
 
         
-            {new Conehead(),new Conehead(),new Conehead(),new Conehead(),new Conehead(),null},
-            {new Conehead(),new Conehead(),new Conehead(),new Conehead(),new Conehead(),null},
-           {new Conehead(),new Conehead(),new Conehead(),new Conehead(),new Conehead(),null},
-            {new Conehead(),new Conehead(),new Conehead(),new Conehead(),new Conehead(),null},
-           {new Conehead(),new Conehead(),new Conehead(),new Conehead(),new Conehead(),null},
+            {new BasicZombie(),null,null,null,null,null},
+            {new Conehead(),new Conehead(),null,null,null,null},
+           {new Conehead(),null,new Conehead(),null,null,null},
+            {new Conehead(),new Conehead(),new Conehead(),new Conehead(),null,null},
+           {new Conehead(),new Conehead(),null,new Conehead(),new Conehead(),null},
         
         {new Conehead(), new Conehead()}, 
         {null, new BasicZombie(), null, null},

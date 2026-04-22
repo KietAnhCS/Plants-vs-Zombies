@@ -110,7 +110,7 @@ public class Plant extends SpriteAnimator
         int x = (int)Math.round((dx * b.ySpacing - dy * b.rowDeltaX) / det);
         
         if (x < 0) return 0;
-        if (x > 8) return 8;
+        if (x > 9) return 9;
         return x;
     }
 

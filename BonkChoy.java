@@ -44,11 +44,7 @@ public class BonkChoy extends Plant {
             adjusted = true; 
         } 
         
-        if (isUsingPF) {
-            handlePlantFood();
-        } else {
-            handleNormalCombat();
-        }
+        handleNormalCombat();
     }
 
     public void activatePlantFood() {
@@ -59,56 +55,6 @@ public class BonkChoy extends Plant {
         pfSoundPlayed = false;
         bgActive = false;
         this.hp = maxHp;
-    }
-
-    private void handlePlantFood() {
-        long now = System.currentTimeMillis();
-    
-        if (pfStage == -1) {
-            setImage(pfTransformImg);
-            if (!pfSoundPlayed) {
-                AudioPlayer.play(100, "awooga.mp3");
-                if (getWorld() != null) {
-                    originalWorldBg = new GreenfootImage(getWorld().getBackground());
-                    GreenfootImage fullBg = new GreenfootImage(deathBg);
-                    fullBg.scale(getWorld().getWidth(), getWorld().getHeight());
-                    getWorld().setBackground(fullBg);
-                }
-                pfSoundPlayed = true;
-                bgActive = true;
-            }
-            if (now - pfTimer > 2000) { 
-                if (bgActive && getWorld() != null && originalWorldBg != null) {
-                    getWorld().setBackground(originalWorldBg);
-                }
-                bgActive = false;
-                pfStage = 0;
-                frameIndex = 0;
-            }
-        } else if (pfStage == 0) {
-            playOnce(pfStart, 40);
-            if (frameIndex >= pfStart.length - 1) { 
-                pfStage = 1; 
-                frameIndex = 0; 
-                pfTimer = now; 
-            }
-        } else if (pfStage == 1) {
-            playLoop(pfLoop, 30);
-            List<Zombie> targets = getObjectsInRange(900, Zombie.class);
-            for (Zombie z : targets) {
-                if (z != null && z.getWorld() != null) {
-                    
-                    z.hit(100); 
-                }
-            }
-            if (now - pfTimer > 2500) { 
-                pfStage = 2; 
-                frameIndex = 0; 
-            }
-        } else if (pfStage == 2) {
-            playOnce(pfEnd, 50);
-            if (frameIndex >= pfEnd.length - 1) isUsingPF = false;
-        }
     }
 
     private void handleNormalCombat() {

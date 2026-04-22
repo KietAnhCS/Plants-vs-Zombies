@@ -18,7 +18,7 @@ public class WaveManager extends Actor
     private boolean sunSpawnedForThisWave = false;
     
     public ArrayList<ArrayList<Zombie>> zombieRow = new ArrayList<ArrayList<Zombie>>();
-    public static final int xOffset = 1115;
+    public static final int xOffset = 905;
 
     public WaveManager(long timeBetweenWaves, Zombie[][] level, long firstWave, boolean startAsFirst, int... hugeWaves) {
         this.level = level;
