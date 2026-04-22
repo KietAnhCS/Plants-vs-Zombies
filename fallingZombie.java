@@ -1,5 +1,5 @@
 import greenfoot.*; 
-public class fallingZombie extends animatedObject
+public class fallingZombie extends SpriteAnimator
 {
     public GreenfootImage[] fall;
     

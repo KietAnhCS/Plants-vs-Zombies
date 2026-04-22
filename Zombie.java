@@ -1,7 +1,7 @@
 import greenfoot.*;
 import java.util.*;
 
-public class Zombie extends animatedObject {
+public class Zombie extends SpriteAnimator {
     public boolean fallen = false;
     public boolean eating = false;
     public boolean eatOnce = false;

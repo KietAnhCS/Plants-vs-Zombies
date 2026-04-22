@@ -2,7 +2,7 @@ import greenfoot.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Projectile extends animatedObject {
+public class Projectile extends SpriteAnimator {
     private int speed;
     private boolean hit = false;
     private boolean foundTarget = false;
@@ -28,6 +28,9 @@ public class Projectile extends animatedObject {
         PlayScene world = (PlayScene) getWorld();
         if (world == null) return;
 
+        if (!world.getObjects(Overlay.class).isEmpty()) {
+            return; 
+        }
         if (hit) {
             handleHitAnimation(world);
             return;

@@ -10,7 +10,7 @@ public class CinematicIntro extends World
     public boolean started = false;
     public Zombie n = null;
     
-    private GreenfootImage backgroundMap = new GreenfootImage("mapwater.png");
+    private GreenfootImage backgroundMap = new GreenfootImage("maptft.png");
     private GifImage daveGif = new GifImage("Dave3.gif");
     public GreenfootSound daveVoice = new GreenfootSound("awooga.mp3");
     private boolean daveTalking = true;
@@ -20,7 +20,7 @@ public class CinematicIntro extends World
     {
 
         {
-            new Conehead(),new Conehead(),new Conehead(),new Conehead(),new Conehead(),
+            new Conehead(),new Conehead(),new Conehead(),new Conehead(),null,
             new Conehead(),new Conehead(),new Conehead(),new Conehead(),new Conehead(),
             new Conehead(),new Conehead(),new Conehead(),new Conehead(),new Conehead(),
             new Conehead(),new Conehead(),new Conehead(),new Conehead(),new Conehead(),
@@ -157,7 +157,7 @@ public class CinematicIntro extends World
         else if (count == 500) {
             CYS.stop(); 
             
-            Greenfoot.setWorld(new PlayScene(CYS, level, seedbank, this, new WinPotato(), true));
+            Greenfoot.setWorld(new PlayScene(CYS, level, seedbank, this,null, true));
         }
     }
     

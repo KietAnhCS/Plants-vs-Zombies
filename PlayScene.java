@@ -72,7 +72,6 @@ public class PlayScene extends World {
     
     public RollButton rollbutton = new RollButton();
     public RupButton rupbutton = new RupButton();
-    public LilypadPacket lilypad = new LilypadPacket();
     public WaveManager level;
 
     public PlayScene(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater) {    
@@ -86,16 +85,12 @@ public class PlayScene extends World {
         
         Greenfoot.setSpeed(50);
         
-        if(isWaterMap) {
-            setBackground("mapwater.png");
-        } else {
-            setBackground("maptft.png");
-        }
+        setBackground("maptft.png");
         
         addObject(new ThuyThan(), 110, 642);
         addObject(seedbank, 0, 0);
         addObject(board, 0, 0);
-        board.setupLayout(isWater);
+        
         addObject(hitbox, 0, 0);
         addObject(shovel, 1052, 537);
        
@@ -107,7 +102,7 @@ public class PlayScene extends World {
         prepareLawnmowers();
 
         setPaintOrder(
-            AugmentCard.class,BonkChoy.class, Overlay.class, Setting.class, Transition.class, AHugeWave.class, ReadySetPlant.class, 
+            Setting.class, Overlay.class, AugmentCard.class,BonkChoy.class, Transition.class, AHugeWave.class, ReadySetPlant.class, 
             SunCounter.class, ThuyThan.class, clickShovel.class, Shovel.class, Lawnmower.class, 
             TransparentObject.class, SeedPacket.class, FallingSun.class, 
             Sun.class, Dirt.class, Projectile.class, FallingObject.class, 
@@ -200,12 +195,12 @@ public class PlayScene extends World {
             {250, 175}, 
             {238, 228}, 
             {226, 293}, 
-            {214, 375}, 
-            {202, 436}  
+            {200, 358}, 
+            {180, 436}  
         };
     
 
-        int rowCount = isWaterMap ? 6 : 5; 
+        int rowCount = 5;
     
         for (int i = 0; i < rowCount; i++) {
             
@@ -213,10 +208,7 @@ public class PlayScene extends World {
                 int xPos = coordinates[i][0];
                 int yPos = coordinates[i][1];
                 addObject(new Lawnmower(), xPos, yPos);
-            } else if (isWaterMap) {
-                
-                addObject(new Lawnmower(), 170, 510); 
-            }
+            }  
         }
     }
 

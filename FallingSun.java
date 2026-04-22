@@ -13,7 +13,14 @@ public class FallingSun extends FallingObject
     }
 
     public void update() {
-        if (getWorld() == null) return;
+        PlayScene world = (PlayScene) getWorld();
+        if (world == null) return;
+        
+        
+        if (!world.getObjects(Overlay.class).isEmpty()) {
+            return; 
+        }
+        
         animate(sunSprites, 200, true);
 
         if (!beenClicked) {

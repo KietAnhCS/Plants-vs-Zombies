@@ -1,7 +1,7 @@
 import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
 import java.util.ArrayList;
 
-public class Explosion extends animatedObject
+public class Explosion extends SpriteAnimator
 {
     public GreenfootImage[] explosion;
     public ArrayList<Zombie> zombies;

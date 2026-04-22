@@ -2,7 +2,7 @@ import greenfoot.*;
 import java.util.Timer;
 import java.io.*;
 
-public class animatedObject extends SmoothMover
+public class SpriteAnimator extends PhysicsBody
 {
     
     public long deltaTime;

@@ -1,6 +1,6 @@
 import greenfoot.*; 
 
-public abstract class SmoothMover extends Actor
+public abstract class PhysicsBody extends Actor
 {
     private double exactX;
     private double exactY;

@@ -2,8 +2,8 @@ import greenfoot.*;
 import java.util.*;
 
 public class Board extends Actor {
+    // Chỉ giữ lại mảng Board chính cho thực vật
     public Plant[][] Board = new Plant[6][9];
-    public Lilypad[][] WaterBoard = new Lilypad[6][9];
     
     public int xOffset = 334;
     public int yOffset = 175;  
@@ -14,18 +14,18 @@ public class Board extends Actor {
     public final int rowDeltaX = -12; 
     
     public int currentRowCount = 6;
-    private boolean isWaterMap = false; 
 
     public Board() {
         getImage().setTransparency(0);
     }
     
-    public void setupLayout(boolean isWater) {
-        this.isWaterMap = isWater; 
+    /**
+     * Khởi tạo lại bố cục cho bản đồ khô 6x9
+     */
+    public void setupLayout() {
         for (int i = 0; i < 6; i++) {
             for (int j = 0; j < 9; j++) {
                 Board[i][j] = null;
-                WaterBoard[i][j] = null;
             }
         }
         currentRowCount = 6;
@@ -39,29 +39,30 @@ public class Board extends Actor {
         return yOffset + (x * colDeltaY) + (y * ySpacing);
     }
     
-    public boolean isWaterRow(int y) {
-        return isWaterMap && (y == 2 || y == 3);
-    }
-    
+    /**
+     * Kiểm tra xem có thể đặt cây tại vị trí (x, y) hay không
+     */
     public boolean canPlace(int x, int y, Plant plant) {
-        if (y < 0 || y >= currentRowCount || x < 0 || x >= 9) return false;
+        // Kiểm tra giới hạn mảng
+        if (y < 0 || y >= 6 || x < 0 || x >= 9) return false;
+        
+        // Kiểm tra khả năng nâng cấp cây (ví dụ: Twin Sunflower đè lên Sunflower)
         if (UpgradeManager.canUpgrade(plant, Board[y][x])) return true;
         
-        boolean isWater = isWaterRow(y);
-        if (plant instanceof Lilypad) {
-            return isWater && WaterBoard[y][x] == null && Board[y][x] == null;
-        }
-        if (isWater) return WaterBoard[y][x] != null && Board[y][x] == null;
-        
+        // Chỉ cho phép đặt nếu ô trống
         return Board[y][x] == null;
     }
     
+    /**
+     * Đặt cây vào vị trí chỉ định
+     */
     public boolean placePlant(int x, int y, Plant plant) {
         if (!canPlace(x, y, plant)) return false;
         
         int posX = getXCoord(x, y);
         int posY = getYCoord(x, y);
 
+        // Xử lý nâng cấp cây
         if (UpgradeManager.canUpgrade(plant, Board[y][x])) {
             Plant upgradedPlant = UpgradeManager.getUpgradeResult(plant, Board[y][x]);
             getWorld().removeObject(Board[y][x]);
@@ -70,13 +71,8 @@ public class Board extends Actor {
             return true;
         }
         
-        if (plant instanceof Lilypad) {
-            WaterBoard[y][x] = (Lilypad) plant;
-            getWorld().addObject(plant, posX, posY + 10);
-        } else {
-            Board[y][x] = plant;
-            getWorld().addObject(plant, posX, posY);
-        }
+        Board[y][x] = plant;
+        getWorld().addObject(plant, posX, posY);
         return true;
     }
     
@@ -85,20 +81,14 @@ public class Board extends Actor {
         if (Board[y][x] != null) {
             getWorld().removeObject(Board[y][x]);
             Board[y][x] = null;
-        } else if (WaterBoard[y][x] != null) {
-            getWorld().removeObject(WaterBoard[y][x]);
-            WaterBoard[y][x] = null;
         }
     }
 
     public boolean movePlant(int oldX, int oldY, int newX, int newY, Plant plant) {
-        
-        if (newX < 0 || newX >= 9 || newY < 0 || newY >= currentRowCount) return false;
-        
+        if (newX < 0 || newX >= 9 || newY < 0 || newY >= 6) return false;
         if (oldX == newX && oldY == newY) return true;
     
         if (UpgradeManager.canUpgrade(plant, Board[newY][newX])) {
-            
             Plant upgradedPlant = UpgradeManager.getUpgradeResult(plant, Board[newY][newX]);
             
             getWorld().removeObject(Board[newY][newX]);

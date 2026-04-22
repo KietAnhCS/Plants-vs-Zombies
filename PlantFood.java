@@ -1,6 +1,6 @@
 import greenfoot.*;
 
-public class PlantFood extends SmoothMover
+public class PlantFood extends PhysicsBody
 {
     public boolean selected = false;
     private long rechargeTime = 20000; 

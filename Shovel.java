@@ -1,5 +1,5 @@
 import greenfoot.*;  
-public class Shovel extends SmoothMover
+public class Shovel extends PhysicsBody
 {
     public boolean selected = false;
     

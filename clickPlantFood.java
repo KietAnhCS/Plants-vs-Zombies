@@ -1,7 +1,7 @@
-import greenfoot.*;
+import greenfoot.*;  
 import java.util.*;
 
-public class clickPlantFood extends SmoothMover
+public class clickPlantFood extends PhysicsBody
 {
     private PlantFood master;
     private PlayScene playScene;
@@ -29,13 +29,11 @@ public class clickPlantFood extends SmoothMover
             int x = (int)Math.round(calcX);
             int y = (int)Math.round(calcY);
             
-            boolean isInsideGrid = (x >= 0 && x < 9 && y >= 0 && y < playScene.board.currentRowCount);
+            boolean isInsideGrid = (x >= 0 && x < 9 && y >= 0 && y < 6);
 
             if (isInsideGrid) {
+                
                 Plant current = playScene.board.Board[y][x]; 
-                if (current == null) {
-                    current = playScene.board.WaterBoard[y][x];
-                }
                 
                 handleHighlight(current);
 
@@ -80,6 +78,9 @@ public class clickPlantFood extends SmoothMover
     private void exitPlantFood() {
         resetOpaque();
         master.setSelected(false);
-        playScene.removeObject(this);
+        
+        if (getWorld() != null) {
+            getWorld().removeObject(this);
+        }
     }
 }

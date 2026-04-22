@@ -1,5 +1,5 @@
 import greenfoot.*; 
-public class Dirt extends animatedObject
+public class Dirt extends SpriteAnimator
 {
     public GreenfootImage[] dirt;
     

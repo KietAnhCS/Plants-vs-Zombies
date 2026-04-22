@@ -1,5 +1,5 @@
 import greenfoot.*;  
-public class FallingObject extends animatedObject
+public class FallingObject extends SpriteAnimator
 {
     public double vSpeed = 0;
     public double hSpeed = 0;

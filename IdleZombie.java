@@ -1,5 +1,5 @@
 import greenfoot.*;  
-public class IdleZombie extends animatedObject
+public class IdleZombie extends SpriteAnimator
 {
     public void act()
     {

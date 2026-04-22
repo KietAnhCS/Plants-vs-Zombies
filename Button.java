@@ -1,6 +1,6 @@
 import greenfoot.*;  
 
-public class Button extends animatedObject
+public class Button extends SpriteAnimator
 {
     public GreenfootImage idle;
     public GreenfootImage hover;

@@ -11,7 +11,6 @@ public class MainMenu extends World
         addObject(hitbox,0,0);
         addObject(new Start(), 555, 198);
         addObject(new More(), 532, 316);
-        addObject(new Bush(), 743, 565);
         
         
         this.menutheme = menutheme;
@@ -23,22 +22,7 @@ public class MainMenu extends World
             Greenfoot.setWorld(new CinematicIntro());
                     
                 
-        } else if (Greenfoot.isKeyDown("2")) {
-           menutheme.stop();
-                
-            Greenfoot.setWorld(new Level1Preview());
-                    
-        } else if (Greenfoot.isKeyDown("3")) {
-            menutheme.stop();
-                
-            Greenfoot.setWorld(new Level2Preview());
-                    
-        } else if (Greenfoot.isKeyDown("4")) {
-            menutheme.stop();
-                
-            Greenfoot.setWorld(new Level3Preview());
-                    
-        }
+        } 
     }
     public void started() {
         if (!menutheme.isPlaying()) {

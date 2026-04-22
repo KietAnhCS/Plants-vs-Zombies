@@ -1,5 +1,5 @@
 import greenfoot.*;  
-public class ReadySetPlant extends animatedObject
+public class ReadySetPlant extends SpriteAnimator
 {
     public GreenfootImage[] ready;
     public GreenfootImage[] set;

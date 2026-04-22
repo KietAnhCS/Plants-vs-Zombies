@@ -1,6 +1,6 @@
 import greenfoot.*;  
 
-public class Plant extends animatedObject
+public class Plant extends SpriteAnimator
 {
     public int cost;
     public int maxHp;
@@ -18,13 +18,20 @@ public class Plant extends animatedObject
 
     public void act()
     {
-        if (getWorld() == null) return;
+        PlayScene world = (PlayScene) getWorld();
+        
+        if (world == null) return;
+        
+        if (!world.getObjects(Overlay.class).isEmpty()) {
+            return; 
+        }
+        
         handleMouse();
 
         if (isLiving()) {
             update();    
             
-            if (getWorld() != null && getImage() != null) {
+            if (world != null && getImage() != null) {
                 if (isDragging) {
                     getImage().setTransparency(125);
                 } else if (!opaque) {

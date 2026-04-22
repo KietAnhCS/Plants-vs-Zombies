@@ -1,7 +1,7 @@
 import greenfoot.*;  
 import java.util.*;
 
-public class clickShovel extends SmoothMover
+public class clickShovel extends PhysicsBody
 {
     private PlayScene PlayScene;
     private Plant lastPlant = null;
@@ -24,13 +24,11 @@ public class clickShovel extends SmoothMover
             int x = (int)Math.round(calcX);
             int y = (int)Math.round(calcY);
             
-            boolean isInsideGrid = (x >= 0 && x < 9 && y >= 0 && y < PlayScene.board.currentRowCount);
+            boolean isInsideGrid = (x >= 0 && x < 9 && y >= 0 && y < 6);
 
             if (isInsideGrid) {
+                
                 Plant current = PlayScene.board.Board[y][x]; 
-                if (current == null) {
-                    current = PlayScene.board.WaterBoard[y][x];
-                }
                 
                 handleHighlight(current);
 
@@ -80,6 +78,6 @@ public class clickShovel extends SmoothMover
     private void exitShovel() {
         resetOpaque();
         PlayScene.shovel.setSelected(false);
-        PlayScene.removeObject(this);
+        getWorld().removeObject(this); 
     }
 }
