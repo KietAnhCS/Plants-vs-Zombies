@@ -17,12 +17,7 @@ public class MainMenu extends World
         Greenfoot.setSpeed(50);
     }
     public void act() {
-        if (Greenfoot.isKeyDown("1")) {
-            menutheme.stop();
-            Greenfoot.setWorld(new CinematicIntro());
-                    
-                
-        } 
+        
     }
     public void started() {
         if (!menutheme.isPlaying()) {

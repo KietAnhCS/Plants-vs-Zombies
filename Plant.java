@@ -125,7 +125,7 @@ public class Plant extends SpriteAnimator
         int y = (int)Math.round((b.xSpacing * dy - b.colDeltaY * dx) / det);
         
         if (y < 0) return 0;
-        if (y > 4) return 4; 
+        if (y > 5) return 5; 
         return y;
     }
 
