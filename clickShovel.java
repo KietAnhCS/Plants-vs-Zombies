@@ -16,31 +16,30 @@ public class clickShovel extends PhysicsBody
         if (mouse != null) {
             setLocation(mouse.getX(), mouse.getY());
             
-            if (PlayScene.board == null || PlayScene.board.xSpacing == 0) return;
+            if (PlayScene.board == null) return;
 
-            double calcX = (double)(mouse.getX() - PlayScene.board.xOffset) / PlayScene.board.xSpacing;
-            double calcY = (double)(mouse.getY() - PlayScene.board.yOffset) / PlayScene.board.ySpacing;
-            
-            int x = (int)Math.round(calcX);
-            int y = (int)Math.round(calcY);
-            
-            boolean isInsideGrid = (x >= 0 && x < 9 && y >= 0 && y < 6);
+            int gx = -1, gy = -1;
+            double minDist = 60;
 
-            if (isInsideGrid) {
-                
-                Plant current = PlayScene.board.Board[y][x]; 
-                
+            for(int r = 0; r < 6; r++) {
+                for(int c = 0; c < 9; c++) {
+                    double d = Math.hypot(mouse.getX() - PlayScene.board.getXCoord(c, r), mouse.getY() - PlayScene.board.getYCoord(c, r));
+                    if (d < minDist) {
+                        minDist = d; gx = c; gy = r;
+                    }
+                }
+            }
+
+            if (gx != -1) {
+                Plant current = PlayScene.board.Board[gy][gx]; 
                 handleHighlight(current);
 
                 if (Greenfoot.mouseClicked(null)) {
                     if (current != null) {
-                        
-                        PlayScene.board.removePlant(x, y); 
-                        
+                        PlayScene.board.removePlant(gx, gy); 
                         if (PlayScene.seedbank != null) {
                             PlayScene.seedbank.addSun(30);
                         }
-                        
                         AudioPlayer.play(80, "plant.mp3"); 
                     } else {
                         AudioPlayer.play(80, "tap.mp3");
@@ -77,7 +76,9 @@ public class clickShovel extends PhysicsBody
 
     private void exitShovel() {
         resetOpaque();
-        PlayScene.shovel.setSelected(false);
+        if (PlayScene.shovel != null) {
+            PlayScene.shovel.setSelected(false);
+        }
         getWorld().removeObject(this); 
     }
 }

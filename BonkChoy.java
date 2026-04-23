@@ -8,7 +8,7 @@ public class BonkChoy extends Plant {
     private long lastAttackTime = System.currentTimeMillis(), lastFrameTime = 0;
 
     public BonkChoy() {
-        maxHp = 250; 
+        maxHp = 350; 
         hp = maxHp;
         kRight = loadResized("bonkchoyknockoutone", 15);
         idle = loadResized("bonkchoyidle_three", 23);
@@ -23,7 +23,13 @@ public class BonkChoy extends Plant {
         }
         return imgs;
     }
-
+    
+    @Override
+    public void addedToWorld(World world) {
+        super.addedToWorld(world); 
+        world.addObject(new HealthBar(this, 50), getX(), getY());
+    }
+    
     @Override
     public void update() {
         if (getWorld() == null) return;
@@ -45,7 +51,7 @@ public class BonkChoy extends Plant {
             if (beingEaten) {
                 dmg = isKO ? 35 : 25;
             } else {
-                dmg = isKO ? 10 : 7;
+                dmg = isKO ? 6 : 5;
             }
             applyDmg(targets, 400, dmg, isKO);
         } else {

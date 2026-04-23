@@ -14,7 +14,7 @@ public class WaveManager extends Actor {
     public boolean isFirstWave;
     private boolean sunSpawnedForThisWave = false;
     public ArrayList<ArrayList<Zombie>> zombieRow = new ArrayList<ArrayList<Zombie>>();
-    public static final int xOffset = 815;
+    public static final int xOffset = 950;
 
     public WaveManager(long timeBetweenWaves, Zombie[][][] level, long firstWave, boolean startAsFirst, int... hugeWaves) {
         this.level = level;
@@ -101,18 +101,29 @@ public class WaveManager extends Actor {
             playScene.addObject(new AugmentCard(this, pool[i], null), xPos, yPos);
         }
         
-        playScene.setPaintOrder(AugmentCard.class, Overlay.class, WaveNotification.class, Plant.class, Zombie.class, GridManager.class);
+        playScene.setPaintOrder(AugmentCard.class, Overlay.class, WaveNotification.class, GridManager.class, Plant.class, Zombie.class);
         AudioPlayer.play(70, "hugewave.mp3");
     }
 
     public void nextWave() {
-        playScene.removeObjects(playScene.getObjects(Overlay.class));
-        playScene.removeObjects(playScene.getObjects(AugmentCard.class));
-        sendHugeWave(level[wave]);
-        playScene.addObject(new WaveNotification(wave == level.length - 1), 360, 215);
-        wave++;
-        choosingCard = false;
-        lastFrame = System.nanoTime();
+        // Xóa các object giao diện Card và Overlay ngay lập tức
+        if (playScene != null) {
+            playScene.removeObjects(playScene.getObjects(Overlay.class));
+            playScene.removeObjects(playScene.getObjects(AugmentCard.class));
+            
+            // Cập nhật lại Paint Order để các nút bấm nằm lên trên trở lại
+            playScene.setPaintOrder(Transition.class, WaveNotification.class, RollButton.class, SeedPacket.class, Shovel.class, Plant.class, GridManager.class);
+        }
+        
+        if (wave < level.length) {
+            sendHugeWave(level[wave]);
+            playScene.addObject(new WaveNotification(wave == level.length - 1), 360, 215);
+            wave++;
+        }
+        
+        // Mở khóa toàn bộ hệ thống
+        this.choosingCard = false; 
+        this.lastFrame = System.nanoTime();
     }
 
     public void sendWave(Zombie[][] waveData) {
@@ -124,27 +135,22 @@ public class WaveManager extends Actor {
     }
 
     private void spawnZombies(Zombie[][] waveData, boolean isHuge) {
-        GridManager board = (GridManager) playScene.getObjects(GridManager.class).get(0);
-        
+        GridManager board = playScene.board;
         for (int rowIndex = 0; rowIndex < waveData.length; rowIndex++) {
             Zombie[] zombiesInRow = waveData[rowIndex];
-            
             if (zombiesInRow != null) {
-                
                 for (int j = 0; j < zombiesInRow.length; j++) {
                     Zombie z = zombiesInRow[j];
                     if (z != null) {
-                        
-                        int offset = xOffset + (isHuge ? 100 : 0) + (j * 40); 
-                        int targetY = rowIndex * board.ySpacing + board.yOffset;
-                        
-                        playScene.addObject(z, offset, targetY);
-                        zombieRow.get(rowIndex).add(z);
+                        int row = board.clampRow(rowIndex);
+                        int targetY = board.getYCoord(8, row);
+                        int targetX = xOffset + (isHuge ? 100 : 0) + (j * 40);
+                        playScene.addObject(z, targetX, targetY);
+                        zombieRow.get(row).add(z);
                     }
                 }
             }
         }
-        playScene.addObject(new FixOrder(this, 500L), 0, 0);
     }
 
     public void fixOrder() {}

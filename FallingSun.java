@@ -16,7 +16,6 @@ public class FallingSun extends FallingObject
         PlayScene world = (PlayScene) getWorld();
         if (world == null) return;
         
-        
         if (!world.getObjects(Overlay.class).isEmpty()) {
             return; 
         }
@@ -41,11 +40,11 @@ public class FallingSun extends FallingObject
         beenClicked = true;
         AudioPlayer.play(90, "points.mp3");
         if (PlayScene != null && PlayScene.seedbank != null) {
+            
             PlayScene.seedbank.sunCounter.addSun(10);
         }
     }
 
-    
     public boolean checkClick() {
         return false;
     }
@@ -59,7 +58,8 @@ public class FallingSun extends FallingObject
             setLocation(getExactX(), y);
             lifetimeStart = System.currentTimeMillis(); 
         } else {
-            if (System.currentTimeMillis() - lifetimeStart > 8000) {
+            
+            if (System.currentTimeMillis() - lifetimeStart > 36000) {
                 fadeOut(10);
             }
         }

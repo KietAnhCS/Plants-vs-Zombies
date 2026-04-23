@@ -38,7 +38,6 @@ public class SeedPacket extends Actor
         PlayScene = (PlayScene)world;
         rechargeOverlay = new GreenfootImage(imageBright.getWidth(), imageBright.getHeight());
         
-        
         if (name.toLowerCase().contains("lilypad")) {
             doneRechargeTime = false;
             recharged = false;
@@ -72,7 +71,6 @@ public class SeedPacket extends Actor
     public void updateAppearance() {
         if (PlayScene == null || PlayScene.seedbank == null) return;
 
-        
         if (isUsed && !name.toLowerCase().contains("lilypad")) {
             setImage(imageDark);
             getImage().setTransparency(130);
@@ -80,7 +78,6 @@ public class SeedPacket extends Actor
             return;
         }
 
-        
         if (!doneRechargeTime && name.toLowerCase().contains("lilypad")) {
             GreenfootImage tempImage = new GreenfootImage(imageDark);
             rechargeOverlay.clear();
@@ -94,9 +91,7 @@ public class SeedPacket extends Actor
 
             setImage(tempImage);
             recharged = false; 
-        } 
-        
-        else {
+        } else {
             int currentSun = PlayScene.seedbank.sunCounter.sun; 
             if (currentSun < sunCost || selected) {
                 setImage(imageDark);
@@ -109,7 +104,7 @@ public class SeedPacket extends Actor
         }
     }
 
-        public void startRecharge() {
+    public void startRecharge() {
         if (name.toLowerCase().contains("lilypad")) {
             this.lastFrame = System.currentTimeMillis();
             this.deltaTime = 0;

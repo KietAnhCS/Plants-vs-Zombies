@@ -1,5 +1,7 @@
 import greenfoot.*; 
 import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
 
 public class PlayScene extends World {  
     
@@ -17,14 +19,8 @@ public class PlayScene extends World {
     public World restartWorld;
     public FallingObject winPlant;
     
-    public Zombie n = null;
-    
     public SeedPacket[] bank = {
-        new SunflowerPacket(), 
-        new PeashooterPacket(), 
-        new WalnutPacket(), 
-        new CactusPacket(), 
-        new TwinSunflowerPacket()
+    
     };
 
     private class RarityEntry {
@@ -39,8 +35,7 @@ public class PlayScene extends World {
     private RarityEntry[] weightedPool = {
         new RarityEntry(SunflowerPacket.class, 0),   
         new RarityEntry(PeashooterPacket.class, 3),
-        new RarityEntry(WalnutPacket.class, 2),
-        new RarityEntry(CactusPacket.class, 10),
+        new RarityEntry(CactusPacket.class, 3),
         new RarityEntry(BonkchoyPacket.class, 2),
         new RarityEntry(TorchwoodPacket.class, 0), 
         new RarityEntry(PotatoPacket.class, 1),
@@ -66,14 +61,13 @@ public class PlayScene extends World {
         this.winPlant = winPlant;
         
         Greenfoot.setSpeed(50);
-        
         setBackground("maptft.png");
         
-        addObject(new ThuyThan(), 110, 642);
-        addObject(seedbank, 0, 0);
-        addObject(board, 0, 0);
+        addObject(board, 555, 349); 
         
-        addObject(hitbox, 0, 0);
+        addObject(new ThuyThan(), 110, 642);
+        addObject(seedbank, 0, 0); 
+        addObject(hitbox, 555, 349);
         addObject(shovel, 1052, 537);
        
         addObject(rollbutton, 277, 679);
@@ -82,11 +76,26 @@ public class PlayScene extends World {
         prepareLawnmowers();
 
         setPaintOrder(
-            AugmentCard.class, Overlay.class, BonkChoy.class, Transition.class, WaveNotification.class, ReadySetPlant.class, 
-            SunCounter.class, ThuyThan.class, clickShovel.class, Shovel.class, Lawnmower.class, 
-            TransparentObject.class, SeedPacket.class, FallingSun.class, 
-            Sun.class, Dirt.class, Projectile.class, FallingObject.class, 
-            HealthBar.class, Zombie.class, fallingZombie.class, Explosion.class, Plant.class, GridManager.class
+            Transition.class,
+            Overlay.class,
+            AugmentCard.class,
+            WaveNotification.class,
+            ReadySetPlant.class,
+            SunCounter.class,
+            SeedPacket.class,    
+            RollButton.class,    
+            RupButton.class,
+            Shovel.class,
+            clickShovel.class,
+            Sun.class,
+            ThuyThan.class,
+            HealthBar.class,
+            Plant.class,         
+            GridManager.class,   
+            Zombie.class,
+            Projectile.class,
+            Dirt.class,
+            Lawnmower.class
         );
     }
 
@@ -109,18 +118,15 @@ public class PlayScene extends World {
             for (RarityEntry entry : weightedPool) {
                 if (entry.weight > 0) totalWeight += entry.weight;
             }
-    
             if (totalWeight <= 0) return; 
-    
+
             seedbank.addSun(-100); 
             SeedPacket[] newBank = new SeedPacket[5]; 
-    
             for (int i = 0; i < 5; i++) {
                 int randomNumber = Greenfoot.getRandomNumber(totalWeight);
                 int cursor = 0;
                 for (RarityEntry entry : weightedPool) {
                     if (entry.weight <= 0) continue; 
-    
                     cursor += entry.weight;
                     if (randomNumber < cursor) {
                         try {
@@ -141,30 +147,14 @@ public class PlayScene extends World {
         if (rollLevel < 5) { 
             rollLevel++;
             for (RarityEntry entry : weightedPool) {
-                if (entry.packetClass == SunflowerPacket.class) {
-                    if (rollLevel >= 3) entry.weight = 5;
-                }
-                if (entry.packetClass == PotatoPacket.class) {
-                    if (rollLevel >= 4) entry.weight = 2;
-                }
-                if (entry.packetClass == TwinSunflowerPacket.class) {
-                    if (rollLevel >= 3) entry.weight = 3;
-                }
-                if (entry.packetClass == GatlingPeaPacket.class) {
-                    if (rollLevel == 5) entry.weight = 3;
-                }
-                if (entry.packetClass == RepeaterPacket.class) {
-                    if (rollLevel == 5) entry.weight = 3;
-                }
-                if (entry.packetClass == PeashooterPacket.class) {
-                    if (rollLevel == 5) entry.weight = 0;
-                }
-                if (entry.packetClass == CactusPacket.class) {
-                    if (rollLevel >= 4) entry.weight = 0;
-                }
-                if (entry.packetClass == TorchwoodPacket.class) {
-                    if (rollLevel >= 4) entry.weight = 3;
-                }
+                if (entry.packetClass == SunflowerPacket.class && rollLevel >= 3) entry.weight = 5;
+                if (entry.packetClass == PotatoPacket.class && rollLevel >= 4) entry.weight = 2;
+                if (entry.packetClass == TwinSunflowerPacket.class && rollLevel >= 3) entry.weight = 3;
+                if (entry.packetClass == GatlingPeaPacket.class && rollLevel == 5) entry.weight = 3;
+                if (entry.packetClass == RepeaterPacket.class && rollLevel == 5) entry.weight = 3;
+                if (entry.packetClass == PeashooterPacket.class && rollLevel == 5) entry.weight = 0;
+                if (entry.packetClass == CactusPacket.class && rollLevel >= 4) entry.weight = 0;
+                if (entry.packetClass == TorchwoodPacket.class && rollLevel >= 4) entry.weight = 3;
             }
         }
     }
@@ -180,23 +170,14 @@ public class PlayScene extends World {
         } else if (!winOnce && hasWon()) {
             winOnce = true;
             finishLevel();
-            addObject(winPlant, Random.Int(SeedBank.x1, SeedBank.x2), 215);
+            addObject(winPlant, Greenfoot.getRandomNumber(266) + 400, 215);
         }
     }
 
     private void prepareLawnmowers() {
-        int[][] coordinates = {
-            {250, 175}, 
-            {238, 228}, 
-            {226, 293}, 
-            {200, 358}, 
-            {180, 436}  
-        };
-
+        int[][] coordinates = {{250, 175}, {238, 228}, {226, 293}, {200, 358}, {180, 436}};
         for (int i = 0; i < 5; i++) {
-            if (i < coordinates.length) {
-                addObject(new Lawnmower(), coordinates[i][0], coordinates[i][1]);
-            }  
+            addObject(new Lawnmower(), coordinates[i][0], coordinates[i][1]);
         }
     }
 
@@ -212,10 +193,31 @@ public class PlayScene extends World {
         }
         return false;
     }
-
-    public boolean hasWon() {
-        return level.hasWon();
+    
+        public void checkAndCombine(Plant newPlant) {
+        if (newPlant == null || newPlant.isMerging || newPlant.isTarget) return;
+    
+        if (!(newPlant instanceof Peashooter || newPlant instanceof Sunflower || newPlant instanceof Repeater)) {
+            return; 
+        }
+    
+        List<? extends Plant> plants = getObjects(newPlant.getClass());
+        List<Plant> available = new ArrayList<>();
+        for (Plant p : plants) {
+            if (!p.isMerging && !p.isTarget) available.add(p);
+        }
+    
+        if (available.size() >= 3) {
+            Plant p1 = available.get(0);
+            Plant p2 = available.get(1);
+            Plant p3 = available.get(2);
+            p3.isTarget = true; 
+            p1.setMergingTarget(p3);
+            p2.setMergingTarget(p3);
+        }
     }
+
+    public boolean hasWon() { return level.hasWon(); }
 
     public void moveHitbox() {
         MouseInfo mouse = Greenfoot.getMouseInfo();
@@ -224,9 +226,8 @@ public class PlayScene extends World {
 
     private void checkDebugKeys() {
         String key = Greenfoot.getKey();
-        if (key == null) return;
-        if (key.equals("1")) { CYS.stop(); Grasswalk.stop(); Greenfoot.setWorld(new CinematicIntro()); }
-        if (key.equals("r")) rollPackets(); 
+        if ("1".equals(key)) { CYS.stop(); Grasswalk.stop(); Greenfoot.setWorld(new CinematicIntro()); }
+        if ("r".equals(key)) rollPackets(); 
     }
 
     public void finishLevel() {

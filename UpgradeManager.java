@@ -1,42 +1,35 @@
 import greenfoot.*;
 
 public class UpgradeManager {
-    
-    public static boolean canUpgrade(Plant handPlant, Plant boardPlant) {
-        if (handPlant == null || boardPlant == null) return false;
+    public static boolean canUpgrade(Plant p1, Plant p2) {
+        if (p1 == null || p2 == null) return false;
         
-        if (handPlant instanceof Peashooter && boardPlant instanceof Peashooter) {
+        if (p1.getClass() == p2.getClass()) {
+            if (p1 instanceof Peashooter || p1 instanceof Sunflower || p1 instanceof Repeater) {
+                return true;
+            }
+        }
+        
+        if ((p1 instanceof Torchwood && p2 instanceof GatlingPea) || 
+            (p1 instanceof GatlingPea && p2 instanceof Torchwood)) {
             return true;
         }
-        if (handPlant instanceof Repeater && boardPlant instanceof Repeater) {
-            return true;
-        }
-        if (handPlant instanceof Sunflower && boardPlant instanceof Sunflower) {
-            return true;
-        }
-        if (handPlant instanceof GatlingPea && boardPlant instanceof Torchwood) {
-            return true;
-        }
+        
         return false;
     }
 
-    public static Plant getUpgradeResult(Plant handPlant, Plant boardPlant) {
-        if (handPlant instanceof Peashooter && boardPlant instanceof Peashooter) {
-            return new  Repeater();
-        }
-        
-        if (handPlant instanceof Repeater && boardPlant instanceof Repeater) {
-            return new GatlingPea();
-        }
-        if (handPlant instanceof Sunflower && boardPlant instanceof Sunflower) {
-            return new TwinSunflower();
-        }
-        if (handPlant instanceof GatlingPea && boardPlant instanceof Torchwood) {
-            return new MegaGatlingPea();
-        }
-        
+    public static Plant getUpgradeResult(Plant p) {
+        if (p instanceof Peashooter) return new Repeater();
+        if (p instanceof Sunflower) return new TwinSunflower();
+        if (p instanceof Repeater) return new GatlingPea();
         return null;
     }
-    
-    
+
+    public static Plant getSpecialUpgrade(Plant p1, Plant p2) {
+        if ((p1 instanceof Torchwood && p2 instanceof GatlingPea) || 
+            (p1 instanceof GatlingPea && p2 instanceof Torchwood)) {
+            return new MegaGatlingPea();
+        }
+        return null;
+    }
 }

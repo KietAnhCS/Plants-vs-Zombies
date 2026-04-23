@@ -1,7 +1,7 @@
 import greenfoot.*; 
 public class Sunflower extends Plant
 {
-    private int sunProductionTime = 10000;
+    private int sunProductionTime = 16000;
     private GreenfootImage[] idle;
     private boolean test = false;
     private long lastFrame2 = System.nanoTime();
@@ -34,8 +34,7 @@ public class Sunflower extends Plant
         hitFlash(idle, "sunfloweridle");
         test = true;
         
-        
-        PlayScene.addObject(new Sun(20), getX(), getY() - 10);
+        PlayScene.addObject(new Sun(10), getX(), getY() - 10);
     }
 }
   

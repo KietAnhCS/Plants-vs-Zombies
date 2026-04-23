@@ -2,101 +2,187 @@ import greenfoot.*;
 import java.util.*;
 
 public class GridManager extends Actor {
-    
     public Plant[][] Board = new Plant[6][9];
-    
-    public int xOffset = 334;
-    public int yOffset = 175;  
-    public int xSpacing = 78;  
-    public int ySpacing = 65;  
-    
-    public final int colDeltaY = 0;  
-    public final int rowDeltaX = -12; 
-    
     public int currentRowCount = 6;
+    
+    private final double Ax = 320, Ay = 177;
+    private final double Dx = 807, Dy = 177;
+    private final double Bx = 249, By = 521;
+    private final double Cx = 843, Cy = 521;
 
     public GridManager() {
-        getImage().setTransparency(0);
+        GreenfootImage img = new GreenfootImage(1111, 698);
+        img.clear();
+        setImage(img);
     }
-    
-    public void setupLayout() {
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 9; j++) {
-                Board[i][j] = null;
+
+    public void act() {
+        drawGridHighlights();
+    }
+
+    public int getXCoord(int col, int row) {
+        double u = col / 9.0; 
+        double v = row / 6.0;
+        return (int)((1.0-u)*(1.0-v)*Ax + u*(1.0-v)*Dx + (1.0-u)*v*Bx + u*v*Cx);
+    }
+
+    public int getYCoord(int col, int row) {
+        double u = col / 9.0;
+        double v = row / 6.0;
+        return (int)((1.0-u)*(1.0-v)*Ay + u*(1.0-v)*Dy + (1.0-u)*v*By + u*v*Cy);
+    }
+
+    public int getGridX(int mx, int my) {
+        int gx = -1;
+        double minDist = 60;
+        for(int r = 0; r < 6; r++) {
+            for(int c = 0; c < 9; c++) {
+                double d = Math.hypot(mx - (getXCoord(c, r) + (getXCoord(c+1, r) - getXCoord(c, r))/2), 
+                                      my - (getYCoord(c, r) + (getYCoord(c, r+1) - getYCoord(c, r))/2));
+                if (d < minDist) {
+                    minDist = d; gx = c;
+                }
             }
         }
-        currentRowCount = 6;
+        return gx;
     }
 
-    public int getXCoord(int x, int y) {
-        return xOffset + (x * xSpacing) + (y * rowDeltaX);
+    public int getGridY(int mx, int my) {
+        int gy = -1;
+        double minDist = 60;
+        for(int r = 0; r < 6; r++) {
+            for(int c = 0; c < 9; c++) {
+                double d = Math.hypot(mx - (getXCoord(c, r) + (getXCoord(c+1, r) - getXCoord(c, r))/2), 
+                                      my - (getYCoord(c, r) + (getYCoord(c, r+1) - getYCoord(c, r))/2));
+                if (d < minDist) {
+                    minDist = d; gy = r;
+                }
+            }
+        }
+        return gy;
     }
 
-    public int getYCoord(int x, int y) {
-        return yOffset + (x * colDeltaY) + (y * ySpacing);
+    public int clampRow(int row) {
+        if (row < 0) return 0;
+        if (row >= currentRowCount) return currentRowCount - 1;
+        return row;
     }
-    
+
+    private void drawGridHighlights() {
+        GreenfootImage canvas = getImage();
+        canvas.clear(); 
+        
+        MouseInfo mouse = Greenfoot.getMouseInfo();
+        if (mouse == null) return;
+
+        Actor dragging = null;
+        
+        List<Plant> plants = getWorld().getObjects(Plant.class);
+        for (Plant p : plants) {
+            if (p.getImage().getTransparency() < 255) {
+                dragging = p;
+                break;
+            }
+        }
+        
+        if (dragging == null) {
+            List<SeedPacket> packets = getWorld().getObjects(SeedPacket.class);
+            for (SeedPacket s : packets) {
+                if (Greenfoot.mouseDragged(s) || Greenfoot.mousePressed(s) || Greenfoot.mouseClicked(s)) {
+                    dragging = s;
+                    break;
+                }
+            }
+        }
+
+        if (dragging != null) {
+            int gx = getGridX(mouse.getX(), mouse.getY());
+            int gy = getGridY(mouse.getX(), mouse.getY());
+            
+            if (gx >= 0 && gx < 9 && gy >= 0 && gy < 6) {
+                boolean can = false;
+                if (dragging instanceof Plant) {
+                    can = canPlace(gx, gy, (Plant)dragging);
+                } else if (dragging instanceof SeedPacket) {
+                    can = canPlace(gx, gy, ((SeedPacket)dragging).getPlant());
+                }
+
+                int x1 = getXCoord(gx, gy), y1 = getYCoord(gx, gy);
+                int x2 = getXCoord(gx + 1, gy), y2 = getYCoord(gx + 1, gy);
+                int x3 = getXCoord(gx + 1, gy + 1), y3 = getYCoord(gx + 1, gy + 1);
+                int x4 = getXCoord(gx, gy + 1), y4 = getYCoord(gx, gy + 1);
+
+                int[] px = {x1, x2, x3, x4};
+                int[] py = {y1, y2, y3, y4};
+
+                canvas.setColor(can ? new Color(0, 255, 0, 100) : new Color(255, 0, 0, 100));
+                canvas.fillPolygon(px, py, 4);
+                canvas.setColor(can ? Color.GREEN : Color.RED);
+                canvas.drawPolygon(px, py, 4);
+            }
+        }
+    }
+
     public boolean canPlace(int x, int y, Plant plant) {
-       
-        if (y < 0 || y >= 6 || x < 0 || x >= 9) return false;
-        
-        if (UpgradeManager.canUpgrade(plant, Board[y][x])) return true;
-        
-        return Board[y][x] == null;
+        if (x < 0 || x >= 9 || y < 0 || y >= 6) return false;
+        Plant target = Board[y][x];
+        if (target == null || target == plant) return true;
+        return UpgradeManager.canUpgrade(plant, target);
     }
-    
+
+    public void updateBoardData(int x, int y, Plant plant) {
+        if (x >= 0 && x < 9 && y >= 0 && y < 6) {
+            Board[y][x] = plant;
+        }
+    }
+
     public boolean placePlant(int x, int y, Plant plant) {
         if (!canPlace(x, y, plant)) return false;
         
-        int posX = getXCoord(x, y);
-        int posY = getYCoord(x, y);
-
-        if (UpgradeManager.canUpgrade(plant, Board[y][x])) {
-            Plant upgradedPlant = UpgradeManager.getUpgradeResult(plant, Board[y][x]);
-            getWorld().removeObject(Board[y][x]);
-            Board[y][x] = upgradedPlant;
-            getWorld().addObject(upgradedPlant, posX, posY);
-            return true;
+        int tx = getXCoord(x, y) + (getXCoord(x+1, y) - getXCoord(x, y))/2;
+        int ty = getYCoord(x, y) + (getYCoord(x, y+1) - getYCoord(x, y))/2;
+        Plant target = Board[y][x];
+    
+        int oldR = -1, oldC = -1;
+        for (int r = 0; r < 6; r++) {
+            for (int c = 0; c < 9; c++) {
+                if (Board[r][c] == plant) { oldR = r; oldC = c; }
+            }
+        }
+    
+        if (target != null && target != plant) {
+            Plant special = UpgradeManager.getSpecialUpgrade(plant, target);
+            if (special != null) {
+                if (oldR >= 0) Board[oldR][oldC] = null;
+                removePlant(x, y);
+                if (plant.getWorld() != null) getWorld().removeObject(plant);
+                getWorld().addObject(special, tx, ty);
+                Board[y][x] = special;
+                return true;
+            }
+            return false; 
         }
         
+        if (oldR >= 0) Board[oldR][oldC] = null;
         Board[y][x] = plant;
-        getWorld().addObject(plant, posX, posY);
+        if (plant.getWorld() == null) {
+            getWorld().addObject(plant, tx, ty);
+        } else {
+            plant.setLocation(tx, ty);
+        }
+        if (getWorld() instanceof PlayScene) ((PlayScene)getWorld()).checkAndCombine(plant);
         return true;
     }
-    
-    public void removePlant(int x, int y) {
-        if (y < 0 || y >= 6 || x < 0 || x >= 9) return;
-        if (Board[y][x] != null) {
-            getWorld().removeObject(Board[y][x]);
-            Board[y][x] = null;
-        }
-    }
 
-    public boolean movePlant(int oldX, int oldY, int newX, int newY, Plant plant) {
-        if (newX < 0 || newX >= 9 || newY < 0 || newY >= 6) return false;
-        if (oldX == newX && oldY == newY) return true;
-    
-        if (UpgradeManager.canUpgrade(plant, Board[newY][newX])) {
-            Plant upgradedPlant = UpgradeManager.getUpgradeResult(plant, Board[newY][newX]);
-            
-            getWorld().removeObject(Board[newY][newX]);
-            Board[oldY][oldX] = null; 
-            
-            Board[newY][newX] = upgradedPlant;
-            int posX = getXCoord(newX, newY);
-            int posY = getYCoord(newX, newY);
-            getWorld().addObject(upgradedPlant, posX, posY);
-            
-            getWorld().removeObject(plant); 
-            return true; 
+    public void removePlant(int x, int y) {
+        if (x >= 0 && x < 9 && y >= 0 && y < 6) {
+            Plant p = Board[y][x];
+            if (p != null) {
+                if (p.getWorld() != null) {
+                    getWorld().removeObject(p);
+                }
+                Board[y][x] = null;
+            }
         }
-    
-        if (canPlace(newX, newY, plant)) {
-            Board[oldY][oldX] = null;
-            Board[newY][newX] = plant;
-            return true;
-        }
-    
-        return false;
     }
 }

@@ -9,13 +9,12 @@ public class RollButton extends Actor
     }
 
     public void act() {
-        
+        PlayScene world = (PlayScene)getWorld();
+        if (world == null) return;
+        if (world.level.choosingCard) return;
         if (Greenfoot.mouseClicked(this)) {
-            World world = getWorld();
-            if (world instanceof PlayScene) {
-                PlayScene ps = (PlayScene) world;
-                ps.rollPackets(); 
-            }
+            world.rollPackets();
+            AudioPlayer.play(80, "achievement.mp3");
         }
     }
 }

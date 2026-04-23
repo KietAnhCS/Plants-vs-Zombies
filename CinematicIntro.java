@@ -109,9 +109,9 @@ public class CinematicIntro extends World
         {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null}
     };
         
-    public SeedPacket[] bank = {new BonkchoyPacket(),new SunflowerPacket(),new SunflowerPacket(),null , null};
+    public SeedPacket[] bank = {new SunflowerPacket(),new BonkchoyPacket(),new SunflowerPacket(),null , null};
     public SeedBank seedbank = new SeedBank(bank);   
-    public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 1,5,10,15,20,25,30,35,40,45,50,55,60,65,70);
+    public WaveManager level = new WaveManager(23500L, level1, 15000L, true,5,10,15,20,25,30,35,40,45,50,55,60,65,70);
 
     public CinematicIntro()
     {    
