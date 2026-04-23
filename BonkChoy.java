@@ -2,37 +2,25 @@ import greenfoot.*;
 import java.util.List;
 
 public class BonkChoy extends Plant {
-    private GreenfootImage[] idle, pRight, pfStart, pfLoop, pfEnd, kRight;
-    private GreenfootImage pfTransformImg;
-    private GreenfootImage deathBg;
-    private GreenfootImage originalWorldBg;
-    
-    private int pfStage = 0, frameIndex = 0, punchCount = 0;
-    private boolean adjusted = false, isUsingPF = false, pfSoundPlayed = false, bgActive = false;
-    private long lastAttackTime = System.currentTimeMillis(), pfTimer = 0, lastFrameTime = 0;
+    private GreenfootImage[] idle, pRight, kRight;
+    private int frameIndex = 0, punchCount = 0;
+    private boolean adjusted = false;
+    private long lastAttackTime = System.currentTimeMillis(), lastFrameTime = 0;
 
     public BonkChoy() {
-        maxHp = 670; 
+        maxHp = 250; 
         hp = maxHp;
-        
         kRight = loadResized("bonkchoyknockoutone", 15);
         idle = loadResized("bonkchoyidle_three", 23);
         pRight = loadResized("bonkchoyattackone", 10);
-        pfStart = loadResized("bonkchoyplantfoodstart", 30);
-        pfLoop = loadResized("bonkchoyplantfood", 30);
-        pfEnd = loadResized("bonkchoyplantfoodend", 10);
-        
-        pfTransformImg = new GreenfootImage("bonkchoyplantfood.png");
-        pfTransformImg.scale(pfTransformImg.getWidth() / 2, pfTransformImg.getHeight() / 2);
-        
-        deathBg = new GreenfootImage("death.png"); 
-        
         setImage(idle[0]);
     }
 
     private GreenfootImage[] loadResized(String prefix, int count) {
         GreenfootImage[] imgs = importSprites(prefix, count);
-        for (GreenfootImage img : imgs) img.scale(img.getWidth() / 2, img.getHeight() / 2);
+        for (GreenfootImage img : imgs) {
+            img.scale(img.getWidth() / 2, img.getHeight() / 2);
+        }
         return imgs;
     }
 
@@ -43,40 +31,28 @@ public class BonkChoy extends Plant {
             setLocation(getX(), getY() - 15); 
             adjusted = true; 
         } 
-        
         handleNormalCombat();
-    }
-
-    public void activatePlantFood() {
-        isUsingPF = true; 
-        pfStage = -1; 
-        frameIndex = 0;
-        pfTimer = System.currentTimeMillis();
-        pfSoundPlayed = false;
-        bgActive = false;
-        this.hp = maxHp;
     }
 
     private void handleNormalCombat() {
         List<Zombie> targets = getObjectsAtOffset(50, 0, Zombie.class); 
-        boolean isKO = (punchCount >= 3);
+        boolean isKO = (punchCount >= 9);
+        boolean beingEaten = (hp < maxHp);
 
         if (!targets.isEmpty()) {
             playLoop(isKO ? kRight : pRight, 40);
-            
-            applyDmg(targets, 400, isKO ? 50 : 35, isKO);
+            int dmg;
+            if (beingEaten) {
+                dmg = isKO ? 35 : 25;
+            } else {
+                dmg = isKO ? 10 : 7;
+            }
+            applyDmg(targets, 400, dmg, isKO);
         } else {
             playLoop(idle, 40);
-            if (System.currentTimeMillis() - lastAttackTime > 1000) punchCount = 0;
-        }
-    }
-
-    private void removeWithCleanup() {
-        if (bgActive && originalWorldBg != null && getWorld() != null) {
-            getWorld().setBackground(originalWorldBg);
-        }
-        if (getWorld() != null) {
-            getWorld().removeObject(this);
+            if (System.currentTimeMillis() - lastAttackTime > 1000) {
+                punchCount = 0;
+            }
         }
     }
 
@@ -87,7 +63,8 @@ public class BonkChoy extends Plant {
             }
             if (ko) {
                 punchCount = 0;
-                
+                this.hp += (int)(maxHp * 0.5);
+                if (this.hp > maxHp) this.hp = maxHp;
             } else {
                 punchCount++;
             }
@@ -104,20 +81,8 @@ public class BonkChoy extends Plant {
         }
     }
 
-    private void playOnce(GreenfootImage[] anim, int delay) {
-        if (System.currentTimeMillis() - lastFrameTime > delay && frameIndex < anim.length - 1) {
-            frameIndex++;
-            setImage(anim[frameIndex]);
-            lastFrameTime = System.currentTimeMillis();
-        }
-    }
-
     @Override
-    public void hit(int dmg) {
-        if (getWorld() == null) return;
-        hp -= dmg;
-        if (hp <= 0) {
-            removeWithCleanup();
-        }
+    public void activatePlantFood() {
+        this.hp = maxHp;
     }
 }

@@ -95,7 +95,7 @@ public class Zombie extends SpriteAnimator {
             if (!eatOnce) {
                 eatOnce = true;
                 AudioPlayer.play(70, "chomp.mp3", "chomp2.mp3", "chompsoft.mp3");
-                target.hit(10);
+                target.hit(35);
             }
         } else {
             eatOnce = false;
@@ -106,6 +106,10 @@ public class Zombie extends SpriteAnimator {
         if (world instanceof PlayScene) {
             this.PlayScene = (PlayScene) world;
         }
+        world.addObject(new HealthBar(this, 60), getX(), getY());
+    
+    
+        world.setPaintOrder(AugmentCard.class, Overlay.class, HealthBar.class, Plant.class, Zombie.class);
     }
 
     public boolean isLiving() {

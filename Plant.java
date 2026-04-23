@@ -19,10 +19,12 @@ public class Plant extends SpriteAnimator
     public void act()
     {
         PlayScene world = (PlayScene) getWorld();
-        
         if (world == null) return;
         
         if (!world.getObjects(Overlay.class).isEmpty()) {
+            if (getImage() != null && getImage().getTransparency() != 125) {
+                getImage().setTransparency(125);
+            }
             return; 
         }
         
@@ -31,13 +33,11 @@ public class Plant extends SpriteAnimator
         if (isLiving()) {
             update();    
             
-            if (world != null && getImage() != null) {
-                if (isDragging) {
+            if (getImage() != null) {
+                if (isDragging || opaque) {
                     getImage().setTransparency(125);
-                } else if (!opaque) {
-                    getImage().setTransparency(255);
                 } else {
-                    getImage().setTransparency(125);
+                    getImage().setTransparency(255);
                 }
             }
         } else {
@@ -64,29 +64,25 @@ public class Plant extends SpriteAnimator
                 startGridX = getXPos();
                 startGridY = getYPos();
                 if (PlayScene != null) {
-                    PlayScene.setPaintOrder(Plant.class, Board.class);
+                    PlayScene.setPaintOrder(Overlay.class, AugmentCard.class, Plant.class, Zombie.class, GridManager.class);
                 }
             }
         }
     
         if (isDragging && Greenfoot.mouseDragged(this)) {
             if (mouse != null) {
-                
                 setLocation(mouse.getX(), mouse.getY());
             }
         }
     
         if (isDragging && Greenfoot.mouseDragEnded(this)) {
             isDragging = false;
-            
             int newGridX = getXPos(); 
             int newGridY = getYPos(); 
     
             if (PlayScene.board != null && PlayScene.board.movePlant(startGridX, startGridY, newGridX, newGridY, this)) {
-                
                 setLocation(PlayScene.board.getXCoord(newGridX, newGridY), PlayScene.board.getYCoord(newGridX, newGridY));
             } else {
-                
                 setLocation(PlayScene.board.getXCoord(startGridX, startGridY), PlayScene.board.getYCoord(startGridX, startGridY));
             }
         }
@@ -101,14 +97,11 @@ public class Plant extends SpriteAnimator
 
     public int getXPos() {
         if (getWorld() == null || PlayScene.board == null) return 0;
-        Board b = PlayScene.board;
-        
+        GridManager b = PlayScene.board;
         double det = (double)(b.xSpacing * b.ySpacing) - (b.rowDeltaX * b.colDeltaY);
         double dx = getX() - b.xOffset;
         double dy = getY() - b.yOffset;
-        
         int x = (int)Math.round((dx * b.ySpacing - dy * b.rowDeltaX) / det);
-        
         if (x < 0) return 0;
         if (x > 9) return 9;
         return x;
@@ -116,14 +109,11 @@ public class Plant extends SpriteAnimator
 
     public int getYPos() {
         if (getWorld() == null || PlayScene.board == null) return 0;
-        Board b = PlayScene.board;
-        
+        GridManager b = PlayScene.board;
         double det = (double)(b.xSpacing * b.ySpacing) - (b.rowDeltaX * b.colDeltaY);
         double dx = getX() - b.xOffset;
         double dy = getY() - b.yOffset;
-        
         int y = (int)Math.round((b.xSpacing * dy - b.colDeltaY * dx) / det);
-        
         if (y < 0) return 0;
         if (y > 5) return 5; 
         return y;
@@ -132,7 +122,9 @@ public class Plant extends SpriteAnimator
     @Override
     public void addedToWorld(World world) {
         PlayScene = (PlayScene)world;
+        world.addObject(new HealthBar(this, 50), getX(), getY());
         PlayScene.addObject(new Dirt(), getX(), getY() + 30);
+        PlayScene.setPaintOrder(Overlay.class, AugmentCard.class, Plant.class, Zombie.class, GridManager.class);
     }
 
     public boolean isLiving() {

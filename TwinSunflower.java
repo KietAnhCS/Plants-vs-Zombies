@@ -29,15 +29,15 @@ public class TwinSunflower extends Plant
     public void produceSun() {
         deltaTime2 = (currentFrame - lastFrame2) / 1000000;
         
-        if (deltaTime2 > 20000L) {
+        if (deltaTime2 > 60000L) {
             lastFrame2 = System.nanoTime();
             hitFlash(idle, "twinsunflower");
             test = true;
             
             
-            PlayScene.addObject(new Sun(5), getX() + 20, getY() - 10);
-            PlayScene.addObject(new Sun(5), getX() - 20, getY() - 10);
-            PlayScene.addObject(new Sun(5), getX() - 20, getY() - 10);
+            PlayScene.addObject(new Sun(25), getX() + 20, getY() - 10);
+            PlayScene.addObject(new Sun(20), getX() - 20, getY() - 10);
+            PlayScene.addObject(new Sun(10), getX() - 20, getY() - 10);
         }
     }
 }

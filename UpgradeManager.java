@@ -14,7 +14,7 @@ public class UpgradeManager {
         if (handPlant instanceof Sunflower && boardPlant instanceof Sunflower) {
             return true;
         }
-        if (handPlant instanceof GatlingPea && boardPlant instanceof GatlingPea) {
+        if (handPlant instanceof GatlingPea && boardPlant instanceof Torchwood) {
             return true;
         }
         return false;
@@ -31,7 +31,7 @@ public class UpgradeManager {
         if (handPlant instanceof Sunflower && boardPlant instanceof Sunflower) {
             return new TwinSunflower();
         }
-        if (handPlant instanceof GatlingPea && boardPlant instanceof GatlingPea) {
+        if (handPlant instanceof GatlingPea && boardPlant instanceof Torchwood) {
             return new MegaGatlingPea();
         }
         

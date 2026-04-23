@@ -10,7 +10,7 @@ public class PlayScene extends World {
     public boolean winOnce = false;
     private boolean isWaterMap = true; 
     
-    public Board board = new Board();
+    public GridManager board = new GridManager();
     public GreenfootSound Grasswalk = new GreenfootSound("intro3.mp3");
     
     public GreenfootSound CYS;
@@ -18,22 +18,7 @@ public class PlayScene extends World {
     public FallingObject winPlant;
     
     public Zombie n = null;
-    public Zombie[][] level1 = {
-        {null, new BasicZombie(), null, null}, {n},
-        {new BasicZombie(), null, null, null, null}, {n},
-        {null, new BasicZombie(), null, new BasicZombie()}, {new BasicZombie()},
-        {null, null, new Conehead(), null, null}, {n},
-        {new BasicZombie(), new Conehead(), new BasicZombie(), new BasicZombie(), new BasicZombie(), n, new BasicZombie()}, {n},
-        {new Conehead(), n, null, new BasicZombie(), null, null, new BasicZombie()},
-        {new BasicZombie(), n, n, new BasicZombie(), null, new BasicZombie(), new BasicZombie()},
-        {new Buckethead(), null, null, null, null},
-        {n, new BasicZombie(), n, n, new Conehead(), n, n, new BasicZombie()},
-        {null, new BasicZombie(), null, null, new Conehead(), n, n, new BasicZombie()},
-        {new BasicZombie(), new BasicZombie(), new BasicZombie(), null, new Conehead()}, 
-        {null, null, new BasicZombie(), null, null}, {n},
-        {new Conehead(), new Conehead(), new Conehead(), new BasicZombie(), new BasicZombie(), new Buckethead(), null, new BasicZombie(), new Conehead(), new Buckethead()}
-    };
-
+    
     public SeedPacket[] bank = {
         new SunflowerPacket(), 
         new PeashooterPacket(), 
@@ -52,18 +37,15 @@ public class PlayScene extends World {
     }
     
     private RarityEntry[] weightedPool = {
-        new RarityEntry(SunflowerPacket.class, 0),
-        new RarityEntry(PeashooterPacket.class, 10),
-        new RarityEntry(WalnutPacket.class, 1),
+        new RarityEntry(SunflowerPacket.class, 0),   
+        new RarityEntry(PeashooterPacket.class, 3),
+        new RarityEntry(WalnutPacket.class, 2),
         new RarityEntry(CactusPacket.class, 10),
-        
-        
-        new RarityEntry(BonkchoyPacket.class, 1),
-        new RarityEntry(TorchwoodPacket.class, 1),
-        
-        new RarityEntry(PotatoPacket.class, 2),
-        
-    
+        new RarityEntry(BonkchoyPacket.class, 2),
+        new RarityEntry(TorchwoodPacket.class, 0), 
+        new RarityEntry(PotatoPacket.class, 1),
+        new RarityEntry(RepeaterPacket.class, 0),
+        new RarityEntry(GatlingPeaPacket.class, 0)
     };
     
     public SeedBank seedbank = new SeedBank(bank);   
@@ -97,27 +79,18 @@ public class PlayScene extends World {
         addObject(rollbutton, 277, 679);
         addObject(rupbutton, 278, 638);
         
-        
-        
         prepareLawnmowers();
 
         setPaintOrder(
-            Setting.class, Overlay.class, AugmentCard.class,BonkChoy.class, Transition.class, AHugeWave.class, ReadySetPlant.class, 
+            AugmentCard.class, Overlay.class, BonkChoy.class, Transition.class, WaveNotification.class, ReadySetPlant.class, 
             SunCounter.class, ThuyThan.class, clickShovel.class, Shovel.class, Lawnmower.class, 
             TransparentObject.class, SeedPacket.class, FallingSun.class, 
             Sun.class, Dirt.class, Projectile.class, FallingObject.class, 
-            Zombie.class, fallingZombie.class, Explosion.class, Plant.class, Board.class
+            HealthBar.class, Zombie.class, fallingZombie.class, Explosion.class, Plant.class, GridManager.class
         );
     }
 
     public void act() {
-        checkEscape();
-        
-        if (!getObjects(Setting.class).isEmpty() || level.choosingCard) {
-            moveHitbox(); 
-            return; 
-        }
-
         moveHitbox(); 
         if (!isPlaying) {
             addObject(level, 0, 0);
@@ -131,16 +104,23 @@ public class PlayScene extends World {
     
     public void rollPackets() {
         int currentSuns = seedbank.getSun(); 
-        if (currentSuns >= 25) {
-            seedbank.addSun(-25); 
-            SeedPacket[] newBank = new SeedPacket[5]; 
+        if (currentSuns >= 100) {
             int totalWeight = 0;
-            for (RarityEntry entry : weightedPool) totalWeight += entry.weight;
-
+            for (RarityEntry entry : weightedPool) {
+                if (entry.weight > 0) totalWeight += entry.weight;
+            }
+    
+            if (totalWeight <= 0) return; 
+    
+            seedbank.addSun(-100); 
+            SeedPacket[] newBank = new SeedPacket[5]; 
+    
             for (int i = 0; i < 5; i++) {
                 int randomNumber = Greenfoot.getRandomNumber(totalWeight);
                 int cursor = 0;
                 for (RarityEntry entry : weightedPool) {
+                    if (entry.weight <= 0) continue; 
+    
                     cursor += entry.weight;
                     if (randomNumber < cursor) {
                         try {
@@ -158,17 +138,32 @@ public class PlayScene extends World {
     }
     
     public void upgradeProbabilities() {
-        if (rollLevel < 9) { 
+        if (rollLevel < 5) { 
             rollLevel++;
             for (RarityEntry entry : weightedPool) {
-                if (entry.packetClass == CactusPacket.class || entry.packetClass == PotatoPacket.class ) {
-                    if (entry.weight > 1) entry.weight -= 1; 
+                if (entry.packetClass == SunflowerPacket.class) {
+                    if (rollLevel >= 3) entry.weight = 5;
                 }
-                if (entry.packetClass == TwinSunflowerPacket.class || entry.packetClass == RepeaterPacket.class ||entry.packetClass == SunflowerPacket.class ||entry.packetClass == WalnutPacket.class ||entry.packetClass == BonkchoyPacket.class ) {
-                    entry.weight += 2;
+                if (entry.packetClass == PotatoPacket.class) {
+                    if (rollLevel >= 4) entry.weight = 2;
                 }
-                if (entry.packetClass == GatlingPeaPacket.class || entry.packetClass == TorchwoodPacket.class) {
-                    entry.weight += 1;
+                if (entry.packetClass == TwinSunflowerPacket.class) {
+                    if (rollLevel >= 3) entry.weight = 3;
+                }
+                if (entry.packetClass == GatlingPeaPacket.class) {
+                    if (rollLevel == 5) entry.weight = 3;
+                }
+                if (entry.packetClass == RepeaterPacket.class) {
+                    if (rollLevel == 5) entry.weight = 3;
+                }
+                if (entry.packetClass == PeashooterPacket.class) {
+                    if (rollLevel == 5) entry.weight = 0;
+                }
+                if (entry.packetClass == CactusPacket.class) {
+                    if (rollLevel >= 4) entry.weight = 0;
+                }
+                if (entry.packetClass == TorchwoodPacket.class) {
+                    if (rollLevel >= 4) entry.weight = 3;
                 }
             }
         }
@@ -190,7 +185,6 @@ public class PlayScene extends World {
     }
 
     private void prepareLawnmowers() {
-        
         int[][] coordinates = {
             {250, 175}, 
             {238, 228}, 
@@ -198,16 +192,10 @@ public class PlayScene extends World {
             {200, 358}, 
             {180, 436}  
         };
-    
 
-        int rowCount = 5;
-    
-        for (int i = 0; i < rowCount; i++) {
-            
+        for (int i = 0; i < 5; i++) {
             if (i < coordinates.length) {
-                int xPos = coordinates[i][0];
-                int yPos = coordinates[i][1];
-                addObject(new Lawnmower(), xPos, yPos);
+                addObject(new Lawnmower(), coordinates[i][0], coordinates[i][1]);
             }  
         }
     }
@@ -234,20 +222,6 @@ public class PlayScene extends World {
         if (mouse != null) hitbox.setLocation(mouse.getX(), mouse.getY());
     }
 
-    private void checkEscape() {
-        if ("escape".equals(Greenfoot.getKey())) {
-            if (getObjects(Setting.class).isEmpty()) {
-                addObject(new Overlay(getWidth(), getHeight()), getWidth()/2, getHeight()/2);
-                addObject(new Setting(), getWidth() / 2, getHeight() / 2);
-                Grasswalk.pause();
-            } else {
-                removeObjects(getObjects(Setting.class));
-                removeObjects(getObjects(Overlay.class));
-                Grasswalk.playLoop();
-            }
-        }
-    }
-
     private void checkDebugKeys() {
         String key = Greenfoot.getKey();
         if (key == null) return;
@@ -268,5 +242,4 @@ public class PlayScene extends World {
     public void stopped() {
         if (Grasswalk.isPlaying()) Grasswalk.pause();
     }
-
 }

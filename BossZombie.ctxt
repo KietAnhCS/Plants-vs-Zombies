@@ -1,9 +1,0 @@
-#BlueJ class context
-comment0.target=BossZombie
-comment1.params=
-comment1.target=BossZombie()
-comment2.params=
-comment2.target=void\ update()
-comment3.params=imgs\ w\ h
-comment3.target=void\ resizeArray(greenfoot.GreenfootImage[],\ int,\ int)
-numComments=4

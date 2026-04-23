@@ -13,9 +13,9 @@ public class RupButton extends Actor {
             if (world instanceof PlayScene) {
                 PlayScene ps = (PlayScene) world;
             
-                int upgradeCost = currentLevel * 50;
+                int upgradeCost = currentLevel * 125;
 
-                if (ps.seedbank.getSun() >= upgradeCost && currentLevel < 9) {
+                if (ps.seedbank.getSun() >= upgradeCost && currentLevel < 5) {
                     ps.seedbank.addSun(-upgradeCost); 
                     ps.upgradeProbabilities();
                     currentLevel++;
@@ -31,7 +31,7 @@ public class RupButton extends Actor {
         GreenfootImage bg = new GreenfootImage("Up", 24, Color.WHITE, new Color(0, 0, 0, 150));
         
         int nextCost = currentLevel * 50;
-        String displayLevel = (currentLevel < 9) ? String.valueOf(currentLevel) : "MAX";
+        String displayLevel = (currentLevel < 5) ? String.valueOf(currentLevel) : "MAX";
         
         try {
             GreenfootImage numImg = new GreenfootImage("text" + currentLevel + ".png");
@@ -41,7 +41,7 @@ public class RupButton extends Actor {
             
             bg.drawString(displayLevel, 5, 20); 
             
-            if (currentLevel < 9) {
+            if (currentLevel < 5) {
                 bg.setFont(new Font("Arial", false, false, 12));
                 bg.drawString("$" + nextCost, 5, 35);
             }

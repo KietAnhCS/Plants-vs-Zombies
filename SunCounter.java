@@ -6,7 +6,7 @@ public class SunCounter extends Actor
     public static int x = 120; 
     public static int y = 50;
     
-    public int sun = 250; 
+    public int sun = 375; 
     public static final int textY = 45;
     
     private long lastFrame = System.currentTimeMillis();

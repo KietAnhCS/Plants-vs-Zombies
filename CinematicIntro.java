@@ -16,37 +16,102 @@ public class CinematicIntro extends World
     private boolean daveTalking = true;
 
     
-    public Zombie[][] level1 = 
-    {
-
+    public Zombie[][][] level1 = {
         
-            {new BasicZombie(),null,null,null,null,null},
-            {new Conehead(),new Conehead(),null,null,null,null},
-           {new Conehead(),null,new Conehead(),null,null,null},
-            {new Conehead(),new Conehead(),new Conehead(),new Conehead(),null,null},
-           {new Conehead(),new Conehead(),null,new Conehead(),new Conehead(),null},
+        {{new BasicZombie()}, null, null, null, null, null},
+        {null, {new BasicZombie()}, null, null, null, null},
+        {null, null, {new BasicZombie()}, null, null, null},
+        {null, null, null, {new BasicZombie()}, null, null},
+        {null, null, null, null, {new BasicZombie()}, null},
         
-        {new Conehead(), new Conehead()}, 
-        {null, new BasicZombie(), null, null},
-        {n},
-        {new BasicZombie(), null, null, null, null}, 
-        {n},
-        {null, new BasicZombie(), null, new BasicZombie()},
-        {new BasicZombie()},
-        {null, null, new Conehead(), null, null},
-        {null, new BasicZombie(), null, null},
-        {n},
-        {new BasicZombie(), null, null, null, null}, 
-        {n},
-        {null, new BasicZombie(), null, new BasicZombie()},
-        {new BasicZombie()},
-        {null, null, new Conehead(), null, null},
+        {{new Conehead()}, null, null, null, null, null},
+        {null, null, {new Conehead()}, null, null, null},
+        {{new BasicZombie()}, null, {new BasicZombie()}, null, null, null},
+        {null, {new Conehead()}, null, {new BasicZombie()}, null, null},
+        {{new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, null, null},
         
+        {{new Brickhead()}, {new Buckethead()}, {new Brickhead()}, {new Buckethead()}, {new Brickhead()}, null},
+        {{new Conehead(), new BasicZombie()}, null, {new Conehead()}, null, null, null},
+        {{new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, null, null},
+        {{new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, null, null},
+        {{new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, null, null},
+        
+        {{new Brickhead()}, null, null, null, null, null},
+        {null, {new Brickhead()}, null, {new Conehead()}, null, null},
+        {{new Buckethead()}, {new Buckethead()}, null, null, {new BasicZombie()}, null},
+        {{new Brickhead(), new BasicZombie()}, null, {new Buckethead()}, null, null, null},
+        {{new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, null, null},
+        
+        {{new Brickhead(), new Conehead()}, {new Buckethead()}, null, null, null, null},
+        {{new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, null, null},
+        {{new Conehead(), new Conehead()}, {new Conehead(), new Conehead()}, {new Conehead()}, null, null, null},
+        {{new Buckethead(), new Buckethead()}, null, {new Brickhead()}, null, {new Buckethead()}, null},
+        {{new Brickhead()}, {new Brickhead()}, {new Brickhead()}, null, null, null},
+        {{new Brickhead(), new BasicZombie()}, {new Brickhead(), new BasicZombie()}, null, null, null, null},
+        {{new Buckethead(), new Conehead()}, {new Buckethead(), new Conehead()}, {new Buckethead()}, null, null, null},
+        {{new Brickhead()}, {new Buckethead()}, {new Conehead()}, {new BasicZombie()}, {new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead()}, null, null, null, {new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, null, null},
+        
+        {{new Brickhead(), new Conehead(), new BasicZombie()}, {new Buckethead(), new Buckethead()}, null, null, null, null},
+        {null, {new Brickhead(), new Brickhead(), new Brickhead()}, null, null, null, null},
+        {{new Buckethead(), new Buckethead()}, {new Brickhead(), new Conehead()}, {new Conehead()}, null, null, null},
+        {{new Brickhead(), new Buckethead(), new Conehead()}, null, {new Brickhead()}, null, null, null},
+        {{new Buckethead()}, {new Buckethead()}, {new Buckethead()}, {new Buckethead()}, {new Buckethead()}, null},
+        {{new Brickhead(), new Brickhead()}, {new Brickhead()}, {new Brickhead()}, null, null, null},
+        {{new Conehead(), new Conehead(), new Conehead()}, {new Conehead(), new Conehead(), new Conehead()}, null, null, null, null},
+        {{new Brickhead(), new Buckethead()}, null, {new Brickhead(), new Buckethead()}, null, null, null},
+        {{new Buckethead(), new Buckethead(), new Buckethead()}, {new Buckethead(), new Buckethead(), new Buckethead()}, null, null, null, null},
+        {{new Brickhead(), new BasicZombie()}, {new Brickhead(), new BasicZombie()}, {new Brickhead(), new BasicZombie()}, {new Brickhead()}, null, null},
+        
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead()}, null, null, null, null},
+        {null, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead()}, null, null, null},
+        {{new Brickhead()}, {new Brickhead()}, {new Brickhead()}, {new Brickhead()}, {new Brickhead()}, null},
+        {{new Brickhead(), new Buckethead(), new Conehead()}, {new Brickhead(), new Buckethead(), new Conehead()}, null, null, null, null},
+        {{new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, null, null, null},
+        {{new Brickhead(), new Buckethead()}, {new Brickhead(), new Buckethead()}, {new Brickhead(), new Buckethead()}, null, null, null},
+        {{new Brickhead(), new Conehead()}, {new Brickhead(), new Conehead()}, {new Brickhead(), new Conehead()}, {new Brickhead()}, null, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null, null, null, null},
+        {{new Brickhead()}, {new Buckethead()}, {new Brickhead()}, {new Buckethead()}, {new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, null, {new Brickhead(), new Brickhead(), new Brickhead()}, null, null, null},
+        
+        {{new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, null, null},
+        {{new Buckethead(), new Buckethead(), new Buckethead()}, {new Buckethead(), new Buckethead(), new Buckethead()}, {new Buckethead(), new Buckethead(), new Buckethead()}, null, null, null},
+        {{new Brickhead(), new Buckethead(), new Conehead()}, {new Brickhead(), new Buckethead(), new Conehead()}, {new Brickhead(), new Buckethead(), new Conehead()}, null, null, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead()}, {new Brickhead()}, null, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Buckethead(), new Buckethead(), new Buckethead()}, {new Conehead(), new Conehead(), new Conehead()}, null, null, null},
+        {{new Brickhead()}, {new Brickhead()}, {new Brickhead()}, {new Brickhead()}, {new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null, null, null},
+        {{new Brickhead(), new Buckethead(), new Buckethead()}, {new Brickhead(), new Buckethead(), new Buckethead()}, {new Brickhead(), new Buckethead(), new Buckethead()}, null, null, null},
+        {{new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Buckethead(), new Buckethead(), new Buckethead()}, {new Buckethead(), new Buckethead(), new Buckethead()}, null, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new Buckethead(), new Buckethead(), new Buckethead()}, {new Buckethead(), new Buckethead(), new Buckethead()}, {new Buckethead(), new Buckethead(), new Buckethead()}, {new Buckethead(), new Buckethead(), new Buckethead()}, {new Buckethead(), new Buckethead(), new Buckethead()}, null},
+        {{new Brickhead(), new Buckethead()}, {new Brickhead(), new Buckethead()}, {new Brickhead(), new Buckethead()}, {new Brickhead(), new Buckethead()}, {new Brickhead(), new Buckethead()}, null},
+        {{new Brickhead(), new Conehead()}, {new Brickhead(), new Conehead()}, {new Brickhead(), new Conehead()}, {new Brickhead(), new Conehead()}, {new Brickhead(), new Conehead()}, null},
+        
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null, null, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Buckethead(), new Buckethead(), new Buckethead()}, {new Buckethead(), new Buckethead(), new Buckethead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null}
     };
-    
-    public SeedPacket[] bank = {new SunflowerPacket(),new SunflowerPacket(),new SunflowerPacket(),new PeashooterPacket(), new PeashooterPacket()};
+        
+    public SeedPacket[] bank = {new BonkchoyPacket(),new SunflowerPacket(),new SunflowerPacket(),null , null};
     public SeedBank seedbank = new SeedBank(bank);   
-    public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 1,5,10,15,20);
+    public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 1,5,10,15,20,25,30,35,40,45,50,55,60,65,70);
 
     public CinematicIntro()
     {    

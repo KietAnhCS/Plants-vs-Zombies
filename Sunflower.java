@@ -35,7 +35,7 @@ public class Sunflower extends Plant
         test = true;
         
         
-        PlayScene.addObject(new Sun(5), getX(), getY() - 10);
+        PlayScene.addObject(new Sun(20), getX(), getY() - 10);
     }
 }
   

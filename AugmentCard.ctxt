@@ -1,9 +1,13 @@
 #BlueJ class context
 comment0.target=AugmentCard
-comment1.params=manager\ type
-comment1.target=AugmentCard(WaveManager,\ java.lang.String)
+comment1.params=manager\ type\ dummy
+comment1.target=AugmentCard(WaveManager,\ java.lang.String,\ java.lang.Object)
 comment2.params=
 comment2.target=void\ act()
 comment3.params=
-comment3.target=void\ applyAugmentEffect()
-numComments=4
+comment3.target=void\ handleHover()
+comment4.params=w\ h
+comment4.target=void\ updateImage(int,\ int)
+comment5.params=
+comment5.target=void\ applyAugmentEffect()
+numComments=6
