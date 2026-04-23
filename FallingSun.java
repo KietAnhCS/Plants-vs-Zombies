@@ -8,7 +8,7 @@ public class FallingSun extends FallingObject
     private long lifetimeStart; 
 
     public FallingSun() {
-        super(0.6, 0, 0, 0, (long)Random.Int(2000, 5000)); 
+        super(0.6, 0, 0, 0, 60000); 
         sunSprites = importSprites("sun", 2);
     }
 

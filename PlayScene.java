@@ -36,7 +36,7 @@ public class PlayScene extends World {
         new RarityEntry(SunflowerPacket.class, 0),   
         new RarityEntry(PeashooterPacket.class, 3),
         new RarityEntry(CactusPacket.class, 3),
-        new RarityEntry(BonkchoyPacket.class, 2),
+        new RarityEntry(BonkchoyPacket.class, 1),
         new RarityEntry(TorchwoodPacket.class, 0), 
         new RarityEntry(PotatoPacket.class, 1),
         new RarityEntry(RepeaterPacket.class, 0),
@@ -76,15 +76,18 @@ public class PlayScene extends World {
         prepareLawnmowers();
 
         setPaintOrder(
-            Transition.class,
-            Overlay.class,
             AugmentCard.class,
+            Overlay.class,
+            RollButton.class,    
+            RupButton.class,
+            Transition.class,
+            
+            
             WaveNotification.class,
             ReadySetPlant.class,
             SunCounter.class,
             SeedPacket.class,    
-            RollButton.class,    
-            RupButton.class,
+            
             Shovel.class,
             clickShovel.class,
             Sun.class,

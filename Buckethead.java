@@ -35,7 +35,7 @@ public class Buckethead extends Zombie
         
         
         walkSpeed = Random.Double(11, 14);
-        maxHp = 600;
+        maxHp = 900;
         hp = maxHp;
     }
 

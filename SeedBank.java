@@ -40,7 +40,6 @@ public class SeedBank extends Actor {
             for (Actor a : touching) {
                 if (a instanceof SeedPacket) {
                     SeedPacket clicked = (SeedPacket) a;
-                    // Kiểm tra điều kiện sử dụng
                     if (clicked.isUsed && !clicked.name.toLowerCase().contains("lilypad")) continue;
                     if (clicked.recharged && sunCounter.sun >= clicked.sunCost) {
                         selectedPacket = clicked;
@@ -64,23 +63,24 @@ public class SeedBank extends Actor {
             int gy = playScene.board.getGridY(mx, my);
 
             if (gx >= 0 && gy >= 0 && playScene.board.canPlace(gx, gy, selectedPacket.getPlant())) {
-                
                 int tx = playScene.board.getXCoord(gx, gy); 
                 int ty = playScene.board.getYCoord(gx, gy);
                 
-                ghostImage.setLocation(tx, ty);
+                int centerX = tx + (playScene.board.getXCoord(gx + 1, gy) - tx) / 2;
+                int centerY = ty + (playScene.board.getYCoord(gx, gy + 1) - ty) / 2;
+                
+                ghostImage.setLocation(centerX, centerY);
                 ghostImage.setTransparent(true); 
                 lastGx = gx;
                 lastGy = gy;
             } else {
-                
                 ghostImage.setLocation(mx, my);
                 ghostImage.setTransparent(false);
                 lastGx = -1;
                 lastGy = -1;
             }
 
-            if (Greenfoot.mouseClicked(null)) {
+            if (Greenfoot.mouseDragEnded(null) || Greenfoot.mouseClicked(null)) {
                 if (lastGx >= 0 && lastGy >= 0) {
                     if (playScene.board.placePlant(lastGx, lastGy, selectedPacket.getPlant())) {
                         sunCounter.removeSun(selectedPacket.sunCost);

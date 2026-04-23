@@ -45,7 +45,7 @@ public class Repeater extends Plant
                 shootCount = 0;
                 resetFrame = false;
             } else {
-                if (shootCount >= 3) {
+                if (shootCount >= 4) {
                     lastFrame2 = currentFrame;
                 }
                 if (!resetFrame) {
@@ -53,7 +53,7 @@ public class Repeater extends Plant
                     resetFrame = true;
                 }
                 
-                if (frame >= 3) {
+                if (frame >= 4) {
                     AudioPlayer.play(80, "throw.mp3", "throw2.mp3");
                     
                     if (getWorld() != null) {

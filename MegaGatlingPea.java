@@ -1,10 +1,10 @@
 import greenfoot.*;
+import java.util.*;
 
 public class MegaGatlingPea extends Plant
 {
     private GreenfootImage[] idle;
     private GreenfootImage[] shoot;
-    private boolean shootOnce = false;
     private int shootCount = 0;
     private boolean resetFrame = false;
     private boolean shooting = false;
@@ -12,8 +12,8 @@ public class MegaGatlingPea extends Plant
     private boolean isPoweredUp = false;
     private long powerUpStartTime;
     private final long POWER_UP_DURATION = 3000L;
-    private long baseShootDelay = 600L; 
-    private long shootDelay = 600L;
+    private long baseShootDelay = 2000L; 
+    private long shootDelay = 2000L;
     
     private long lastFrame2 = System.nanoTime();
     private long deltaTime2;
@@ -21,7 +21,6 @@ public class MegaGatlingPea extends Plant
     public MegaGatlingPea() {
         maxHp = 60;
         hp = maxHp;
-      
         shoot = scaleImages(importSprites("MegaGatlingPea_shoot", 31), 0.75);
         idle = scaleImages(importSprites("MegaGatlingPea_idle", 31), 0.75);
         setImage(idle[0]);
@@ -45,7 +44,7 @@ public class MegaGatlingPea extends Plant
     public void activatePlantFood() {
         this.isPoweredUp = true;
         this.powerUpStartTime = System.currentTimeMillis();
-        this.shootDelay = 60L; 
+        this.shootDelay = 40L; 
         this.hp = maxHp;
     }
 
@@ -67,6 +66,7 @@ public class MegaGatlingPea extends Plant
             }
         }
 
+        PlayScene = (PlayScene)getWorld();
         currentFrame = System.nanoTime();
 
         handleAction();
@@ -74,30 +74,25 @@ public class MegaGatlingPea extends Plant
     }
 
     private void handleAction() {
-        boolean activeShooting = shooting || isPoweredUp;
+        deltaTime2 = (currentFrame - lastFrame2) / 1000000;
 
-        if (!activeShooting) {
-            animate(idle, 225, true);
-            lastFrame2 = System.nanoTime();
-            shootCount = 0;
-            resetFrame = false;
-        } else {
-            deltaTime2 = (currentFrame - lastFrame2) / 1000000;
-            
-            if (deltaTime2 < shootDelay) {
-                if (!isPoweredUp) {
-                    animate(idle, 225, true);
+        if (isPoweredUp) {
+            executeShootingLogic();
+        } 
+        else if (shooting) {
+            if (shootCount >= 7) {
+                if (deltaTime2 >= shootDelay) {
                     shootCount = 0;
-                    resetFrame = false;
                 } else {
-                    executeShootingLogic();
+                    animate(idle, 225, true);
                 }
             } else {
-                if (shootCount >= 7 && !isPoweredUp) {
-                    lastFrame2 = currentFrame;
-                }
                 executeShootingLogic();
             }
+        } else {
+            animate(idle, 225, true);
+            shootCount = 0;
+            lastFrame2 = currentFrame - (shootDelay * 1000000);
         }
     }
 
@@ -107,30 +102,37 @@ public class MegaGatlingPea extends Plant
             resetFrame = true;
         }
         
+        int animSpeed = isPoweredUp ? 5 : 10; 
+        animate(shoot, animSpeed, false);
+
         if (frame >= 12) {
             int myRow = getYPos();
             if (getWorld() != null && myRow != -1) {
                 AudioPlayer.play(80, "throw.mp3", "throw2.mp3");
                 PlayScene.addObject(new FirePea(myRow), getX() + 20, getY());
-                setFrame(1);
+                
+                setFrame(1); 
                 shootCount++;
+                
+                if (shootCount >= 7 && !isPoweredUp) {
+                    lastFrame2 = System.nanoTime();
+                    resetFrame = false;
+                }
             }
         }
-        
-        int animSpeed = isPoweredUp ? 20 : 40;
-        animate(shoot, animSpeed, false);
     }
 
     private void checkZombieInRow() {
         int myRow = getYPos();
-        if (myRow == -1 || PlayScene.level == null) return;
+        if (myRow == -1 || PlayScene.level == null || PlayScene.level.zombieRow == null) return;
 
-        if (PlayScene.level.zombieRow.get(myRow).isEmpty()) {
+        List<Zombie> zombiesInRow = PlayScene.level.zombieRow.get(myRow);
+        if (zombiesInRow == null || zombiesInRow.isEmpty()) {
             shooting = false;
         } else {
             boolean found = false;
-            for (Zombie i : PlayScene.level.zombieRow.get(myRow)) {
-                if (i.getWorld() != null && i.getX() > getX() && i.getX() <= PlayScene.getWidth() + 10) {
+            for (Zombie i : zombiesInRow) {
+                if (i != null && i.getWorld() != null && i.getX() > getX() && i.getX() <= PlayScene.getWidth() + 10) {
                     found = true;
                     break;
                 }

@@ -2,6 +2,8 @@ import greenfoot.*;
 
 public class RupButton extends Actor {
     private int currentLevel = 1;
+    private final int MAX_LEVEL = 10;
+    private final int BASE_COST = 125;
 
     public RupButton() {
         updateAppearance();
@@ -12,10 +14,9 @@ public class RupButton extends Actor {
             World world = getWorld();
             if (world instanceof PlayScene) {
                 PlayScene ps = (PlayScene) world;
-            
-                int upgradeCost = currentLevel * 125;
+                int upgradeCost = currentLevel * BASE_COST;
 
-                if (ps.seedbank.getSun() >= upgradeCost && currentLevel < 5) {
+                if (ps.seedbank.getSun() >= upgradeCost && currentLevel < MAX_LEVEL) {
                     ps.seedbank.addSun(-upgradeCost); 
                     ps.upgradeProbabilities();
                     currentLevel++;
@@ -27,23 +28,25 @@ public class RupButton extends Actor {
     }
 
     private void updateAppearance() {
+        GreenfootImage bg = new GreenfootImage(80, 60);
+        bg.setColor(new Color(0, 0, 0, 150));
+        bg.fill();
         
-        GreenfootImage bg = new GreenfootImage("Up", 24, Color.WHITE, new Color(0, 0, 0, 150));
-        
-        int nextCost = currentLevel * 50;
-        String displayLevel = (currentLevel < 5) ? String.valueOf(currentLevel) : "MAX";
-        
+        String displayLevel = (currentLevel < MAX_LEVEL) ? "LV: " + currentLevel : "MAX";
+        int nextCost = currentLevel * BASE_COST;
+
         try {
             GreenfootImage numImg = new GreenfootImage("text" + currentLevel + ".png");
-            bg.drawImage(numImg, 5, 5);
+            bg.drawImage(numImg, (bg.getWidth()-numImg.getWidth())/2, 5);
         } catch (Exception e) {
-            bg.setColor(Color.YELLOW);
+            bg.setColor(Color.WHITE);
+            bg.setFont(new Font("Arial", true, false, 18));
+            bg.drawString(displayLevel, 10, 25); 
             
-            bg.drawString(displayLevel, 5, 20); 
-            
-            if (currentLevel < 5) {
-                bg.setFont(new Font("Arial", false, false, 12));
-                bg.drawString("$" + nextCost, 5, 35);
+            if (currentLevel < MAX_LEVEL) {
+                bg.setColor(Color.YELLOW);
+                bg.setFont(new Font("Arial", false, false, 14));
+                bg.drawString("$" + nextCost, 10, 50);
             }
         }
         setImage(bg);

@@ -10,23 +10,42 @@ public class BonkChoy extends Plant {
     public BonkChoy() {
         maxHp = 350; 
         hp = maxHp;
+        
         kRight = loadResized("bonkchoyknockoutone", 15);
         idle = loadResized("bonkchoyidle_three", 23);
         pRight = loadResized("bonkchoyattackone", 10);
-        setImage(idle[0]);
+        
+        if (idle != null && idle.length > 0) {
+            setImage(idle[0]);
+        }
     }
 
     private GreenfootImage[] loadResized(String prefix, int count) {
+        
         GreenfootImage[] imgs = importSprites(prefix, count);
+        
         for (GreenfootImage img : imgs) {
-            img.scale(img.getWidth() / 2, img.getHeight() / 2);
+            if (img != null) {
+                
+                int oldWidth = img.getWidth();
+                int oldHeight = img.getHeight();
+                
+                int newWidth = (int)(oldWidth * 0.45);
+                int newHeight = (int)(oldHeight * 0.45);
+                
+                if (newWidth <= 0) newWidth = 1;
+                if (newHeight <= 0) newHeight = 1;
+                
+                img.scale(newWidth, newHeight);
+            }
         }
         return imgs;
     }
-    
+
     @Override
     public void addedToWorld(World world) {
         super.addedToWorld(world); 
+        
         world.addObject(new HealthBar(this, 50), getX(), getY());
     }
     
@@ -34,6 +53,7 @@ public class BonkChoy extends Plant {
     public void update() {
         if (getWorld() == null) return;
         if (!adjusted) { 
+            
             setLocation(getX(), getY() - 15); 
             adjusted = true; 
         } 
@@ -41,6 +61,7 @@ public class BonkChoy extends Plant {
     }
 
     private void handleNormalCombat() {
+        
         List<Zombie> targets = getObjectsAtOffset(50, 0, Zombie.class); 
         boolean isKO = (punchCount >= 9);
         boolean beingEaten = (hp < maxHp);
@@ -53,6 +74,7 @@ public class BonkChoy extends Plant {
             } else {
                 dmg = isKO ? 6 : 5;
             }
+            
             applyDmg(targets, 400, dmg, isKO);
         } else {
             playLoop(idle, 40);
@@ -69,7 +91,7 @@ public class BonkChoy extends Plant {
             }
             if (ko) {
                 punchCount = 0;
-                this.hp += (int)(maxHp * 0.5);
+                this.hp += (int)(maxHp * 0.2);
                 if (this.hp > maxHp) this.hp = maxHp;
             } else {
                 punchCount++;
@@ -80,6 +102,7 @@ public class BonkChoy extends Plant {
     }
 
     private void playLoop(GreenfootImage[] anim, int delay) {
+        if (anim == null || anim.length == 0) return;
         if (System.currentTimeMillis() - lastFrameTime > delay) {
             frameIndex = (frameIndex + 1) % anim.length;
             setImage(anim[frameIndex]);
