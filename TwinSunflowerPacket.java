@@ -3,7 +3,7 @@ import greenfoot.*;
 public class TwinSunflowerPacket extends SeedPacket
 {
     public TwinSunflowerPacket() {
-        super(16000L, true, 175, "twinsunflowerpacket");
+        super(16000L, true, 0, "stwinsunflowerpacket");
     }
  
     public TransparentObject addImage() {

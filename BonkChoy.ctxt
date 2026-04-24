@@ -14,6 +14,4 @@ comment6.params=targets\ delay\ dmg\ ko
 comment6.target=void\ applyDmg(java.util.List,\ int,\ int,\ boolean)
 comment7.params=anim\ delay
 comment7.target=void\ playLoop(greenfoot.GreenfootImage[],\ int)
-comment8.params=
-comment8.target=void\ activatePlantFood()
-numComments=9
+numComments=8

@@ -2,7 +2,7 @@ import greenfoot.*;
 
 public class TwinSunflower extends Plant
 {
-    private int sunProductionTime = 60000;
+    private int sunProductionTime = 120000;
     private GreenfootImage[] idle;
     private boolean test = false;
     private long lastFrame2 = System.nanoTime();
@@ -35,9 +35,9 @@ public class TwinSunflower extends Plant
             hitFlash(idle, "twinsunflower");
             test = true;
             
-            PlayScene.addObject(new Sun(10), getX() + 20, getY() - 10);
-            PlayScene.addObject(new Sun(10), getX() + 20, getY() - 10);
-            PlayScene.addObject(new Sun(10), getX() + 20, getY() - 10);
+            PlayScene.addObject(new Sun(100), getX() + 20, getY() - 10);
+            PlayScene.addObject(new Sun(100), getX() + 20, getY() - 10);
+            PlayScene.addObject(new Sun(100), getX() + 20, getY() - 10);
         }
     }
 }

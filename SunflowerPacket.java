@@ -3,7 +3,7 @@ import greenfoot.*;
 public class SunflowerPacket extends SeedPacket
 {
     public SunflowerPacket() {
-        super(5000L, true,50, "sunflowerpacket");
+        super(5000L, true,0, "sunflowerpacket");
     }
  
     public TransparentObject addImage() {

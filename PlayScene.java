@@ -150,9 +150,9 @@ public class PlayScene extends World {
         if (rollLevel < 5) { 
             rollLevel++;
             for (RarityEntry entry : weightedPool) {
-                if (entry.packetClass == SunflowerPacket.class && rollLevel >= 3) entry.weight = 5;
+                
                 if (entry.packetClass == PotatoPacket.class && rollLevel >= 4) entry.weight = 2;
-                if (entry.packetClass == TwinSunflowerPacket.class && rollLevel >= 3) entry.weight = 3;
+                
                 if (entry.packetClass == GatlingPeaPacket.class && rollLevel == 5) entry.weight = 3;
                 if (entry.packetClass == RepeaterPacket.class && rollLevel == 5) entry.weight = 3;
                 if (entry.packetClass == PeashooterPacket.class && rollLevel == 5) entry.weight = 0;
@@ -200,7 +200,7 @@ public class PlayScene extends World {
         public void checkAndCombine(Plant newPlant) {
         if (newPlant == null || newPlant.isMerging || newPlant.isTarget) return;
     
-        if (!(newPlant instanceof Peashooter || newPlant instanceof Sunflower || newPlant instanceof Repeater)) {
+        if (!(newPlant instanceof Peashooter || newPlant instanceof Sunflower || newPlant instanceof Repeater || newPlant instanceof Cactus)) {
             return; 
         }
     

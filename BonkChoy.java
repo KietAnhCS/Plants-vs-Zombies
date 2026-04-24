@@ -110,8 +110,4 @@ public class BonkChoy extends Plant {
         }
     }
 
-    @Override
-    public void activatePlantFood() {
-        this.hp = maxHp;
-    }
 }

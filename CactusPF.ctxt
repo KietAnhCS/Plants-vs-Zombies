@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=CactusPF
+comment1.params=
+comment1.target=CactusPF()
+comment2.params=prefix\ count\ scale
+comment2.target=greenfoot.GreenfootImage[]\ loadResized(java.lang.String,\ int,\ double)
+comment3.params=
+comment3.target=void\ update()
+comment4.params=world
+comment4.target=void\ checkZombies(PlayScene)
+numComments=5

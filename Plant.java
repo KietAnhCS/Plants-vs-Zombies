@@ -202,5 +202,5 @@ public abstract class Plant extends SpriteAnimator {
     }
 
     public boolean isLiving() { return hp > 0; }
-    public void activatePlantFood() { this.hp = maxHp; }
+    
 }
