@@ -2,7 +2,7 @@ import greenfoot.*;
 public class Pea extends Projectile
 {
     public Pea(int yPos) {
-        super("pea", 3, yPos, 30, 6);
+        super("pea", 3, yPos, 20, 6);
         
     }
 }

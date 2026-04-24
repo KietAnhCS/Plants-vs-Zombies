@@ -18,11 +18,14 @@ public class CinematicIntro extends World
     
     public Zombie[][][] level1 = {
         {{new BasicZombie()}, null, null, null, null, null},
-        {{new BasicZombie()}, {new BasicZombie()}, null, {new BasicZombie()}, null, null},
-        {{new BasicZombie(),new BasicZombie()}, {new BasicZombie()}, {new BasicZombie(),new BasicZombie()}, {new BasicZombie()}, {new BasicZombie(),new BasicZombie()}, null},
-        {{new Buckethead(), new Buckethead()}, null, null, null, {new Buckethead(), new Brickhead()}, null},
-        {{new Buckethead(),new Buckethead()}, {new Buckethead()}, {new BasicZombie(),new BasicZombie()}, {new Buckethead()}, {new Buckethead(),new BasicZombie()}, null},
+        {{new Brickhead(), new BasicZombie()}, {new Brickhead(), new BasicZombie()}, null, null, null, null},
         {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new BasicZombie()}, null, null, {new BasicZombie()}, null, null},
+        {{new BasicZombie()}, {new BasicZombie()}, null, {new BasicZombie()}, null, null},
+        {{new Buckethead(), new Buckethead()}, null, null, null, {new Buckethead(), new Brickhead()}, null},
+        {{new Buckethead(),new Buckethead()}, {new BasicZombie()}, {new BasicZombie(),new BasicZombie()}, {new BasicZombie()}, {new Buckethead(),new BasicZombie()}, null},
+        {{new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, null},
         
         {{new Brickhead(), new BasicZombie()}, {new Brickhead(), new BasicZombie()}, null, null, null, null},
         {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},

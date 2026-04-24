@@ -16,7 +16,7 @@ public class UpgradeManager {
         if (p instanceof Peashooter) return new Repeater();
         if (p instanceof Sunflower) return new TwinSunflower();
         if (p instanceof Repeater) return new GatlingPea();
-        if (p instanceof Cactus) return new CactusPF();
+        if (p instanceof Cactus) return new BonkChoy();
         return null;
     }
 

@@ -36,9 +36,9 @@ public class PlayScene extends World {
         new RarityEntry(SunflowerPacket.class, 0),   
         new RarityEntry(PeashooterPacket.class, 3),
         new RarityEntry(CactusPacket.class, 3),
-        new RarityEntry(BonkchoyPacket.class, 1),
+        
         new RarityEntry(TorchwoodPacket.class, 0), 
-        new RarityEntry(PotatoPacket.class, 1),
+        new RarityEntry(PotatoPacket.class, 7),
         new RarityEntry(RepeaterPacket.class, 0),
         new RarityEntry(GatlingPeaPacket.class, 0)
     };
@@ -125,7 +125,7 @@ public class PlayScene extends World {
 
             seedbank.addSun(-100); 
             SeedPacket[] newBank = new SeedPacket[5]; 
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 3; i++) {
                 int randomNumber = Greenfoot.getRandomNumber(totalWeight);
                 int cursor = 0;
                 for (RarityEntry entry : weightedPool) {

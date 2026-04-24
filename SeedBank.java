@@ -12,7 +12,7 @@ public class SeedBank extends Actor {
 
     private final int START_X = 400;
     private final int START_Y = 666;
-    private final int SPACING_X = 105;
+    private final int SPACING_X = 150;
     private boolean isTDActive = false;
 
     public SeedBank(SeedPacket[] bank) {
@@ -61,16 +61,14 @@ public class SeedBank extends Actor {
             
             int gx = playScene.board.getGridX(mx, my);
             int gy = playScene.board.getGridY(mx, my);
-
+        
             if (gx >= 0 && gy >= 0 && playScene.board.canPlace(gx, gy, selectedPacket.getPlant())) {
-                int tx = playScene.board.getXCoord(gx, gy); 
+                
+                int tx = playScene.board.getXCoord(gx, gy);
                 int ty = playScene.board.getYCoord(gx, gy);
                 
-                int centerX = tx + (playScene.board.getXCoord(gx + 1, gy) - tx) / 2;
-                int centerY = ty + (playScene.board.getYCoord(gx, gy + 1) - ty) / 2;
-                
-                ghostImage.setLocation(centerX, centerY);
-                ghostImage.setTransparent(true); 
+                ghostImage.setLocation(tx, ty);
+                ghostImage.setTransparent(true);
                 lastGx = gx;
                 lastGy = gy;
             } else {
@@ -79,7 +77,7 @@ public class SeedBank extends Actor {
                 lastGx = -1;
                 lastGy = -1;
             }
-
+        
             if (Greenfoot.mouseDragEnded(null) || Greenfoot.mouseClicked(null)) {
                 if (lastGx >= 0 && lastGy >= 0) {
                     if (playScene.board.placePlant(lastGx, lastGy, selectedPacket.getPlant())) {

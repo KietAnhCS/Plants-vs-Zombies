@@ -8,7 +8,7 @@ public class BonkChoy extends Plant {
     private long lastAttackTime = System.currentTimeMillis(), lastFrameTime = 0;
 
     public BonkChoy() {
-        maxHp = 350; 
+        maxHp = 636; 
         hp = maxHp;
         
         kRight = loadResized("bonkchoyknockoutone", 15);
