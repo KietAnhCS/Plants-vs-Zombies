@@ -41,7 +41,7 @@ public class FallingSun extends FallingObject
         AudioPlayer.play(90, "points.mp3");
         if (PlayScene != null && PlayScene.seedbank != null) {
             
-            PlayScene.seedbank.sunCounter.addSun(25);
+            PlayScene.seedbank.sunCounter.addSun(5);
         }
     }
 

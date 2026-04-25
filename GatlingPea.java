@@ -95,7 +95,7 @@ public class GatlingPea extends Plant
             int myRow = getYPos();
             if (getWorld() != null && myRow != -1) {
                 AudioPlayer.play(80, "throw.mp3", "throw2.mp3");
-                PlayScene.addObject(new Pea(myRow), getX() + 25, getY() - 17);
+                PlayScene.addObject(new FirePea(myRow), getX() + 25, getY() - 17);
                 
                 setFrame(1); 
                 shootCount++;

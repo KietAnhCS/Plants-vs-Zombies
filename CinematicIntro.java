@@ -17,10 +17,10 @@ public class CinematicIntro extends World
 
     
     public Zombie[][][] level1 = {
-        {{new BasicZombie()}, null, null, null, null, null},
+        {{new BasicZombie()}, {new BasicZombie()}, {new BasicZombie()}, {new BasicZombie()}, {new BasicZombie()}, null},
         {{new Brickhead(), new BasicZombie()}, {new Brickhead(), new BasicZombie()}, null, null, null, null},
         {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        
         {{new BasicZombie()}, null, null, {new BasicZombie()}, null, null},
         {{new BasicZombie()}, {new BasicZombie()}, null, {new BasicZombie()}, null, null},
         {{new Buckethead(), new Buckethead()}, null, null, null, {new Buckethead(), new Brickhead()}, null},
@@ -40,7 +40,7 @@ public class CinematicIntro extends World
         {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null}
     };
         
-    public SeedPacket[] bank = {new SunflowerPacket(),new TwinSunflowerPacket(),null ,null,null};
+    public SeedPacket[] bank = {new SunflowerPacket(),new SunflowerPacket(),new SunflowerPacket(),null,null};
     public SeedBank seedbank = new SeedBank(bank);   
     public WaveManager level = new WaveManager(23500L, level1, 15000L, true,2,6,8);
 

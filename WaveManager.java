@@ -56,7 +56,7 @@ public class WaveManager extends Actor {
         
         if (playScene.getObjects(Zombie.class).isEmpty()) {
             if (deltaTime >= 1000 && !sunSpawnedForThisWave && !isFirstWave) {
-                playScene.addObject(new Sun(100), 900, 300);
+                playScene.addObject(new Sun(75), 900, 300);
                 sunSpawnedForThisWave = true;
             }
 
@@ -106,12 +106,11 @@ public class WaveManager extends Actor {
     }
 
     public void nextWave() {
-        // Xóa các object giao diện Card và Overlay ngay lập tức
+        
         if (playScene != null) {
             playScene.removeObjects(playScene.getObjects(Overlay.class));
             playScene.removeObjects(playScene.getObjects(AugmentCard.class));
             
-            // Cập nhật lại Paint Order để các nút bấm nằm lên trên trở lại
             playScene.setPaintOrder(Transition.class, WaveNotification.class, RollButton.class, SeedPacket.class, Shovel.class, Plant.class, GridManager.class);
         }
         
@@ -121,7 +120,6 @@ public class WaveManager extends Actor {
             wave++;
         }
         
-        // Mở khóa toàn bộ hệ thống
         this.choosingCard = false; 
         this.lastFrame = System.nanoTime();
     }
@@ -144,7 +142,12 @@ public class WaveManager extends Actor {
                     if (z != null) {
                         int row = board.clampRow(rowIndex);
                         int targetY = board.getYCoord(8, row);
+                        
+                        int yOffsetAdjustment = 20; 
+                        targetY -= yOffsetAdjustment;
+                        
                         int targetX = xOffset + (isHuge ? 100 : 0) + (j * 40);
+                        
                         playScene.addObject(z, targetX, targetY);
                         zombieRow.get(row).add(z);
                     }

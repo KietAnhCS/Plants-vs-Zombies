@@ -19,31 +19,9 @@ public class PlayScene extends World {
     public World restartWorld;
     public FallingObject winPlant;
     
-    public SeedPacket[] bank = {
-    
-    };
+    public SeedPacket[] bank = {};
 
-    private class RarityEntry {
-        Class packetClass;
-        int weight;
-        RarityEntry(Class packetClass, int weight) {
-            this.packetClass = packetClass;
-            this.weight = weight;
-        }
-    }
-    
-    private RarityEntry[] weightedPool = {
-        new RarityEntry(SunflowerPacket.class, 0),   
-        new RarityEntry(PeashooterPacket.class, 3),
-        new RarityEntry(CactusPacket.class, 3),
-        
-        new RarityEntry(TorchwoodPacket.class, 0), 
-        new RarityEntry(PotatoPacket.class, 7),
-        new RarityEntry(RepeaterPacket.class, 0),
-        new RarityEntry(GatlingPeaPacket.class, 0)
-    };
-    
-    public SeedBank seedbank = new SeedBank(bank);   
+    public SeedBank seedbank; 
     public Hitbox hitbox = new Hitbox();
     public Shovel shovel = new Shovel();
     
@@ -51,7 +29,7 @@ public class PlayScene extends World {
     public RupButton rupbutton = new RupButton();
     public WaveManager level;
 
-    public PlayScene(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater) {    
+    public PlayScene(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater) {     
         super(1111, 698, 1, false); 
         this.isWaterMap = isWater;
         this.CYS = CYS;
@@ -64,7 +42,6 @@ public class PlayScene extends World {
         setBackground("maptft.png");
         
         addObject(board, 555, 349); 
-        
         addObject(new ThuyThan(), 110, 642);
         addObject(seedbank, 0, 0); 
         addObject(hitbox, 555, 349);
@@ -81,13 +58,10 @@ public class PlayScene extends World {
             RollButton.class,    
             RupButton.class,
             Transition.class,
-            
-            
             WaveNotification.class,
             ReadySetPlant.class,
             SunCounter.class,
             SeedPacket.class,    
-            
             Shovel.class,
             clickShovel.class,
             Sun.class,
@@ -113,24 +87,29 @@ public class PlayScene extends World {
         handleWinLoss();
         checkDebugKeys();
     }
-    
+
     public void rollPackets() {
-        int currentSuns = seedbank.getSun(); 
-        if (currentSuns >= 100) {
+        RupButton rup = rupbutton;
+        if (seedbank.getSun() >= 25) {
             int totalWeight = 0;
-            for (RarityEntry entry : weightedPool) {
+            for (RupButton.RarityEntry entry : rup.weightedPool) {
                 if (entry.weight > 0) totalWeight += entry.weight;
             }
+            
             if (totalWeight <= 0) return; 
 
-            seedbank.addSun(-100); 
-            SeedPacket[] newBank = new SeedPacket[5]; 
+            seedbank.addSun(-25); 
+            AudioPlayer.play(80, "achievement.mp3");
+
+            SeedPacket[] newBank = new SeedPacket[3]; 
             for (int i = 0; i < 3; i++) {
                 int randomNumber = Greenfoot.getRandomNumber(totalWeight);
                 int cursor = 0;
-                for (RarityEntry entry : weightedPool) {
-                    if (entry.weight <= 0) continue; 
+                
+                for (RupButton.RarityEntry entry : rup.weightedPool) {
+                    if (entry.weight <= 0) continue;
                     cursor += entry.weight;
+                    
                     if (randomNumber < cursor) {
                         try {
                             newBank[i] = (SeedPacket) entry.packetClass.getDeclaredConstructor().newInstance();
@@ -141,24 +120,7 @@ public class PlayScene extends World {
                     }
                 }
             }
-            this.bank = newBank;
-            seedbank.updateBank(newBank); 
-        }
-    }
-    
-    public void upgradeProbabilities() {
-        if (rollLevel < 5) { 
-            rollLevel++;
-            for (RarityEntry entry : weightedPool) {
-                
-                if (entry.packetClass == PotatoPacket.class && rollLevel >= 4) entry.weight = 2;
-                
-                if (entry.packetClass == GatlingPeaPacket.class && rollLevel == 5) entry.weight = 3;
-                if (entry.packetClass == RepeaterPacket.class && rollLevel == 5) entry.weight = 3;
-                if (entry.packetClass == PeashooterPacket.class && rollLevel == 5) entry.weight = 0;
-                if (entry.packetClass == CactusPacket.class && rollLevel >= 4) entry.weight = 0;
-                if (entry.packetClass == TorchwoodPacket.class && rollLevel >= 4) entry.weight = 3;
-            }
+            seedbank.updateBank(newBank);
         }
     }
 
@@ -178,7 +140,7 @@ public class PlayScene extends World {
     }
 
     private void prepareLawnmowers() {
-        int[][] coordinates = {{250, 175}, {238, 228}, {226, 293}, {200, 358}, {180, 436}};
+        int[][] coordinates = {{240, 180}, {228, 235}, {226, 300}, {200, 360}, {180, 430}};
         for (int i = 0; i < 5; i++) {
             addObject(new Lawnmower(), coordinates[i][0], coordinates[i][1]);
         }
@@ -197,10 +159,10 @@ public class PlayScene extends World {
         return false;
     }
     
-        public void checkAndCombine(Plant newPlant) {
+    public void checkAndCombine(Plant newPlant) {
         if (newPlant == null || newPlant.isMerging || newPlant.isTarget) return;
     
-        if (!(newPlant instanceof Peashooter || newPlant instanceof Sunflower || newPlant instanceof Repeater || newPlant instanceof Cactus)) {
+        if (!(newPlant instanceof Peashooter || newPlant instanceof Sunflower || newPlant instanceof Repeater)) {
             return; 
         }
     

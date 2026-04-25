@@ -34,7 +34,7 @@ public class Sunflower extends Plant
         hitFlash(idle, "sunfloweridle");
         test = true;
         
-        PlayScene.addObject(new Sun(25), getX(), getY() - 10);
+        PlayScene.addObject(new Sun(10), getX(), getY() - 10);
     }
 }
   
