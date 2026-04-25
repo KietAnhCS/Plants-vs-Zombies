@@ -1,0 +1,17 @@
+#BlueJ class context
+comment0.target=BonkChoy2
+comment1.params=
+comment1.target=BonkChoy2()
+comment2.params=prefix\ count
+comment2.target=greenfoot.GreenfootImage[]\ loadResized(java.lang.String,\ int)
+comment3.params=world
+comment3.target=void\ addedToWorld(greenfoot.World)
+comment4.params=
+comment4.target=void\ update()
+comment5.params=
+comment5.target=void\ handleNormalCombat()
+comment6.params=targets\ delay\ dmg\ ko
+comment6.target=void\ applyDmg(java.util.List,\ int,\ int,\ boolean)
+comment7.params=anim\ delay
+comment7.target=void\ playLoop(greenfoot.GreenfootImage[],\ int)
+numComments=8

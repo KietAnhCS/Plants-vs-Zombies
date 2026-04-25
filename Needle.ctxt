@@ -1,9 +1,5 @@
 #BlueJ class context
 comment0.target=Needle
-comment1.params=yPos\ offset
-comment1.target=Needle(int,\ int)
-comment2.params=
-comment2.target=void\ act()
-comment3.params=
-comment3.target=void\ checkPiercingCollision()
-numComments=4
+comment1.params=yPos
+comment1.target=Needle(int)
+numComments=2

@@ -167,4 +167,8 @@ public class WaveManager extends Actor {
     public boolean hasWon() {
         return (wave >= level.length && playScene.getObjects(Zombie.class).isEmpty());
     }
+    
+    public int getWaveNumber() {
+    return (wave < 0) ? 0 : (wave + 1);
+}
 }

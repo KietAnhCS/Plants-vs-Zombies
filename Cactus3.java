@@ -1,7 +1,7 @@
 import greenfoot.*;
 import java.util.List;
 
-public class Peashooter extends Plant {
+public class Cactus3 extends Plant {
     private GreenfootImage[] idle;
     private GreenfootImage[] shoot;
     private boolean shootOnce = false;
@@ -15,11 +15,11 @@ public class Peashooter extends Plant {
     private long shootDelay = 1500L;
     private PlayScene cachedPlayScene;
     
-    public Peashooter() {
+    public Cactus3() {
         maxHp = 60;
         hp = maxHp;
-        shoot = importSprites("peashootershoot",3);
-        idle = importSprites("peashooter",9);
+        shoot = importSprites("cactusshoot", 2);
+        idle = importSprites("cactus", 4);
         setImage(idle[0]);
     }
     
@@ -32,7 +32,7 @@ public class Peashooter extends Plant {
     }
     
     @Override
-    public void hit (int dmg) {
+    public void hit(int dmg) {
         if (getWorld() != null && isLiving()) {
             hitFlash(shootOnce ? shoot : idle, shootOnce ? "peashootershoot" : "peashooter");
         }
@@ -61,36 +61,41 @@ public class Peashooter extends Plant {
     }
     
     private void handleAction() {
-        
-        if (!shooting && !isPoweredUp) {
+        if (!(shooting || isPoweredUp)) {
             animate(idle, 300, true);
-            lastFrame2 = System.nanoTime();
+            lastFrame2 = currentFrame;
             shootOnce = false;
             return;
         }
-    
-        long elapsedMillis = (System.nanoTime() - lastFrame2) / 1_000_000;
-    
-        if (elapsedMillis >= shootDelay) {
-            animate(shoot, isPoweredUp ? 50 : 100, false);
-            if (!shootOnce && frame >= 1) { 
-                executeShoot();
-                shootOnce = true; 
-            }
-            if (frame >= shoot.length - 1) {
-                lastFrame2 = System.nanoTime();
-                shootOnce = false;
-            }
+
+        deltaTime2 = (currentFrame - lastFrame2) / 1000000;
+
+        if (deltaTime2 < shootDelay) {
+            animate(isPoweredUp ? shoot : idle, isPoweredUp ? 2 : 200, !isPoweredUp);
+            shootOnce = false;
         } else {
-            animate(idle, 300, true);
+            if (!shootOnce) {
+                shootOnce = true;
+                frame = 0;
+            }
+            if (frame >= 1 && shootOnce) executeShoot();
+            animate(shoot, isPoweredUp ? 2 : 10, false);
         }
     }
     
     private void executeShoot() {
         int myRow = getYPos();
-        if (myRow != -1 && cachedPlayScene != null) {
+        if (myRow != -1) {
             AudioPlayer.play(80, "throw.mp3", "throw2.mp3");
-            cachedPlayScene.addObject(new Pea(myRow), getX() + 25, getY() - 17);
+            
+            getWorld().addObject(new Needle3(getY(), -50), getX(), getY());
+            
+            getWorld().addObject(new Needle3(getY(), 0), getX(), getY());
+            
+            getWorld().addObject(new Needle3(getY(), 50), getX(), getY());
+            
+            lastFrame2 = currentFrame;
+            shootOnce = false;
         }
     }
     
@@ -103,6 +108,5 @@ public class Peashooter extends Plant {
 
         List<Zombie> rowZombies = cachedPlayScene.level.zombieRow.get(myRow);
         shooting = rowZombies.stream().anyMatch(z -> z.getWorld() != null && z.getX() > getX() && z.getX() <= cachedPlayScene.getWidth() + 10);
-        
     }
 }

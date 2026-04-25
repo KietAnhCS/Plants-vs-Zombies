@@ -36,7 +36,7 @@ public class RupButton extends Actor {
     }
 
     public RarityEntry[] getPoolForRoll() {
-        if (rollCount < 4) {
+        if (rollCount < 2) {
             rollCount++;
             RarityEntry[] forcedPool = new RarityEntry[weightedPool.length];
             for (int i = 0; i < weightedPool.length; i++) {

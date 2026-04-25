@@ -11,7 +11,7 @@ public class PotatoMine extends Plant
     public PotatoMine() {
         idle = importSprites("potato", 5);
         arm = importSprites("potatomine", 3);
-        maxHp = 60;
+        maxHp = 100;
         hp = maxHp;
         currentFrame = System.nanoTime();
         lastFrame2 = System.nanoTime();
@@ -20,7 +20,7 @@ public class PotatoMine extends Plant
     public void update() {
         currentFrame = System.nanoTime();
         deltaTime2 = (currentFrame - lastFrame2) / 1000000;
-        if (deltaTime2 > 22000L) {
+        if (deltaTime2 > 10000L) {
             armed = true;
             if (!playOnce) {
                 if (!playSFX) {

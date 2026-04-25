@@ -14,6 +14,10 @@ public class PlayScene extends World {
     public GridManager board = new GridManager();
     public GreenfootSound Grasswalk = new GreenfootSound("intro3.mp3");
     
+    // Khai báo nhạc Final Wave
+    public GreenfootSound finalWaveMusic = new GreenfootSound("finalwavemp3.mp3");
+    private boolean isFinalMusicPlaying = false;
+
     public GreenfootSound CYS;
     public World restartWorld;
     public FallingObject winPlant;
@@ -49,10 +53,12 @@ public class PlayScene extends World {
         addObject(rupbutton, 250, 575);
         
         prepareLawnmowers();
+        finalWaveMusic.setVolume(70);
 
         setPaintOrder(
             AugmentCard.class,
             Overlay.class,
+            RupButton.class,
             RollButton.class,    
             RupButton.class,
             Transition.class,
@@ -65,7 +71,7 @@ public class PlayScene extends World {
             Sun.class,
             ThuyThan.class,
             HealthBar.class,
-            Plant.class,         
+            Plant.class,          
             GridManager.class,   
             Zombie.class,
             Projectile.class,
@@ -82,9 +88,41 @@ public class PlayScene extends World {
             level.startLevel();
             isPlaying = true;                
         }
+        checkMusicInGame();
+        
         handleSunSpawn();
         handleWinLoss();
         checkDebugKeys();
+    }
+
+    private void checkMusicInGame() {
+        if (level == null) return;
+        
+        int currentWave = level.getWaveNumber();
+        showText("Wave: " + currentWave, 100, 100);
+    
+        if (currentWave >= 3 && currentWave <= 5) {
+            if (!isFinalMusicPlaying) {
+                
+                if (Grasswalk.isPlaying()) Grasswalk.stop();
+                if (CYS != null && CYS.isPlaying()) CYS.stop();
+                
+                finalWaveMusic.playLoop();
+                isFinalMusicPlaying = true;
+            }
+        }
+        else {
+            if (isFinalMusicPlaying) {
+                finalWaveMusic.stop();
+                
+                Grasswalk.playLoop(); 
+                isFinalMusicPlaying = false;
+            }
+            
+            if (!isFinalMusicPlaying && !Grasswalk.isPlaying() && isPlaying) {
+                 Grasswalk.playLoop();
+            }
+        }
     }
 
     private void handleSunSpawn() {
@@ -132,6 +170,7 @@ public class PlayScene extends World {
     private void handleWinLoss() {
         if (!loseOnce && hasLost()) {
             Grasswalk.stop();
+            finalWaveMusic.stop(); 
             AudioPlayer.play(80, "losemusic.mp3");
             addObject(new DelayAudio(new GreenfootSound("scream.mp3"), 70, false, 4000L), 0, 0);
             loseOnce = true;
@@ -166,7 +205,8 @@ public class PlayScene extends World {
     
     public void checkAndCombine(Plant newPlant) {
         if (newPlant == null || newPlant.isMerging || newPlant.isTarget) return;
-        if (!(newPlant instanceof Peashooter || newPlant instanceof Sunflower || newPlant instanceof Repeater)) {
+        if (!(newPlant instanceof Peashooter || newPlant instanceof Sunflower || newPlant instanceof Repeater || newPlant instanceof Cactus || 
+              newPlant instanceof Cactus2 || newPlant instanceof BonkChoy || newPlant instanceof BonkChoy2)) {
             return; 
         }
     
@@ -195,21 +235,32 @@ public class PlayScene extends World {
 
     private void checkDebugKeys() {
         String key = Greenfoot.getKey();
-        if ("1".equals(key)) { CYS.stop(); Grasswalk.stop(); Greenfoot.setWorld(new CinematicIntro()); }
+        if ("1".equals(key)) { 
+            CYS.stop(); 
+            Grasswalk.stop(); 
+            finalWaveMusic.stop(); 
+            Greenfoot.setWorld(new Arena()); 
+        }
         if ("r".equals(key)) rollPackets(); 
     }
 
     public void finishLevel() {
         Grasswalk.stop();
+        finalWaveMusic.stop(); 
         AudioPlayer.play(70, "winmusic.mp3");
     }
 
     public void started() {
-        if (!Grasswalk.isPlaying()) Grasswalk.playLoop();
+        if (isFinalMusicPlaying) {
+            finalWaveMusic.playLoop();
+        } else {
+            if (!Grasswalk.isPlaying()) Grasswalk.playLoop();
+        }
         Greenfoot.setSpeed(50);          
     }
 
     public void stopped() {
         if (Grasswalk.isPlaying()) Grasswalk.pause();
+        if (finalWaveMusic.isPlaying()) finalWaveMusic.pause();
     }
 }
