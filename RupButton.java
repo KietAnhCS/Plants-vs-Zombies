@@ -16,6 +16,7 @@ public class RupButton extends Actor {
     private int rollCount = 0;
 
     public RarityEntry[] weightedPool = {
+        new RarityEntry(SunflowerPacket.class, 0),
         new RarityEntry(BonkchoyPacket.class, 1),   
         new RarityEntry(PeashooterPacket.class, 3),
         new RarityEntry(CactusPacket.class, 3),
@@ -66,17 +67,21 @@ public class RupButton extends Actor {
             if (entry.packetClass == RepeaterPacket.class && currentLevel >= 2) {
                 entry.weight = 1;
             }
+            
             if (entry.packetClass == GatlingPeaPacket.class && currentLevel >= 4) {
                 entry.weight = 1;
             }
-            if (currentLevel == 5) {
-                
-                if (entry.packetClass == RepeaterPacket.class) entry.weight = 7;
-                if (entry.packetClass == PeashooterPacket.class) entry.weight = 0;
-            }
+            
             if (currentLevel >= 4) {
                 if (entry.packetClass == CactusPacket.class) entry.weight = 0;
+                if (entry.packetClass == SunflowerPacket.class) entry.weight = 1;
             
+            }
+            
+            if (currentLevel == 5) {
+                if (entry.packetClass == SunflowerPacket.class) entry.weight = 2;
+                if (entry.packetClass == RepeaterPacket.class) entry.weight = 7;
+                if (entry.packetClass == PeashooterPacket.class) entry.weight = 0;
             }
         }
     }

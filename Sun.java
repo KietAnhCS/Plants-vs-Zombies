@@ -1,12 +1,12 @@
 import greenfoot.*;
 import java.util.*;
-
 public class Sun extends FallingObject {
     public int sunValue = 25; 
-    private PlayScene PlayScene;
+    private PlayScene playScene;
     private GreenfootImage[] sunSprites;
     private boolean beenClicked = false; 
-    private long lifetimeStart; 
+    private long lifetimeStart;
+    private boolean stationary = false;
 
     public Sun() {
         this(25);
@@ -18,34 +18,45 @@ public class Sun extends FallingObject {
         sunSprites = importSprites("sun", 2);
     }
 
+    public Sun(int value, boolean stationary) {
+        super(0, 0, 0, 0, 0L);
+        this.sunValue = value;
+        this.stationary = stationary;
+        sunSprites = importSprites("sun", 2);
+    }
+
     public void update() {
         if (getWorld() == null) return;
         animate(sunSprites, 200, true);
-
         if (!beenClicked) {
-            handleAutoFadeOut();
-            applyFallingPhysics();
+            if (Greenfoot.mouseClicked(this) || isTouching(ThuyThan.class)) {
+                collect();
+            } else {
+                handleAutoFadeOut();
+                if (!stationary) applyFallingPhysics();
+            }
         } else {
             flyToCounter();
         }
-
         checkRemoval();
     }
 
-    public boolean isPickedUp() {
-        return beenClicked;
-    }
-
-    public void collectByHero() {
+    private void collect() {
         if (beenClicked) return;
         beenClicked = true;
-        setRotation(0); 
+        setRotation(0);
+        AudioPlayer.play(90, "points.mp3");
+        playScene.seedbank.sunCounter.addSun(sunValue);
+    }
+
+    public boolean isPickedUp() { return beenClicked; }
+
+    public void collectByHero() {
+        collect();
     }
 
     private void applyFallingPhysics() {
-        currentFrame = System.nanoTime();
-        deltaTime = (currentFrame - lastFrame) / 1000000;
-        if (deltaTime < fallTime) {
+        if (elapsedTime < fallTime) {
             double x = getExactX() + hSpeed;
             double y = getExactY() + vSpeed;
             setLocation(x, y);
@@ -81,8 +92,7 @@ public class Sun extends FallingObject {
 
     @Override
     public void addedToWorld(World world) {
-        PlayScene = (PlayScene)world;
-        lastFrame = System.nanoTime(); 
+        playScene = (PlayScene) world;
         lifetimeStart = System.currentTimeMillis(); 
     }
 }

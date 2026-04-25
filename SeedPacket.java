@@ -37,21 +37,14 @@ public class SeedPacket extends Actor
     public void addedToWorld(World world) {
         PlayScene = (PlayScene)world;
         rechargeOverlay = new GreenfootImage(imageBright.getWidth(), imageBright.getHeight());
+        doneRechargeTime = true;
+        recharged = true;
         
-        if (name.toLowerCase().contains("lilypad")) {
-            doneRechargeTime = false;
-            recharged = false;
-        } else {
-            doneRechargeTime = true;
-            recharged = true;
-        }
         updateAppearance();
     }
 
     public void act() {
-        if (name.toLowerCase().contains("lilypad")) {
-            updateCooldown(); 
-        } else if (!isUsed) {
+        if (!isUsed) {
             doneRechargeTime = true;
             recharged = true;
         }
@@ -71,50 +64,28 @@ public class SeedPacket extends Actor
     public void updateAppearance() {
         if (PlayScene == null || PlayScene.seedbank == null) return;
 
-        if (isUsed && !name.toLowerCase().contains("lilypad")) {
+        if (isUsed) {
             setImage(imageDark);
             getImage().setTransparency(130);
             recharged = false; 
             return;
         }
 
-        if (!doneRechargeTime && name.toLowerCase().contains("lilypad")) {
-            GreenfootImage tempImage = new GreenfootImage(imageDark);
-            rechargeOverlay.clear();
-            rechargeOverlay.setColor(new Color(0, 0, 0, 150)); 
-            
-            double progress = (double)deltaTime / rechargeTime;
-            int height = (int)(tempImage.getHeight() * (1.0 - progress));
-            
-            rechargeOverlay.fillRect(0, 0, tempImage.getWidth(), height);
-            tempImage.drawImage(rechargeOverlay, 0, 0);
-
-            setImage(tempImage);
-            recharged = false; 
+        int currentSun = PlayScene.seedbank.sunCounter.sun; 
+        if (currentSun < sunCost || selected) {
+            setImage(imageDark);
+            recharged = (currentSun >= sunCost); 
         } else {
-            int currentSun = PlayScene.seedbank.sunCounter.sun; 
-            if (currentSun < sunCost || selected) {
-                setImage(imageDark);
-                recharged = (currentSun >= sunCost); 
-            } else {
-                setImage(imageBright);
-                getImage().setTransparency(255); 
-                recharged = true;
-            }
+            setImage(imageBright);
+            getImage().setTransparency(255); 
+            recharged = true;
         }
     }
 
     public void startRecharge() {
-        if (name.toLowerCase().contains("lilypad")) {
-            this.lastFrame = System.currentTimeMillis();
-            this.deltaTime = 0;
-            this.doneRechargeTime = false;
-            this.recharged = false; 
-            this.isUsed = false; 
-        } else {
-            this.isUsed = true; 
-            this.recharged = false;
-        }
+        
+        this.isUsed = true; 
+        this.recharged = false;
         updateAppearance();
     }
 

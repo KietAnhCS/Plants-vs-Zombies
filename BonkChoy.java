@@ -62,15 +62,15 @@ public class BonkChoy extends Plant {
 
     private void handleNormalCombat() {
         
-        List<Zombie> targets = getObjectsAtOffset(50, 0, Zombie.class); 
-        boolean isKO = (punchCount >= 9);
+        List<Zombie> targets = getObjectsAtOffset(25, 0, Zombie.class); 
+        boolean isKO = (punchCount >= 3);
         boolean beingEaten = (hp < maxHp);
 
         if (!targets.isEmpty()) {
             playLoop(isKO ? kRight : pRight, 40);
             int dmg;
             if (beingEaten) {
-                dmg = isKO ? 35 : 25;
+                dmg = isKO ? 15 : 10;
             } else {
                 dmg = isKO ? 6 : 5;
             }
@@ -91,7 +91,7 @@ public class BonkChoy extends Plant {
             }
             if (ko) {
                 punchCount = 0;
-                this.hp += (int)(maxHp * 0.2);
+                this.hp += (int)(maxHp * 0.35);
                 if (this.hp > maxHp) this.hp = maxHp;
             } else {
                 punchCount++;

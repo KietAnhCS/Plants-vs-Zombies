@@ -56,7 +56,7 @@ public class WaveManager extends Actor {
         
         if (playScene.getObjects(Zombie.class).isEmpty()) {
             if (deltaTime >= 1000 && !sunSpawnedForThisWave && !isFirstWave) {
-                playScene.addObject(new Sun(75), 900, 300);
+                playScene.addObject(new Sun(100, true), 900, 300);
                 sunSpawnedForThisWave = true;
             }
 

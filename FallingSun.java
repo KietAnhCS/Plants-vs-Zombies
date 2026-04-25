@@ -1,29 +1,28 @@
 import greenfoot.*;
-
 public class FallingSun extends FallingObject
 {
-    private PlayScene PlayScene;
+    private PlayScene playScene;
     private GreenfootImage[] sunSprites;
     private boolean beenClicked = false;
-    private long lifetimeStart; 
+    private boolean landed = false;
+    private long landedTime = 0;
 
     public FallingSun() {
-        super(0.6, 0, 0, 0, 60000); 
+        super(2.5, 0, 0, 0, 3000);
         sunSprites = importSprites("sun", 2);
     }
 
-    public void update() {
-        PlayScene world = (PlayScene) getWorld();
-        if (world == null) return;
-        
-        if (!world.getObjects(Overlay.class).isEmpty()) {
-            return; 
-        }
-        
-        animate(sunSprites, 200, true);
+    public void act() {
+        update();
+    }
 
+    public void update() {
+        playScene = (PlayScene) getWorld();
+        if (playScene == null) return;
+        if (!playScene.getObjects(Overlay.class).isEmpty()) return;
+        animate(sunSprites, 200, true);
         if (!beenClicked) {
-            if (isTouching(ThuyThan.class)) {
+            if (Greenfoot.mouseClicked(this) || isTouching(ThuyThan.class)) {
                 collectSun();
             } else {
                 handleFallingAndWaiting();
@@ -31,7 +30,6 @@ public class FallingSun extends FallingObject
         } else {
             flyToCounter();
         }
-
         checkRemoval();
     }
 
@@ -39,35 +37,32 @@ public class FallingSun extends FallingObject
         if (beenClicked) return;
         beenClicked = true;
         AudioPlayer.play(90, "points.mp3");
-        if (PlayScene != null && PlayScene.seedbank != null) {
-            
-            PlayScene.seedbank.sunCounter.addSun(5);
+        if (playScene.seedbank != null && playScene.seedbank.sunCounter != null) {
+            playScene.seedbank.sunCounter.addSun(25);
         }
     }
 
-    public boolean checkClick() {
-        return false;
-    }
-
     private void handleFallingAndWaiting() {
-        currentFrame = System.nanoTime();
-        deltaTime = (currentFrame - lastFrame) / 1000000;
-
-        if (deltaTime < fallTime) {
-            double y = getExactY() + vSpeed;
-            setLocation(getExactX(), y);
-            lifetimeStart = System.currentTimeMillis(); 
+        if (!landed) {
+            super.update();
+            if (elapsedTime >= fallTime) {
+                landed = true;
+                landedTime = System.currentTimeMillis();
+            }
         } else {
-            
-            if (System.currentTimeMillis() - lifetimeStart > 36000) {
-                fadeOut(10);
+            if (System.currentTimeMillis() - landedTime > 10000) {
+                fadeOut(5);
             }
         }
     }
 
     private void flyToCounter() {
-        turnTowards(SunCounter.x, SunCounter.y);
-        move(20);
+        if (playScene.seedbank != null && playScene.seedbank.sunCounter != null) {
+            int targetX = playScene.seedbank.sunCounter.getX();
+            int targetY = playScene.seedbank.sunCounter.getY();
+            turnTowards(targetX, targetY);
+            move(25);
+        }
     }
 
     private void fadeOut(int amount) {
@@ -77,16 +72,17 @@ public class FallingSun extends FallingObject
     }
 
     private void checkRemoval() {
-        boolean reachedCounter = Math.abs(getX() - SunCounter.x) < 20 && Math.abs(getY() - SunCounter.y) < 20;
-        if (getImage().getTransparency() == 0 || (beenClicked && reachedCounter)) {
-            if (getWorld() != null) getWorld().removeObject(this);
+        if (playScene.seedbank == null || playScene.seedbank.sunCounter == null) return;
+        int targetX = playScene.seedbank.sunCounter.getX();
+        int targetY = playScene.seedbank.sunCounter.getY();
+        double dist = Math.hypot(getX() - targetX, getY() - targetY);
+        if (getImage().getTransparency() == 0 || (beenClicked && dist < 35)) {
+            getWorld().removeObject(this);
         }
     }
 
     @Override
     public void addedToWorld(World world) {
-        PlayScene = (PlayScene)world;
-        lastFrame = System.nanoTime(); 
-        lifetimeStart = System.currentTimeMillis(); 
+        playScene = (PlayScene) world;
     }
 }

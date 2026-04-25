@@ -4,8 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class PlayScene extends World {  
-    
-    private int rollLevel = 1;
+    private long lastSunSpawnTime;
     private boolean isPlaying = false;
     public boolean lose = false;
     public boolean loseOnce = false;
@@ -20,7 +19,6 @@ public class PlayScene extends World {
     public FallingObject winPlant;
     
     public SeedPacket[] bank = {};
-
     public SeedBank seedbank; 
     public Hitbox hitbox = new Hitbox();
     public Shovel shovel = new Shovel();
@@ -29,7 +27,7 @@ public class PlayScene extends World {
     public RupButton rupbutton = new RupButton();
     public WaveManager level;
 
-    public PlayScene(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater) {     
+    public PlayScene(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater) {      
         super(1111, 698, 1, false); 
         this.isWaterMap = isWater;
         this.CYS = CYS;
@@ -37,18 +35,18 @@ public class PlayScene extends World {
         this.restartWorld = restartWorld;
         this.level = level;
         this.winPlant = winPlant;
+        lastSunSpawnTime = System.currentTimeMillis();
         
         Greenfoot.setSpeed(50);
-        setBackground("maptft.png");
+        setBackground("maptft2.png");
         
         addObject(board, 555, 349); 
         addObject(new ThuyThan(), 110, 642);
         addObject(seedbank, 0, 0); 
         addObject(hitbox, 555, 349);
-        addObject(shovel, 1052, 537);
-       
-        addObject(rollbutton, 277, 679);
-        addObject(rupbutton, 278, 638);
+        addObject(shovel, 930, 615);
+        addObject(rollbutton, 250, 625);
+        addObject(rupbutton, 250, 575);
         
         prepareLawnmowers();
 
@@ -61,9 +59,9 @@ public class PlayScene extends World {
             WaveNotification.class,
             ReadySetPlant.class,
             SunCounter.class,
-            SeedPacket.class,    
+            SeedPacket.class,
+            SellShovel.class,
             Shovel.class,
-            clickShovel.class,
             Sun.class,
             ThuyThan.class,
             HealthBar.class,
@@ -84,8 +82,18 @@ public class PlayScene extends World {
             level.startLevel();
             isPlaying = true;                
         }
+        handleSunSpawn();
         handleWinLoss();
         checkDebugKeys();
+    }
+
+    private void handleSunSpawn() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastSunSpawnTime >= 30000) {
+            lastSunSpawnTime = currentTime;
+            int x = Greenfoot.getRandomNumber(700) + 200;
+            addObject(new FallingSun(), x, -30);
+        }
     }
 
     public void rollPackets() {
@@ -95,7 +103,6 @@ public class PlayScene extends World {
             for (RupButton.RarityEntry entry : rup.weightedPool) {
                 if (entry.weight > 0) totalWeight += entry.weight;
             }
-            
             if (totalWeight <= 0) return; 
 
             seedbank.addSun(-25); 
@@ -105,11 +112,9 @@ public class PlayScene extends World {
             for (int i = 0; i < 3; i++) {
                 int randomNumber = Greenfoot.getRandomNumber(totalWeight);
                 int cursor = 0;
-                
                 for (RupButton.RarityEntry entry : rup.weightedPool) {
                     if (entry.weight <= 0) continue;
                     cursor += entry.weight;
-                    
                     if (randomNumber < cursor) {
                         try {
                             newBank[i] = (SeedPacket) entry.packetClass.getDeclaredConstructor().newInstance();
@@ -161,7 +166,6 @@ public class PlayScene extends World {
     
     public void checkAndCombine(Plant newPlant) {
         if (newPlant == null || newPlant.isMerging || newPlant.isTarget) return;
-    
         if (!(newPlant instanceof Peashooter || newPlant instanceof Sunflower || newPlant instanceof Repeater)) {
             return; 
         }

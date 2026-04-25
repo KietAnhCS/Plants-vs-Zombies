@@ -32,7 +32,7 @@ public class Cactus extends Plant {
     }
     
     @Override
-    public void hit (int dmg) {
+    public void hit(int dmg) {
         if (getWorld() != null && isLiving()) {
             hitFlash(shootOnce ? shoot : idle, shootOnce ? "peashootershoot" : "peashooter");
         }
@@ -87,13 +87,17 @@ public class Cactus extends Plant {
         int myRow = getYPos();
         if (myRow != -1) {
             AudioPlayer.play(80, "throw.mp3", "throw2.mp3");
-            cachedPlayScene.addObject(new Needle(myRow), getX() + 25, getY() - 17);
+            
+            getWorld().addObject(new Needle(getY(), -50), getX(), getY());
+            
+            getWorld().addObject(new Needle(getY(), 0), getX(), getY());
+            
+            getWorld().addObject(new Needle(getY(), 50), getX(), getY());
+            
             lastFrame2 = currentFrame;
             shootOnce = false;
         }
     }
-    
-    
     
     private void checkZombieInRow() {
         int myRow = getYPos();
@@ -104,6 +108,5 @@ public class Cactus extends Plant {
 
         List<Zombie> rowZombies = cachedPlayScene.level.zombieRow.get(myRow);
         shooting = rowZombies.stream().anyMatch(z -> z.getWorld() != null && z.getX() > getX() && z.getX() <= cachedPlayScene.getWidth() + 10);
-        
     }
 }

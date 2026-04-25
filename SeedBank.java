@@ -10,8 +10,8 @@ public class SeedBank extends Actor {
     private boolean isDragging = false;
     private int lastGx = -1, lastGy = -1;
 
-    private final int START_X = 400;
-    private final int START_Y = 666;
+    private final int START_X = 450;
+    private final int START_Y = 650;
     private final int SPACING_X = 150;
     private boolean isTDActive = false;
 
@@ -130,7 +130,7 @@ public class SeedBank extends Actor {
     @Override
     public void addedToWorld(World world) {
         playScene = (PlayScene) world;
-        playScene.addObject(sunCounter, 606, 616);
+        playScene.addObject(sunCounter, 600, 600);
         for (int i = 0; i < bank.length; i++) {
             if (bank[i] != null) {
                 playScene.addObject(bank[i], START_X + (i * SPACING_X), START_Y);

@@ -10,7 +10,9 @@ public class Zombie extends SpriteAnimator {
     public PlayScene PlayScene;
     public boolean spawnHead = false;
     public Plant target;
-    public int eatSpeed;
+
+    protected int damage; 
+    
     public boolean isAlive = true;
     public GreenfootImage[] headless, headlesseating, fall;
     public boolean resetAnim = false, finalDeath = false, fixAnim = false;
@@ -19,6 +21,7 @@ public class Zombie extends SpriteAnimator {
         headless = importSprites("zombieheadless", 7);
         fall = importSprites("zombiefall", 6);
         headlesseating = importSprites("headlesszombieeating", 7);
+        this.damage = 20; 
     }
 
     public void act() {
@@ -33,6 +36,7 @@ public class Zombie extends SpriteAnimator {
     }
 
     public void update() {
+        
     }
 
     public void deathAnim() {
@@ -82,7 +86,8 @@ public class Zombie extends SpriteAnimator {
             if (!eatOnce) {
                 eatOnce = true;
                 AudioPlayer.play(70, "chomp.mp3", "chomp2.mp3", "chompsoft.mp3");
-                target.hit(35);
+                
+                target.hit(this.damage); 
             }
         } else {
             eatOnce = false;
@@ -146,7 +151,6 @@ public class Zombie extends SpriteAnimator {
 
     public int getYPos() {
         if (PlayScene == null || PlayScene.board == null) return 0;
-        
         return PlayScene.board.getGridY(getX(), getY());
     }
 

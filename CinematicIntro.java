@@ -10,7 +10,7 @@ public class CinematicIntro extends World
     public boolean started = false;
     public Zombie n = null;
     
-    private GreenfootImage backgroundMap = new GreenfootImage("maptft.png");
+    private GreenfootImage backgroundMap = new GreenfootImage("maptft2.png");
     private GifImage daveGif = new GifImage("Dave3.gif");
     public GreenfootSound daveVoice = new GreenfootSound("awooga.mp3");
     private boolean daveTalking = true;
@@ -40,9 +40,9 @@ public class CinematicIntro extends World
         {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null}
     };
         
-    public SeedPacket[] bank = {new SunflowerPacket(),new SunflowerPacket(),new SunflowerPacket(),null,null};
+    public SeedPacket[] bank = {new TwinSunflowerPacket(),new SunflowerPacket(),new BonkchoyPacket(),null,null};
     public SeedBank seedbank = new SeedBank(bank);   
-    public WaveManager level = new WaveManager(23500L, level1, 15000L, true,2,6,8);
+    public WaveManager level = new WaveManager(23500L, level1, 15000L, true,2,5,10,15);
 
     public CinematicIntro()
     {    

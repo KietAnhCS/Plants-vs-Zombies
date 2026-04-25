@@ -1,22 +1,14 @@
 import greenfoot.*; 
+
 public class Conehead extends Zombie
 {
     public boolean cone = true;
-    public GreenfootImage[] idle;
-    public GreenfootImage[] walk;
-    public GreenfootImage[] armless;
-    public GreenfootImage[] eat;
-    public GreenfootImage[] armlesseat;
-    public GreenfootImage[] conehead;
-    public GreenfootImage[] coneheadwalk;
-    public GreenfootImage[] coneheadwalkd;
-    public GreenfootImage[] coneheadwalkdd;
-    public GreenfootImage[] coneheadeat;
-    public GreenfootImage[] coneheadeatd;
-    public GreenfootImage[] coneheadeatdd;
+    public GreenfootImage[] walk, armless, eat, armlesseat;
+    public GreenfootImage[] coneheadwalk, coneheadwalkd, coneheadwalkdd;
+    public GreenfootImage[] coneheadeat, coneheadeatd, coneheadeatdd;
     
     public Conehead() {
-        idle = importSprites("zombieidle", 4);
+        super();
         walk = importSprites("zombiewalk", 7);
         eat = importSprites("zombieeating", 7);
         armlesseat = importSprites("armlesszombieeating", 7);
@@ -29,123 +21,72 @@ public class Conehead extends Zombie
         coneheadeatd = importSprites("coneheadeatd", 7);
         coneheadeatdd = importSprites("coneheadeatdd", 7);
         
-        
-        walkSpeed = Random.Double(11, 14);
-        maxHp = 800;
+        walkSpeed = Random.Double(22, 28);
+        maxHp = 400;
         hp = maxHp;
+        this.damage = 30;
     }
 
+    @Override
     public void update() {
         if (hp > 232) {
-            if (!isEating()) {
-                animate(coneheadwalk, 350, true);   
-                move(-walkSpeed);
-            } else {
-                animate(coneheadeat, 200, true);
-                playEating();
-            }
+            handleAnimation(coneheadwalk, coneheadeat);
         } else if (hp > 166) {
-            if (!isEating()) {
-                animate(coneheadwalkd, 350, true);   
-                move(-walkSpeed);
-            } else {
-                animate(coneheadeatd, 200, true);
-                playEating();
-            }
+            handleAnimation(coneheadwalkd, coneheadeatd);
         } else if (hp > 100) {
-            if (!isEating()) {
-                animate(coneheadwalkdd, 350, true);   
-                move(-walkSpeed);
-            } else {
-                animate(coneheadeatdd, 200, true);
-                playEating();
-            }
+            handleAnimation(coneheadwalkdd, coneheadeatdd);
         } else {
             if (cone) {
                 cone = false;
-                PlayScene.addObject(new Cone(), getX(), getY()-25);
+                if (PlayScene != null) PlayScene.addObject(new Cone(), getX(), getY() - 25);
             }
             
             if (hp > 50) {
-                if (!isEating()) {
-                    animate(walk, 350, true);   
-                    move(-walkSpeed);
-                } else {
-                    animate(eat, 200, true);
-                    playEating();
-                }
-                
+                handleAnimation(walk, eat);
             } else {
                 if (!fallen) {
                     fallen = true;
                     AudioPlayer.play(80, "limbs_pop.mp3");
-                    PlayScene.addObject(new Arm(), getX()+8, getY()+20);
+                    if (PlayScene != null) PlayScene.addObject(new Arm(), getX() + 8, getY() + 20);
                 }
-                if (!isEating()) {
-                    animate(armless, 350, true);
-                    move(-walkSpeed);
-                } else {
-                    animate(armlesseat, 200, true); 
-                    playEating();
-                }
-                
+                handleAnimation(armless, armlesseat);
             }
         }
     }
-   
+
+    private void handleAnimation(GreenfootImage[] walkAnim, GreenfootImage[] eatAnim) {
+        if (!isEating()) {
+            animate(walkAnim, 350, true);
+            move(-walkSpeed);
+        } else {
+            animate(eatAnim, 200, true);
+            playEating();
+        }
+    }
+
+    @Override
     public void hit(int dmg) {
-        AudioPlayer.play(70, "plastichit.mp3", "plastichit2.mp3");
+        if (cone) {
+            AudioPlayer.play(70, "plastichit.mp3", "plastichit2.mp3");
+        }
         AudioPlayer.play(70, "splat.mp3", "splat2.mp3", "splat3.mp3");
+        
         if (isLiving()) {
             if (hp > 232) {
-                if (!isEating()) {
-                    hitFlash(coneheadwalk, "coneheadwalk");
-                } else {
-                    hitFlash(coneheadeat, "coneheadeat");
-                    
-                }
+                hitFlash(eating ? coneheadeat : coneheadwalk, eating ? "coneheadeat" : "coneheadwalk");
             } else if (hp > 166) {
-                if (!isEating()) {
-                    hitFlash(coneheadwalkd, "coneheadwalkd");
-                } else {
-                    hitFlash(coneheadeatd, "coneheadeatd");
-                }
+                hitFlash(eating ? coneheadeatd : coneheadwalkd, eating ? "coneheadeatd" : "coneheadwalkd");
             } else if (hp > 100) {
-                if (!isEating()) {
-                    hitFlash(coneheadwalkdd, "coneheadwalkdd");
-                } else {
-                    hitFlash(coneheadeatdd, "coneheadeatdd");
-                }
-            } else {        
-                
-                if (!fallen) {
-                    if (!eating) {
-                        hitFlash(walk, "zombiewalk");
-                    } else {
-                        hitFlash(eat, "zombieeating");
-                    }
-                } else {
-                    if (!eating) {
-                        hitFlash(armless, "armlesszombie");
-                    } else {
-                        hitFlash(armlesseat, "armlesszombieeating");
-                    }
-                    
-                }
-            
-            }
-            
-            hp -= dmg;
-        } else if (!finalDeath) {
-            if (!eating) {
-                hitFlash(headless, "zombieheadless");
+                hitFlash(eating ? coneheadeatdd : coneheadwalkdd, eating ? "coneheadeatdd" : "coneheadwalkdd");
+            } else if (!fallen) {
+                hitFlash(eating ? eat : walk, eating ? "zombieeating" : "zombiewalk");
             } else {
-                hitFlash(headlesseating, "headlesszombieeating");
+                hitFlash(eating ? armlesseat : armless, eating ? "armlesszombieeating" : "armlesszombie");
             }
+        } else if (!finalDeath) {
+            hitFlash(eating ? headlesseating : headless, eating ? "headlesszombieeating" : "zombieheadless");
         }
-        
-        
+
+        super.hit(dmg);
     }
-    
-    
 }
