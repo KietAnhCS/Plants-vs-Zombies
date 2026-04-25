@@ -17,27 +17,55 @@ public class CinematicIntro extends World
 
     
     public Zombie[][][] level1 = {
-        {{new BasicZombie()}, {new BasicZombie()}, {new BasicZombie()}, {new BasicZombie()}, {new BasicZombie()}, null},
-        {{new Brickhead(), new BasicZombie()}, {new Brickhead(), new BasicZombie()}, null, null, null, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        
-        {{new BasicZombie()}, null, null, {new BasicZombie()}, null, null},
-        {{new BasicZombie()}, {new BasicZombie()}, null, {new BasicZombie()}, null, null},
-        {{new Buckethead(), new Buckethead()}, null, null, null, {new Buckethead(), new Brickhead()}, null},
-        {{new Buckethead(),new Buckethead()}, {new BasicZombie()}, {new BasicZombie(),new BasicZombie()}, {new BasicZombie()}, {new Buckethead(),new BasicZombie()}, null},
-        {{new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, null},
-        
-        {{new Brickhead(), new BasicZombie()}, {new Brickhead(), new BasicZombie()}, null, null, null, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Buckethead(), new Conehead()}, {new Buckethead(), new Conehead()}, {new Buckethead()}, null, null, null},
-        {{new Brickhead()}, {new Buckethead()}, {new Conehead()}, {new BasicZombie()}, {new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, null, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null, null},
-        
-        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null}
+        // --- GIAI ĐOẠN 1: KHỞI ĐẦU (Wave 1 - 9) ---
+        {{new BasicZombie()}, null, null, null, null, null}, // 1
+        {null, {new BasicZombie()}, null, {new BasicZombie()}, null, null}, // 2
+        {{new BasicZombie()}, {new BasicZombie()}, {new BasicZombie()}, null, null, null}, // 3
+        {{new Conehead()}, null, {new BasicZombie()}, null, {new BasicZombie()}, null}, // 4
+        {{new BasicZombie()}, {new Conehead()}, {new BasicZombie()}, {new Conehead()}, null, null}, // 5
+        {{new Conehead(), new Conehead()}, null, null, {new BasicZombie()}, null, null}, // 6
+        {{new BasicZombie(), new BasicZombie()}, {new BasicZombie()}, {new Conehead()}, {new BasicZombie()}, null, null}, // 7
+        {{new Conehead()}, {new Conehead()}, {new Conehead()}, null, null, null}, // 8
+        {{new Buckethead()}, {new BasicZombie()}, {new BasicZombie()}, {new BasicZombie()}, {new BasicZombie()}, null}, // 9
+    
+        // --- GIAI ĐOẠN 2: TĂNG TỐC (Wave 10 - 18) ---
+        {{new Buckethead(), new BasicZombie()}, {new Conehead()}, {new Conehead()}, null, null, null}, // 10
+        {{new Buckethead(), new BasicZombie()}, {new Buckethead(), new BasicZombie()}, null, null, null, null}, // 11
+        {{new Buckethead(), new Conehead()}, {new Buckethead(), new Conehead()}, {new Buckethead()}, null, null, null}, // 12
+        {{new Buckethead(), new Buckethead(), new Conehead()}, {new Conehead()}, {new BasicZombie()}, {new BasicZombie()}, null, null}, // 13
+        {{new Brickhead()}, {new Buckethead()}, {new Buckethead()}, null, {new Buckethead()}, null}, // 14
+        {{new Buckethead(), new Buckethead(), new Buckethead()}, {new Buckethead()}, {new Conehead()}, {new Conehead()}, null, null}, // 15
+        {{new Brickhead(), new BasicZombie()}, {new Brickhead()}, {new Buckethead()}, {new BasicZombie()}, null, null}, // 16
+        {{new Brickhead(), new Conehead(), new BasicZombie()}, {new Brickhead()}, null, null, null, null}, // 17
+        {{new Buckethead(), new Buckethead(), new Buckethead(), new Conehead()}, {new Buckethead()}, {new Buckethead()}, null, null, null}, // 18
+    
+        // --- GIAI ĐOẠN 3: CĂNG THẲNG (Wave 19 - 24) ---
+        {{new Brickhead(), new Brickhead()}, {new Brickhead()}, {new Buckethead(), new Buckethead()}, null, null, null}, // 19
+        {{new Brickhead(), new Brickhead(), new Conehead()}, null, null, {new Brickhead(), new Buckethead()}, null, null}, // 20
+        {{new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead()}, {new Brickhead()}, null, null}, // 21
+        {{new Brickhead(), new Buckethead(), new Buckethead()}, {new Brickhead(), new Brickhead()}, {new Buckethead()}, {new Buckethead()}, null, null}, // 22
+        {{new Brickhead(), new Brickhead(), new Buckethead()}, {new Buckethead(), new Buckethead(), new Conehead()}, {new Conehead()}, null, null, null}, // 23
+        {{new Brickhead(), new Brickhead(), new Brickhead(), new Buckethead()}, null, {new Brickhead(), new Buckethead()}, null, null, null}, // 24
+    
+        // --- GIAI ĐOẠN 4: ĐỘ KHÓ CỰC ĐẠI (Wave 25 - 36) ---
+        // Từ đây mỗi hàng có tối đa 6 Zombie
+        {{new Brickhead(), new Brickhead(), new Buckethead(), new Buckethead(), new Conehead(), new BasicZombie()}, {new Brickhead(), new Brickhead()}, null, null, null, null}, // 25
+        {{new Brickhead(), new Brickhead(), new Brickhead(), new Buckethead(), new Buckethead(), new Buckethead()}, {new Brickhead()}, {new Brickhead()}, null, null, null}, // 26
+        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead()}, {new Brickhead()}, {new Brickhead()}, null, null}, // 27
+        {{new Brickhead(), new Brickhead(), new Brickhead(), new Buckethead(), new Buckethead(), new Conehead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Buckethead(), new Buckethead(), new Conehead()}, null, null, null, null}, // 28
+        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead()}, null, null, null}, // 29
+        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null, null, null}, // 30
+        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null, null}, // 31
+        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null}, // 32
+        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new BasicZombie()}, null}, // 33
+        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Buckethead(), new Buckethead()}, null}, // 34
+        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null}, // 35
+        // WAVE 36: TẤT CẢ CÁC HÀNG ĐỀU CÓ 6 BRICKHEAD (MỨC ĐỘ KHÓ NHẤT)
+        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
+         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
+         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
+         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
+         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null} // 36
     };
         
     public SeedPacket[] bank = {new TwinSunflowerPacket(),new SunflowerPacket(),new BonkchoyPacket(),null,null};
