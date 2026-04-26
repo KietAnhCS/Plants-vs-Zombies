@@ -1,11 +1,4 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-
-/**
- * Write a description of class PotatoMine here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
+import greenfoot.*; 
 public class PotatoMine extends Plant
 {
     private GreenfootImage[] idle;
@@ -18,7 +11,7 @@ public class PotatoMine extends Plant
     public PotatoMine() {
         idle = importSprites("potato", 5);
         arm = importSprites("potatomine", 3);
-        maxHp = 60;
+        maxHp = 100;
         hp = maxHp;
         currentFrame = System.nanoTime();
         lastFrame2 = System.nanoTime();
@@ -27,7 +20,7 @@ public class PotatoMine extends Plant
     public void update() {
         currentFrame = System.nanoTime();
         deltaTime2 = (currentFrame - lastFrame2) / 1000000;
-        if (deltaTime2 > 22000L) {
+        if (deltaTime2 > 10000L) {
             armed = true;
             if (!playOnce) {
                 if (!playSFX) {
@@ -63,7 +56,7 @@ public class PotatoMine extends Plant
                 if (Math.abs(i.getX() - getX()) < 28) {
                     
                     getWorld().addObject(new Explosion(PlayScene.level.zombieRow.get(getYPos())), getX(), getY()-25);
-                    ((PlayScene)getWorld()).board.removePlant(getXPos(), getYPos());
+                    ((PlayScene)getWorld()).GridManager.removePlant(getXPos(), getYPos());
                     return;
                 } 
             }

@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=Arena
+comment1.params=
+comment1.target=Arena()
+comment2.params=
+comment2.target=void\ act()
+comment3.params=
+comment3.target=void\ handleDave()
+comment4.params=
+comment4.target=void\ bgScrollAnimate()
+comment5.params=offset
+comment5.target=void\ scrollBGimage(int)
+numComments=6

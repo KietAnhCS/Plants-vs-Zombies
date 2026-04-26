@@ -1,9 +1,0 @@
-#BlueJ class context
-comment0.target=PlantFood
-comment1.params=world
-comment1.target=void\ addedToWorld(greenfoot.World)
-comment2.params=
-comment2.target=void\ act()
-comment3.params=bool
-comment3.target=void\ setSelected(boolean)
-numComments=4

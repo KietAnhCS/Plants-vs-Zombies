@@ -1,8 +1,4 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-
-/**
- * Class Start đã được scale 1.5x và tối ưu logic.
- */
+import greenfoot.*;  
 public class Start extends Button
 {
     public boolean clicked = false;
@@ -72,6 +68,6 @@ public class Start extends Button
 
     public void update() {
         
-        getWorld().addObject(new Transition(false, new CinematicIntro(), 4), 365, 315);
+        getWorld().addObject(new Transition(false, new Arena(), 4), 365, 315);
     }
 }

@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=HealthBar
+comment1.params=owner\ width
+comment1.target=HealthBar(greenfoot.Actor,\ int)
+comment2.params=
+comment2.target=void\ act()
+comment3.params=
+comment3.target=void\ update()
+numComments=4

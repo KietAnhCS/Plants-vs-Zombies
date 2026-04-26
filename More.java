@@ -1,18 +1,9 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*;  
 import java.awt.Desktop;
 import java.net.URL;
-/**
- * Write a description of class More here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
+
 public class More extends Button
 {
-    /**
-     * Act - do whatever the More wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
     public boolean clicked = false;
     GreenfootImage[] start;
     public int counter = 0;

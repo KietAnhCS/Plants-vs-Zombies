@@ -1,26 +1,23 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*;
 
-/**
- * Write a description of class TransparentCactus here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
 public class TransparentBonkchoy extends TransparentObject
 {
-    /**
-     * Act - do whatever the TransparentPeashooter wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
     public TransparentBonkchoy(boolean bool) {
+        GreenfootImage img = new GreenfootImage("bonkchoyidle_three1.png");
+        img.scale(img.getWidth() / 2, img.getHeight() / 2);
+        setImage(img);
+        
         if (bool) {
             getImage().setTransparency(125);
         } else {
             getImage().setTransparency(255);
         }
     }
-    public void act()
-    {
-        // Add your action code here.
+
+    public void act() {
+        MouseInfo mouse = Greenfoot.getMouseInfo();
+        if (mouse != null) {
+            setLocation(mouse.getX(), mouse.getY() - 15);
+        }
     }
 }

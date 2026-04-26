@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=WaveNotification
+comment1.params=finalWave
+comment1.target=WaveNotification(boolean)
+comment2.params=
+comment2.target=void\ act()
+comment3.params=
+comment3.target=void\ handleNormalWave()
+comment4.params=
+comment4.target=void\ handleFinalWave()
+numComments=5

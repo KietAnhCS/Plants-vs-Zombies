@@ -1,9 +1,7 @@
 import greenfoot.*; 
 
-
 public class BasicZombie extends Zombie
 {
-   
     public GreenfootImage[] idle;
     public GreenfootImage[] walk;
     public GreenfootImage[] armless;
@@ -12,30 +10,41 @@ public class BasicZombie extends Zombie
     
     public BasicZombie() {
         
+        super(); 
+        
         walk = importSprites("zombiewalk", 7);
         eat = importSprites("zombieeating", 7);
         armlesseat = importSprites("armlesszombieeating", 7);
         armless = importSprites("armlesszombie", 7);
-        walkSpeed = Random.Double(11, 14);
-        maxHp = 100;
+        
+        walkSpeed = Random.Double(22, 28);
+        maxHp = 150;
         hp = maxHp;
+        
+        this.damage = 5; 
     }
 
+    @Override
     public void update() {
+        
         if (hp > 50) {
             if (!isEating()) {
                 animate(walk, 350, true);   
                 move(-walkSpeed);
             } else {
                 animate(eat, 200, true);
-                playEating();
+                playEating(); 
             }
         } else {
+           
             if (!fallen) {
                 fallen = true;
                 AudioPlayer.play(80, "limbs_pop.mp3");
-                PlayScene.addObject(new Arm(), getX()+8, getY()+20);
+                if (PlayScene != null) {
+                    PlayScene.addObject(new Arm(), getX() + 8, getY() + 20);
+                }
             }
+            
             if (!isEating()) {
                 animate(armless, 350, true);
                 move(-walkSpeed);
@@ -43,41 +52,23 @@ public class BasicZombie extends Zombie
                 animate(armlesseat, 200, true); 
                 playEating();
             }
-            
         }
-        
     }
    
+    @Override
     public void hit(int dmg) {
         AudioPlayer.play(70, "splat.mp3", "splat2.mp3", "splat3.mp3");
+        
         if (isLiving()) {
-            
             if (!fallen) {
-                if (!eating) {
-                    hitFlash(walk, "zombiewalk");
-                } else {
-                    hitFlash(eat, "zombieeating");
-                }
+                hitFlash(eating ? eat : walk, eating ? "zombieeating" : "zombiewalk");
             } else {
-                if (!eating) {
-                    hitFlash(armless, "armlesszombie");
-                } else {
-                    hitFlash(armlesseat, "armlesszombieeating");
-                }
-                
+                hitFlash(eating ? armlesseat : armless, eating ? "armlesszombieeating" : "armlesszombie");
             }
-            
-            hp -= dmg;
         } else if (!finalDeath) {
-            if (!eating) {
-                hitFlash(headless, "zombieheadless");
-            } else {
-                hitFlash(headlesseating, "headlesszombieeating");
-            }
+            hitFlash(eating ? headlesseating : headless, eating ? "headlesszombieeating" : "zombieheadless");
         }
         
-        
+        super.hit(dmg); 
     }
-    
-    
 }

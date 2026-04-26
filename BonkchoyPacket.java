@@ -4,12 +4,12 @@ import greenfoot.*;
 public class BonkchoyPacket extends SeedPacket
 {
     public BonkchoyPacket() {
-        super(1L, true, 100, "peashooterpacket");
+        super(1L, true, 175, "bonkchoypacket");
         
     }
     
     public TransparentObject addImage() {
-        TransparentObject temp = new TransparentPeashooter(false);
+        TransparentObject temp = new TransparentBonkchoy(false);
         ((PlayScene)getWorld()).addObject(temp, Greenfoot.getMouseInfo().getX(), Greenfoot.getMouseInfo().getY());
         return temp;
     }

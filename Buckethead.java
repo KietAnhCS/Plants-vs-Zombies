@@ -1,31 +1,19 @@
-import greenfoot.*;  
-
+import greenfoot.*; 
 
 public class Buckethead extends Zombie
 {
-   
     public boolean bucket = true;
-    public GreenfootImage[] idle;
-    public GreenfootImage[] walk;
-    public GreenfootImage[] armless;
-    public GreenfootImage[] eat;
-    public GreenfootImage[] armlesseat;
-    public GreenfootImage[] buckethead;
-    public GreenfootImage[] bucketheadwalk;
-    public GreenfootImage[] bucketheadwalkd;
-    public GreenfootImage[] bucketheadwalkdd;
-    public GreenfootImage[] bucketheadeat;
-    public GreenfootImage[] bucketheadeatd;
-    public GreenfootImage[] bucketheadeatdd;
+    public GreenfootImage[] walk, armless, eat, armlesseat;
+    public GreenfootImage[] bucketheadwalk, bucketheadwalkd, bucketheadwalkdd;
+    public GreenfootImage[] bucketheadeat, bucketheadeatd, bucketheadeatdd;
     
     public Buckethead() {
-        idle = importSprites("zombieidle", 4);
+        super();
         walk = importSprites("zombiewalk", 7);
         eat = importSprites("zombieeating", 7);
         armlesseat = importSprites("armlesszombieeating", 7);
         armless = importSprites("armlesszombie", 7);
         
-        //Conehead
         bucketheadwalk = importSprites("bucketheadwalk", 7);
         bucketheadwalkd = importSprites("bucketheadwalkd", 7);
         bucketheadwalkdd = importSprites("bucketheadwalkdd", 7);
@@ -33,70 +21,50 @@ public class Buckethead extends Zombie
         bucketheadeatd = importSprites("bucketheadeatd", 7);
         bucketheadeatdd = importSprites("bucketheadeatdd", 7);
         
-        
-        walkSpeed = Random.Double(11, 14);
-        maxHp = 700;
+        walkSpeed = Random.Double(22, 28);
+        maxHp = 450;
         hp = maxHp;
+        this.damage = 35;
     }
 
+    @Override
     public void update() {
-        if (hp > 500) {
-            if (!isEating()) {
-                animate(bucketheadwalk, 350, true);   
-                move(-walkSpeed);
-            } else {
-                animate(bucketheadeat, 200, true);
-                playEating();
-            }
-        } else if (hp > 300) {
-            if (!isEating()) {
-                animate(bucketheadwalkd, 350, true);   
-                move(-walkSpeed);
-            } else {
-                animate(bucketheadeatd, 200, true);
-                playEating();
-            }
+        if (hp > 375) {
+            handleAnimation(bucketheadwalk, bucketheadeat);
+        } else if (hp > 200) {
+            handleAnimation(bucketheadwalkd, bucketheadeatd);
         } else if (hp > 100) {
-            if (!isEating()) {
-                animate(bucketheadwalkdd, 350, true);   
-                move(-walkSpeed);
-            } else {
-                animate(bucketheadeatdd, 200, true);
-                playEating();
-            }
+            handleAnimation(bucketheadwalkdd, bucketheadeatdd);
         } else {
             if (bucket) {
                 bucket = false;
-                PlayScene.addObject(new Bucket(), getX(), getY()-25);
+                if (PlayScene != null) PlayScene.addObject(new Bucket(), getX(), getY() - 25);
             }
             
             if (hp > 50) {
-                if (!isEating()) {
-                    animate(walk, 350, true);   
-                    move(-walkSpeed);
-                } else {
-                    animate(eat, 200, true);
-                    playEating();
-                }
-                
+                handleAnimation(walk, eat);
             } else {
                 if (!fallen) {
                     fallen = true;
                     AudioPlayer.play(80, "limbs_pop.mp3");
-                    PlayScene.addObject(new Arm(), getX()+8, getY()+20);
+                    if (PlayScene != null) PlayScene.addObject(new Arm(), getX() + 8, getY() + 20);
                 }
-                if (!isEating()) {
-                    animate(armless, 350, true);
-                    move(-walkSpeed);
-                } else {
-                    animate(armlesseat, 200, true); 
-                    playEating();
-                }
-                
+                handleAnimation(armless, armlesseat);
             }
         }
     }
-   
+
+    private void handleAnimation(GreenfootImage[] walkAnim, GreenfootImage[] eatAnim) {
+        if (!isEating()) {
+            animate(walkAnim, 350, true);
+            move(-walkSpeed);
+        } else {
+            animate(eatAnim, 200, true);
+            playEating();
+        }
+    }
+
+    @Override
     public void hit(int dmg) {
         if (bucket) {
             AudioPlayer.play(70, "shieldhit.mp3", "shieldhit2.mp3");
@@ -105,55 +73,21 @@ public class Buckethead extends Zombie
         }
         
         if (isLiving()) {
-            if (hp > 500) {
-                if (!isEating()) {
-                    hitFlash(bucketheadwalk, "bucketheadwalk");
-                } else {
-                    hitFlash(bucketheadeat, "bucketheadeat");
-                    
-                }
-            } else if (hp > 300) {
-                if (!isEating()) {
-                    hitFlash(bucketheadwalkd, "bucketheadwalkd");
-                } else {
-                    hitFlash(bucketheadeatd, "bucketheadeatd");
-                }
+            if (hp > 375) {
+                hitFlash(eating ? bucketheadeat : bucketheadwalk, eating ? "bucketheadeat" : "bucketheadwalk");
+            } else if (hp > 200) {
+                hitFlash(eating ? bucketheadeatd : bucketheadwalkd, eating ? "bucketheadeatd" : "bucketheadwalkd");
             } else if (hp > 100) {
-                if (!isEating()) {
-                    hitFlash(bucketheadwalkdd, "bucketheadwalkdd");
-                } else {
-                    hitFlash(bucketheadeatdd, "bucketheadeatdd");
-                }
-            } else {        
-                
-                if (!fallen) {
-                    if (!eating) {
-                        hitFlash(walk, "zombiewalk");
-                    } else {
-                        hitFlash(eat, "zombieeating");
-                    }
-                } else {
-                    if (!eating) {
-                        hitFlash(armless, "armlesszombie");
-                    } else {
-                        hitFlash(armlesseat, "armlesszombieeating");
-                    }
-                    
-                }
-            
-            }
-            
-            hp -= dmg;
-        } else if (!finalDeath) {
-            if (!eating) {
-                hitFlash(headless, "zombieheadless");
+                hitFlash(eating ? bucketheadeatdd : bucketheadwalkdd, eating ? "bucketheadeatdd" : "bucketheadwalkdd");
+            } else if (!fallen) {
+                hitFlash(eating ? eat : walk, eating ? "zombieeating" : "zombiewalk");
             } else {
-                hitFlash(headlesseating, "headlesszombieeating");
+                hitFlash(eating ? armlesseat : armless, eating ? "armlesszombieeating" : "armlesszombie");
             }
+        } else if (!finalDeath) {
+            hitFlash(eating ? headlesseating : headless, eating ? "headlesszombieeating" : "zombieheadless");
         }
-        
-        
+
+        super.hit(dmg);
     }
-    
-    
 }

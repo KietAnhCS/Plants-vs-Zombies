@@ -1,16 +1,6 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-
-/**
- * Write a description of class Repeater here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
+import greenfoot.*; 
 public class Repeater extends Plant
 {
-    /**
-     * Act - do whatever the Repeater wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.  */
     private GreenfootImage[] idle;
     private GreenfootImage[] shoot;
     private boolean shootOnce = false;
@@ -40,7 +30,9 @@ public class Repeater extends Plant
         }
     }
     public void update() {
-        PlayScene = (PlayScene)getWorld();
+        if (getWorld() == null) return;
+        
+        PlayScene world = (PlayScene)getWorld();
         currentFrame = System.nanoTime();
         if (!shooting) {
             animate(idle, 225, true);
@@ -53,7 +45,7 @@ public class Repeater extends Plant
                 shootCount = 0;
                 resetFrame = false;
             } else {
-                if (shootCount >= 3) {
+                if (shootCount >= 4) {
                     lastFrame2 = currentFrame;
                 }
                 if (!resetFrame) {
@@ -61,8 +53,13 @@ public class Repeater extends Plant
                     resetFrame = true;
                 }
                 
-                if (frame >= 3) {
+                if (frame >= 4) {
                     AudioPlayer.play(80, "throw.mp3", "throw2.mp3");
+                    
+                    if (getWorld() != null) {
+                        world.addObject(new Pea(getYPos()), getX() + 25, getY() - 17);
+                    }
+                    
                     PlayScene.addObject(new Pea(getYPos()), getX()+25,getY()-17);
                     setFrame(1);
                     setImage("repeatershoot1.png");
@@ -75,19 +72,18 @@ public class Repeater extends Plant
             
             
         }
-        if (PlayScene.level.zombieRow.get(getYPos()).size() == 0) {
+        if (world.level.zombieRow.get(getYPos()).size() == 0) {
             shooting = false;
         } else {
-            
-            for (Zombie i : PlayScene.level.zombieRow.get(getYPos())) {
-                if (i.getX() > getX() && i.getX()<=PlayScene.getWidth()+10){
-                    shooting = true;
+            boolean foundZombie = false;
+            for (Zombie i : world.level.zombieRow.get(getYPos())) {
+                
+                if (i != null && i.getWorld() != null && i.getX() > getX() && i.getX() <= world.getWidth() + 10) {
+                    foundZombie = true;
                     break;
-                } else {
-                    shooting = false;
                 }
             }
-                                    
+            shooting = foundZombie;                      
         }
     }
  

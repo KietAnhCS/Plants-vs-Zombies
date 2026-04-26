@@ -1,20 +1,10 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
+import greenfoot.*; 
 import java.util.ArrayList;
 
-/**
- * Write a description of class Explosion here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
-public class Explosion extends animatedObject
+public class Explosion extends SpriteAnimator
 {
     public GreenfootImage[] explosion;
     public ArrayList<Zombie> zombies;
-    /**
-     * Act - do whatever the Explosion wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
     public Explosion(ArrayList<Zombie> zombies) {
         this.zombies = zombies;
         explosion = importSprites("spudow",8);
@@ -25,7 +15,7 @@ public class Explosion extends animatedObject
         
         for (int i = zombies.size()-1; i >= 0; i--) {
             if (Math.abs(zombies.get(i).getX() - getX()) < 44) {
-                zombies.get(i).takeDmg(900);
+                zombies.get(i).takeDmg(150);
             } 
         }
        
@@ -40,6 +30,6 @@ public class Explosion extends animatedObject
             return;
             
         }
-        // Add your action code here.
+       
     }
 }

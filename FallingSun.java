@@ -1,26 +1,28 @@
 import greenfoot.*;
-
 public class FallingSun extends FallingObject
 {
-    private PlayScene PlayScene;
+    private PlayScene playScene;
     private GreenfootImage[] sunSprites;
     private boolean beenClicked = false;
-    
-    // lifetimeStart dùng để tính thời gian mặt trời nằm dưới đất trước khi biến mất
-    private long lifetimeStart; 
+    private boolean landed = false;
+    private long landedTime = 0;
 
     public FallingSun() {
-        // vSpeed = 0.6, không gia tốc (rơi đều), hSpeed = 0, rơi thẳng đứng
-        // fallTime ngẫu nhiên từ 2-10 giây để mặt trời dừng lại ở các độ cao khác nhau
-        super(0.6, 0, 0, 0, (long)Random.Int(2000, 5000)); 
+        super(2.5, 0, 0, 0, 3000);
         sunSprites = importSprites("sun", 2);
     }
 
-    public void update() {
-        animate(sunSprites, 200, true);
+    public void act() {
+        update();
+    }
 
+    public void update() {
+        playScene = (PlayScene) getWorld();
+        if (playScene == null) return;
+        if (!playScene.getObjects(Overlay.class).isEmpty()) return;
+        animate(sunSprites, 200, true);
         if (!beenClicked) {
-            if (checkClick()) {
+            if (Greenfoot.mouseClicked(this) || isTouching(ThuyThan.class)) {
                 collectSun();
             } else {
                 handleFallingAndWaiting();
@@ -28,78 +30,59 @@ public class FallingSun extends FallingObject
         } else {
             flyToCounter();
         }
-
         checkRemoval();
     }
 
-    private void handleFallingAndWaiting() {
-        currentFrame = System.nanoTime();
-        deltaTime = (currentFrame - lastFrame) / 1000000;
-
-        // Nếu đang trong thời gian rơi
-        if (deltaTime < fallTime) {
-            double y = getExactY() + vSpeed;
-            setLocation(getExactX(), y);
-            // Cập nhật mốc thời gian bắt đầu "chờ" liên tục khi đang rơi
-            lifetimeStart = System.currentTimeMillis(); 
-        } 
-        // Nếu đã rơi xong và đang nằm chờ
-        else {
-            // Nếu nằm chờ quá 8 giây thì mờ dần và biến mất
-            if (System.currentTimeMillis() - lifetimeStart > 8000) {
-                fadeOut(10);
-            }
+    public void collectSun() {
+        if (beenClicked) return;
+        beenClicked = true;
+        AudioPlayer.play(90, "points.mp3");
+        if (playScene.seedbank != null && playScene.seedbank.sunCounter != null) {
+            playScene.seedbank.sunCounter.addSun(25);
         }
     }
 
-    private void collectSun() {
-        beenClicked = true;
-        AudioPlayer.play(90, "points.mp3");
-        if (PlayScene != null && PlayScene.seedbank != null) {
-            PlayScene.seedbank.sunCounter.addSun(25);
+    private void handleFallingAndWaiting() {
+        if (!landed) {
+            super.update();
+            if (elapsedTime >= fallTime) {
+                landed = true;
+                landedTime = System.currentTimeMillis();
+            }
+        } else {
+            if (System.currentTimeMillis() - landedTime > 10000) {
+                fadeOut(5);
+            }
         }
     }
 
     private void flyToCounter() {
-        turnTowards(SunCounter.x, SunCounter.y);
-        move(20);
+        if (playScene.seedbank != null && playScene.seedbank.sunCounter != null) {
+            int targetX = playScene.seedbank.sunCounter.getX();
+            int targetY = playScene.seedbank.sunCounter.getY();
+            turnTowards(targetX, targetY);
+            move(25);
+        }
     }
 
     private void fadeOut(int amount) {
         int trans = getImage().getTransparency();
-        if (trans > amount) {
-            getImage().setTransparency(trans - amount);
-        } else {
-            getImage().setTransparency(0);
-        }
+        if (trans > amount) getImage().setTransparency(trans - amount);
+        else getImage().setTransparency(0);
     }
 
     private void checkRemoval() {
-        // Kiểm tra xem đã chạm vào SunCounter chưa
-        boolean reachedCounter = Math.abs(getX() - SunCounter.x) < 20 && Math.abs(getY() - SunCounter.y) < 20;
-
-        if (getImage().getTransparency() == 0 || (beenClicked && reachedCounter)) {
-            if (getWorld() != null) {
-                getWorld().removeObject(this);
-            }
+        if (playScene.seedbank == null || playScene.seedbank.sunCounter == null) return;
+        int targetX = playScene.seedbank.sunCounter.getX();
+        int targetY = playScene.seedbank.sunCounter.getY();
+        double dist = Math.hypot(getX() - targetX, getY() - targetY);
+        if (getImage().getTransparency() == 0 || (beenClicked && dist < 35)) {
+            getWorld().removeObject(this);
         }
-    }
-
-    public boolean checkClick() {
-        if (Greenfoot.mouseClicked(this)) return true;
-        
-        MouseInfo mouse = Greenfoot.getMouseInfo();
-        if (mouse != null && Greenfoot.mouseClicked(null)) {
-            PlayScene.moveHitbox();
-            return intersects(PlayScene.hitbox);
-        }
-        return false;
     }
 
     @Override
     public void addedToWorld(World world) {
-        PlayScene = (PlayScene)world;
-        lastFrame = System.nanoTime(); 
-        lifetimeStart = System.currentTimeMillis(); 
+        playScene = (PlayScene) world;
     }
 }

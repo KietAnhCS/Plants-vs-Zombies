@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=UpgradeManager
+comment1.params=p1\ p2
+comment1.target=boolean\ canUpgrade(Plant,\ Plant)
+comment2.params=p
+comment2.target=Plant\ getUpgradeResult(Plant)
+comment3.params=p1\ p2
+comment3.target=Plant\ getSpecialUpgrade(Plant,\ Plant)
+numComments=4

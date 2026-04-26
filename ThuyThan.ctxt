@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=ThuyThan
+comment1.params=
+comment1.target=ThuyThan()
+comment2.params=
+comment2.target=void\ act()
+comment3.params=
+comment3.target=void\ handleRightClick()
+comment4.params=
+comment4.target=void\ moveToTarget()
+comment5.params=
+comment5.target=void\ autoCollectSun()
+numComments=6

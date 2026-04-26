@@ -1,12 +1,5 @@
-import greenfoot.*;  // (World, Actor, GreenfootImage, Greenfoot and MouseInfo)
-
-/**
- * Write a description of class ReadySetPlant here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
-public class ReadySetPlant extends animatedObject
+import greenfoot.*;  
+public class ReadySetPlant extends SpriteAnimator
 {
     public GreenfootImage[] ready;
     public GreenfootImage[] set;
