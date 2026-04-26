@@ -20,6 +20,7 @@ public class AugmentCard extends Actor {
             if (mouse != null && mouse.getButton() == 1) {
                 AudioPlayer.play(100, "gravebutton.mp3");
                 applyAugmentEffect();
+                clearUI();
                 manager.nextWave();
             }
         }
@@ -52,6 +53,14 @@ public class AugmentCard extends Actor {
             if (type.equals("rerollcard")) world.seedbank.addSun(150);
             else if (type.equals("TD")) world.seedbank.addSun(150);
             else if (type.equals("HM")) world.seedbank.addSun(150);
+        }
+    }
+
+    private void clearUI() {
+        World world = getWorld();
+        if (world != null) {
+            world.removeObjects(world.getObjects(AugmentCard.class));
+            world.removeObjects(world.getObjects(Overlay.class));
         }
     }
 }

@@ -123,10 +123,10 @@ public class Zombie extends SpriteAnimator {
     }
 
     public boolean isEating() {
-        if (PlayScene == null || PlayScene.board == null) return false;
+        if (PlayScene == null || PlayScene.GridManager == null) return false;
         int yIdx = getYPos();
         
-        Plant[][] boardGrid = PlayScene.board.Board;
+        Plant[][] boardGrid = PlayScene.GridManager.Board;
         if (yIdx < 0 || yIdx >= boardGrid.length) return false;
 
         Plant[] row = boardGrid[yIdx];
@@ -150,8 +150,8 @@ public class Zombie extends SpriteAnimator {
     }
 
     public int getYPos() {
-        if (PlayScene == null || PlayScene.board == null) return 0;
-        return PlayScene.board.getGridY(getX(), getY());
+        if (PlayScene == null || PlayScene.GridManager == null) return 0;
+        return PlayScene.GridManager.getGridY(getX(), getY());
     }
 
     public int getXPos() { return getX(); }

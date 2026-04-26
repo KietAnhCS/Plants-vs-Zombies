@@ -106,12 +106,23 @@ public class WaveManager extends Actor {
     }
 
     public void nextWave() {
-        
         if (playScene != null) {
             playScene.removeObjects(playScene.getObjects(Overlay.class));
             playScene.removeObjects(playScene.getObjects(AugmentCard.class));
             
-            playScene.setPaintOrder(Transition.class, WaveNotification.class, RollButton.class, SeedPacket.class, Shovel.class, Plant.class, GridManager.class);
+            playScene.setPaintOrder(
+                Transition.class, 
+                WaveNotification.class, 
+                AugmentCard.class,
+                Overlay.class,
+                RupButton.class, 
+                RollButton.class, 
+                SeedPacket.class, 
+                Shovel.class, 
+                Sun.class,
+                Plant.class, 
+                GridManager.class
+            );
         }
         
         if (wave < level.length) {
@@ -133,7 +144,7 @@ public class WaveManager extends Actor {
     }
 
     private void spawnZombies(Zombie[][] waveData, boolean isHuge) {
-        GridManager board = playScene.board;
+        GridManager board = playScene.GridManager;
         for (int rowIndex = 0; rowIndex < waveData.length; rowIndex++) {
             Zombie[] zombiesInRow = waveData[rowIndex];
             if (zombiesInRow != null) {
@@ -142,12 +153,9 @@ public class WaveManager extends Actor {
                     if (z != null) {
                         int row = board.clampRow(rowIndex);
                         int targetY = board.getYCoord(8, row);
-                        
                         int yOffsetAdjustment = 20; 
                         targetY -= yOffsetAdjustment;
-                        
                         int targetX = xOffset + (isHuge ? 100 : 0) + (j * 40);
-                        
                         playScene.addObject(z, targetX, targetY);
                         zombieRow.get(row).add(z);
                     }
@@ -169,6 +177,6 @@ public class WaveManager extends Actor {
     }
     
     public int getWaveNumber() {
-    return (wave < 0) ? 0 : (wave + 1);
-}
+        return (wave < 0) ? 0 : (wave + 1);
+    }
 }

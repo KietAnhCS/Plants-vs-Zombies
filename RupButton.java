@@ -1,4 +1,5 @@
 import greenfoot.*;
+import java.util.*;
 
 public class RupButton extends Actor {
     public static class RarityEntry {
@@ -12,11 +13,10 @@ public class RupButton extends Actor {
 
     private int currentLevel = 1;
     private final int MAX_LEVEL = 5;
-    private final int BASE_COST = 100;
+    private final int UPGRADE_COST = 50;
     private int rollCount = 0;
 
     public RarityEntry[] weightedPool = {
-        new RarityEntry(SunflowerPacket.class, 0),
         new RarityEntry(BonkchoyPacket.class, 1),   
         new RarityEntry(PeashooterPacket.class, 3),
         new RarityEntry(CactusPacket.class, 3),
@@ -52,10 +52,14 @@ public class RupButton extends Actor {
         PlayScene world = (PlayScene) getWorld();
         if (world == null) return;
 
-        int cost = 100;
-        if (currentLevel < MAX_LEVEL && world.seedbank.getSun() >= cost) {
-            world.seedbank.addSun(-cost);
+        if (currentLevel < MAX_LEVEL && world.seedbank.getSun() >= UPGRADE_COST) {
+            world.seedbank.addSun(-UPGRADE_COST);
             currentLevel++;
+
+            if (world.GridManager != null) {
+                world.GridManager.playerLevel = currentLevel;
+            }
+
             applyChanges();
             updateAppearance();
             AudioPlayer.play(80, "achievement.mp3");
@@ -65,42 +69,48 @@ public class RupButton extends Actor {
     private void applyChanges() {
         for (RarityEntry entry : weightedPool) {
             if (entry.packetClass == RepeaterPacket.class && currentLevel >= 2) {
-                entry.weight = 1;
-            }
-            
-            if (entry.packetClass == GatlingPeaPacket.class && currentLevel >= 4) {
-                entry.weight = 1;
+                entry.weight = 2;
             }
             
             if (currentLevel >= 4) {
+                if (entry.packetClass == GatlingPeaPacket.class) entry.weight = 1;
                 if (entry.packetClass == CactusPacket.class) entry.weight = 0;
-                if (entry.packetClass == SunflowerPacket.class) entry.weight = 1;
-            
             }
             
             if (currentLevel == 5) {
-                if (entry.packetClass == SunflowerPacket.class) entry.weight = 2;
                 if (entry.packetClass == RepeaterPacket.class) entry.weight = 7;
+                if (entry.packetClass == GatlingPeaPacket.class) entry.weight = 3;
                 if (entry.packetClass == PeashooterPacket.class) entry.weight = 0;
+                if (entry.packetClass == PotatoPacket.class) entry.weight = 2;
             }
         }
     }
 
     private void updateAppearance() {
-        GreenfootImage bg = new GreenfootImage(100, 45);
-        bg.setColor(new Color(0, 0, 0, 180));
+        GreenfootImage bg = new GreenfootImage(120, 50);
+        bg.setColor(new Color(40, 40, 40, 220));
         bg.fill();
         bg.setColor(Color.WHITE);
-        bg.drawRect(0, 0, 99, 44);
-        bg.setFont(new Font("Arial", true, false, 14));
+        bg.drawRect(0, 0, 119, 49);
         
-        String txt = (currentLevel < MAX_LEVEL) ? "UP LV: " + currentLevel : "MAX LV";
-        bg.drawString(txt, 10, 20);
+        bg.setFont(new Font("Verdana", true, false, 16));
+        String txt = (currentLevel < MAX_LEVEL) ? "UP LV: " + currentLevel : "MAX LEVEL";
+        bg.drawString(txt, 15, 22);
         
         if (currentLevel < MAX_LEVEL) {
             bg.setColor(Color.YELLOW);
-            bg.drawString("$" + (100), 10, 38);
+            bg.setFont(new Font("Verdana", true, false, 14));
+            bg.drawString("COST: $" + UPGRADE_COST, 15, 42);
+        } else {
+            bg.setColor(Color.GRAY);
+            bg.setFont(new Font("Verdana", true, false, 14));
+            bg.drawString("COMPLETED", 15, 42);
         }
+        
         setImage(bg);
+    }
+
+    public int getCurrentLevel() {
+        return currentLevel;
     }
 }

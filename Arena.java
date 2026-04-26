@@ -28,10 +28,11 @@ public class Arena extends World {
         {{new Buckethead()}, {new Conehead()}, null, {new Conehead()}, {new Buckethead()}, null}, 
         {{new Conehead()}, {new Conehead()}, {new Buckethead()}, {new Conehead()}, {new Conehead()}, null},
         {{new Brickhead()}, {new Buckethead()}, {new Buckethead()}, {new Buckethead()}, {new Brickhead()}, null},
-        {{new Brickhead(), new Conehead()}, {new Brickhead()}, {new Brickhead()}, {new Brickhead()}, {new Brickhead(), new Conehead()}, null},
-        {{new Brickhead(), new Brickhead()}, {new Brickhead(), new Buckethead()}, {new Brickhead(), new Brickhead()}, {new Brickhead()}, {new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead()}, {new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Buckethead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead()}, {new Brickhead()}, null},
+        
+        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null},
+        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null},
         {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead()}, null},
         {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead()}, null},
         {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, null},
@@ -58,7 +59,7 @@ public class Arena extends World {
         }
     };
         
-    public SeedPacket[] bank = {new TwinSunflowerPacket(), new PeashooterPacket(), new BonkchoyPacket(), null, null};
+    public SeedPacket[] bank = {new PeashooterPacket(), new PeashooterPacket(), new BonkchoyPacket(), null, null};
     public SeedBank seedbank = new SeedBank(bank);   
     public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 2, 5, 10);
 

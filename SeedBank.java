@@ -59,13 +59,13 @@ public class SeedBank extends Actor {
             int mx = mouse.getX();
             int my = mouse.getY();
             
-            int gx = playScene.board.getGridX(mx, my);
-            int gy = playScene.board.getGridY(mx, my);
+            int gx = playScene.GridManager.getGridX(mx, my);
+            int gy = playScene.GridManager.getGridY(mx, my);
         
-            if (gx >= 0 && gy >= 0 && playScene.board.canPlace(gx, gy, selectedPacket.getPlant())) {
+            if (gx >= 0 && gy >= 0 && playScene.GridManager.canPlace(gx, gy, selectedPacket.getPlant())) {
                 
-                int tx = playScene.board.getXCoord(gx, gy);
-                int ty = playScene.board.getYCoord(gx, gy);
+                int tx = playScene.GridManager.getXCoord(gx, gy);
+                int ty = playScene.GridManager.getYCoord(gx, gy);
                 
                 ghostImage.setLocation(tx, ty);
                 ghostImage.setTransparent(true);
@@ -80,7 +80,7 @@ public class SeedBank extends Actor {
         
             if (Greenfoot.mouseDragEnded(null) || Greenfoot.mouseClicked(null)) {
                 if (lastGx >= 0 && lastGy >= 0) {
-                    if (playScene.board.placePlant(lastGx, lastGy, selectedPacket.getPlant())) {
+                    if (playScene.GridManager.placePlant(lastGx, lastGy, selectedPacket.getPlant())) {
                         sunCounter.removeSun(selectedPacket.sunCost);
                         selectedPacket.startRecharge();
                     }
@@ -137,8 +137,18 @@ public class SeedBank extends Actor {
             }
         }
         getImage().setTransparency(0); 
+        spawnBonkchoyAtBench();
     }
     
     public void setTD(boolean active) { this.isTDActive = active; }
     public int getSun() { return sunCounter.sun; }
+    
+    public void spawnBonkchoyAtBench() {
+        int targetX = 1; 
+        int targetY = 5;
+        Plant newBonkchoy = new BonkChoy(); 
+        if (playScene != null && playScene.GridManager != null) {
+            playScene.GridManager.placePlant(targetX, targetY, newBonkchoy);
+        }
+    }
 }

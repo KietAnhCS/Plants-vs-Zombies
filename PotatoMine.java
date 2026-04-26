@@ -56,7 +56,7 @@ public class PotatoMine extends Plant
                 if (Math.abs(i.getX() - getX()) < 28) {
                     
                     getWorld().addObject(new Explosion(PlayScene.level.zombieRow.get(getYPos())), getX(), getY()-25);
-                    ((PlayScene)getWorld()).board.removePlant(getXPos(), getYPos());
+                    ((PlayScene)getWorld()).GridManager.removePlant(getXPos(), getYPos());
                     return;
                 } 
             }

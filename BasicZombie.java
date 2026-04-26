@@ -18,10 +18,10 @@ public class BasicZombie extends Zombie
         armless = importSprites("armlesszombie", 7);
         
         walkSpeed = Random.Double(22, 28);
-        maxHp = 200;
+        maxHp = 150;
         hp = maxHp;
         
-        this.damage = 30; 
+        this.damage = 5; 
     }
 
     @Override

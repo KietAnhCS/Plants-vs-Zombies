@@ -2,6 +2,8 @@
 comment0.target=SeedBank
 comment1.params=bank
 comment1.target=SeedBank(SeedPacket[])
+comment10.params=
+comment10.target=void\ spawnBonkchoyAtBench()
 comment2.params=
 comment2.target=void\ act()
 comment3.params=mouse
@@ -18,4 +20,4 @@ comment8.params=active
 comment8.target=void\ setTD(boolean)
 comment9.params=
 comment9.target=int\ getSun()
-numComments=10
+numComments=11

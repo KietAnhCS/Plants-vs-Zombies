@@ -4,7 +4,7 @@ public class SunCounter extends Actor
     public static int x = 120; 
     public static int y = 50;
     
-    public int sun = 100; 
+    public int sun = 0; 
     public static final int textY = 45;
     
     private PlayScene PlayScene;

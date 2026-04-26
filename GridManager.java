@@ -4,6 +4,7 @@ import java.util.*;
 public class GridManager extends Actor {
     public Plant[][] Board = new Plant[6][9];
     public int currentRowCount = 6;
+    public int playerLevel = 1;
 
     private final int HEX_R = 40;
     private final int COLS  = 9;
@@ -60,9 +61,27 @@ public class GridManager extends Actor {
         return best;
     }
 
+    public int getMaxCapacity() {
+        return playerLevel;
+    }
+
+    public int getCurrentPlantCount() {
+        int count = 0;
+        for (int r = 0; r < 5; r++) {
+            for (int c = 0; c < COLS; c++) {
+                if (Board[r][c] != null) count++;
+            }
+        }
+        return count;
+    }
+
     private void drawGridHighlights() {
         GreenfootImage canvas = getImage();
         canvas.clear();
+
+        String status = "Plants: " + getCurrentPlantCount() + "/" + getMaxCapacity();
+        canvas.setColor(Color.WHITE);
+        canvas.drawString(status, 10, 20);
 
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse == null) return;
@@ -125,7 +144,22 @@ public class GridManager extends Actor {
 
     public boolean canPlace(int x, int y, Plant plant) {
         if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return false;
+        
         Plant target = Board[y][x];
+        
+        if (y < 5) {
+            boolean isAlreadyInTopFive = false;
+            for (int r = 0; r < 5; r++) {
+                for (int c = 0; c < COLS; c++) {
+                    if (Board[r][c] == plant) isAlreadyInTopFive = true;
+                }
+            }
+
+            if (target == null && !isAlreadyInTopFive) {
+                if (getCurrentPlantCount() >= getMaxCapacity()) return false;
+            }
+        }
+        
         if (target == null || target == plant) return true;
         return UpgradeManager.canUpgrade(plant, target);
     }
@@ -136,7 +170,10 @@ public class GridManager extends Actor {
     }
 
     public boolean placePlant(int x, int y, Plant plant) {
-        if (!canPlace(x, y, plant)) return false;
+        if (!canPlace(x, y, plant)) {
+            returnBackToBench(plant);
+            return false;
+        }
 
         int tx = getXCoord(x, y);
         int ty = getYCoord(x, y);
@@ -157,6 +194,7 @@ public class GridManager extends Actor {
                 Board[y][x] = special;
                 return true;
             }
+            returnBackToBench(plant);
             return false;
         }
 
@@ -170,6 +208,31 @@ public class GridManager extends Actor {
         if (getWorld() instanceof PlayScene)
             ((PlayScene) getWorld()).checkAndCombine(plant);
         return true;
+    }
+
+    private void returnBackToBench(Plant plant) {
+        for (int r = 0; r < ROWS; r++)
+            for (int c = 0; c < COLS; c++)
+                if (Board[r][c] == plant) return;
+
+        List<Integer> emptyCols = new ArrayList<>();
+        for (int c = 0; c < COLS; c++) {
+            if (Board[5][c] == null) emptyCols.add(c);
+        }
+
+        if (!emptyCols.isEmpty()) {
+            int randomCol = emptyCols.get(Greenfoot.getRandomNumber(emptyCols.size()));            int bx = getXCoord(randomCol, 5);
+            int by = getYCoord(randomCol, 5);
+            
+            if (plant.getWorld() == null) {
+                getWorld().addObject(plant, bx, by);
+            } else {
+                plant.setLocation(bx, by);
+            }
+            Board[5][randomCol] = plant;
+        } else {
+            if (plant.getWorld() != null) getWorld().removeObject(plant);
+        }
     }
 
     public void removePlant(int x, int y) {

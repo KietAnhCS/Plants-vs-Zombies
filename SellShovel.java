@@ -35,8 +35,8 @@ public class SellShovel extends SpriteAnimator {
 
             if (Greenfoot.mouseClicked(null)) {
                 isDragging = false;
-                int gx = playScene.board.getGridX(mouse.getX(), mouse.getY());
-                int gy = playScene.board.getGridY(mouse.getX(), mouse.getY());
+                int gx = playScene.GridManager.getGridX(mouse.getX(), mouse.getY());
+                int gy = playScene.GridManager.getGridY(mouse.getX(), mouse.getY());
 
                 if (gx != -1 && gy != -1) {
                     executeDig(gx, gy);
@@ -53,11 +53,11 @@ public class SellShovel extends SpriteAnimator {
             lastHighlighted.opaque = false;
             lastHighlighted = null;
         }
-        if (playScene.board == null) return;
-        int gx = playScene.board.getGridX(x, y);
-        int gy = playScene.board.getGridY(x, y);
+        if (playScene.GridManager == null) return;
+        int gx = playScene.GridManager.getGridX(x, y);
+        int gy = playScene.GridManager.getGridY(x, y);
         if (gx != -1 && gy != -1) {
-            Plant p = playScene.board.Board[gy][gx];
+            Plant p = playScene.GridManager.Board[gy][gx];
             if (p != null) {
                 p.opaque = true;
                 lastHighlighted = p;
@@ -66,9 +66,9 @@ public class SellShovel extends SpriteAnimator {
     }
 
     private void executeDig(int gx, int gy) {
-        Plant p = playScene.board.Board[gy][gx];
+        Plant p = playScene.GridManager.Board[gy][gx];
         if (p != null) {
-            playScene.board.removePlant(gx, gy);
+            playScene.GridManager.removePlant(gx, gy);
             if (playScene.seedbank != null) {
                 playScene.seedbank.addSun(30);
             }

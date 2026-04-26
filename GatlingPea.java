@@ -1,5 +1,4 @@
-import greenfoot.*;
-import java.util.*;
+import greenfoot.*; 
 
 public class GatlingPea extends Plant
 {
@@ -8,122 +7,82 @@ public class GatlingPea extends Plant
     private int shootCount = 0;
     private boolean resetFrame = false;
     private boolean shooting = false;
-    
-    private boolean isPoweredUp = false;
-    private long powerUpStartTime;
-    private final long POWER_UP_DURATION = 3000L;
-    
-    private long baseShootDelay = 2000L; 
-    private long shootDelay = 2000L;      
-    
+    private long shootDelay = 800L;
     private long lastFrame2 = System.nanoTime();
     private long deltaTime2;
-
+    
     public GatlingPea() {
         maxHp = 60;
         hp = maxHp;
-        shoot = importSprites("GatlingPea", 19);
         idle = importSprites("GatlingPea", 19);
+        shoot = importSprites("GatlingPea", 19);
         setImage(idle[0]);
     }
-
-    public void activatePlantFood() {
-        this.isPoweredUp = true;
-        this.powerUpStartTime = System.currentTimeMillis();
-        this.shootDelay = 40L; 
-        this.hp = maxHp;
-    }
-
-    @Override
+   
     public void hit(int dmg) {
-        if (getWorld() != null && isLiving()) {
+        if (isLiving()) {
+            hitFlash(shooting ? shoot : idle, "GatlingPea");
             hp -= dmg;
         }
     }
 
-    @Override
     public void update() {
         if (getWorld() == null) return;
-
-        if (isPoweredUp) {
-            if (System.currentTimeMillis() - powerUpStartTime > POWER_UP_DURATION) {
-                isPoweredUp = false;
-                shootDelay = baseShootDelay;
-            }
-        }
-
-        PlayScene = (PlayScene)getWorld();
+        
+        PlayScene world = (PlayScene)getWorld();
         currentFrame = System.nanoTime();
 
-        handleAction();
-        checkZombieInRow();
-    }
+        checkForZombies(world);
 
-    private void handleAction() {
-        deltaTime2 = (currentFrame - lastFrame2) / 1000000;
-
-        if (isPoweredUp) {
-            executeShootingLogic();
-        } 
-        else if (shooting) {
-            if (shootCount >= 5) {
-                if (deltaTime2 >= shootDelay) {
-                    shootCount = 0;
-                } else {
-                    animate(idle, 225, true);
-                }
-            } else {
-                executeShootingLogic();
-            }
-        } else {
+        if (!shooting) {
             animate(idle, 225, true);
-            shootCount = 0;
-            lastFrame2 = currentFrame - (shootDelay * 1000000);
-        }
-    }
-
-    private void executeShootingLogic() {
-        if (!resetFrame) {
-            setFrame(1);
-            resetFrame = true;
-        }
-        
-        int animSpeed = isPoweredUp ? 10 : 15; 
-        animate(shoot, animSpeed, false);
-
-        if (frame >= 7) {
-            int myRow = getYPos();
-            if (getWorld() != null && myRow != -1) {
-                AudioPlayer.play(80, "throw.mp3", "throw2.mp3");
-                PlayScene.addObject(new FirePea(myRow), getX() + 25, getY() - 17);
-                
-                setFrame(1); 
-                shootCount++;
-                
-                if (shootCount >= 5 && !isPoweredUp) {
-                    lastFrame2 = System.nanoTime();
-                    resetFrame = false;
+            lastFrame2 = System.nanoTime();
+        } else {
+            deltaTime2 = (currentFrame - lastFrame2) / 1000000;
+            
+            if (deltaTime2 < shootDelay) {
+                animate(idle, 225, true);
+                shootCount = 0;
+                resetFrame = false;
+            } else {
+                if (shootCount >= 7) {
+                    lastFrame2 = currentFrame;
+                    return;
                 }
+
+                if (!resetFrame) {
+                    frame = 0;
+                    resetFrame = true;
+                }
+                
+                if (frame >= 4) {
+                    AudioPlayer.play(80, "throw.mp3", "throw2.mp3");
+                    world.addObject(new Pea(getYPos()), getX() + 25, getY() - 17);
+                    frame = 0; 
+                    shootCount++;
+                }
+                
+                if (frame < 0) frame = 0; 
+                animate(shoot, 30, false);
             }
         }
     }
 
-    private void checkZombieInRow() {
-        int myRow = getYPos();
-        if (myRow == -1 || PlayScene.level == null || PlayScene.level.zombieRow == null) return;
-
-        List<Zombie> zombiesInRow = PlayScene.level.zombieRow.get(myRow);
+    private void checkForZombies(PlayScene world) {
+        java.util.List<Zombie> zombiesInRow = world.level.zombieRow.get(getYPos());
+        
         if (zombiesInRow == null || zombiesInRow.isEmpty()) {
             shooting = false;
-        } else {
-            boolean found = false;
-            for (Zombie i : zombiesInRow) {
-                if (i != null && i.getWorld() != null && i.getX() > getX() && i.getX() <= PlayScene.getWidth() + 10) {
-                    found = true;
-                    break;
-                }
-            }
-            shooting = found;
+            return;
         }
+
+        boolean foundZombie = false;
+        for (Zombie z : zombiesInRow) {
+            if (z != null && z.getWorld() != null && z.getX() > getX() && z.getX() <= world.getWidth() + 10) {
+                foundZombie = true;
+                break;
+            }
+        }
+        shooting = foundZombie;
     }
 }

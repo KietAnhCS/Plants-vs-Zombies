@@ -48,8 +48,8 @@ public abstract class Plant extends SpriteAnimator {
     public void setMergingTarget(Plant target) {
         if (target == null) return;
 
-        if (PlayScene != null && PlayScene.board != null) {
-            PlayScene.board.Board[this.currentGridY][this.currentGridX] = null;
+        if (PlayScene != null && PlayScene.GridManager != null) {
+            PlayScene.GridManager.Board[this.currentGridY][this.currentGridX] = null;
         }
 
         this.targetPlant = target;
@@ -78,7 +78,9 @@ public abstract class Plant extends SpriteAnimator {
 
         if (isLiving()) {
             if (!isDragging) {
-                update();
+                if (currentGridY < 5) {
+                    update();
+                }
             }
             if (getImage() != null) {
                 getImage().setTransparency((isDragging || opaque) ? 125 : 255);
@@ -113,11 +115,11 @@ public abstract class Plant extends SpriteAnimator {
 
         if (activeMergers == 0 && target.getWorld() != null) {
             Plant upgraded = UpgradeManager.getUpgradeResult(target);
-            world.board.removePlant(gx, gy);
+            world.GridManager.removePlant(gx, gy);
 
             if (upgraded != null) {
                 world.addObject(upgraded, tx, ty);
-                world.board.updateBoardData(gx, gy, upgraded);
+                world.GridManager.updateBoardData(gx, gy, upgraded);
                 world.checkAndCombine(upgraded);
             }
         }
@@ -128,8 +130,8 @@ public abstract class Plant extends SpriteAnimator {
         if (worldRef == null) return;
 
         AudioPlayer.play(80, "gulp.mp3");
-        if (PlayScene.board != null) {
-            PlayScene.board.removePlant(currentGridX, currentGridY);
+        if (PlayScene.GridManager != null) {
+            PlayScene.GridManager.removePlant(currentGridX, currentGridY);
         }
         worldRef.removeObject(this);
     }
@@ -156,31 +158,28 @@ public abstract class Plant extends SpriteAnimator {
                 isDragging = false;
                 if (getWorld() == null) return;
             
-                int nx = PlayScene.board.getGridX(mouse.getX(), mouse.getY());
-                int ny = PlayScene.board.getGridY(mouse.getX(), mouse.getY());
+                int nx = PlayScene.GridManager.getGridX(mouse.getX(), mouse.getY());
+                int ny = PlayScene.GridManager.getGridY(mouse.getX(), mouse.getY());
                 
                 if (nx < 0 || ny < 0) {
-                    
-                    int ox = PlayScene.board.getXCoord(startGridX, startGridY) + 
-                             (PlayScene.board.getXCoord(startGridX+1, startGridY) - PlayScene.board.getXCoord(startGridX, startGridY))/2;
-                    int oy = PlayScene.board.getYCoord(startGridX, startGridY) + 
-                             (PlayScene.board.getYCoord(startGridX, startGridY+1) - PlayScene.board.getYCoord(startGridX, startGridY))/2;
-                    setLocation(ox, oy);
-                } else if (PlayScene.board.placePlant(nx, ny, this)) {
+                    returnToOldPosition();
+                } else if (PlayScene.GridManager.placePlant(nx, ny, this)) {
                     currentGridX = nx;
                     currentGridY = ny;
                     PlayScene.checkAndCombine(this);
-                    
                 } else {
-                    
-                    int ox = PlayScene.board.getXCoord(startGridX, startGridY) + 
-                             (PlayScene.board.getXCoord(startGridX+1, startGridY) - PlayScene.board.getXCoord(startGridX, startGridY))/2;
-                    int oy = PlayScene.board.getYCoord(startGridX, startGridY) + 
-                             (PlayScene.board.getYCoord(startGridX, startGridY+1) - PlayScene.board.getYCoord(startGridX, startGridY))/2;
-                    setLocation(ox, oy);
+                    returnToOldPosition();
                 }
             }
         }
+    }
+
+    private void returnToOldPosition() {
+        int ox = PlayScene.GridManager.getXCoord(startGridX, startGridY);
+        int oy = PlayScene.GridManager.getYCoord(startGridX, startGridY);
+        setLocation(ox, oy);
+        currentGridX = startGridX;
+        currentGridY = startGridY;
     }
 
     public void hit(int dmg) { 
@@ -196,11 +195,10 @@ public abstract class Plant extends SpriteAnimator {
     @Override
     public void addedToWorld(World world) {
         PlayScene = (PlayScene)world;
-        currentGridX = PlayScene.board.getGridX(getX(), getY());
-        currentGridY = PlayScene.board.getGridY(getX(), getY());
+        currentGridX = PlayScene.GridManager.getGridX(getX(), getY());
+        currentGridY = PlayScene.GridManager.getGridY(getX(), getY());
         PlayScene.addObject(new Dirt(), getX(), getY() + 30);
     }
 
     public boolean isLiving() { return hp > 0; }
-    
 }

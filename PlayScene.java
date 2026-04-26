@@ -11,12 +11,12 @@ public class PlayScene extends World {
     public boolean winOnce = false;
     private boolean isWaterMap = true; 
     
-    public GridManager board = new GridManager();
+    public GridManager GridManager = new GridManager();
     public GreenfootSound Grasswalk = new GreenfootSound("intro3.mp3");
-    
-    // Khai báo nhạc Final Wave
+    public GreenfootSound easyWaveMusic = new GreenfootSound("sans.mp3");
     public GreenfootSound finalWaveMusic = new GreenfootSound("finalwavemp3.mp3");
-    private boolean isFinalMusicPlaying = false;
+    
+    private GreenfootSound currentlyPlaying;
 
     public GreenfootSound CYS;
     public World restartWorld;
@@ -44,7 +44,7 @@ public class PlayScene extends World {
         Greenfoot.setSpeed(50);
         setBackground("maptft2.png");
         
-        addObject(board, 555, 349); 
+        addObject(GridManager, 555, 349); 
         addObject(new ThuyThan(), 110, 642);
         addObject(seedbank, 0, 0); 
         addObject(hitbox, 555, 349);
@@ -54,13 +54,14 @@ public class PlayScene extends World {
         
         prepareLawnmowers();
         finalWaveMusic.setVolume(70);
+        easyWaveMusic.setVolume(70);
 
         setPaintOrder(
             AugmentCard.class,
             Overlay.class,
+            ThuyThan.class,
             RupButton.class,
             RollButton.class,    
-            RupButton.class,
             Transition.class,
             WaveNotification.class,
             ReadySetPlant.class,
@@ -69,7 +70,7 @@ public class PlayScene extends World {
             SellShovel.class,
             Shovel.class,
             Sun.class,
-            ThuyThan.class,
+            
             HealthBar.class,
             Plant.class,          
             GridManager.class,   
@@ -84,45 +85,43 @@ public class PlayScene extends World {
         moveHitbox(); 
         if (!isPlaying) {
             addObject(level, 0, 0);
-            addObject(new DelayAudio(Grasswalk, CYS, 70, true, 2000L), 0, 0);
+            isPlaying = true;
             level.startLevel();
-            isPlaying = true;                
         }
-        checkMusicInGame();
-        
+        updateGameMusic();
         handleSunSpawn();
         handleWinLoss();
         checkDebugKeys();
     }
 
-    private void checkMusicInGame() {
-        if (level == null) return;
+    private void updateGameMusic() {
+        if (level == null || loseOnce || winOnce) return;
         
-        int currentWave = level.getWaveNumber();
+        int currentWave = level.getWaveNumber()-1;
         showText("Wave: " + currentWave, 100, 100);
-    
-        if (currentWave >= 3 && currentWave <= 5) {
-            if (!isFinalMusicPlaying) {
-                
-                if (Grasswalk.isPlaying()) Grasswalk.stop();
-                if (CYS != null && CYS.isPlaying()) CYS.stop();
-                
-                finalWaveMusic.playLoop();
-                isFinalMusicPlaying = true;
-            }
+
+        GreenfootSound targetMusic;
+
+        if (currentWave >= 1 && currentWave <= 6) {
+            targetMusic = easyWaveMusic;
+        } else if (currentWave >= 12 && currentWave <= 16) {
+            targetMusic = finalWaveMusic;
+        } else {
+            targetMusic = Grasswalk;
         }
-        else {
-            if (isFinalMusicPlaying) {
-                finalWaveMusic.stop();
-                
-                Grasswalk.playLoop(); 
-                isFinalMusicPlaying = false;
-            }
-            
-            if (!isFinalMusicPlaying && !Grasswalk.isPlaying() && isPlaying) {
-                 Grasswalk.playLoop();
-            }
+
+        if (currentlyPlaying != targetMusic) {
+            stopAllMusic();
+            currentlyPlaying = targetMusic;
+            currentlyPlaying.playLoop();
         }
+    }
+
+    private void stopAllMusic() {
+        if (Grasswalk.isPlaying()) Grasswalk.stop();
+        if (easyWaveMusic.isPlaying()) easyWaveMusic.stop();
+        if (finalWaveMusic.isPlaying()) finalWaveMusic.stop();
+        if (CYS != null && CYS.isPlaying()) CYS.stop();
     }
 
     private void handleSunSpawn() {
@@ -169,8 +168,7 @@ public class PlayScene extends World {
 
     private void handleWinLoss() {
         if (!loseOnce && hasLost()) {
-            Grasswalk.stop();
-            finalWaveMusic.stop(); 
+            stopAllMusic();
             AudioPlayer.play(80, "losemusic.mp3");
             addObject(new DelayAudio(new GreenfootSound("scream.mp3"), 70, false, 4000L), 0, 0);
             loseOnce = true;
@@ -184,15 +182,15 @@ public class PlayScene extends World {
     }
 
     private void prepareLawnmowers() {
-        int[][] coordinates = {{240, 180}, {228, 235}, {226, 300}, {200, 360}, {180, 430}};
-        for (int i = 0; i < 5; i++) {
+        int[][] coordinates = {{240, 180}, {226, 300}, {180, 430}};
+        for (int i = 0; i < 3; i++) {
             addObject(new Lawnmower(), coordinates[i][0], coordinates[i][1]);
         }
     }
 
     public boolean tryPlacePlant(int gridX, int gridY, Plant newPlant) {
         if (newPlant == null || level.choosingCard) return false;
-        return board.placePlant(gridX, gridY, newPlant);
+        return GridManager.placePlant(gridX, gridY, newPlant);
     }
 
     public boolean hasLost() {
@@ -205,7 +203,7 @@ public class PlayScene extends World {
     
     public void checkAndCombine(Plant newPlant) {
         if (newPlant == null || newPlant.isMerging || newPlant.isTarget) return;
-        if (!(newPlant instanceof Peashooter || newPlant instanceof Sunflower || newPlant instanceof Repeater || newPlant instanceof Cactus || 
+        if (!(newPlant instanceof Peashooter|| newPlant instanceof Repeater ||  newPlant instanceof GatlingPea || newPlant instanceof Cactus || 
               newPlant instanceof Cactus2 || newPlant instanceof BonkChoy || newPlant instanceof BonkChoy2)) {
             return; 
         }
@@ -236,31 +234,27 @@ public class PlayScene extends World {
     private void checkDebugKeys() {
         String key = Greenfoot.getKey();
         if ("1".equals(key)) { 
-            CYS.stop(); 
-            Grasswalk.stop(); 
-            finalWaveMusic.stop(); 
+            stopAllMusic();
             Greenfoot.setWorld(new Arena()); 
         }
         if ("r".equals(key)) rollPackets(); 
     }
 
     public void finishLevel() {
-        Grasswalk.stop();
-        finalWaveMusic.stop(); 
+        stopAllMusic();
         AudioPlayer.play(70, "winmusic.mp3");
     }
 
     public void started() {
-        if (isFinalMusicPlaying) {
-            finalWaveMusic.playLoop();
-        } else {
-            if (!Grasswalk.isPlaying()) Grasswalk.playLoop();
+        if (currentlyPlaying != null) {
+            currentlyPlaying.playLoop();
         }
         Greenfoot.setSpeed(50);          
     }
 
     public void stopped() {
-        if (Grasswalk.isPlaying()) Grasswalk.pause();
-        if (finalWaveMusic.isPlaying()) finalWaveMusic.pause();
+        if (currentlyPlaying != null && currentlyPlaying.isPlaying()) {
+            currentlyPlaying.pause();
+        }
     }
 }
