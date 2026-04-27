@@ -102,7 +102,7 @@ public class PlayScene extends World {
 
         GreenfootSound targetMusic;
 
-        if (currentWave >= 1 && currentWave <= 6) {
+        if (currentWave >= 0 && currentWave <= 6) {
             targetMusic = easyWaveMusic;
         } else if (currentWave >= 12 && currentWave <= 16) {
             targetMusic = finalWaveMusic;

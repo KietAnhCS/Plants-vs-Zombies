@@ -62,7 +62,7 @@ public class GridManager extends Actor {
     }
 
     public int getMaxCapacity() {
-        return playerLevel;
+        return playerLevel+3;
     }
 
     public int getCurrentPlantCount() {
@@ -105,7 +105,7 @@ public class GridManager extends Actor {
         int[] px = new int[6];
         int[] py = new int[6];
         for (int i = 0; i < 6; i++) {
-            double angle = Math.toRadians(60 * i);
+            double angle = Math.toRadians(60 * i-90);
             px[i] = (int)(cx + HEX_R * Math.cos(angle));
             py[i] = (int)(cy + HEX_R * Math.sin(angle));
         }
