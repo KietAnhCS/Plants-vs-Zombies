@@ -1,4 +1,5 @@
 import greenfoot.*;
+
 public class FallingSun extends FallingObject
 {
     private PlayScene playScene;
@@ -20,7 +21,9 @@ public class FallingSun extends FallingObject
         playScene = (PlayScene) getWorld();
         if (playScene == null) return;
         if (!playScene.getObjects(Overlay.class).isEmpty()) return;
+
         animate(sunSprites, 200, true);
+
         if (!beenClicked) {
             if (Greenfoot.mouseClicked(this) || isTouching(ThuyThan.class)) {
                 collectSun();
@@ -30,6 +33,7 @@ public class FallingSun extends FallingObject
         } else {
             flyToCounter();
         }
+
         checkRemoval();
     }
 
@@ -37,9 +41,7 @@ public class FallingSun extends FallingObject
         if (beenClicked) return;
         beenClicked = true;
         AudioPlayer.play(90, "points.mp3");
-        if (playScene.seedbank != null && playScene.seedbank.sunCounter != null) {
-            playScene.seedbank.sunCounter.addSun(25);
-        }
+        playScene.getSunManager().add(25);
     }
 
     private void handleFallingAndWaiting() {
@@ -57,12 +59,10 @@ public class FallingSun extends FallingObject
     }
 
     private void flyToCounter() {
-        if (playScene.seedbank != null && playScene.seedbank.sunCounter != null) {
-            int targetX = playScene.seedbank.sunCounter.getX();
-            int targetY = playScene.seedbank.sunCounter.getY();
-            turnTowards(targetX, targetY);
-            move(25);
-        }
+        int targetX = SunCounter.x;
+        int targetY = SunCounter.y;
+        turnTowards(targetX, targetY);
+        move(25);
     }
 
     private void fadeOut(int amount) {
@@ -72,9 +72,8 @@ public class FallingSun extends FallingObject
     }
 
     private void checkRemoval() {
-        if (playScene.seedbank == null || playScene.seedbank.sunCounter == null) return;
-        int targetX = playScene.seedbank.sunCounter.getX();
-        int targetY = playScene.seedbank.sunCounter.getY();
+        int targetX = SunCounter.x;
+        int targetY = SunCounter.y;
         double dist = Math.hypot(getX() - targetX, getY() - targetY);
         if (getImage().getTransparency() == 0 || (beenClicked && dist < 35)) {
             getWorld().removeObject(this);

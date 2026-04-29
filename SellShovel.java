@@ -70,7 +70,7 @@ public class SellShovel extends SpriteAnimator {
         if (p != null) {
             playScene.GridManager.removePlant(gx, gy);
             if (playScene.seedbank != null) {
-                playScene.seedbank.addSun(30);
+                playScene.getSunManager().add(30);
             }
             AudioPlayer.play(80, "plant.mp3");
         } else {

@@ -1,0 +1,17 @@
+#BlueJ class context
+comment0.target=DragController
+comment1.params=sunCounter\ placer
+comment1.target=DragController(SunCounter,\ IPlantPlacer)
+comment2.params=
+comment2.target=void\ act()
+comment3.params=mouse
+comment3.target=void\ handleDrag(greenfoot.MouseInfo)
+comment4.params=mouse
+comment4.target=void\ tryPickUp(greenfoot.MouseInfo)
+comment5.params=mouse
+comment5.target=void\ updateGhostPosition(greenfoot.MouseInfo)
+comment6.params=
+comment6.target=void\ tryPlace()
+comment7.params=
+comment7.target=void\ cleanup()
+numComments=8

@@ -62,23 +62,21 @@ public class ThuyThan extends Actor {
         }
     }
 
-        private void autoCollectSun() {
-        List<Sun> suns = getObjectsInRange(pickupRange, Sun.class);
-        for (Sun s : suns) {
-           
-            if (s.getWorld() != null && !s.isPickedUp()) {
-                
-                
-                s.collectByHero(); 
-                
-                
-                PlayScene world = (PlayScene) getWorld();
-                if (world.seedbank != null && world.seedbank.sunCounter != null) {
-                    world.seedbank.sunCounter.addSun(s.sunValue);
-                }
-                
-                AudioPlayer.play(80, "points.mp3");
+    private void autoCollectSun() {
+    List<Sun> suns = getObjectsInRange(pickupRange, Sun.class);
+
+    for (Sun s : suns) {
+        if (s.getWorld() != null && !s.isPickedUp()) {
+
+            s.collectByHero(); 
+
+            PlayScene world = (PlayScene) getWorld();
+            if (world != null && world.getSunManager() != null) {
+                world.getSunManager().add(s.getValue());
             }
+
+            AudioPlayer.play(80, "points.mp3");
         }
     }
+}
 }

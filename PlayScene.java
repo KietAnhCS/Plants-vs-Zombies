@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class PlayScene extends World {  
+    private SunManager sunManager = new SunManager();
     private long lastSunSpawnTime;
     private boolean isPlaying = false;
     public boolean lose = false;
@@ -135,14 +136,14 @@ public class PlayScene extends World {
 
     public void rollPackets() {
         RupButton rup = rupbutton;
-        if (seedbank.getSun() >= 25) {
+        if (getSunManager().hasEnough(25)) {
             int totalWeight = 0;
             for (RupButton.RarityEntry entry : rup.weightedPool) {
                 if (entry.weight > 0) totalWeight += entry.weight;
             }
             if (totalWeight <= 0) return; 
 
-            seedbank.addSun(-25); 
+            getSunManager().spend(25); 
             AudioPlayer.play(80, "achievement.mp3");
 
             SeedPacket[] newBank = new SeedPacket[3]; 
@@ -256,5 +257,9 @@ public class PlayScene extends World {
         if (currentlyPlaying != null && currentlyPlaying.isPlaying()) {
             currentlyPlaying.pause();
         }
+    }
+    
+    public SunManager getSunManager() {
+        return sunManager;
     }
 }

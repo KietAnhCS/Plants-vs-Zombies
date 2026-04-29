@@ -1,10 +1,14 @@
 import greenfoot.*;
 import java.util.*;
+
 public class Sun extends FallingObject {
-    public int sunValue = 25; 
-    private PlayScene playScene;
-    private GreenfootImage[] sunSprites;
-    private boolean beenClicked = false; 
+
+    private int value = 25; 
+    private PlayScene scene;
+
+    private GreenfootImage[] sprites;
+
+    private boolean pickedUp = false; 
     private long lifetimeStart;
     private boolean stationary = false;
 
@@ -14,21 +18,23 @@ public class Sun extends FallingObject {
 
     public Sun(int value) {
         super(-3.5, 0.15, Random.Int(-1, 1), 1, 800L); 
-        this.sunValue = value;
-        sunSprites = importSprites("sun", 2);
+        this.value = value;
+        sprites = importSprites("sun", 2);
     }
 
     public Sun(int value, boolean stationary) {
         super(0, 0, 0, 0, 0L);
-        this.sunValue = value;
+        this.value = value;
         this.stationary = stationary;
-        sunSprites = importSprites("sun", 2);
+        sprites = importSprites("sun", 2);
     }
 
     public void update() {
         if (getWorld() == null) return;
-        animate(sunSprites, 200, true);
-        if (!beenClicked) {
+
+        animate(sprites, 200, true);
+
+        if (!pickedUp) {
             if (Greenfoot.mouseClicked(this) || isTouching(ThuyThan.class)) {
                 collect();
             } else {
@@ -38,18 +44,30 @@ public class Sun extends FallingObject {
         } else {
             flyToCounter();
         }
+
         checkRemoval();
     }
 
     private void collect() {
-        if (beenClicked) return;
-        beenClicked = true;
+        if (pickedUp) return;
+
+        pickedUp = true;
         setRotation(0);
+
         AudioPlayer.play(90, "points.mp3");
-        playScene.seedbank.sunCounter.addSun(sunValue);
+
+        if (scene != null && scene.getSunManager() != null) {
+            scene.getSunManager().add(value);
+        }
     }
 
-    public boolean isPickedUp() { return beenClicked; }
+    public boolean isPickedUp() {
+        return pickedUp;
+    }
+
+    public int getValue() {
+        return value;
+    }
 
     public void collectByHero() {
         collect();
@@ -84,15 +102,19 @@ public class Sun extends FallingObject {
 
     private void checkRemoval() {
         if (getWorld() == null) return;
-        boolean reachedCounter = Math.abs(getX() - SunCounter.x) < 20 && Math.abs(getY() - SunCounter.y) < 20;
-        if (getImage().getTransparency() == 0 || (beenClicked && reachedCounter)) {
+
+        boolean reachedCounter =
+            Math.abs(getX() - SunCounter.x) < 20 &&
+            Math.abs(getY() - SunCounter.y) < 20;
+
+        if (getImage().getTransparency() == 0 || (pickedUp && reachedCounter)) {
             getWorld().removeObject(this);
         }
     }
 
     @Override
     public void addedToWorld(World world) {
-        playScene = (PlayScene) world;
+        scene = (PlayScene) world;
         lifetimeStart = System.currentTimeMillis(); 
     }
 }

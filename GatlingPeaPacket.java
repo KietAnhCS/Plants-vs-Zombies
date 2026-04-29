@@ -1,17 +1,24 @@
-import greenfoot.*; 
+import greenfoot.*;
 
-public class GatlingPeaPacket extends SeedPacket
-{
+public class GatlingPeaPacket extends SeedPacket {
+
     public GatlingPeaPacket() {
-        super(3000L, false, 300, "gatlingpeapacket");
+        super(3000L, 300, "gatlingpeapacket");
     }
- 
+
+    @Override
     public TransparentObject addImage() {
+        MouseInfo mouse = Greenfoot.getMouseInfo();
+        if (mouse == null) return null;
         TransparentObject temp = new TransparentGatlingPea(false);
-        ((PlayScene)getWorld()).addObject(temp, Greenfoot.getMouseInfo().getX(), Greenfoot.getMouseInfo().getY());
+        if (getWorld() != null) {
+            getWorld().addObject(temp, mouse.getX(), mouse.getY());
+        }
         return temp;
     }
-    public Plant getPlant() {
+
+    @Override
+    public Plant getPlant() { 
         return new GatlingPea();
     }
 }

@@ -52,8 +52,8 @@ public class RupButton extends Actor {
         PlayScene world = (PlayScene) getWorld();
         if (world == null) return;
 
-        if (currentLevel < MAX_LEVEL && world.seedbank.getSun() >= UPGRADE_COST) {
-            world.seedbank.addSun(-UPGRADE_COST);
+        if (currentLevel < MAX_LEVEL && world.getSunManager().hasEnough(UPGRADE_COST)) {
+            world.getSunManager().spend(UPGRADE_COST);
             currentLevel++;
 
             if (world.GridManager != null) {

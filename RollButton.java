@@ -40,7 +40,7 @@ public class RollButton extends Actor
     private void executeRoll(PlayScene world) {
         if (world.seedbank == null || world.rupbutton == null) return;
 
-        if (world.seedbank.getSun() >= ROLL_COST) {
+        if (world.getSunManager().hasEnough(ROLL_COST)) {
             RupButton.RarityEntry[] currentPool = world.rupbutton.getPoolForRoll();
             
             int totalWeight = 0;
@@ -52,7 +52,7 @@ public class RollButton extends Actor
             
             if (totalWeight <= 0) return; 
 
-            world.seedbank.addSun(-ROLL_COST); 
+            world.getSunManager().spend(ROLL_COST);; 
             AudioPlayer.play(80, "achievement.mp3");
 
             SeedPacket[] newBank = new SeedPacket[3]; 

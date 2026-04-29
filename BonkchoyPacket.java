@@ -1,19 +1,24 @@
-import greenfoot.*;  
+import greenfoot.*;
 
+public class BonkchoyPacket extends SeedPacket {
 
-public class BonkchoyPacket extends SeedPacket
-{
     public BonkchoyPacket() {
-        super(1L, true, 175, "bonkchoypacket");
-        
+        super(1000L, 175, "bonkchoypacket");
     }
-    
+
+    @Override
     public TransparentObject addImage() {
+        MouseInfo mouse = Greenfoot.getMouseInfo();
+        if (mouse == null) return null;
         TransparentObject temp = new TransparentBonkchoy(false);
-        ((PlayScene)getWorld()).addObject(temp, Greenfoot.getMouseInfo().getX(), Greenfoot.getMouseInfo().getY());
+        if (getWorld() != null) {
+            getWorld().addObject(temp, mouse.getX(), mouse.getY());
+        }
         return temp;
     }
-    public Plant getPlant() {
+
+    @Override
+    public Plant getPlant() { 
         return new BonkChoy();
     }
 }

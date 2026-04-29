@@ -49,10 +49,16 @@ public class AugmentCard extends Actor {
 
     private void applyAugmentEffect() {
         PlayScene world = (PlayScene) getWorld();
-        if (world != null && world.seedbank != null) {
-            if (type.equals("rerollcard")) world.seedbank.addSun(150);
-            else if (type.equals("TD")) world.seedbank.addSun(150);
-            else if (type.equals("HM")) world.seedbank.addSun(150);
+        if (world == null) return;
+        
+        if (type.equals("rerollcard")) {
+            world.getSunManager().add(150);
+        } 
+        else if (type.equals("TD")) {
+            world.getSunManager().add(150);
+        } 
+        else if (type.equals("HM")) {
+            world.getSunManager().add(150);
         }
     }
 

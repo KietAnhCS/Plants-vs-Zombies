@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=SunManager
+comment1.params=cost
+comment1.target=boolean\ hasEnough(int)
+comment2.params=amount
+comment2.target=void\ add(int)
+comment3.params=cost
+comment3.target=void\ spend(int)
+comment4.params=
+comment4.target=int\ getSun()
+numComments=5
