@@ -1,11 +1,11 @@
 #BlueJ class context
-comment0.target=ICooldownState
+comment0.target=IPacketState
 comment1.params=packet
 comment1.target=void\ onEnter(SeedPacket)
 comment2.params=packet
 comment2.target=void\ tick(SeedPacket)
 comment3.params=packet
-comment3.target=boolean\ canSelect(SeedPacket)
+comment3.target=boolean\ canPurchase(SeedPacket)
 comment4.params=packet\ currentSun
 comment4.target=void\ onSunChanged(SeedPacket,\ int)
 numComments=5

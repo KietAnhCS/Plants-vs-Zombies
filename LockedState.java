@@ -1,7 +1,9 @@
-public class ExhaustedState implements ICooldownState {
+public class LockedState implements IPacketState {
+
     @Override
     public void onEnter(SeedPacket packet) {
         packet.showDark(255); 
+        packet.updateOverlay(1f); 
     }
 
     @Override
@@ -11,12 +13,16 @@ public class ExhaustedState implements ICooldownState {
     @Override
     public void onSunChanged(SeedPacket packet, int currentSun) {
         if (currentSun >= packet.sunCost) {
-            packet.setState(new ReadyState());
+            packet.setState(new AvailableState()); 
         }
     }
 
     @Override
-    public boolean canSelect(SeedPacket packet) {
+    public boolean canPurchase(SeedPacket packet) {
         return false; 
+    }
+    
+    @Override
+    public void onClick(SeedPacket packet) {
     }
 }

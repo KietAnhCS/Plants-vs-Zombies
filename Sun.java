@@ -84,7 +84,7 @@ public class Sun extends FallingObject {
     }
 
     private void flyToCounter() {
-        turnTowards(SunCounter.x, SunCounter.y);
+        turnTowards(SunDisplay.x, SunDisplay.y);
         move(15);
     }
 
@@ -104,8 +104,8 @@ public class Sun extends FallingObject {
         if (getWorld() == null) return;
 
         boolean reachedCounter =
-            Math.abs(getX() - SunCounter.x) < 20 &&
-            Math.abs(getY() - SunCounter.y) < 20;
+            Math.abs(getX() - SunDisplay.x) < 20 &&
+            Math.abs(getY() - SunDisplay.y) < 20;
 
         if (getImage().getTransparency() == 0 || (pickedUp && reachedCounter)) {
             getWorld().removeObject(this);

@@ -1,9 +1,7 @@
 import greenfoot.*;
 
 public class SeedBank extends Actor {
-
-    public final SunCounter sunCounter = new SunCounter();
-
+    public SunDisplay sunDisplay; 
     private SeedPacket[] bank;
     private DragController dragController;
     private boolean isTDActive = false;
@@ -20,17 +18,31 @@ public class SeedBank extends Actor {
     @Override
     public void addedToWorld(World world) {
         PlayScene scene = (PlayScene) world;
-        dragController = new DragController(sunCounter, (IPlantPlacer) scene.GridManager);
+        
+        this.sunDisplay = scene.sunDisplay; 
+        
+        dragController = new DragController(sunDisplay, (IPlantPlacer) scene.GridManager);
         scene.addObject(dragController, 0, 0);
-        scene.addObject(sunCounter, 600, 600);
+        
+        if (sunDisplay.getWorld() == null) {
+            scene.addObject(sunDisplay, 600, 600);
+        }
+
         placePacketsInWorld(scene);
         spawnBonkchoyAtBench(scene);
     }
 
     @Override
     public void act() {
+        PlayScene scene = (PlayScene) getWorld();
+        if (scene == null || scene.getSunManager() == null) return;
+
+        int currentSun = scene.getSunManager().getSun();
+
         for (SeedPacket p : bank) {
-            if (p != null) p.onSunChanged(sunCounter.sun);
+            if (p != null) {
+                p.onSunChanged(currentSun);
+            }
         }
     }
 
@@ -41,18 +53,27 @@ public class SeedBank extends Actor {
             isTDActive = false;
         }
         this.bank = newBank;
-        placePacketsInWorld((PlayScene) getWorld());
-    }
-
-    public void addSun(int amount) {
-        if (amount >= 0) sunCounter.addSun(amount);
-        else sunCounter.removeSun(Math.abs(amount));
-        for (SeedPacket p : bank) {
-            if (p != null) p.onSunChanged(sunCounter.sun);
+        if (getWorld() != null) {
+            placePacketsInWorld((PlayScene) getWorld());
         }
     }
 
-    public int getSun() { return sunCounter.sun; }
+    public void addSun(int amount) {
+        PlayScene scene = (PlayScene) getWorld();
+        if (scene != null && scene.getSunManager() != null) {
+            if (amount >= 0) scene.getSunManager().add(amount);
+            else scene.getSunManager().spend(Math.abs(amount));
+        }
+    }
+
+    public int getSun() {
+        PlayScene scene = (PlayScene) getWorld();
+        if (scene != null && scene.getSunManager() != null) {
+            return scene.getSunManager().getSun();
+        }
+        return 0;
+    }
+
     public void setTD(boolean active) { this.isTDActive = active; }
 
     private void placePacketsInWorld(PlayScene scene) {

@@ -2,11 +2,11 @@ import greenfoot.*;
 
 public class SeedPacket extends Actor {
 
-    public final int    sunCost;
+    public final int sunCost;
     public final String name;
-    public final long   rechargeTime;
+    public final long rechargeTime;
 
-    private ICooldownState state;
+    private IPacketState state;
 
     private final GreenfootImage imageBright;
     private final GreenfootImage imageDark;
@@ -16,14 +16,15 @@ public class SeedPacket extends Actor {
     private PlayScene playScene;
 
     public SeedPacket(long rechargeTime, int sunCost, String name) {
-        this.rechargeTime  = rechargeTime;
-        this.sunCost       = sunCost;
-        this.name          = name.toLowerCase();
-        this.imageBright   = new GreenfootImage(name + "1.png");
-        this.imageDark     = new GreenfootImage(name + "2.png");
+        this.rechargeTime = rechargeTime;
+        this.sunCost = sunCost;
+        this.name = name.toLowerCase();
+        this.imageBright = new GreenfootImage(name + "1.png");
+        this.imageDark = new GreenfootImage(name + "2.png");
         this.overlayBuffer = new GreenfootImage(imageDark.getWidth(), imageDark.getHeight());
-        this.combined      = new GreenfootImage(imageDark.getWidth(), imageDark.getHeight());
-        this.state         = new ExhaustedState();
+        this.combined = new GreenfootImage(imageDark.getWidth(), imageDark.getHeight());
+        
+        this.state = new LockedState();
         setImage(imageDark);
     }
 
@@ -38,27 +39,31 @@ public class SeedPacket extends Actor {
         state.tick(this);
     }
 
-    public void setState(ICooldownState newState) {
+    public void setState(IPacketState newState) {
         this.state = newState;
         newState.onEnter(this);
     }
 
-    public boolean canBeSelected() {
-        return state.canSelect(this);
+    public boolean canBePurchased() {
+        return state.canPurchase(this);
     }
 
-    public boolean trySelect() {
-        if (!state.canSelect(this)) return false;
-        setState(new SelectedState());
+    public boolean tryPurchase() {
+        if (!state.canPurchase(this)) return false;
+        setState(new SoldOutState()); 
         return true;
     }
 
     public void confirmPlace() {
-        setState(new CoolingState(rechargeTime));
+        setState(new SoldOutState());
     }
 
     public void cancelSelect() {
-        setState(new ExhaustedState());
+        if (getCurrentSun() >= sunCost) {
+            setState(new AvailableState());
+        } else {
+            setState(new LockedState());
+        }
     }
 
     public void onSunChanged(int currentSun) {
@@ -93,5 +98,5 @@ public class SeedPacket extends Actor {
     }
 
     public TransparentObject addImage() { return null; }
-    public Plant getPlant()             { return null; }
+    public Plant getPlant() { return null; }
 }

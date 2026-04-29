@@ -59,8 +59,8 @@ public class FallingSun extends FallingObject
     }
 
     private void flyToCounter() {
-        int targetX = SunCounter.x;
-        int targetY = SunCounter.y;
+        int targetX = SunDisplay.x;
+        int targetY = SunDisplay.y;
         turnTowards(targetX, targetY);
         move(25);
     }
@@ -72,8 +72,8 @@ public class FallingSun extends FallingObject
     }
 
     private void checkRemoval() {
-        int targetX = SunCounter.x;
-        int targetY = SunCounter.y;
+        int targetX = SunDisplay.x;
+        int targetY = SunDisplay.y;
         double dist = Math.hypot(getX() - targetX, getY() - targetY);
         if (getImage().getTransparency() == 0 || (beenClicked && dist < 35)) {
             getWorld().removeObject(this);

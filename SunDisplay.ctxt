@@ -1,11 +1,11 @@
 #BlueJ class context
-comment0.target=SunCounter
+comment0.target=SunDisplay
 comment1.params=
-comment1.target=SunCounter()
-comment2.params=
-comment2.target=void\ act()
-comment3.params=world
-comment3.target=void\ addedToWorld(greenfoot.World)
+comment1.target=SunDisplay()
+comment2.params=world
+comment2.target=void\ addedToWorld(greenfoot.World)
+comment3.params=
+comment3.target=void\ act()
 comment4.params=
 comment4.target=void\ updateText()
 comment5.params=amount

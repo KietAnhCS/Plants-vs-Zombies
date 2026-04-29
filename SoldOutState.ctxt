@@ -1,5 +1,5 @@
 #BlueJ class context
-comment0.target=ReadyState
+comment0.target=SoldOutState
 comment1.params=packet
 comment1.target=void\ onEnter(SeedPacket)
 comment2.params=packet
@@ -7,5 +7,7 @@ comment2.target=void\ tick(SeedPacket)
 comment3.params=packet\ currentSun
 comment3.target=void\ onSunChanged(SeedPacket,\ int)
 comment4.params=packet
-comment4.target=boolean\ canSelect(SeedPacket)
-numComments=5
+comment4.target=boolean\ canPurchase(SeedPacket)
+comment5.params=packet
+comment5.target=void\ onClick(SeedPacket)
+numComments=6

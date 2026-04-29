@@ -1,7 +1,7 @@
 #BlueJ class context
 comment0.target=DragController
-comment1.params=sunCounter\ placer
-comment1.target=DragController(SunCounter,\ IPlantPlacer)
+comment1.params=sunDisplay\ placer
+comment1.target=DragController(SunDisplay,\ IPlantPlacer)
 comment2.params=
 comment2.target=void\ act()
 comment3.params=mouse

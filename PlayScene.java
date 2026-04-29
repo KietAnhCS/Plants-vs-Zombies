@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 public class PlayScene extends World {  
     private SunManager sunManager = new SunManager();
+    public SunDisplay sunDisplay = new SunDisplay();
+    
     private long lastSunSpawnTime;
     private boolean isPlaying = false;
     public boolean lose = false;
@@ -18,7 +20,6 @@ public class PlayScene extends World {
     public GreenfootSound finalWaveMusic = new GreenfootSound("finalwavemp3.mp3");
     
     private GreenfootSound currentlyPlaying;
-
     public GreenfootSound CYS;
     public World restartWorld;
     public FallingObject winPlant;
@@ -48,6 +49,7 @@ public class PlayScene extends World {
         addObject(GridManager, 555, 349); 
         addObject(new ThuyThan(), 110, 642);
         addObject(seedbank, 0, 0); 
+        addObject(sunDisplay, 600, 600);
         addObject(hitbox, 555, 349);
         addObject(shovel, 930, 615);
         addObject(rollbutton, 250, 625);
@@ -66,12 +68,11 @@ public class PlayScene extends World {
             Transition.class,
             WaveNotification.class,
             ReadySetPlant.class,
-            SunCounter.class,
+            SunDisplay.class,
             SeedPacket.class,
             SellShovel.class,
             Shovel.class,
             Sun.class,
-            
             HealthBar.class,
             Plant.class,          
             GridManager.class,   
@@ -135,11 +136,11 @@ public class PlayScene extends World {
     }
 
     public void rollPackets() {
-        RupButton rup = rupbutton;
         if (getSunManager().hasEnough(25)) {
+            RupButton.RarityEntry[] currentPool = rupbutton.getPoolForRoll();
             int totalWeight = 0;
-            for (RupButton.RarityEntry entry : rup.weightedPool) {
-                if (entry.weight > 0) totalWeight += entry.weight;
+            for (RupButton.RarityEntry entry : currentPool) {
+                if (entry != null && entry.weight > 0) totalWeight += entry.weight;
             }
             if (totalWeight <= 0) return; 
 
@@ -150,8 +151,8 @@ public class PlayScene extends World {
             for (int i = 0; i < 3; i++) {
                 int randomNumber = Greenfoot.getRandomNumber(totalWeight);
                 int cursor = 0;
-                for (RupButton.RarityEntry entry : rup.weightedPool) {
-                    if (entry.weight <= 0) continue;
+                for (RupButton.RarityEntry entry : currentPool) {
+                    if (entry == null || entry.weight <= 0) continue;
                     cursor += entry.weight;
                     if (randomNumber < cursor) {
                         try {

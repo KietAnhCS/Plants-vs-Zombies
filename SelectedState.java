@@ -1,4 +1,4 @@
-public class SelectedState implements ICooldownState {
+public class SelectedState implements IPacketState {
     
     @Override
     public void onEnter(SeedPacket packet) {
@@ -10,14 +10,17 @@ public class SelectedState implements ICooldownState {
     }
 
     @Override
-    public boolean canSelect(SeedPacket packet) {
+    public boolean canPurchase(SeedPacket packet) {
         return false; 
     }
 
     @Override
     public void onSunChanged(SeedPacket packet, int currentSun) {
         if (currentSun < packet.sunCost) {
-            packet.cancelSelect();
         }
+    }
+
+    @Override
+    public void onClick(SeedPacket packet) {
     }
 }
