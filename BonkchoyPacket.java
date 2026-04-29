@@ -10,15 +10,18 @@ public class BonkchoyPacket extends SeedPacket {
     public TransparentObject addImage() {
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse == null) return null;
+        
         TransparentObject temp = new TransparentBonkchoy(false);
-        if (getWorld() != null) {
-            getWorld().addObject(temp, mouse.getX(), mouse.getY());
+        World world = getWorld();
+        if (world != null) {
+            world.addObject(temp, mouse.getX(), mouse.getY());
+            return temp;
         }
-        return temp;
+        return null;
     }
 
     @Override
     public Plant getPlant() { 
-        return new BonkChoy();
+        return PlantFactory.createPlant(PlantFactory.PlantType.BONKCHOY);
     }
 }

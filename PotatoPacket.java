@@ -3,7 +3,7 @@ import greenfoot.*;
 public class PotatoPacket extends SeedPacket {
 
     public PotatoPacket() {
-        super(3000L, 25, "potatopacket");
+        super(40000L, 125, "potatopacket");
     }
 
     @Override
@@ -12,14 +12,16 @@ public class PotatoPacket extends SeedPacket {
         if (mouse == null) return null;
 
         TransparentObject temp = new TransparentPotato(false);
-        if (getWorld() != null) {
-            getWorld().addObject(temp, mouse.getX(), mouse.getY());
+        World world = getWorld();
+        if (world != null) {
+            world.addObject(temp, mouse.getX(), mouse.getY());
+            return temp;
         }
-        return temp;
+        return null;
     }
 
     @Override
     public Plant getPlant() { 
-        return new PotatoMine();
+        return PlantFactory.createPlant(PlantFactory.PlantType.POTATOMINE);
     }
 }

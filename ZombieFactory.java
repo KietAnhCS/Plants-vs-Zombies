@@ -1,30 +1,37 @@
-/**
- * Write a description of class ZombieFactory here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
- */
-public class ZombieFactory  
-{
-    // instance variables - replace the example below with your own
-    private int x;
+import greenfoot.*;
 
-    /**
-     * Constructor for objects of class ZombieFactory
-     */
-    public ZombieFactory()
-    {
+public class ZombieFactory {
+    
+    public enum ZombieType {
+        NORMAL,
+        CONEHEAD,
+        BUCKETHEAD,
+        BRICKHEAD
     }
 
-    /**
-     * An example of a method - replace this comment with your own
-     * 
-     * @param  y   a sample parameter for a method
-     * @return     the sum of x and y 
-     */
-    public int sampleMethod(int y)
-    {
-        // put your code here
-        return x + y;
+    public static Zombie createZombie(ZombieType type) {
+        if (type == null) return null;
+
+        switch (type) {
+            case NORMAL:
+                return new BasicZombie();
+            case CONEHEAD:
+                return new Conehead();
+            case BUCKETHEAD:
+                return new Buckethead();
+            case BRICKHEAD:
+                return new Brickhead();
+            default:
+                return new BasicZombie();
+        }
+    }
+
+    public static Zombie createZombie(String typeName) {
+        try {
+            return createZombie(ZombieType.valueOf(typeName.toUpperCase()));
+        } catch (Exception e) {
+            System.err.println("Error: " + typeName);
+            return new BasicZombie();
+        }
     }
 }

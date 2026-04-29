@@ -3,22 +3,25 @@ import greenfoot.*;
 public class GatlingPeaPacket extends SeedPacket {
 
     public GatlingPeaPacket() {
-        super(3000L, 300, "gatlingpeapacket");
+        super(3000L, 300, "gatlingpacket");
     }
 
     @Override
     public TransparentObject addImage() {
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse == null) return null;
+
         TransparentObject temp = new TransparentGatlingPea(false);
-        if (getWorld() != null) {
-            getWorld().addObject(temp, mouse.getX(), mouse.getY());
+        World world = getWorld();
+        if (world != null) {
+            world.addObject(temp, mouse.getX(), mouse.getY());
+            return temp;
         }
-        return temp;
+        return null;
     }
 
     @Override
     public Plant getPlant() { 
-        return new GatlingPea();
+        return PlantFactory.createPlant(PlantFactory.PlantType.GATLINGPEA);
     }
 }

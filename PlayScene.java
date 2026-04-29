@@ -1,28 +1,22 @@
-import greenfoot.*; 
+import greenfoot.*;
 import java.util.*;
-import java.util.List;
-import java.util.ArrayList;
 
-public class PlayScene extends World {  
+public class PlayScene extends World {
     private SunManager sunManager = new SunManager();
     public SunDisplay sunDisplay = new SunDisplay();
-    
     private long lastSunSpawnTime;
     private boolean isPlaying = false;
     public boolean lose = false;
     public boolean loseOnce = false;
     public boolean winOnce = false;
-    private boolean isWaterMap = true; 
-    
+    private boolean isWaterMap = true;
     public GridManager GridManager = new GridManager();
-    private String currentBGM = ""; 
+    private String currentBGM = "";
     public GreenfootSound CYS;
-
     public World restartWorld;
     public FallingObject winPlant;
-    
     public SeedPacket[] bank = {};
-    public SeedBank seedbank; 
+    public SeedBank seedbank;
     public Hitbox hitbox = new Hitbox();
     public Shovel shovel = new Shovel();
     public MuteButton mutebutton = new MuteButton();
@@ -30,23 +24,24 @@ public class PlayScene extends World {
     public RupButton rupbutton = new RupButton();
     public WaveManager level;
 
-    public PlayScene(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater) {      
-        super(1111, 698, 1, false); 
+    public PlayScene(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater) {
+        super(1111, 698, 1, false);
         this.isWaterMap = isWater;
         this.CYS = CYS;
         this.seedbank = seedbank;
         this.restartWorld = restartWorld;
         this.level = level;
         this.winPlant = winPlant;
-        lastSunSpawnTime = System.currentTimeMillis();
+        this.lastSunSpawnTime = System.currentTimeMillis();
         
         Greenfoot.setSpeed(50);
-        addObject(new SliderBar(), 800, 120);
         setBackground("maptft2.png");
+        
+        addObject(new SliderBar(), 850, 50);
         addObject(mutebutton, 1050, 50);
-        addObject(GridManager, 555, 349); 
+        addObject(GridManager, 555, 349);
         addObject(new ThuyThan(), 110, 642);
-        addObject(seedbank, 0, 0); 
+        addObject(seedbank, 0, 0);
         addObject(sunDisplay, 600, 600);
         addObject(hitbox, 555, 349);
         addObject(shovel, 930, 615);
@@ -54,36 +49,22 @@ public class PlayScene extends World {
         addObject(rupbutton, 250, 575);
         
         prepareLawnmowers();
+        applyDefaultPaintOrder();
+    }
 
+    public void applyDefaultPaintOrder() {
         setPaintOrder(
-            SliderKnob.class, 
-            SliderBar.class,
-            MuteButton.class,
-            AugmentCard.class,
-            Overlay.class,
-            ThuyThan.class,
-            RupButton.class,
-            RollButton.class,    
-            Transition.class,
-            WaveNotification.class,
-            ReadySetPlant.class,
-            SunDisplay.class,
-            SeedPacket.class,
-            SellShovel.class,
-            Shovel.class,
-            Sun.class,
-            HealthBar.class,
-            Plant.class,          
-            GridManager.class,   
-            Zombie.class,
-            Projectile.class,
-            Dirt.class,
-            Lawnmower.class
+            SliderKnob.class, SliderBar.class, MuteButton.class, AugmentCard.class,
+            Overlay.class, ThuyThan.class, RupButton.class, RollButton.class,
+            Transition.class, WaveNotification.class, ReadySetPlant.class,
+            SunDisplay.class, SeedPacket.class, SellShovel.class, Shovel.class,
+            Sun.class, HealthBar.class, Pea.class, FirePea.class, Needle.class,
+            Plant.class, GridManager.class, Zombie.class, Dirt.class, Lawnmower.class
         );
     }
 
     public void act() {
-        moveHitbox(); 
+        moveHitbox();
         if (!isPlaying) {
             addObject(level, 0, 0);
             isPlaying = true;
@@ -97,8 +78,7 @@ public class PlayScene extends World {
 
     private void updateGameMusic() {
         if (level == null || loseOnce || winOnce) return;
-        
-        int currentWave = level.getWaveNumber()-1;
+        int currentWave = level.getWaveNumber() - 1;
         showText("Wave: " + currentWave, 100, 100);
 
         String targetMusic;
@@ -137,13 +117,12 @@ public class PlayScene extends World {
             for (RupButton.RarityEntry entry : currentPool) {
                 if (entry != null && entry.weight > 0) totalWeight += entry.weight;
             }
-            if (totalWeight <= 0) return; 
+            if (totalWeight <= 0) return;
 
-            getSunManager().spend(25); 
-            
-            AudioManager.playSound(80, false,"achievement.mp3");
+            getSunManager().spend(25);
+            AudioManager.playSound(80, false, "achievement.mp3");
 
-            SeedPacket[] newBank = new SeedPacket[3]; 
+            SeedPacket[] newBank = new SeedPacket[3];
             for (int i = 0; i < 3; i++) {
                 int randomNumber = Greenfoot.getRandomNumber(totalWeight);
                 int cursor = 0;
@@ -151,11 +130,8 @@ public class PlayScene extends World {
                     if (entry == null || entry.weight <= 0) continue;
                     cursor += entry.weight;
                     if (randomNumber < cursor) {
-                        try {
-                            newBank[i] = (SeedPacket) entry.packetClass.getDeclaredConstructor().newInstance();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        String typeName = entry.packetClass.getSimpleName().replace("Packet", "").toUpperCase();
+                        newBank[i] = PlantFactory.createSeedPacket(typeName);
                         break;
                     }
                 }
@@ -169,25 +145,19 @@ public class PlayScene extends World {
             loseOnce = true;
             stopAllMusic();
             AudioManager.playSound(80, false, "losemusic.mp3");
-            
             addObject(new DelayAudio("scream.mp3", 70, false, 4000L), 0, 0);
-            
             addObject(new Transition(false, new ResultScreen(restartWorld), "gameover.png", 5), 365, 215);
-            
         } else if (!winOnce && hasWon()) {
             winOnce = true;
             finishLevel();
-            
-            AudioManager.playSound("winmusic.mp3");
-            
             addObject(winPlant, Greenfoot.getRandomNumber(266) + 400, 215);
         }
     }
 
     private void prepareLawnmowers() {
-        int[][] coordinates = {{240, 180}, {226, 300}, {180, 430}};
+        int[][] coords = {{240, 180}, {226, 300}, {180, 430}};
         for (int i = 0; i < 3; i++) {
-            addObject(new Lawnmower(), coordinates[i][0], coordinates[i][1]);
+            addObject(new Lawnmower(), coords[i][0], coords[i][1]);
         }
     }
 
@@ -198,36 +168,32 @@ public class PlayScene extends World {
 
     public boolean hasLost() {
         List<Zombie> zombies = getObjects(Zombie.class);
-        for (Zombie i : zombies) {
-            if (i.getWorld() != null && i.getX() < 125) return true;
+        for (Zombie z : zombies) {
+            if (z.getWorld() != null && z.getX() < 125) return true;
         }
         return false;
     }
-    
+
     public void checkAndCombine(Plant newPlant) {
         if (newPlant == null || newPlant.isMerging || newPlant.isTarget) return;
-        if (!(newPlant instanceof Peashooter|| newPlant instanceof Repeater ||  newPlant instanceof GatlingPea || newPlant instanceof Cactus || 
-              newPlant instanceof Cactus2 || newPlant instanceof BonkChoy || newPlant instanceof BonkChoy2)) {
-            return; 
-        }
-    
+        
         List<? extends Plant> plants = getObjects(newPlant.getClass());
         List<Plant> available = new ArrayList<>();
         for (Plant p : plants) {
             if (!p.isMerging && !p.isTarget) available.add(p);
         }
-    
+
         if (available.size() >= 3) {
-            Plant p1 = available.get(0);
-            Plant p2 = available.get(1);
             Plant p3 = available.get(2);
-            p3.isTarget = true; 
-            p1.setMergingTarget(p3);
-            p2.setMergingTarget(p3);
+            p3.isTarget = true;
+            available.get(0).setMergingTarget(p3);
+            available.get(1).setMergingTarget(p3);
         }
     }
 
-    public boolean hasWon() { return level.hasWon(); }
+    public boolean hasWon() {
+        return level != null && level.hasWon();
+    }
 
     public void moveHitbox() {
         MouseInfo mouse = Greenfoot.getMouseInfo();
@@ -236,27 +202,27 @@ public class PlayScene extends World {
 
     private void checkDebugKeys() {
         String key = Greenfoot.getKey();
-        if ("1".equals(key)) { 
+        if ("1".equals(key)) {
             stopAllMusic();
-            Greenfoot.setWorld(new Arena()); 
+            Greenfoot.setWorld(new Arena());
         }
-        if ("r".equals(key)) rollPackets(); 
+        if ("r".equals(key)) rollPackets();
     }
 
     public void finishLevel() {
         stopAllMusic();
-        AudioManager.playSound(80,false,"winmusic.mp3");
+        AudioManager.playSound(80, false, "winmusic.mp3");
     }
 
     public void started() {
-        updateGameMusic(); 
-        Greenfoot.setSpeed(50);          
+        updateGameMusic();
+        Greenfoot.setSpeed(50);
     }
 
     public void stopped() {
         AudioManager.stopBGM();
     }
-    
+
     public SunManager getSunManager() {
         return sunManager;
     }

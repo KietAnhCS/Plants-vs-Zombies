@@ -2,7 +2,7 @@ import greenfoot.*;
 
 public class Conehead extends Zombie
 {
-    public boolean cone = true;
+    private boolean cone = true;
     public GreenfootImage[] walk, armless, eat, armlesseat;
     public GreenfootImage[] coneheadwalk, coneheadwalkd, coneheadwalkdd;
     public GreenfootImage[] coneheadeat, coneheadeatd, coneheadeatdd;
@@ -21,24 +21,26 @@ public class Conehead extends Zombie
         coneheadeatd = importSprites("coneheadeatd", 7);
         coneheadeatdd = importSprites("coneheadeatdd", 7);
         
-        walkSpeed = Random.Double(22, 28);
-        maxHp = 400;
+        this.walkSpeed = (Greenfoot.getRandomNumber(6) + 22) / 100.0;
+        
+        maxHp = 640; 
         hp = maxHp;
-        this.damage = 30;
+        this.damage = 20;
     }
 
     @Override
     public void update() {
-        if (hp > 232) {
+        if (hp > 460) {
             handleAnimation(coneheadwalk, coneheadeat);
-        } else if (hp > 166) {
+        } else if (hp > 280) {
             handleAnimation(coneheadwalkd, coneheadeatd);
         } else if (hp > 100) {
             handleAnimation(coneheadwalkdd, coneheadeatdd);
         } else {
             if (cone) {
                 cone = false;
-                if (PlayScene != null) PlayScene.addObject(new Cone(), getX(), getY() - 25);
+                AudioManager.playSound(80, false, "shield_break.mp3"); 
+                if (getWorld() != null) getWorld().addObject(new Cone(), getX(), getY() - 25);
             }
             
             if (hp > 50) {
@@ -47,7 +49,7 @@ public class Conehead extends Zombie
                 if (!fallen) {
                     fallen = true;
                     AudioManager.playSound(80, false, "limbs_pop.mp3");
-                    if (PlayScene != null) PlayScene.addObject(new Arm(), getX() + 8, getY() + 20);
+                    if (getWorld() != null) getWorld().addObject(new Arm(), getX() + 8, getY() + 20);
                 }
                 handleAnimation(armless, armlesseat);
             }
@@ -66,15 +68,18 @@ public class Conehead extends Zombie
 
     @Override
     public void hit(int dmg) {
+        if (!isAlive) return;
+
         if (cone) {
             AudioManager.playSound(80, false, "plastichit.mp3", "plastichit2.mp3");
+        } else {
+            AudioManager.playSound(80, false, "splat.mp3", "splat2.mp3");
         }
-        AudioManager.playSound(80, false, "splat.mp3", "splat2.mp3", "splat3.mp3");
         
         if (isLiving()) {
-            if (hp > 232) {
+            if (hp > 460) {
                 hitFlash(eating ? coneheadeat : coneheadwalk, eating ? "coneheadeat" : "coneheadwalk");
-            } else if (hp > 166) {
+            } else if (hp > 280) {
                 hitFlash(eating ? coneheadeatd : coneheadwalkd, eating ? "coneheadeatd" : "coneheadwalkd");
             } else if (hp > 100) {
                 hitFlash(eating ? coneheadeatdd : coneheadwalkdd, eating ? "coneheadeatdd" : "coneheadwalkdd");

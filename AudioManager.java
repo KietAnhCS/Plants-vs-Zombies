@@ -3,7 +3,7 @@ import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class AudioManager {
-    private static int masterVolume = 80;
+    private static int masterVolume = 50;
     private static boolean isMuted = false;
     private static GreenfootSound currentBGM = null;
     

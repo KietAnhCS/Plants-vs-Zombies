@@ -8,4 +8,6 @@ comment3.params=dmg
 comment3.target=void\ hit(int)
 comment4.params=
 comment4.target=void\ checkExplosion()
-numComments=5
+comment5.params=
+comment5.target=void\ explode()
+numComments=6

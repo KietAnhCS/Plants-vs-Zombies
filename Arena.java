@@ -16,51 +16,42 @@ public class Arena extends World {
     private GreenfootImage backgroundMap = new GreenfootImage("maptft2.png");
     private GifImage daveGif = new GifImage("Dave3.gif");
 
-        public Zombie[][][] level1 = {
-        {{new BasicZombie()}, null, null, null, null}, 
-        {null, {new BasicZombie()}, null, {new BasicZombie()}, null}, 
-        {{new BasicZombie()}, {new BasicZombie()}, {new BasicZombie()}, null, null}, 
-        {null, {new Conehead()}, null, {new Conehead()}, {new Buckethead()}, null},
-        {null, {new Conehead()}, null, {new Conehead()}, {new Buckethead()}, null},
-        {null, {new BasicZombie()}, null, {new BasicZombie()}, {new Buckethead()}, null},
-        {{new Buckethead()}, {new Conehead()}, null, {new BasicZombie()}, {new Buckethead()}, null},
-        {{new BasicZombie()}, {new Conehead()}, null, {new Conehead()}, {new BasicZombie()}, null},
-        {{new Buckethead()}, {new Conehead()}, null, {new Conehead()}, {new Buckethead()}, null}, 
-        {{new Conehead()}, {new Conehead()}, {new Buckethead()}, {new Conehead()}, {new Conehead()}, null},
-        {{new Brickhead()}, {new Buckethead()}, {new Buckethead()}, {new Buckethead()}, {new Brickhead()}, null},
-        
-        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {
-            {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-            {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-            {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-            {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-            {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-            null 
-        }
+    public String[][][] levelData = {
+        {{"NORMAL"}, null, null, null, null}, 
+        {null, {"NORMAL"}, null, {"NORMAL"}, null}, 
+        {{"NORMAL"}, {"NORMAL"}, {"NORMAL"}, null, null}, 
+        {null, {"CONEHEAD"}, null, {"CONEHEAD"}, {"BUCKETHEAD"}, null},
+        {null, {"CONEHEAD"}, null, {"CONEHEAD"}, {"BUCKETHEAD"}, null},
+        {null, {"NORMAL"}, null, {"NORMAL"}, {"BUCKETHEAD"}, null},
+        {{"BUCKETHEAD"}, {"CONEHEAD"}, null, {"NORMAL"}, {"BUCKETHEAD"}, null},
+        {{"NORMAL"}, {"CONEHEAD"}, null, {"CONEHEAD"}, {"NORMAL"}, null},
+        {{"BUCKETHEAD"}, {"CONEHEAD"}, null, {"CONEHEAD"}, {"BUCKETHEAD"}, null}, 
+        {{"CONEHEAD"}, {"CONEHEAD"}, {"BUCKETHEAD"}, {"CONEHEAD"}, {"CONEHEAD"}, null},
+        {{"BRICKHEAD"}, {"BUCKETHEAD"}, {"BUCKETHEAD"}, {"BUCKETHEAD"}, {"BRICKHEAD"}, null},
+        {{"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, null},
+        {{"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, null},
+        {{"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, null},
+        {{"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, null},
+        {{"BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD"}, null},
+        {{"BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD"}, null},
+        {{"BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD"}, null},
+        {{"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD"}, null},
+        {{"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, null},
+        {{"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, null},
+        {{"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, null},
+        {{"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, null},
+        {{"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, {"BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}, null}
     };
-    public SeedPacket[] bank = {new PeashooterPacket(), new PeashooterPacket(), new BonkchoyPacket(), null, null};
+
+    public SeedPacket[] bank = {
+        PlantFactory.createSeedPacket("PEASHOOTER"), 
+        PlantFactory.createSeedPacket("PEASHOOTER"), 
+        PlantFactory.createSeedPacket("BONKCHOY"), 
+        null, null
+    };
+    
     public SeedBank seedbank = new SeedBank(bank);   
-    public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 2, 5, 10);
+    public WaveManager level = new WaveManager(23500L, levelData, 15000L, true, 2, 5, 10);
 
     public Arena() {    
         super(1111, 698, 1, false); 

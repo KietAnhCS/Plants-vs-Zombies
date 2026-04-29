@@ -12,7 +12,7 @@ public class BonkChoy extends Plant {
         hp = maxHp;
         
         kRight = loadResized("bonkchoyknockoutone", 15);
-        idle = loadResized("bonkchoyidle_three", 23);
+        idle = loadResized("bonkchoy", 23);
         pRight = loadResized("bonkchoyattackone", 10);
         
         if (idle != null && idle.length > 0) {

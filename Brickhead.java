@@ -1,4 +1,4 @@
-import greenfoot.*; 
+import greenfoot.*;
 
 public class Brickhead extends Zombie
 {
@@ -20,37 +20,39 @@ public class Brickhead extends Zombie
         brickheadeatd = importSprites("brickheadeatd", 7);
         brickheadeatdd = importSprites("brickheadeatdd", 7);
         
-        walkSpeed = Random.Double(22, 28);
-        maxHp = 300;
+        this.walkSpeed = (Greenfoot.getRandomNumber(6) + 22) / 100.0;
+        
+        maxHp = 2000; 
         hp = maxHp;
-        this.damage = 150; 
+        this.damage = 20;
     }
 
     @Override
     public void update() {
-        if (hp > 200) {
+        if (hp > 1500) {
             handleAnimation(brickheadwalk, brickheadeat);
         } 
-        else if (hp > 100) {
+        else if (hp > 1000) {
             handleAnimation(brickheadwalkd, brickheadeatd);
         } 
-        else if (hp > 50) {
+        else if (hp > 500) {
             handleAnimation(brickheadwalkdd, brickheadeatdd);
         } 
         else {
             if (brick) {
                 brick = false;
-                if (PlayScene != null) PlayScene.addObject(new Brick(), getX(), getY() - 25);
+                AudioManager.playSound(80, false, "shield_break.mp3"); 
+                if (getWorld() != null) getWorld().addObject(new Brick(), getX(), getY() - 25);
             }
 
-            if (hp > 25) {
+            if (hp > 100) {
                 handleAnimation(walk, eat);
             } 
             else {
                 if (!fallen) {
                     fallen = true;
                     AudioManager.playSound(80, false, "limbs_pop.mp3");
-                    if (PlayScene != null) PlayScene.addObject(new Arm(), getX() + 8, getY() + 20);
+                    if (getWorld() != null) getWorld().addObject(new Arm(), getX() + 8, getY() + 20);
                 }
                 handleAnimation(armless, armlesseat);
             }
@@ -69,14 +71,20 @@ public class Brickhead extends Zombie
 
     @Override
     public void hit(int dmg) {
-        AudioManager.playSound(80, false, "splat.mp3", "splat2.mp3", "splat3.mp3");
+        if (!isAlive) return;
+
+        if (hp > 500) {
+            AudioManager.playSound(80, false, "plastichit.mp3", "plastichit2.mp3");
+        } else {
+            AudioManager.playSound(80, false, "splat.mp3", "splat2.mp3");
+        }
 
         if (isLiving()) {
-            if (hp > 200) {
+            if (hp > 1500) {
                 hitFlash(eating ? brickheadeat : brickheadwalk, eating ? "brickheadeat" : "brickhead");
-            } else if (hp > 100) {
+            } else if (hp > 1000) {
                 hitFlash(eating ? brickheadeatd : brickheadwalkd, eating ? "brickheadeatd" : "brickheadd");
-            } else if (hp > 50) {
+            } else if (hp > 500) {
                 hitFlash(eating ? brickheadeatdd : brickheadwalkdd, eating ? "brickheadeatdd" : "brickheaddd");
             } else if (!fallen) {
                 hitFlash(eating ? eat : walk, eating ? "zombieeating" : "zombiewalk");

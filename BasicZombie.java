@@ -1,4 +1,4 @@
-import greenfoot.*; 
+import greenfoot.*;
 
 public class BasicZombie extends Zombie
 {
@@ -9,7 +9,6 @@ public class BasicZombie extends Zombie
     public GreenfootImage[] armlesseat;
     
     public BasicZombie() {
-        
         super(); 
         
         walk = importSprites("zombiewalk", 7);
@@ -17,46 +16,43 @@ public class BasicZombie extends Zombie
         armlesseat = importSprites("armlesszombieeating", 7);
         armless = importSprites("armlesszombie", 7);
         
-        walkSpeed = Random.Double(22, 28);
+        this.walkSpeed = (Greenfoot.getRandomNumber(6) + 22) / 100.0;
+        
         maxHp = 150;
         hp = maxHp;
-        
         this.damage = 5; 
     }
 
     @Override
     public void update() {
-        
         if (hp > 50) {
-            if (!isEating()) {
-                animate(walk, 350, true);   
-                move(-walkSpeed);
-            } else {
-                animate(eat, 200, true);
-                playEating(); 
-            }
+            handleMovement(walk, eat);
         } else {
-           
             if (!fallen) {
                 fallen = true;
                 AudioManager.playSound(80, false, "limbs_pop.mp3");
-                if (PlayScene != null) {
-                    PlayScene.addObject(new Arm(), getX() + 8, getY() + 20);
+                if (getWorld() != null) {
+                    getWorld().addObject(new Arm(), getX() + 8, getY() + 20);
                 }
             }
-            
-            if (!isEating()) {
-                animate(armless, 350, true);
-                move(-walkSpeed);
-            } else {
-                animate(armlesseat, 200, true); 
-                playEating();
-            }
+            handleMovement(armless, armlesseat);
+        }
+    }
+    
+    private void handleMovement(GreenfootImage[] walkAnim, GreenfootImage[] eatAnim) {
+        if (!isEating()) {
+            animate(walkAnim, 350, true);   
+            move(-walkSpeed);
+        } else {
+            animate(eatAnim, 200, true);
+            playEating(); 
         }
     }
    
     @Override
     public void hit(int dmg) {
+        if (!isAlive) return;
+        
         AudioManager.playSound(80, false, "splat.mp3", "splat2.mp3", "splat3.mp3");
         
         if (isLiving()) {

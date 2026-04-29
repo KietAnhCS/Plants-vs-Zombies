@@ -60,7 +60,7 @@ public class Repeater extends Plant
                         world.addObject(new Pea(getYPos()), getX() + 25, getY() - 17);
                     }
                     
-                    PlayScene.addObject(new Pea(getYPos()), getX()+25,getY()-17);
+                    
                     setFrame(1);
                     setImage("repeatershoot1.png");
                     shootCount++;

@@ -1,35 +1,48 @@
 import greenfoot.*;
 
-public class FixOrder extends Actor
-{
+public class FixOrder extends Actor {
     private WaveManager level;
-    private long delayTimeMillis;
-    private long startTimeNano;
+    private long delayTime;
+    private long startTime;
+    private long pausedTime;
+    private boolean wasPaused = false;
+    private PlayScene playScene; 
 
     public FixOrder(WaveManager level, long delayTimeMillis) {
         this.level = level;
-        this.delayTimeMillis = delayTimeMillis;
-        this.startTimeNano = System.nanoTime();
+        this.delayTime = delayTimeMillis;
+        this.startTime = System.currentTimeMillis();
         setImage(new GreenfootImage(1, 1)); 
     }
 
     @Override
-    public void act() 
-    {
-        if (getWorld() == null) return;
+    protected void addedToWorld(World world) {
+        if (world instanceof PlayScene) {
+            this.playScene = (PlayScene) world;
+        }
+    }
+
+    @Override
+    public void act() {
+        if (getWorld() == null || playScene == null) return;
 
         if (level != null && level.choosingCard) {
-            startTimeNano = System.nanoTime() - (startTimeNano); 
-            startTimeNano = System.nanoTime() - (startTimeNano); 
+            if (!wasPaused) {
+                pausedTime = System.currentTimeMillis() - startTime;
+                wasPaused = true;
+            }
             return;
         }
 
-        long elapsedMillis = (System.nanoTime() - startTimeNano) / 1000000;
+        if (wasPaused) {
+            startTime = System.currentTimeMillis() - pausedTime;
+            wasPaused = false;
+        }
 
-        if (elapsedMillis >= delayTimeMillis) {
-            if (level != null) {
-                level.fixOrder();
-            }
+        long elapsed = System.currentTimeMillis() - startTime;
+
+        if (elapsed >= delayTime) {
+            playScene.applyDefaultPaintOrder();
             getWorld().removeObject(this);
         }
     }
