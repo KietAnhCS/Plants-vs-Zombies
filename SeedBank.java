@@ -6,8 +6,8 @@ public class SeedBank extends Actor {
     private DragController dragController;
     private boolean isTDActive = false;
 
-    private static final int START_X   = 450;
-    private static final int START_Y   = 650;
+    private static final int START_X   = 475;
+    private static final int START_Y   = 620;
     private static final int SPACING_X = 150;
 
     public SeedBank(SeedPacket[] bank) {

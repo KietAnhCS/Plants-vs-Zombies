@@ -5,7 +5,7 @@ public class ThuyThan extends Actor {
     private int targetX, targetY;
     private boolean isMoving = false;
     private int speed = 10; 
-    private int pickupRange = 60; 
+    private int pickupRange = 80; 
 
     private GreenfootImage imageRight;
     private GreenfootImage imageLeft;
@@ -23,7 +23,7 @@ public class ThuyThan extends Actor {
     public void act() {
         handleRightClick();
         moveToTarget();
-        autoCollectSun(); 
+        autoCollectObjects(); 
     }
 
     private void handleRightClick() {
@@ -62,21 +62,19 @@ public class ThuyThan extends Actor {
         }
     }
 
-    private void autoCollectSun() {
-    List<Sun> suns = getObjectsInRange(pickupRange, Sun.class);
-
-    for (Sun s : suns) {
-        if (s.getWorld() != null && !s.isPickedUp()) {
-
-            s.collectByHero(); 
-
-            PlayScene world = (PlayScene) getWorld();
-            if (world != null && world.getSunManager() != null) {
-                world.getSunManager().add(s.getValue());
+    private void autoCollectObjects() {
+        List<Sun> suns = getObjectsInRange(pickupRange, Sun.class);
+        for (Sun s : suns) {
+            if (s.getWorld() != null) {
+                s.collect(); 
             }
+        }
 
-            AudioManager.playSound(80, false, "points.mp3");
+        List<FallingSun> fallingSuns = getObjectsInRange(pickupRange, FallingSun.class);
+        for (FallingSun fs : fallingSuns) {
+            if (fs.getWorld() != null) {
+                fs.collectSun();
+            }
         }
     }
-}
 }

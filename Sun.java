@@ -5,7 +5,6 @@ public class Sun extends FallingObject {
 
     private int value = 25; 
     private PlayScene scene;
-
     private GreenfootImage[] sprites;
 
     private boolean pickedUp = false; 
@@ -48,7 +47,7 @@ public class Sun extends FallingObject {
         checkRemoval();
     }
 
-    private void collect() {
+    protected void collect() {
         if (pickedUp) return;
 
         pickedUp = true;
@@ -59,18 +58,6 @@ public class Sun extends FallingObject {
         if (scene != null && scene.getSunManager() != null) {
             scene.getSunManager().add(value);
         }
-    }
-
-    public boolean isPickedUp() {
-        return pickedUp;
-    }
-
-    public int getValue() {
-        return value;
-    }
-
-    public void collectByHero() {
-        collect();
     }
 
     private void applyFallingPhysics() {
@@ -84,8 +71,16 @@ public class Sun extends FallingObject {
     }
 
     private void flyToCounter() {
-        turnTowards(SunDisplay.x, SunDisplay.y);
-        move(15);
+        if (scene == null) return;
+        
+        List<SunDisplay> displays = scene.getObjects(SunDisplay.class);
+        if (!displays.isEmpty()) {
+            SunDisplay ds = displays.get(0);
+            turnTowards(ds.getX(), ds.getY());
+            move(15);
+        } else {
+            fadeOut(25);
+        }
     }
 
     private void handleAutoFadeOut() {
@@ -103,9 +98,12 @@ public class Sun extends FallingObject {
     private void checkRemoval() {
         if (getWorld() == null) return;
 
-        boolean reachedCounter =
-            Math.abs(getX() - SunDisplay.x) < 20 &&
-            Math.abs(getY() - SunDisplay.y) < 20;
+        boolean reachedCounter = false;
+        List<SunDisplay> displays = scene.getObjects(SunDisplay.class);
+        if (!displays.isEmpty()) {
+            SunDisplay ds = displays.get(0);
+            reachedCounter = Math.abs(getX() - ds.getX()) < 20 && Math.abs(getY() - ds.getY()) < 20;
+        }
 
         if (getImage().getTransparency() == 0 || (pickedUp && reachedCounter)) {
             getWorld().removeObject(this);
@@ -114,7 +112,9 @@ public class Sun extends FallingObject {
 
     @Override
     public void addedToWorld(World world) {
-        scene = (PlayScene) world;
+        if (world instanceof PlayScene) {
+            scene = (PlayScene) world;
+        }
         lifetimeStart = System.currentTimeMillis(); 
     }
 }

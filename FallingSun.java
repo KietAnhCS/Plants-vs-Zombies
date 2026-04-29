@@ -1,4 +1,5 @@
 import greenfoot.*;
+import java.util.*;
 
 public class FallingSun extends FallingObject
 {
@@ -59,10 +60,14 @@ public class FallingSun extends FallingObject
     }
 
     private void flyToCounter() {
-        int targetX = SunDisplay.x;
-        int targetY = SunDisplay.y;
-        turnTowards(targetX, targetY);
-        move(25);
+        List<SunDisplay> displays = playScene.getObjects(SunDisplay.class);
+        if (!displays.isEmpty()) {
+            SunDisplay ds = displays.get(0);
+            turnTowards(ds.getX(), ds.getY());
+            move(25);
+        } else {
+            fadeOut(25);
+        }
     }
 
     private void fadeOut(int amount) {
@@ -72,10 +77,17 @@ public class FallingSun extends FallingObject
     }
 
     private void checkRemoval() {
-        int targetX = SunDisplay.x;
-        int targetY = SunDisplay.y;
-        double dist = Math.hypot(getX() - targetX, getY() - targetY);
-        if (getImage().getTransparency() == 0 || (beenClicked && dist < 35)) {
+        if (getWorld() == null) return;
+        
+        boolean reached = false;
+        List<SunDisplay> displays = playScene.getObjects(SunDisplay.class);
+        if (!displays.isEmpty()) {
+            SunDisplay ds = displays.get(0);
+            double dist = Math.hypot(getX() - ds.getX(), getY() - ds.getY());
+            if (beenClicked && dist < 35) reached = true;
+        }
+
+        if (getImage().getTransparency() == 0 || reached) {
             getWorld().removeObject(this);
         }
     }

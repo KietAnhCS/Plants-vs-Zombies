@@ -40,13 +40,16 @@ public class PlayScene extends World {
         addObject(new SliderBar(), 850, 50);
         addObject(mutebutton, 1050, 50);
         addObject(GridManager, 555, 349);
-        addObject(new ThuyThan(), 110, 642);
+        addObject(new ThuyThan(), 110, 500);
         addObject(seedbank, 0, 0);
-        addObject(sunDisplay, 600, 600);
+        
+        addObject(sunDisplay, 600, 570); 
+        sunDisplay.setLocation(600, 570);
+        
         addObject(hitbox, 555, 349);
         addObject(shovel, 930, 615);
-        addObject(rollbutton, 250, 625);
-        addObject(rupbutton, 250, 575);
+        addObject(rollbutton, 325, 625);
+        addObject(rupbutton, 175, 625);
         
         prepareLawnmowers();
         applyDefaultPaintOrder();
@@ -74,12 +77,43 @@ public class PlayScene extends World {
         handleSunSpawn();
         handleWinLoss();
         checkDebugKeys();
+        drawWaveUI();
+    }
+
+    private void drawWaveUI() {
+        if (level == null) return;
+        
+        GreenfootImage canvas = getBackground();
+        int currentWave = level.getWaveNumber() - 1;
+        String waveText = "WAVE " + currentWave;
+        
+        int boxWidth = 140;
+        int boxHeight = 40;
+        int startX = 20;
+        int startY = 80;
+
+        canvas.setColor(new Color(0, 0, 0, 160));
+        canvas.fillRect(startX + 4, startY + 4, boxWidth, boxHeight);
+
+        canvas.setColor(new Color(50, 50, 50));
+        canvas.fillRect(startX, startY, boxWidth, boxHeight);
+
+        canvas.setColor(Color.WHITE);
+        canvas.drawRect(startX, startY, boxWidth, boxHeight);
+        canvas.drawRect(startX + 1, startY + 1, boxWidth - 2, boxHeight - 2);
+
+        Font pixelFont = new Font("Courier New", true, false, 22);
+        canvas.setFont(pixelFont);
+
+        canvas.setColor(Color.BLACK);
+        canvas.drawString(waveText, startX + 22, startY + 29);
+        canvas.setColor(new Color(0, 191, 255));
+        canvas.drawString(waveText, startX + 20, startY + 27);
     }
 
     private void updateGameMusic() {
         if (level == null || loseOnce || winOnce) return;
         int currentWave = level.getWaveNumber() - 1;
-        showText("Wave: " + currentWave, 100, 100);
 
         String targetMusic;
         if (currentWave >= 0 && currentWave <= 6) {
@@ -105,8 +139,8 @@ public class PlayScene extends World {
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastSunSpawnTime >= 30000) {
             lastSunSpawnTime = currentTime;
-            int x = Greenfoot.getRandomNumber(700) + 200;
-            addObject(new FallingSun(), x, -30);
+            int xPos = Greenfoot.getRandomNumber(700) + 200;
+            addObject(new FallingSun(), xPos, -30);
         }
     }
 
@@ -174,9 +208,9 @@ public class PlayScene extends World {
         return false;
     }
 
-     public void checkAndCombine(Plant newPlant) {
+    public void checkAndCombine(Plant newPlant) {
         if (newPlant == null || newPlant.isMerging || newPlant.isTarget) return;
-        if (!(newPlant instanceof Peashooter|| newPlant instanceof Repeater ||  newPlant instanceof GatlingPea || newPlant instanceof Cactus || 
+        if (!(newPlant instanceof Peashooter || newPlant instanceof Repeater || newPlant instanceof GatlingPea || newPlant instanceof Cactus || 
               newPlant instanceof Cactus2 || newPlant instanceof BonkChoy || newPlant instanceof BonkChoy2)) {
             return; 
         }

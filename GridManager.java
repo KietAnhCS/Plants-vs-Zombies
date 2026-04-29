@@ -18,7 +18,6 @@ public class GridManager extends Actor implements IPlantPlacer {
 
     public GridManager() {
         GreenfootImage img = new GreenfootImage(1111, 698);
-        img.clear();
         setImage(img);
     }
 
@@ -35,18 +34,36 @@ public class GridManager extends Actor implements IPlantPlacer {
     }
 
     private void drawStatus(GreenfootImage canvas) {
-        String status = "Plants: " + getCurrentPlantCount() + "/" + getMaxCapacity();
+        String status = "PLANTS: " + getCurrentPlantCount() + "/" + getMaxCapacity();
+        int boxWidth = 180;
+        int boxHeight = 40;
+        int startX = 20;
+        int startY = 20;
+
+        canvas.setColor(new Color(0, 0, 0, 160));
+        canvas.fillRect(startX + 4, startY + 4, boxWidth, boxHeight);
+
+        canvas.setColor(new Color(50, 50, 50));
+        canvas.fillRect(startX, startY, boxWidth, boxHeight);
+
         canvas.setColor(Color.WHITE);
-        canvas.drawString(status, 10, 20);
+        canvas.drawRect(startX, startY, boxWidth, boxHeight);
+        canvas.drawRect(startX + 1, startY + 1, boxWidth - 2, boxHeight - 2);
+
+        Font pixelFont = new Font("Courier New", true, false, 20);
+        canvas.setFont(pixelFont);
+
+        canvas.setColor(Color.BLACK);
+        canvas.drawString(status, startX + 12, startY + 28);
+        canvas.setColor(new Color(255, 215, 0));
+        canvas.drawString(status, startX + 10, startY + 26);
     }
 
     private void drawFullGrid(GreenfootImage canvas) {
         canvas.setColor(new Color(100, 180, 255, 60));
         for (int r = 0; r < ROWS; r++) {
             for (int c = 0; c < COLS; c++) {
-                int cx = getXCoord(c, r);
-                int cy = getYCoord(c, r);
-                drawHexagon(canvas, cx, cy);
+                drawHexagon(canvas, getXCoord(c, r), getYCoord(c, r));
             }
         }
     }
@@ -57,29 +74,19 @@ public class GridManager extends Actor implements IPlantPlacer {
         int gx = getGridX(mouse.getX(), mouse.getY());
         int gy = getGridY(mouse.getX(), mouse.getY());
         if (gx < 0 || gy < 0) return;
-
-        Plant plant = dragging instanceof Plant ? (Plant) dragging
-                    : dragging instanceof SeedPacket ? ((SeedPacket) dragging).getPlant()
-                    : null;
+        Plant plant = dragging instanceof Plant ? (Plant) dragging : dragging instanceof SeedPacket ? ((SeedPacket) dragging).getPlant() : null;
         if (plant == null) return;
-
         boolean can = canPlace(gx, gy, plant);
         int cx = getXCoord(gx, gy);
         int cy = getYCoord(gx, gy);
-
-        canvas.setColor(new Color(100, 180, 255, 100));
+        canvas.setColor(new Color(100, 180, 255, 120));
         fillHexagon(canvas, cx, cy);
-        canvas.setColor(new Color(0, 0, 200));
-        drawHexagon(canvas, cx, cy);
-        
-        int circleR = (int)(HEX_R * 0.6); 
-        canvas.setColor(new Color(255, 255, 255, 80));
-        canvas.fillOval(cx - circleR, cy - circleR, circleR * 2, circleR * 2);
-
         if (!can) {
-            canvas.setColor(new Color(255, 0, 0, 100));
+            canvas.setColor(new Color(255, 0, 0, 120));
             fillHexagon(canvas, cx, cy);
         }
+        canvas.setColor(Color.WHITE);
+        drawHexagon(canvas, cx, cy);
     }
 
     private void drawHexagon(GreenfootImage canvas, int cx, int cy) {
@@ -87,8 +94,8 @@ public class GridManager extends Actor implements IPlantPlacer {
         int[] py = new int[6];
         for (int i = 0; i < 6; i++) {
             double angle = Math.toRadians(60 * i - 90);
-            px[i] = (int)(cx + HEX_R * Math.cos(angle));
-            py[i] = (int)(cy + HEX_R * Math.sin(angle));
+            px[i] = (int) (cx + HEX_R * Math.cos(angle));
+            py[i] = (int) (cy + HEX_R * Math.sin(angle));
         }
         canvas.drawPolygon(px, py, 6);
     }
@@ -98,19 +105,19 @@ public class GridManager extends Actor implements IPlantPlacer {
         int[] py = new int[6];
         for (int i = 0; i < 6; i++) {
             double angle = Math.toRadians(60 * i - 90);
-            px[i] = (int)(cx + HEX_R * Math.cos(angle));
-            py[i] = (int)(cy + HEX_R * Math.sin(angle));
+            px[i] = (int) (cx + HEX_R * Math.cos(angle));
+            py[i] = (int) (cy + HEX_R * Math.sin(angle));
         }
         canvas.fillPolygon(px, py, 6);
     }
 
     public int getXCoord(int col, int row) {
         double offset = (row % 2 == 1) ? HEX_W / 2.0 : 0;
-        return (int)(ORIGIN_X + col * STEP_X + offset);
+        return (int) (ORIGIN_X + col * STEP_X + offset);
     }
 
     public int getYCoord(int col, int row) {
-        return (int)(ORIGIN_Y + row * STEP_Y);
+        return (int) (ORIGIN_Y + row * STEP_Y);
     }
 
     public int getGridX(int mx, int my) {
@@ -155,15 +162,12 @@ public class GridManager extends Actor implements IPlantPlacer {
         if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return false;
         Plant target = Board[y][x];
         if (y < 5) {
-            boolean isAlreadyInTopFive = false;
-            for (int r = 0; r < 5; r++) {
-                for (int c = 0; c < COLS; c++) {
-                    if (Board[r][c] == plant) isAlreadyInTopFive = true;
-                }
-            }
-            if (target == null && !isAlreadyInTopFive) {
+            boolean alreadyInTop = false;
+            for (int r = 0; r < 5; r++)
+                for (int c = 0; c < COLS; c++)
+                    if (Board[r][c] == plant) alreadyInTop = true;
+            if (target == null && !alreadyInTop)
                 if (getCurrentPlantCount() >= getMaxCapacity()) return false;
-            }
         }
         if (target == null || target == plant) return true;
         return UpgradeManager.canUpgrade(plant, target);
@@ -182,21 +186,19 @@ public class GridManager extends Actor implements IPlantPlacer {
         for (int r = 0; r < ROWS; r++)
             for (int c = 0; c < COLS; c++)
                 if (Board[r][c] == plant) { oldR = r; oldC = c; }
-
         if (target != null && target != plant) {
-            Plant special = UpgradeManager.getSpecialUpgrade(plant, target);
-            if (special != null) {
+            Plant spec = UpgradeManager.getSpecialUpgrade(plant, target);
+            if (spec != null) {
                 if (oldR >= 0) Board[oldR][oldC] = null;
                 removePlant(x, y);
                 if (plant.getWorld() != null) getWorld().removeObject(plant);
-                getWorld().addObject(special, tx, ty);
-                Board[y][x] = special;
+                getWorld().addObject(spec, tx, ty);
+                Board[y][x] = spec;
                 return true;
             }
             returnBackToBench(plant);
             return false;
         }
-
         if (oldR >= 0) Board[oldR][oldC] = null;
         Board[y][x] = plant;
         if (plant.getWorld() == null) getWorld().addObject(plant, tx, ty);
@@ -209,18 +211,18 @@ public class GridManager extends Actor implements IPlantPlacer {
         for (int r = 0; r < ROWS; r++)
             for (int c = 0; c < COLS; c++)
                 if (Board[r][c] == plant) return;
-        List<Integer> emptyCols = new ArrayList<>();
+        List<Integer> empties = new ArrayList<>();
         for (int c = 0; c < COLS; c++)
-            if (Board[5][c] == null) emptyCols.add(c);
-        if (!emptyCols.isEmpty()) {
-            int randomCol = emptyCols.get(Greenfoot.getRandomNumber(emptyCols.size()));
-            int bx = getXCoord(randomCol, 5);
-            int by = getYCoord(randomCol, 5);
+            if (Board[5][c] == null) empties.add(c);
+        if (!empties.isEmpty()) {
+            int rnd = empties.get(Greenfoot.getRandomNumber(empties.size()));
+            int bx = getXCoord(rnd, 5);
+            int by = getYCoord(rnd, 5);
             if (plant.getWorld() == null) getWorld().addObject(plant, bx, by);
             else plant.setLocation(bx, by);
-            Board[5][randomCol] = plant;
-        } else {
-            if (plant.getWorld() != null) getWorld().removeObject(plant);
+            Board[5][rnd] = plant;
+        } else if (plant.getWorld() != null) {
+            getWorld().removeObject(plant);
         }
     }
 
@@ -237,8 +239,10 @@ public class GridManager extends Actor implements IPlantPlacer {
     private Actor getDraggingActor() {
         for (Plant p : getWorld().getObjects(Plant.class))
             if (p.getImage().getTransparency() < 255) return p;
-        for (SeedPacket s : getWorld().getObjects(SeedPacket.class))
-            if (Greenfoot.mouseDragged(s) || Greenfoot.mousePressed(s)) return s;
+        for (SeedPacket s : getWorld().getObjects(SeedPacket.class)) {
+            MouseInfo m = Greenfoot.getMouseInfo();
+            if (m != null && Greenfoot.mouseDragged(s)) return s;
+        }
         return null;
     }
 
