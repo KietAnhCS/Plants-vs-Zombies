@@ -96,7 +96,7 @@ public class BonkChoy3 extends Plant {
             } else {
                 punchCount++;
             }
-            AudioPlayer.play(80, "bonk.mp3");
+            AudioManager.playSound(80, false, "bonk.mp3");
             lastAttackTime = System.currentTimeMillis();
         }
     }

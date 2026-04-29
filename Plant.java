@@ -129,7 +129,7 @@ public abstract class Plant extends SpriteAnimator {
     private void handleDeath() {
         World worldRef = getWorld();
         if (worldRef == null) return;
-        AudioPlayer.play(80, "gulp.mp3");
+        AudioManager.playSound(80,false, "gulp.mp3");
         if (PlayScene.GridManager != null) {
             PlayScene.GridManager.removePlant(currentGridX, currentGridY);
         }

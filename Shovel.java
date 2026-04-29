@@ -15,7 +15,7 @@ public class Shovel extends PhysicsBody {
             if (!selected) {
                 selected = true;
                 setImage("shovel2.png");
-                AudioPlayer.play(80, "shovel.mp3");
+                AudioManager.playSound(80, false, "shovel.mp3");
                 world.addObject(new SellShovel(this, getX(), getY()), mouse.getX(), mouse.getY());
             }
         }

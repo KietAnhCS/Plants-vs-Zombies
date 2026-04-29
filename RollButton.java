@@ -28,7 +28,7 @@ public class RollButton extends Actor {
             if (totalWeight <= 0) return;
 
             sm.spend(ROLL_COST);
-            AudioPlayer.play(80, "achievement.mp3");
+            AudioManager.playSound(80, false, "achievement.mp3");
 
             SeedPacket[] newBank = new SeedPacket[3];
             for (int i = 0; i < 3; i++) {

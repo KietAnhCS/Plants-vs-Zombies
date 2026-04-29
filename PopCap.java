@@ -4,7 +4,6 @@ public class PopCap extends World
 {
     public int counter = 0;
     public boolean hasTransitioned = false; 
-    public GreenfootSound menutheme = new GreenfootSound("menutheme.mp3");
 
     public PopCap()
     {    
@@ -13,18 +12,20 @@ public class PopCap extends World
     }
 
     public void act() {
-       
-        if (!menutheme.isPlaying()) {
-            menutheme.setVolume(80);
-            menutheme.playLoop();
+        if (!AudioManager.isSoundPlaying("menutheme.mp3")) {
+            AudioManager.playBGM("menutheme.mp3");
         }
 
         counter++;
 
-        
         if (counter > 100 && !hasTransitioned) {
-            addObject(new Transition(true, new MainMenu(menutheme), 6), getWidth()/2, getHeight()/2);
+            addObject(new Transition(true, new MainMenu(), 6), getWidth()/2, getHeight()/2);
             hasTransitioned = true; 
         }
+    }
+    
+    @Override
+    public void stopped() {
+        AudioManager.stopBGM();
     }
 }

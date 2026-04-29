@@ -75,7 +75,7 @@ public class ThuyThan extends Actor {
                 world.getSunManager().add(s.getValue());
             }
 
-            AudioPlayer.play(80, "points.mp3");
+            AudioManager.playSound(80, false, "points.mp3");
         }
     }
 }

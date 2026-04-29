@@ -46,7 +46,7 @@ public class Buckethead extends Zombie
             } else {
                 if (!fallen) {
                     fallen = true;
-                    AudioPlayer.play(80, "limbs_pop.mp3");
+                    AudioManager.playSound(80, false, "limbs_pop.mp3");
                     if (PlayScene != null) PlayScene.addObject(new Arm(), getX() + 8, getY() + 20);
                 }
                 handleAnimation(armless, armlesseat);
@@ -67,9 +67,9 @@ public class Buckethead extends Zombie
     @Override
     public void hit(int dmg) {
         if (bucket) {
-            AudioPlayer.play(70, "shieldhit.mp3", "shieldhit2.mp3");
+            AudioManager.playSound(80, false, "shieldhit.mp3", "shieldhit2.mp3");
         } else {
-            AudioPlayer.play(70, "splat.mp3", "splat2.mp3", "splat3.mp3");
+            AudioManager.playSound(80, false, "splat.mp3", "splat2.mp3", "splat3.mp3");
         }
         
         if (isLiving()) {

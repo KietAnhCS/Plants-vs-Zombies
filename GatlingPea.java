@@ -56,7 +56,7 @@ public class GatlingPea extends Plant
                 }
                 
                 if (frame >= 4) {
-                    AudioPlayer.play(80, "throw.mp3", "throw2.mp3");
+                    AudioManager.playSound(80, false, "throw.mp3", "throw2.mp3");
                     world.addObject(new Pea(getYPos()), getX() + 25, getY() - 17);
                     frame = 0; 
                     shootCount++;

@@ -49,7 +49,7 @@ public class Zombie extends SpriteAnimator {
             if (finalDeath) {
                 if (!fixAnim) {
                     fixAnim = true;
-                    AudioPlayer.play(80, "zombie_falling_1.mp3", "zombie_falling_2.mp3");
+                    AudioManager.playSound(80,false, "zombie_falling_1.mp3", "zombie_falling_2.mp3");
                     PlayScene.addObject(new fallingZombie(fall), getX() - 12, getY() + 20);
                     PlayScene.removeObject(this);
                     return;
@@ -57,7 +57,7 @@ public class Zombie extends SpriteAnimator {
             } else {
                 if (!spawnHead) {
                     spawnHead = true;
-                    AudioPlayer.play(80, "limbs_pop.mp3");
+                    AudioManager.playSound(80,false, "limbs_pop.mp3");
                     getWorld().addObject(new Head(), getX(), getY() - 10);
                 }
                 if (!eating) {
@@ -85,7 +85,7 @@ public class Zombie extends SpriteAnimator {
         if (frame == 5 || frame == 2) {
             if (!eatOnce) {
                 eatOnce = true;
-                AudioPlayer.play(70, "chomp.mp3", "chomp2.mp3", "chompsoft.mp3");
+                AudioManager.playSound(70,false, "chomp.mp3", "chomp2.mp3", "chompsoft.mp3");
                 
                 target.hit(this.damage); 
             }

@@ -72,9 +72,9 @@ public class SellShovel extends SpriteAnimator {
             if (playScene.seedbank != null) {
                 playScene.getSunManager().add(30);
             }
-            AudioPlayer.play(80, "plant.mp3");
+            AudioManager.playSound(80, false, "plant.mp3");
         } else {
-            AudioPlayer.play(80, "tap.mp3");
+            AudioManager.playSound(80, false, "tap.mp3");
         }
     }
 

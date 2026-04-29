@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.target=AudioManager
+comment1.params=volume\ loop\ files
+comment1.target=void\ playSound(int,\ boolean,\ java.lang.String[])
+comment10.params=file
+comment10.target=boolean\ isSoundPlaying(java.lang.String)
+comment2.params=files
+comment2.target=void\ playSound(java.lang.String[])
+comment3.params=file
+comment3.target=void\ playBGM(java.lang.String)
+comment4.params=
+comment4.target=void\ stopBGM()
+comment5.params=
+comment5.target=void\ toggleMute()
+comment6.params=volume
+comment6.target=void\ setMasterVolume(int)
+comment7.params=
+comment7.target=void\ cleanUpSounds()
+comment8.params=
+comment8.target=boolean\ isMuted()
+comment9.params=
+comment9.target=int\ getVolume()
+numComments=11

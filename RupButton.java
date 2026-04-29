@@ -52,7 +52,7 @@ public class RupButton extends Actor {
             
             applyChanges();
             updateAppearance();
-            AudioPlayer.play(80, "achievement.mp3");
+            AudioManager.playSound(80, false, "achievement.mp3");
         }
     }
 

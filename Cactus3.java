@@ -86,7 +86,7 @@ public class Cactus3 extends Plant {
     private void executeShoot() {
         int myRow = getYPos();
         if (myRow != -1) {
-            AudioPlayer.play(80, "throw.mp3", "throw2.mp3");
+            AudioManager.playSound(80, false, "throw.mp3", "throw2.mp3");
             
             getWorld().addObject(new Needle3(getY(), -50), getX(), getY());
             

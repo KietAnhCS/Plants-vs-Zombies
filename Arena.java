@@ -2,21 +2,21 @@ import greenfoot.*;
 import java.util.*;
 
 public class Arena extends World {
-    public GreenfootSound CYS = new GreenfootSound("intro3.mp3");
-    public GreenfootSound finalWaveMusic = new GreenfootSound("finalwavemp3.mp3");
+    private static final int SCROLL_SPEED = 4;
+    private static final int SCROLL_START_OUT = 100;
+    private static final int SCROLL_END_OUT = 160;
+    private static final int SCROLL_START_IN = 350;
+    private static final int SCROLL_END_IN = 410;
+    private static final int TRANSITION_TICK = 500;
+
     public int count = 0;
-    public int scrollSpeed = 4;
     public int location = 0;
-    public boolean started = false;
-    public Zombie n = null;
+    private boolean daveTalking = true;
     
     private GreenfootImage backgroundMap = new GreenfootImage("maptft2.png");
     private GifImage daveGif = new GifImage("Dave3.gif");
-    public GreenfootSound daveVoice = new GreenfootSound("awooga.mp3");
-    private boolean isFinalMusicPlaying = false; 
-    private boolean daveTalking = true;
 
-    public Zombie[][][] level1 = {
+        public Zombie[][][] level1 = {
         {{new BasicZombie()}, null, null, null, null}, 
         {null, {new BasicZombie()}, null, {new BasicZombie()}, null}, 
         {{new BasicZombie()}, {new BasicZombie()}, {new BasicZombie()}, null, null}, 
@@ -58,74 +58,75 @@ public class Arena extends World {
             null 
         }
     };
-        
     public SeedPacket[] bank = {new PeashooterPacket(), new PeashooterPacket(), new BonkchoyPacket(), null, null};
     public SeedBank seedbank = new SeedBank(bank);   
     public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 2, 5, 10);
 
     public Arena() {    
         super(1111, 698, 1, false); 
-        getBackground().drawImage(backgroundMap, 0, 0);
+        refreshBackground();
+        setupInitialZombies();
+        AudioManager.playBGM("awooga.mp3"); 
+    }
+
+    private void setupInitialZombies() {
         addObject(new Basic(), 1176, 227);
         addObject(new Basic(), 1195, 322);
         addObject(new Basic(), 1129, 227);
         addObject(new Basic(), 1162, 325);
         addObject(new IdleCone(), 1183, 396);
-        CYS.setVolume(70);
-        daveVoice.setVolume(70);
-        finalWaveMusic.setVolume(70);
     }
 
     public void act() {
         if (daveTalking) {
             handleDave();
         } else {
-            if (count == 0) {
-                getBackground().drawImage(backgroundMap, 0, 0);
-            }
             count++;
             bgScrollAnimate();
         }
     }
 
     private void handleDave() {
-        GreenfootImage bg = getBackground();
-        bg.drawImage(backgroundMap, 0, 0);
+        refreshBackground(); 
         GreenfootImage currentDave = daveGif.getCurrentImage();
         if (currentDave.getWidth() != 600) {
             currentDave.scale(600, 400);
         }
-        bg.drawImage(currentDave, 0, getHeight() - 400);
-        if (!daveVoice.isPlaying()) daveVoice.playLoop();
+        getBackground().drawImage(currentDave, 0, getHeight() - 400);
+
         if (Greenfoot.mouseClicked(this)) {
-            daveVoice.stop();
+            AudioManager.stopBGM(); 
             daveTalking = false;
-            bg.drawImage(backgroundMap, 0, 0);
+            refreshBackground(); 
         }
     }
 
     public void bgScrollAnimate() {
-        if ((count > 100 && count < 160) || (count > 350 && count < 410)) {
-            if (count > 100 && count < 160) location -= scrollSpeed;
-            else location += scrollSpeed;
-            scrollBGimage(location);
-        } else if (count == 450) {
+        if (count > SCROLL_START_OUT && count < SCROLL_END_OUT) {
+            location -= SCROLL_SPEED;
+            scrollWorld(-SCROLL_SPEED);
+        } 
+        else if (count > SCROLL_START_IN && count < SCROLL_END_IN) {
+            location += SCROLL_SPEED;
+            scrollWorld(SCROLL_SPEED);
+        } 
+        else if (count == 450) {
             removeObjects(getObjects(IdleZombie.class));
-        } else if (count == 500) {
-            CYS.stop(); 
-            finalWaveMusic.stop();
-            Greenfoot.setWorld(new PlayScene(CYS, level, seedbank, this, null, true));
+        } 
+        else if (count == TRANSITION_TICK) {
+            AudioManager.stopBGM();
+            Greenfoot.setWorld(new PlayScene(null, level, seedbank, this, null, true));
         }
     }
     
-    public void scrollBGimage(int offset) {
-        GreenfootImage bg = getBackground(); 
-        bg.drawImage(backgroundMap, offset, 0);  
+    private void scrollWorld(int speed) {
+        getBackground().drawImage(backgroundMap, location, 0); 
         for (Actor a : getObjects(Actor.class)) {
-            if (a.getWorld() != null) {
-                if (count > 100 && count < 160) a.setLocation(a.getX() - scrollSpeed, a.getY());
-                else a.setLocation(a.getX() + scrollSpeed, a.getY());
-            }
+            a.setLocation(a.getX() + speed, a.getY());
         } 
+    }
+
+    private void refreshBackground() {
+        getBackground().drawImage(backgroundMap, location, 0);
     }
 }

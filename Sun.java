@@ -54,7 +54,7 @@ public class Sun extends FallingObject {
         pickedUp = true;
         setRotation(0);
 
-        AudioPlayer.play(90, "points.mp3");
+        AudioManager.playSound(80, false, "points.mp3");
 
         if (scene != null && scene.getSunManager() != null) {
             scene.getSunManager().add(value);

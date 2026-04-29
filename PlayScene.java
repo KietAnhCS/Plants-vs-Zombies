@@ -15,12 +15,9 @@ public class PlayScene extends World {
     private boolean isWaterMap = true; 
     
     public GridManager GridManager = new GridManager();
-    public GreenfootSound Grasswalk = new GreenfootSound("intro3.mp3");
-    public GreenfootSound easyWaveMusic = new GreenfootSound("sans.mp3");
-    public GreenfootSound finalWaveMusic = new GreenfootSound("finalwavemp3.mp3");
-    
-    private GreenfootSound currentlyPlaying;
+    private String currentBGM = ""; 
     public GreenfootSound CYS;
+
     public World restartWorld;
     public FallingObject winPlant;
     
@@ -28,7 +25,7 @@ public class PlayScene extends World {
     public SeedBank seedbank; 
     public Hitbox hitbox = new Hitbox();
     public Shovel shovel = new Shovel();
-    
+    public MuteButton mutebutton = new MuteButton();
     public RollButton rollbutton = new RollButton();
     public RupButton rupbutton = new RupButton();
     public WaveManager level;
@@ -44,8 +41,9 @@ public class PlayScene extends World {
         lastSunSpawnTime = System.currentTimeMillis();
         
         Greenfoot.setSpeed(50);
+        addObject(new SliderBar(), 800, 120);
         setBackground("maptft2.png");
-        
+        addObject(mutebutton, 1050, 50);
         addObject(GridManager, 555, 349); 
         addObject(new ThuyThan(), 110, 642);
         addObject(seedbank, 0, 0); 
@@ -56,10 +54,11 @@ public class PlayScene extends World {
         addObject(rupbutton, 250, 575);
         
         prepareLawnmowers();
-        finalWaveMusic.setVolume(70);
-        easyWaveMusic.setVolume(70);
 
         setPaintOrder(
+            SliderKnob.class, 
+            SliderBar.class,
+            MuteButton.class,
             AugmentCard.class,
             Overlay.class,
             ThuyThan.class,
@@ -102,27 +101,23 @@ public class PlayScene extends World {
         int currentWave = level.getWaveNumber()-1;
         showText("Wave: " + currentWave, 100, 100);
 
-        GreenfootSound targetMusic;
-
+        String targetMusic;
         if (currentWave >= 0 && currentWave <= 6) {
-            targetMusic = easyWaveMusic;
+            targetMusic = "sans.mp3";
         } else if (currentWave >= 12 && currentWave <= 16) {
-            targetMusic = finalWaveMusic;
+            targetMusic = "finalwavemp3.mp3";
         } else {
-            targetMusic = Grasswalk;
+            targetMusic = "intro3.mp3";
         }
 
-        if (currentlyPlaying != targetMusic) {
-            stopAllMusic();
-            currentlyPlaying = targetMusic;
-            currentlyPlaying.playLoop();
+        if (!currentBGM.equals(targetMusic)) {
+            currentBGM = targetMusic;
+            AudioManager.playBGM(targetMusic);
         }
     }
 
     private void stopAllMusic() {
-        if (Grasswalk.isPlaying()) Grasswalk.stop();
-        if (easyWaveMusic.isPlaying()) easyWaveMusic.stop();
-        if (finalWaveMusic.isPlaying()) finalWaveMusic.stop();
+        AudioManager.stopBGM();
         if (CYS != null && CYS.isPlaying()) CYS.stop();
     }
 
@@ -145,7 +140,8 @@ public class PlayScene extends World {
             if (totalWeight <= 0) return; 
 
             getSunManager().spend(25); 
-            AudioPlayer.play(80, "achievement.mp3");
+            
+            AudioManager.playSound(80, false,"achievement.mp3");
 
             SeedPacket[] newBank = new SeedPacket[3]; 
             for (int i = 0; i < 3; i++) {
@@ -171,7 +167,9 @@ public class PlayScene extends World {
     private void handleWinLoss() {
         if (!loseOnce && hasLost()) {
             stopAllMusic();
-            AudioPlayer.play(80, "losemusic.mp3");
+            
+            AudioManager.playSound(80,false,"losemusic.mp3");
+            
             addObject(new DelayAudio(new GreenfootSound("scream.mp3"), 70, false, 4000L), 0, 0);
             loseOnce = true;
             Greenfoot.delay(250);
@@ -244,20 +242,16 @@ public class PlayScene extends World {
 
     public void finishLevel() {
         stopAllMusic();
-        AudioPlayer.play(70, "winmusic.mp3");
+        AudioManager.playSound(80,false,"winmusic.mp3");
     }
 
     public void started() {
-        if (currentlyPlaying != null) {
-            currentlyPlaying.playLoop();
-        }
+        updateGameMusic(); 
         Greenfoot.setSpeed(50);          
     }
 
     public void stopped() {
-        if (currentlyPlaying != null && currentlyPlaying.isPlaying()) {
-            currentlyPlaying.pause();
-        }
+        AudioManager.stopBGM();
     }
     
     public SunManager getSunManager() {

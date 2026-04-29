@@ -11,7 +11,7 @@ public class Explosion extends SpriteAnimator
         
     }
     public void addedToWorld(World world) {
-        AudioPlayer.play(80, "potato_mine.mp3");
+        AudioManager.playSound(80, false, "potato_mine.mp3");
         
         for (int i = zombies.size()-1; i >= 0; i--) {
             if (Math.abs(zombies.get(i).getX() - getX()) < 44) {

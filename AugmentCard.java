@@ -18,7 +18,7 @@ public class AugmentCard extends Actor {
         if (Greenfoot.mouseClicked(this)) {
             MouseInfo mouse = Greenfoot.getMouseInfo();
             if (mouse != null && mouse.getButton() == 1) {
-                AudioPlayer.play(100, "gravebutton.mp3");
+                AudioManager.playSound(80, false, "gravebutton.mp3");
                 applyAugmentEffect();
                 clearUI();
                 manager.nextWave();

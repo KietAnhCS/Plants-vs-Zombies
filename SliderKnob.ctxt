@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=SliderKnob
+comment1.params=bar\ barWidth
+comment1.target=SliderKnob(SliderBar,\ int)
+comment2.params=state
+comment2.target=void\ setDragging(boolean)
+comment3.params=
+comment3.target=void\ act()
+numComments=4

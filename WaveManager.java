@@ -29,7 +29,7 @@ public class WaveManager extends Actor {
 
     public void startLevel() {
         wave = 0;
-        AudioPlayer.play(80, "readysetplant.mp3");
+        AudioManager.playSound(80, false, "readysetplant.mp3");
         if (getWorld() != null) {
             getWorld().addObject(new ReadySetPlant(), 620, 295);
         }
@@ -62,7 +62,7 @@ public class WaveManager extends Actor {
 
             if (deltaTime >= dynamicTargetTime) {
                 if (isFirstWave) {
-                    AudioPlayer.play(80, "awooga.mp3");
+                    AudioManager.playSound(80,false, "awooga.mp3");
                     isFirstWave = false;
                 }
                 checkAndPrepareWave();
@@ -102,7 +102,7 @@ public class WaveManager extends Actor {
         }
         
         playScene.setPaintOrder(AugmentCard.class, Overlay.class, WaveNotification.class, GridManager.class, Plant.class, Zombie.class);
-        AudioPlayer.play(70, "hugewave.mp3");
+        AudioManager.playSound(70, false, "hugewave.mp3");
     }
 
     public void nextWave() {

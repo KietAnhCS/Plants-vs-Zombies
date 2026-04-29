@@ -39,7 +39,7 @@ public class BasicZombie extends Zombie
            
             if (!fallen) {
                 fallen = true;
-                AudioPlayer.play(80, "limbs_pop.mp3");
+                AudioManager.playSound(80, false, "limbs_pop.mp3");
                 if (PlayScene != null) {
                     PlayScene.addObject(new Arm(), getX() + 8, getY() + 20);
                 }
@@ -57,7 +57,7 @@ public class BasicZombie extends Zombie
    
     @Override
     public void hit(int dmg) {
-        AudioPlayer.play(70, "splat.mp3", "splat2.mp3", "splat3.mp3");
+        AudioManager.playSound(80, false, "splat.mp3", "splat2.mp3", "splat3.mp3");
         
         if (isLiving()) {
             if (!fallen) {

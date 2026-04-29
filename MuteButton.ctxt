@@ -1,9 +1,9 @@
 #BlueJ class context
-comment0.target=PopCap
+comment0.target=MuteButton
 comment1.params=
-comment1.target=PopCap()
+comment1.target=MuteButton()
 comment2.params=
 comment2.target=void\ act()
 comment3.params=
-comment3.target=void\ stopped()
+comment3.target=void\ updateImage()
 numComments=4

@@ -21,7 +21,7 @@ public class Button extends SpriteAnimator
                 setImage(idle);
             }
             if (Greenfoot.mouseClicked(this)) {
-                AudioPlayer.play(100, "gravebutton.mp3");
+                AudioManager.playSound(80, false, "gravebutton.mp3");
                 update(); 
             }
         }
