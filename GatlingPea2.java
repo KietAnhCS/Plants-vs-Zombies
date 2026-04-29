@@ -10,18 +10,17 @@ public class GatlingPea2 extends Plant {
     private boolean isPoweredUp = false;
     
     private long powerUpStartTime;
-    private final long POWER_UP_DURATION = 3000L;
+    private final long POWER_UP_DURATION = PlantRegistry.POWER_UP_DURATION;
     
     private long lastActionTime = System.currentTimeMillis();
-    private long shootDelay = 2000L; // Thời gian nghỉ giữa các loạt đạn
-    private final long BURST_INTERVAL = 100L; // Thời gian giữa mỗi viên đạn trong loạt đạn 5 viên
+    private long shootDelay = PlantRegistry.GATLING2_SHOOT_DELAY;
+    private final long BURST_INTERVAL = PlantRegistry.GATLING2_BURST_INTERVAL;
 
     public GatlingPea2() {
-        maxHp = 100; // Gatling Pea nên trâu hơn một chút
+        maxHp = PlantRegistry.GATLING2_HP;
         hp = maxHp;
-        // Sử dụng chung sprites nếu chúng giống nhau hoặc import riêng
-        shoot = importSprites("GatlingPea", 19);
-        idle = importSprites("GatlingPea", 19);
+        shoot = importSprites(PlantAssets.GATLING_PEA, 19);
+        idle = importSprites(PlantAssets.GATLING_PEA, 19);
         setImage(idle[0]);
     }
 
@@ -35,7 +34,7 @@ public class GatlingPea2 extends Plant {
     public void hit(int dmg) {
         if (getWorld() != null && isLiving()) {
             hp -= dmg;
-            hitFlash(shooting ? shoot : idle, "GatlingPea");
+            hitFlash(shooting ? shoot : idle, PlantAssets.GATLING_PEA);
         }
     }
 
@@ -58,20 +57,17 @@ public class GatlingPea2 extends Plant {
     private void handleAction() {
         long currentTime = System.currentTimeMillis();
 
-        // Trạng thái Plant Food: Bắn liên tục không ngừng
         if (isPoweredUp) {
             animate(shoot, 40, false);
-            if (currentTime - lastActionTime >= 50) { // Tốc độ cực nhanh
+            if (currentTime - lastActionTime >= 50) {
                 fireFirePea();
                 lastActionTime = currentTime;
             }
             return;
         }
 
-        // Trạng thái bình thường
         if (shooting) {
-            if (shootCount < 5) {
-                // Đang trong loạt bắn 5 viên
+            if (shootCount < PlantRegistry.GATLING2_BURST_COUNT) {
                 animate(shoot, 100, false);
                 if (currentTime - lastActionTime >= BURST_INTERVAL) {
                     fireFirePea();
@@ -79,15 +75,13 @@ public class GatlingPea2 extends Plant {
                     lastActionTime = currentTime;
                 }
             } else {
-                // Đã bắn xong 5 viên, đợi hồi chiêu (shootDelay)
                 animate(idle, 225, true);
                 if (currentTime - lastActionTime >= shootDelay) {
-                    shootCount = 0; // Reset để bắt đầu loạt bắn mới
+                    shootCount = 0;
                     lastActionTime = currentTime;
                 }
             }
         } else {
-            // Không có zombie: Nghỉ ngơi
             animate(idle, 225, true);
             shootCount = 0;
         }
@@ -95,7 +89,7 @@ public class GatlingPea2 extends Plant {
 
     private void fireFirePea() {
         if (getWorld() != null) {
-            AudioManager.playSound(80, false, "throw.mp3", "throw2.mp3");
+            AudioManager.playSound(80, false, PlantAssets.SOUND_THROW, PlantAssets.SOUND_THROW2);
             getWorld().addObject(new FirePea(getYPos()), getX() + 25, getY() - 17);
         }
     }

@@ -1,97 +1,63 @@
-import greenfoot.*; 
+import greenfoot.*;
 
-public class Conehead extends Zombie
-{
+public class Conehead extends Zombie {
+
+    public GreenfootImage[] wNormal, wD1, wD2, wBare, wArmless;
+    public GreenfootImage[] eNormal, eD1, eD2, eBare, eArmless;
     private boolean cone = true;
-    public GreenfootImage[] walk, armless, eat, armlesseat;
-    public GreenfootImage[] coneheadwalk, coneheadwalkd, coneheadwalkdd;
-    public GreenfootImage[] coneheadeat, coneheadeatd, coneheadeatdd;
-    
+
     public Conehead() {
         super();
-        walk = importSprites("zombiewalk", 7);
-        eat = importSprites("zombieeating", 7);
-        armlesseat = importSprites("armlesszombieeating", 7);
-        armless = importSprites("armlesszombie", 7);
-        
-        coneheadwalk = importSprites("coneheadwalk", 7);
-        coneheadwalkd = importSprites("coneheadwalkd", 7);
-        coneheadwalkdd = importSprites("coneheadwalkdd", 7);
-        coneheadeat = importSprites("coneheadeat", 7);
-        coneheadeatd = importSprites("coneheadeatd", 7);
-        coneheadeatdd = importSprites("coneheadeatdd", 7);
-        
+        this.maxHp = ZombieRegistry.CONE_HP;
+        this.hp = maxHp;
+        this.damage = ZombieRegistry.CONE_DAMAGE;
         this.walkSpeed = (Greenfoot.getRandomNumber(6) + 22) / 100.0;
-        
-        maxHp = 640; 
-        hp = maxHp;
-        this.damage = 20;
+        loadSprites();
+        this.currentState = new ConeheadState(this);
+    }
+
+    private void loadSprites() {
+        wNormal  = importSprites(ZombieAssets.CONE_WALK, 7);
+        wD1      = importSprites(ZombieAssets.CONE_WALK_D1, 7);
+        wD2      = importSprites(ZombieAssets.CONE_WALK_D2, 7);
+        wBare    = importSprites(ZombieAssets.SHARED_WALK_BARE, 7);
+        wArmless = importSprites(ZombieAssets.SHARED_WALK_ARMLESS, 7);
+
+        eNormal  = importSprites(ZombieAssets.CONE_EAT, 7);
+        eD1      = importSprites(ZombieAssets.CONE_EAT_D1, 7);
+        eD2      = importSprites(ZombieAssets.CONE_EAT_D2, 7);
+        eBare    = importSprites(ZombieAssets.SHARED_EAT_BARE, 7);
+        eArmless = importSprites(ZombieAssets.SHARED_EAT_ARMLESS, 7);
     }
 
     @Override
-    public void update() {
-        if (hp > 460) {
-            handleAnimation(coneheadwalk, coneheadeat);
-        } else if (hp > 280) {
-            handleAnimation(coneheadwalkd, coneheadeatd);
-        } else if (hp > 100) {
-            handleAnimation(coneheadwalkdd, coneheadeatdd);
-        } else {
-            if (cone) {
-                cone = false;
-                AudioManager.playSound(80, false, "shield_break.mp3"); 
-                if (getWorld() != null) getWorld().addObject(new Cone(), getX(), getY() - 25);
-            }
-            
-            if (hp > 50) {
-                handleAnimation(walk, eat);
-            } else {
-                if (!fallen) {
-                    fallen = true;
-                    AudioManager.playSound(80, false, "limbs_pop.mp3");
-                    if (getWorld() != null) getWorld().addObject(new Arm(), getX() + 8, getY() + 20);
-                }
-                handleAnimation(armless, armlesseat);
-            }
+    protected void handleThresholds() {
+        if (hp <= ZombieRegistry.CONE_BARE && cone) {
+            cone = false;
+            AudioManager.playSound(80, false, "limbs_pop.mp3");
+            if (getWorld() != null) getWorld().addObject(new Cone(), getX(), getY() - 25);
         }
-    }
-
-    private void handleAnimation(GreenfootImage[] walkAnim, GreenfootImage[] eatAnim) {
-        if (!isEating()) {
-            animate(walkAnim, 350, true);
-            move(-walkSpeed);
-        } else {
-            animate(eatAnim, 200, true);
-            playEating();
+        if (hp <= ZombieRegistry.CONE_ARMLESS && !fallen) {
+            fallen = true;
+            AudioManager.playSound(80, false, "limbs_pop.mp3");
+            if (getWorld() != null) getWorld().addObject(new Arm(), getX() + 8, getY() + 20);
         }
     }
 
     @Override
     public void hit(int dmg) {
         if (!isAlive) return;
-
-        if (cone) {
-            AudioManager.playSound(80, false, "plastichit.mp3", "plastichit2.mp3");
-        } else {
-            AudioManager.playSound(80, false, "splat.mp3", "splat2.mp3");
-        }
-        
+        AudioManager.playSound(80, false, cone ? "plastichit.mp3" : "splat.mp3",
+                                          cone ? "plastichit2.mp3" : "splat2.mp3");
         if (isLiving()) {
-            if (hp > 460) {
-                hitFlash(eating ? coneheadeat : coneheadwalk, eating ? "coneheadeat" : "coneheadwalk");
-            } else if (hp > 280) {
-                hitFlash(eating ? coneheadeatd : coneheadwalkd, eating ? "coneheadeatd" : "coneheadwalkd");
-            } else if (hp > 100) {
-                hitFlash(eating ? coneheadeatdd : coneheadwalkdd, eating ? "coneheadeatdd" : "coneheadwalkdd");
-            } else if (!fallen) {
-                hitFlash(eating ? eat : walk, eating ? "zombieeating" : "zombiewalk");
-            } else {
-                hitFlash(eating ? armlesseat : armless, eating ? "armlesszombieeating" : "armlesszombie");
-            }
+            if (hp > ZombieRegistry.CONE_D1)        hitFlash(eating ? eNormal  : wNormal,  eating ? ZombieAssets.CONE_EAT         : ZombieAssets.CONE_WALK);
+            else if (hp > ZombieRegistry.CONE_D2)   hitFlash(eating ? eD1      : wD1,      eating ? ZombieAssets.CONE_EAT_D1      : ZombieAssets.CONE_WALK_D1);
+            else if (hp > ZombieRegistry.CONE_BARE) hitFlash(eating ? eD2      : wD2,      eating ? ZombieAssets.CONE_EAT_D2      : ZombieAssets.CONE_WALK_D2);
+            else if (!fallen)                       hitFlash(eating ? eBare    : wBare,    eating ? ZombieAssets.SHARED_EAT_BARE   : ZombieAssets.SHARED_WALK_BARE);
+            else                                    hitFlash(eating ? eArmless : wArmless, eating ? ZombieAssets.SHARED_EAT_ARMLESS : ZombieAssets.SHARED_WALK_ARMLESS);
         } else if (!finalDeath) {
-            hitFlash(eating ? headlesseating : headless, eating ? "headlesszombieeating" : "zombieheadless");
+            hitFlash(eating ? headlesseating : headless, eating ? ZombieAssets.SHARED_HEADLESS_EAT : ZombieAssets.SHARED_HEADLESS);
         }
-
         super.hit(dmg);
     }
 }

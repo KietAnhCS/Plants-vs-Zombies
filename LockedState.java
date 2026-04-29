@@ -1,13 +1,8 @@
 public class LockedState implements IPacketState {
-
     @Override
     public void onEnter(SeedPacket packet) {
         packet.showDark(255); 
         packet.updateOverlay(1f); 
-    }
-
-    @Override
-    public void tick(SeedPacket packet) {
     }
 
     @Override
@@ -18,11 +13,14 @@ public class LockedState implements IPacketState {
     }
 
     @Override
+    public void onClick(SeedPacket packet) {
+    }
+
+    @Override
     public boolean canPurchase(SeedPacket packet) {
         return false; 
     }
-    
+
     @Override
-    public void onClick(SeedPacket packet) {
-    }
+    public void tick(SeedPacket packet) {}
 }

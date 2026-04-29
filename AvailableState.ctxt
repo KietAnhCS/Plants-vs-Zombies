@@ -2,10 +2,12 @@
 comment0.target=AvailableState
 comment1.params=packet
 comment1.target=void\ onEnter(SeedPacket)
-comment2.params=packet
-comment2.target=void\ tick(SeedPacket)
-comment3.params=packet\ currentSun
-comment3.target=void\ onSunChanged(SeedPacket,\ int)
+comment2.params=packet\ currentSun
+comment2.target=void\ onSunChanged(SeedPacket,\ int)
+comment3.params=packet
+comment3.target=void\ onClick(SeedPacket)
 comment4.params=packet
 comment4.target=boolean\ canPurchase(SeedPacket)
-numComments=5
+comment5.params=packet
+comment5.target=void\ tick(SeedPacket)
+numComments=6

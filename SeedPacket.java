@@ -35,6 +35,10 @@ public class SeedPacket extends Actor {
     @Override
     public void act() {
         if (state != null) state.tick(this);
+        
+        if (Greenfoot.mousePressed(this)) {
+            state.onClick(this);
+        }
     }
 
     public void setState(IPacketState newState) {

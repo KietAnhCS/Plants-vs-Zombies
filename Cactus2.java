@@ -10,16 +10,16 @@ public class Cactus2 extends Plant {
     private long powerUpStartTime;
     private long lastFrame2 = System.nanoTime();
     private long deltaTime2;
-    private final long POWER_UP_DURATION = 3000L;
-    private final long BASE_SHOOT_DELAY = 1500L;
-    private long shootDelay = 1500L;
+    private final long POWER_UP_DURATION = PlantRegistry.POWER_UP_DURATION;
+    private final long BASE_SHOOT_DELAY = PlantRegistry.CACTUS2_SHOOT_DELAY;
+    private long shootDelay = PlantRegistry.CACTUS2_SHOOT_DELAY;
     private PlayScene cachedPlayScene;
     
     public Cactus2() {
-        maxHp = 60;
+        maxHp = PlantRegistry.CACTUS2_HP;
         hp = maxHp;
-        shoot = importSprites("cactusshoot", 2);
-        idle = importSprites("cactus", 4);
+        shoot = importSprites(PlantAssets.CACTUS_SHOOT, 2);
+        idle = importSprites(PlantAssets.CACTUS_IDLE, 4);
         setImage(idle[0]);
     }
     
@@ -34,14 +34,15 @@ public class Cactus2 extends Plant {
     @Override
     public void hit(int dmg) {
         if (getWorld() != null && isLiving()) {
-            hitFlash(shootOnce ? shoot : idle, shootOnce ? "peashootershoot" : "peashooter");
+            hitFlash(shootOnce ? shoot : idle, shootOnce ? PlantAssets.CACTUS_SHOOT : PlantAssets.CACTUS_IDLE);
+            hp -= dmg;
         }
     }
     
     public void activatePlantFood() {
         this.isPoweredUp = true;
         this.powerUpStartTime = System.currentTimeMillis();
-        this.shootDelay = 300L;
+        this.shootDelay = PlantRegistry.POWER_UP_SHOOT_DELAY;
     }
     
     @Override
@@ -83,17 +84,15 @@ public class Cactus2 extends Plant {
         }
     }
     
-        private void executeShoot() {
+    private void executeShoot() {
         int myRow = getYPos();
         if (myRow != -1) {
-            AudioManager.playSound(80, false, "throw.mp3", "throw2.mp3");
+            AudioManager.playSound(80, false, PlantAssets.SOUND_THROW, PlantAssets.SOUND_THROW2);
             
             int offset = 50; 
     
             getWorld().addObject(new Needle2(getY(), -offset), getX(), getY());
-            
             getWorld().addObject(new Needle2(getY(), offset), getX(), getY());
-            
     
             lastFrame2 = currentFrame;
             shootOnce = false;

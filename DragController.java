@@ -34,7 +34,7 @@ public class DragController extends Actor {
             updateGhostPosition(mouse);
 
             if (Greenfoot.mouseClicked(null) || Greenfoot.mouseDragEnded(null)) {
-                tryPlace();
+                processPlacement();
                 cleanup();
             }
         }
@@ -55,9 +55,7 @@ public class DragController extends Actor {
                     plantToPlace = packet.getPlant(); 
                     
                     if (ghostImage != null && getWorld() != null) {
-                        if (ghostImage.getWorld() == null) {
-                            getWorld().addObject(ghostImage, mouse.getX(), mouse.getY());
-                        }
+                        getWorld().addObject(ghostImage, mouse.getX(), mouse.getY());
                     }
 
                     selectedPacket = packet;
@@ -86,21 +84,40 @@ public class DragController extends Actor {
         }
     }
 
-    private void tryPlace() {
-        if (lastGx < 0 || lastGy < 0 || plantToPlace == null) {
-            if (selectedPacket != null) selectedPacket.cancelSelect();
-            return;
+    private void processPlacement() {
+        if (lastGx >= 0 && lastGy >= 0) {
+            if (executePlacement(lastGx, lastGy)) return;
         }
 
-        if (placer.placePlant(lastGx, lastGy, plantToPlace)) {
+        if (autoPlaceInQueue()) return;
+
+        System.out.println("Khong dat duoc: San da day!");
+        if (selectedPacket != null) selectedPacket.cancelSelect();
+    }
+
+    private boolean autoPlaceInQueue() {
+        for (int y = 5; y >= 0; y--) { 
+            for (int x = 0; x < 9; x++) { 
+                if (placer.canPlace(x, y, plantToPlace)) {
+                    return executePlacement(x, y);
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean executePlacement(int x, int y) {
+        if (placer.placePlant(x, y, plantToPlace)) {
             if (sunDisplay != null) sunDisplay.removeSun(selectedPacket.sunCost);
+            
             selectedPacket.confirmPlace();
             
             PlayScene scene = (PlayScene) getWorld();
             if (scene != null) scene.checkAndCombine(plantToPlace);
-        } else {
-            selectedPacket.cancelSelect();
+            
+            return true;
         }
+        return false;
     }
 
     private void cleanup() {

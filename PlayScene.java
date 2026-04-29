@@ -174,20 +174,26 @@ public class PlayScene extends World {
         return false;
     }
 
-    public void checkAndCombine(Plant newPlant) {
+     public void checkAndCombine(Plant newPlant) {
         if (newPlant == null || newPlant.isMerging || newPlant.isTarget) return;
-        
+        if (!(newPlant instanceof Peashooter|| newPlant instanceof Repeater ||  newPlant instanceof GatlingPea || newPlant instanceof Cactus || 
+              newPlant instanceof Cactus2 || newPlant instanceof BonkChoy || newPlant instanceof BonkChoy2)) {
+            return; 
+        }
+    
         List<? extends Plant> plants = getObjects(newPlant.getClass());
         List<Plant> available = new ArrayList<>();
         for (Plant p : plants) {
             if (!p.isMerging && !p.isTarget) available.add(p);
         }
-
+    
         if (available.size() >= 3) {
+            Plant p1 = available.get(0);
+            Plant p2 = available.get(1);
             Plant p3 = available.get(2);
-            p3.isTarget = true;
-            available.get(0).setMergingTarget(p3);
-            available.get(1).setMergingTarget(p3);
+            p3.isTarget = true; 
+            p1.setMergingTarget(p3);
+            p2.setMergingTarget(p3);
         }
     }
 

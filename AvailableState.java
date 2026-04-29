@@ -1,12 +1,8 @@
 public class AvailableState implements IPacketState {
-
     @Override
     public void onEnter(SeedPacket packet) {
         packet.showBright();
-    }
-
-    @Override
-    public void tick(SeedPacket packet) {
+        packet.updateOverlay(0f);
     }
 
     @Override
@@ -17,11 +13,15 @@ public class AvailableState implements IPacketState {
     }
 
     @Override
+    public void onClick(SeedPacket packet) {
+        packet.setState(new SelectedState());
+    }
+
+    @Override
     public boolean canPurchase(SeedPacket packet) {
         return true;
     }
-    
+
     @Override
-    public void onClick(SeedPacket packet) {
-    }
+    public void tick(SeedPacket packet) {}
 }

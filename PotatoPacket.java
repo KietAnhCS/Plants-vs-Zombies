@@ -3,7 +3,7 @@ import greenfoot.*;
 public class PotatoPacket extends SeedPacket {
 
     public PotatoPacket() {
-        super(40000L, 125, "potatopacket");
+        super(40000L, 25, "potatopacket");
     }
 
     @Override

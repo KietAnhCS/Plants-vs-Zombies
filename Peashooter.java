@@ -10,16 +10,16 @@ public class Peashooter extends Plant {
     private long powerUpStartTime;
     private long lastFrame2 = System.nanoTime();
     private long deltaTime2;
-    private final long POWER_UP_DURATION = 3000L;
-    private final long BASE_SHOOT_DELAY = 1500L;
-    private long shootDelay = 1500L;
+    private final long POWER_UP_DURATION = PlantRegistry.POWER_UP_DURATION;
+    private final long BASE_SHOOT_DELAY = PlantRegistry.PEA_SHOOT_DELAY;
+    private long shootDelay = PlantRegistry.PEA_SHOOT_DELAY;
     private PlayScene cachedPlayScene;
     
     public Peashooter() {
-        maxHp = 60;
+        maxHp = PlantRegistry.PEA_HP;
         hp = maxHp;
-        shoot = importSprites("peashootershoot",3);
-        idle = importSprites("peashooter",9);
+        shoot = importSprites(PlantAssets.PEASHOOTER_SHOOT, 3);
+        idle = importSprites(PlantAssets.PEASHOOTER_IDLE, 9);
         setImage(idle[0]);
     }
     
@@ -32,16 +32,17 @@ public class Peashooter extends Plant {
     }
     
     @Override
-    public void hit (int dmg) {
+    public void hit(int dmg) {
         if (getWorld() != null && isLiving()) {
-            hitFlash(shootOnce ? shoot : idle, shootOnce ? "peashootershoot" : "peashooter");
+            hitFlash(shootOnce ? shoot : idle, shootOnce ? PlantAssets.PEASHOOTER_SHOOT : PlantAssets.PEASHOOTER_IDLE);
+            hp -= dmg;
         }
     }
     
     public void activatePlantFood() {
         this.isPoweredUp = true;
         this.powerUpStartTime = System.currentTimeMillis();
-        this.shootDelay = 300L;
+        this.shootDelay = PlantRegistry.POWER_UP_SHOOT_DELAY;
     }
     
     @Override
@@ -61,7 +62,6 @@ public class Peashooter extends Plant {
     }
     
     private void handleAction() {
-        
         if (!shooting && !isPoweredUp) {
             animate(idle, 300, true);
             lastFrame2 = System.nanoTime();
@@ -89,7 +89,7 @@ public class Peashooter extends Plant {
     private void executeShoot() {
         int myRow = getYPos();
         if (myRow != -1 && cachedPlayScene != null) {
-            AudioManager.playSound(80, false, "throw.mp3", "throw2.mp3");
+            AudioManager.playSound(80, false, PlantAssets.SOUND_THROW, PlantAssets.SOUND_THROW2);
             cachedPlayScene.addObject(new Pea(myRow), getX() + 25, getY() - 17);
         }
     }
@@ -103,6 +103,5 @@ public class Peashooter extends Plant {
 
         List<Zombie> rowZombies = cachedPlayScene.level.zombieRow.get(myRow);
         shooting = rowZombies.stream().anyMatch(z -> z.getWorld() != null && z.getX() > getX() && z.getX() <= cachedPlayScene.getWidth() + 10);
-        
     }
 }

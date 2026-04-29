@@ -1,6 +1,5 @@
 #BlueJ class context
 comment0.target=IPlantPlacer
-comment0.text=Abstraction\ \u0111\u1EC3\ DragController\ kh\u00F4ng\ ph\u1EE5\ thu\u1ED9c\ tr\u1EF1c\ ti\u1EBFp\ v\u00E0o\ GridManager
 comment1.params=worldX\ worldY
 comment1.target=int\ getGridX(int,\ int)
 comment2.params=worldX\ worldY

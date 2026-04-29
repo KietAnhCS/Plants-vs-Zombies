@@ -1,100 +1,63 @@
 import greenfoot.*;
 
-public class Brickhead extends Zombie
-{
+public class Brickhead extends Zombie {
+
+    public GreenfootImage[] wNormal, wD1, wD2, wBare, wArmless;
+    public GreenfootImage[] eNormal, eD1, eD2, eBare, eArmless;
     private boolean brick = true;
-    public GreenfootImage[] walk, armless, eat, armlesseat;
-    public GreenfootImage[] brickheadwalk, brickheadwalkd, brickheadwalkdd;
-    public GreenfootImage[] brickheadeat, brickheadeatd, brickheadeatdd;
-    
+
     public Brickhead() {
-        super(); 
-        walk = importSprites("zombiewalk", 7);
-        eat = importSprites("zombieeating", 7);
-        armlesseat = importSprites("armlesszombieeating", 7);
-        armless = importSprites("armlesszombie", 7);
-        brickheadwalk = importSprites("brickhead", 7);
-        brickheadwalkd = importSprites("brickheadd", 7);
-        brickheadwalkdd = importSprites("brickheaddd", 7);
-        brickheadeat = importSprites("brickheadeat", 7);
-        brickheadeatd = importSprites("brickheadeatd", 7);
-        brickheadeatdd = importSprites("brickheadeatdd", 7);
-        
+        super();
+        this.maxHp = ZombieRegistry.BRICK_HP;
+        this.hp = maxHp;
         this.walkSpeed = (Greenfoot.getRandomNumber(6) + 22) / 100.0;
-        
-        maxHp = 2000; 
-        hp = maxHp;
-        this.damage = 20;
+        this.damage = ZombieRegistry.BRICK_DAMAGE;
+        loadSprites();
+        this.currentState = new BrickheadState(this);
+    }
+
+    private void loadSprites() {
+        wNormal  = importSprites(ZombieAssets.BRICK_WALK, 7);
+        wD1      = importSprites(ZombieAssets.BRICK_WALK_D1, 7);
+        wD2      = importSprites(ZombieAssets.BRICK_WALK_D2, 7);
+        wBare    = importSprites(ZombieAssets.SHARED_WALK_BARE, 7);
+        wArmless = importSprites(ZombieAssets.SHARED_WALK_ARMLESS, 7);
+
+        eNormal  = importSprites(ZombieAssets.BRICK_EAT, 7);
+        eD1      = importSprites(ZombieAssets.BRICK_EAT_D1, 7);
+        eD2      = importSprites(ZombieAssets.BRICK_EAT_D2, 7);
+        eBare    = importSprites(ZombieAssets.SHARED_EAT_BARE, 7);
+        eArmless = importSprites(ZombieAssets.SHARED_EAT_ARMLESS, 7);
     }
 
     @Override
-    public void update() {
-        if (hp > 1500) {
-            handleAnimation(brickheadwalk, brickheadeat);
-        } 
-        else if (hp > 1000) {
-            handleAnimation(brickheadwalkd, brickheadeatd);
-        } 
-        else if (hp > 500) {
-            handleAnimation(brickheadwalkdd, brickheadeatdd);
-        } 
-        else {
-            if (brick) {
-                brick = false;
-                AudioManager.playSound(80, false, "shield_break.mp3"); 
-                if (getWorld() != null) getWorld().addObject(new Brick(), getX(), getY() - 25);
-            }
-
-            if (hp > 100) {
-                handleAnimation(walk, eat);
-            } 
-            else {
-                if (!fallen) {
-                    fallen = true;
-                    AudioManager.playSound(80, false, "limbs_pop.mp3");
-                    if (getWorld() != null) getWorld().addObject(new Arm(), getX() + 8, getY() + 20);
-                }
-                handleAnimation(armless, armlesseat);
-            }
+    protected void handleThresholds() {
+        if (hp <= ZombieRegistry.BRICK_BARE && brick) {
+            brick = false;
+            AudioManager.playSound(80, false, "limbs_pop.mp3");
+            if (getWorld() != null) getWorld().addObject(new Brick(), getX(), getY() - 25);
         }
-    }
-
-    private void handleAnimation(GreenfootImage[] walkAnim, GreenfootImage[] eatAnim) {
-        if (!isEating()) {
-            animate(walkAnim, 350, true);
-            move(-walkSpeed);
-        } else {
-            animate(eatAnim, 200, true);
-            playEating();
+        if (hp <= ZombieRegistry.BRICK_ARMLESS && !fallen) {
+            fallen = true;
+            AudioManager.playSound(80, false, "limbs_pop.mp3");
+            if (getWorld() != null) getWorld().addObject(new Arm(), getX() + 8, getY() + 20);
         }
     }
 
     @Override
     public void hit(int dmg) {
         if (!isAlive) return;
-
-        if (hp > 500) {
-            AudioManager.playSound(80, false, "plastichit.mp3", "plastichit2.mp3");
-        } else {
-            AudioManager.playSound(80, false, "splat.mp3", "splat2.mp3");
-        }
-
+        AudioManager.playSound(80, false, brick ? "shieldhit.mp3" : "splat.mp3",
+                                          brick ? "shieldhit2.mp3" : "splat2.mp3");
         if (isLiving()) {
-            if (hp > 1500) {
-                hitFlash(eating ? brickheadeat : brickheadwalk, eating ? "brickheadeat" : "brickhead");
-            } else if (hp > 1000) {
-                hitFlash(eating ? brickheadeatd : brickheadwalkd, eating ? "brickheadeatd" : "brickheadd");
-            } else if (hp > 500) {
-                hitFlash(eating ? brickheadeatdd : brickheadwalkdd, eating ? "brickheadeatdd" : "brickheaddd");
-            } else if (!fallen) {
-                hitFlash(eating ? eat : walk, eating ? "zombieeating" : "zombiewalk");
-            } else {
-                hitFlash(eating ? armlesseat : armless, eating ? "armlesszombieeating" : "armlesszombie");
-            }
+            if (hp > ZombieRegistry.BRICK_D1)        hitFlash(eating ? eNormal  : wNormal,  eating ? ZombieAssets.BRICK_EAT        : ZombieAssets.BRICK_WALK);
+            else if (hp > ZombieRegistry.BRICK_D2)   hitFlash(eating ? eD1      : wD1,      eating ? ZombieAssets.BRICK_EAT_D1     : ZombieAssets.BRICK_WALK_D1);
+            else if (hp > ZombieRegistry.BRICK_BARE) hitFlash(eating ? eD2      : wD2,      eating ? ZombieAssets.BRICK_EAT_D2     : ZombieAssets.BRICK_WALK_D2);
+            else if (!fallen)                        hitFlash(eating ? eBare    : wBare,    eating ? ZombieAssets.SHARED_EAT_BARE   : ZombieAssets.SHARED_WALK_BARE);
+            else                                     hitFlash(eating ? eArmless : wArmless, eating ? ZombieAssets.SHARED_EAT_ARMLESS : ZombieAssets.SHARED_WALK_ARMLESS);
         } else if (!finalDeath) {
-            hitFlash(eating ? headlesseating : headless, eating ? "headlesszombieeating" : "zombieheadless");
+            hitFlash(eating ? headlesseating : headless, eating ? ZombieAssets.SHARED_HEADLESS_EAT : ZombieAssets.SHARED_HEADLESS);
         }
-
-        super.hit(dmg); 
+        super.hit(dmg);
     }
 }

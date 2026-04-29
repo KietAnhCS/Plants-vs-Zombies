@@ -1,7 +1,0 @@
-#BlueJ class context
-comment0.target=Observer
-comment1.params=
-comment1.target=Observer()
-comment2.params=y
-comment2.target=int\ sampleMethod(int)
-numComments=3

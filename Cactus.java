@@ -6,21 +6,21 @@ public class Cactus extends Plant {
     private GreenfootImage[] shoot;
     private boolean shooting = false;
     private boolean isShootingAnimation = false;
-    private long shootDelay = 2400L;
+    private long shootDelay = PlantRegistry.CACTUS_SHOOT_DELAY;
     private long lastShootTime = System.currentTimeMillis();
 
     public Cactus() {
-        maxHp = 100;
+        maxHp = PlantRegistry.CACTUS_HP;
         hp = maxHp;
-        shoot = importSprites("cactusshoot", 2);
-        idle = importSprites("cactus", 4);
+        shoot = importSprites(PlantAssets.CACTUS_SHOOT, 2);
+        idle = importSprites(PlantAssets.CACTUS_IDLE, 4);
         setImage(idle[0]);
     }
 
     @Override
     public void hit(int dmg) {
         if (isLiving()) {
-            hitFlash(isShootingAnimation ? shoot : idle, isShootingAnimation ? "cactusshoot" : "cactus");
+            hitFlash(isShootingAnimation ? shoot : idle, isShootingAnimation ? PlantAssets.CACTUS_SHOOT : PlantAssets.CACTUS_IDLE);
             hp -= dmg;
         }
     }
@@ -63,7 +63,7 @@ public class Cactus extends Plant {
 
     private void fireNeedle() {
         if (getWorld() != null) {
-            AudioManager.playSound(80, false, "throw.mp3");
+            AudioManager.playSound(80, false, PlantAssets.SOUND_THROW);
             getWorld().addObject(new Needle(getYPos()), getX() + 30, getY() - 8);
         }
     }

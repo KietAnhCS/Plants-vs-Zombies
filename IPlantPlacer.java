@@ -1,4 +1,4 @@
-/** Abstraction để DragController không phụ thuộc trực tiếp vào GridManager */
+
 public interface IPlantPlacer {
     int  getGridX(int worldX, int worldY);
     int  getGridY(int worldX, int worldY);

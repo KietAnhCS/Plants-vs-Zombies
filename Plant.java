@@ -12,7 +12,9 @@ class Merger {
     }
 
     public boolean update() {
-        if (target == null || target.getWorld() == null || mover == null || mover.getWorld() == null) return true;
+        if (mover == null || mover.getWorld() == null || target == null || target.getWorld() == null) {
+            return true;
+        }
 
         int dx = target.getX() - mover.getX();
         int dy = target.getY() - mover.getY();
@@ -34,17 +36,18 @@ class Merger {
 
 public abstract class Plant extends SpriteAnimator {
     public int cost, maxHp, hp, damage;
+    public String name = "";
     public boolean isAlive = true, opaque = false;
     public PlayScene playScene;
 
-    private boolean isDragging = false;
-    private int startGridX, startGridY;
-    private int currentGridX, currentGridY;
+    protected int startGridX, startGridY;
+    protected int currentGridX, currentGridY;
 
     private Merger merger;
     public Plant targetPlant;
-    public boolean isMerging = false;
-    public boolean isTarget = false;
+    protected boolean isDragging = false; 
+    protected boolean isMerging = false;
+    protected boolean isTarget = false;
 
     @Override
     public void addedToWorld(World world) {
@@ -60,7 +63,9 @@ public abstract class Plant extends SpriteAnimator {
         playScene = (PlayScene) getWorld();
 
         if (isMerging) {
-            if (merger != null && merger.update()) onMergeReached();
+            if (merger != null && merger.update()) {
+                onMergeReached();
+            }
             return;
         }
 
@@ -74,7 +79,15 @@ public abstract class Plant extends SpriteAnimator {
         handleMouse();
 
         if (getWorld() != null && isLiving()) {
-            if (!isDragging && currentGridY < 5) update();
+            if (!isDragging) {
+                String className = getClass().getSimpleName().toUpperCase();
+                boolean isPotato = className.contains("POTATOMINE");
+                boolean isOnBench = (currentGridY == 5);
+
+                if (!(isPotato && isOnBench)) {
+                    update();
+                }
+            }
             if (getImage() != null) {
                 getImage().setTransparency((isDragging || opaque) ? 125 : 255);
             }
@@ -82,7 +95,7 @@ public abstract class Plant extends SpriteAnimator {
     }
 
     public void setMergingTarget(Plant target) {
-        if (target == null || target == this) return;
+        if (target == null || target == this || getWorld() == null) return;
         if (playScene != null && playScene.GridManager != null) {
             playScene.GridManager.Board[this.currentGridY][this.currentGridX] = null;
         }
@@ -92,13 +105,15 @@ public abstract class Plant extends SpriteAnimator {
     }
 
     private void onMergeReached() {
-        if (getWorld() == null) return;
+        World world = getWorld();
+        if (world == null) return;
+        
         Plant target = this.targetPlant;
-        playScene.removeObject(this);
+        world.removeObject(this);
 
         if (target == null || target.getWorld() == null) return;
 
-        List<Plant> allPlants = playScene.getObjects(Plant.class);
+        List<Plant> allPlants = world.getObjects(Plant.class);
         boolean stillWaiting = false;
         for (Plant p : allPlants) {
             if (p != this && p.isMerging && p.targetPlant == target) {
@@ -114,27 +129,35 @@ public abstract class Plant extends SpriteAnimator {
             int ty = target.getY();
 
             Plant upgraded = UpgradeManager.getUpgradeResult(target);
-            playScene.removeObject(target);
-            playScene.GridManager.removePlant(gx, gy);
-
-            if (upgraded != null) {
-                playScene.addObject(upgraded, tx, ty);
-                playScene.GridManager.Board[gy][gx] = upgraded;
-                playScene.checkAndCombine(upgraded);
+            
+            if (target.getWorld() != null) {
+                world.removeObject(target);
+            }
+            
+            if (playScene != null && playScene.GridManager != null) {
+                playScene.GridManager.removePlant(gx, gy);
+                if (upgraded != null) {
+                    world.addObject(upgraded, tx, ty);
+                    playScene.GridManager.Board[gy][gx] = upgraded;
+                    playScene.checkAndCombine(upgraded);
+                }
             }
         }
     }
 
     private void handleDeath() {
-        if (getWorld() == null) return;
+        World world = getWorld();
+        if (world == null) return;
+        
         AudioManager.playSound(80, false, "gulp.mp3");
         if (playScene != null && playScene.GridManager != null) {
             playScene.GridManager.removePlant(currentGridX, currentGridY);
         }
-        getWorld().removeObject(this);
+        world.removeObject(this);
     }
 
     private void handleMouse() {
+        if (getWorld() == null) return;
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse == null) return;
 
@@ -152,15 +175,17 @@ public abstract class Plant extends SpriteAnimator {
 
             if (Greenfoot.mouseClicked(null)) {
                 isDragging = false;
-                int nx = playScene.GridManager.getGridX(getX(), getY());
-                int ny = playScene.GridManager.getGridY(getX(), getY());
+                if (playScene != null && playScene.GridManager != null) {
+                    int nx = playScene.GridManager.getGridX(getX(), getY());
+                    int ny = playScene.GridManager.getGridY(getX(), getY());
 
-                if (nx >= 0 && ny >= 0 && playScene.GridManager.placePlant(nx, ny, this)) {
-                    currentGridX = nx;
-                    currentGridY = ny;
-                    playScene.checkAndCombine(this);
-                } else {
-                    returnToOldPosition();
+                    if (nx >= 0 && ny >= 0 && playScene.GridManager.placePlant(nx, ny, this)) {
+                        currentGridX = nx;
+                        currentGridY = ny;
+                        playScene.checkAndCombine(this);
+                    } else {
+                        returnToOldPosition();
+                    }
                 }
             }
         }

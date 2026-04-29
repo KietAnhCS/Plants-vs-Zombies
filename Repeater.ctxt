@@ -6,4 +6,6 @@ comment2.params=dmg
 comment2.target=void\ hit(int)
 comment3.params=
 comment3.target=void\ update()
-numComments=4
+comment4.params=world
+comment4.target=void\ checkZombieInRow(PlayScene)
+numComments=5

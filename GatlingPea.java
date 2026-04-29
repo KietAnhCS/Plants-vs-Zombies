@@ -7,21 +7,21 @@ public class GatlingPea extends Plant
     private int shootCount = 0;
     private boolean resetFrame = false;
     private boolean shooting = false;
-    private long shootDelay = 800L;
+    private long shootDelay = PlantRegistry.GATLING_SHOOT_DELAY;
     private long lastFrame2 = System.nanoTime();
     private long deltaTime2;
     
     public GatlingPea() {
-        maxHp = 60;
+        maxHp = PlantRegistry.GATLING_HP;
         hp = maxHp;
-        idle = importSprites("GatlingPea", 19);
-        shoot = importSprites("GatlingPea", 19);
+        idle = importSprites(PlantAssets.GATLING_PEA, 19);
+        shoot = importSprites(PlantAssets.GATLING_PEA, 19);
         setImage(idle[0]);
     }
    
     public void hit(int dmg) {
         if (isLiving()) {
-            hitFlash(shooting ? shoot : idle, "GatlingPea");
+            hitFlash(shooting ? shoot : idle, PlantAssets.GATLING_PEA);
             hp -= dmg;
         }
     }
@@ -45,7 +45,7 @@ public class GatlingPea extends Plant
                 shootCount = 0;
                 resetFrame = false;
             } else {
-                if (shootCount >= 7) {
+                if (shootCount >= PlantRegistry.GATLING_BURST_COUNT) {
                     lastFrame2 = currentFrame;
                     return;
                 }
@@ -56,7 +56,7 @@ public class GatlingPea extends Plant
                 }
                 
                 if (frame >= 4) {
-                    AudioManager.playSound(80, false, "throw.mp3", "throw2.mp3");
+                    AudioManager.playSound(80, false, PlantAssets.SOUND_THROW, PlantAssets.SOUND_THROW2);
                     world.addObject(new Pea(getYPos()), getX() + 25, getY() - 17);
                     frame = 0; 
                     shootCount++;

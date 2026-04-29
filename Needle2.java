@@ -5,13 +5,13 @@ import java.util.Set;
 
 public class Needle2 extends Projectile {
     private Set<Zombie> hitZombies = new HashSet<>();
-    private int pierceDamage = 10;
+    private int pierceDamage = PlantRegistry.NEEDLE_PIERCE_DAMAGE;
     private int targetY;
     private int speed = 6;
     private int verticalStep;
 
     public Needle2(int yPos, int offset) {
-        super("needle", 2, yPos, 10, 6); 
+        super("needle", 2, yPos, PlantRegistry.NEEDLE_PIERCE_DAMAGE, 6); 
         this.targetY = yPos + offset;
         this.verticalStep = (offset > 0) ? 2 : -2; 
         if (offset == 0) this.verticalStep = 0; 

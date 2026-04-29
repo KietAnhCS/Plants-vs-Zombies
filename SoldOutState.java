@@ -1,14 +1,12 @@
 public class SoldOutState implements IPacketState {
-
     @Override
     public void onEnter(SeedPacket packet) {
-        packet.showDark(130);
-        
-        packet.updateOverlay(0f);
+        packet.showDark(100); 
+        packet.updateOverlay(1f); 
     }
 
     @Override
-    public void tick(SeedPacket packet) {
+    public void onClick(SeedPacket packet) {
     }
 
     @Override
@@ -19,8 +17,7 @@ public class SoldOutState implements IPacketState {
     public boolean canPurchase(SeedPacket packet) {
         return false;
     }
-    
+
     @Override
-    public void onClick(SeedPacket packet) {
-    }
+    public void tick(SeedPacket packet) {}
 }

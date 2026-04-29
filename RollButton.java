@@ -23,7 +23,9 @@ public class RollButton extends Actor {
         if (sm.hasEnough(ROLL_COST)) {
             RupButton.RarityEntry[] currentPool = world.rupbutton.getPoolForRoll();
             int totalWeight = 0;
-            for (RupButton.RarityEntry entry : currentPool) totalWeight += entry.weight;
+            for (RupButton.RarityEntry entry : currentPool) {
+                if (entry != null) totalWeight += entry.weight;
+            }
 
             if (totalWeight <= 0) return;
 
@@ -32,19 +34,29 @@ public class RollButton extends Actor {
 
             SeedPacket[] newBank = new SeedPacket[3];
             for (int i = 0; i < 3; i++) {
-                int randomNumber = Greenfoot.getRandomNumber(totalWeight);
-                int cursor = 0;
-                for (RupButton.RarityEntry entry : currentPool) {
-                    cursor += entry.weight;
-                    if (randomNumber < cursor) {
-                        try {
-                            newBank[i] = (SeedPacket) entry.packetClass.getDeclaredConstructor().newInstance();
-                        } catch (Exception e) { e.printStackTrace(); }
-                        break;
-                    }
-                }
+                newBank[i] = generateValidPacket(currentPool, totalWeight);
             }
             world.seedbank.updateBank(newBank);
+        }
+    }
+
+    private SeedPacket generateValidPacket(RupButton.RarityEntry[] pool, int totalWeight) {
+        while (true) {
+            int randomNumber = Greenfoot.getRandomNumber(totalWeight);
+            int cursor = 0;
+            for (RupButton.RarityEntry entry : pool) {
+                if (entry == null) continue;
+                cursor += entry.weight;
+                if (randomNumber < cursor) {
+                    try {
+                        SeedPacket packet = (SeedPacket) entry.packetClass.getDeclaredConstructor().newInstance();
+                        if (packet != null) return packet;
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+            }
         }
     }
 

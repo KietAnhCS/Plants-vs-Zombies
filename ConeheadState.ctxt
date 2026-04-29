@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=ConeheadState
+comment1.params=zombie
+comment1.target=ConeheadState(Zombie)
+comment2.params=
+comment2.target=greenfoot.GreenfootImage[]\ getAnimation()
+comment3.params=
+comment3.target=greenfoot.GreenfootImage[]\ getWalkAnim()
+comment4.params=
+comment4.target=greenfoot.GreenfootImage[]\ getEatAnim()
+numComments=5

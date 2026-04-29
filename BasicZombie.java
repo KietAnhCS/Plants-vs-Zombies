@@ -1,70 +1,46 @@
 import greenfoot.*;
 
-public class BasicZombie extends Zombie
-{
-    public GreenfootImage[] idle;
-    public GreenfootImage[] walk;
-    public GreenfootImage[] armless;
-    public GreenfootImage[] eat;
-    public GreenfootImage[] armlesseat;
-    
+public class BasicZombie extends Zombie {
+
+    public GreenfootImage[] wNormal, wArmless;
+    public GreenfootImage[] eNormal, eArmless;
+
     public BasicZombie() {
-        super(); 
-        
-        walk = importSprites("zombiewalk", 7);
-        eat = importSprites("zombieeating", 7);
-        armlesseat = importSprites("armlesszombieeating", 7);
-        armless = importSprites("armlesszombie", 7);
-        
+        super();
+        this.maxHp = ZombieRegistry.BASIC_HP;
+        this.hp = maxHp;
         this.walkSpeed = (Greenfoot.getRandomNumber(6) + 22) / 100.0;
-        
-        maxHp = 150;
-        hp = maxHp;
-        this.damage = 5; 
+        this.damage = ZombieRegistry.BASIC_DAMAGE;
+        loadSprites();
+        this.currentState = new BasicZombieState(this);
+    }
+
+    private void loadSprites() {
+        wNormal  = importSprites(ZombieAssets.BASIC_WALK, 7);
+        wArmless = importSprites(ZombieAssets.BASIC_WALK_ARMLESS, 7);
+        eNormal  = importSprites(ZombieAssets.BASIC_EAT, 7);
+        eArmless = importSprites(ZombieAssets.BASIC_EAT_ARMLESS, 7);
     }
 
     @Override
-    public void update() {
-        if (hp > 50) {
-            handleMovement(walk, eat);
-        } else {
-            if (!fallen) {
-                fallen = true;
-                AudioManager.playSound(80, false, "limbs_pop.mp3");
-                if (getWorld() != null) {
-                    getWorld().addObject(new Arm(), getX() + 8, getY() + 20);
-                }
-            }
-            handleMovement(armless, armlesseat);
+    protected void handleThresholds() {
+        if (hp <= ZombieRegistry.BASIC_ARMLESS && !fallen) {
+            fallen = true;
+            AudioManager.playSound(80, false, "limbs_pop.mp3");
+            if (getWorld() != null) getWorld().addObject(new Arm(), getX() + 8, getY() + 20);
         }
     }
-    
-    private void handleMovement(GreenfootImage[] walkAnim, GreenfootImage[] eatAnim) {
-        if (!isEating()) {
-            animate(walkAnim, 350, true);   
-            move(-walkSpeed);
-        } else {
-            animate(eatAnim, 200, true);
-            playEating(); 
-        }
-    }
-   
+
     @Override
     public void hit(int dmg) {
         if (!isAlive) return;
-        
-        AudioManager.playSound(80, false, "splat.mp3", "splat2.mp3", "splat3.mp3");
-        
+        AudioManager.playSound(80, false, "splat.mp3", "splat2.mp3");
         if (isLiving()) {
-            if (!fallen) {
-                hitFlash(eating ? eat : walk, eating ? "zombieeating" : "zombiewalk");
-            } else {
-                hitFlash(eating ? armlesseat : armless, eating ? "armlesszombieeating" : "armlesszombie");
-            }
+            if (!fallen) hitFlash(eating ? eNormal  : wNormal,  eating ? ZombieAssets.BASIC_EAT        : ZombieAssets.BASIC_WALK);
+            else         hitFlash(eating ? eArmless : wArmless, eating ? ZombieAssets.BASIC_EAT_ARMLESS : ZombieAssets.BASIC_WALK_ARMLESS);
         } else if (!finalDeath) {
-            hitFlash(eating ? headlesseating : headless, eating ? "headlesszombieeating" : "zombieheadless");
+            hitFlash(eating ? headlesseating : headless, eating ? ZombieAssets.SHARED_HEADLESS_EAT : ZombieAssets.SHARED_HEADLESS);
         }
-        
-        super.hit(dmg); 
+        super.hit(dmg);
     }
 }

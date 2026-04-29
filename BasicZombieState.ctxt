@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=BasicZombieState
+comment1.params=zombie
+comment1.target=BasicZombieState(Zombie)
+comment2.params=
+comment2.target=greenfoot.GreenfootImage[]\ getAnimation()
+numComments=3

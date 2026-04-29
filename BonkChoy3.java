@@ -8,12 +8,12 @@ public class BonkChoy3 extends Plant {
     private long lastAttackTime = System.currentTimeMillis(), lastFrameTime = 0;
 
     public BonkChoy3() {
-        maxHp = 1200; 
+        maxHp = PlantRegistry.BONK3_HP;
         hp = maxHp;
         
-        kRight = loadResized("bonkchoyknockoutone", 15);
-        idle = loadResized("bonkchoyidle_three", 23);
-        pRight = loadResized("bonkchoyattackone", 10);
+        kRight = loadResized(PlantAssets.BONKCHOY_KO, 15);
+        idle = loadResized(PlantAssets.BONKCHOY_IDLE, 23);
+        pRight = loadResized(PlantAssets.BONKCHOY_ATTACK, 10);
         
         if (idle != null && idle.length > 0) {
             setImage(idle[0]);
@@ -21,22 +21,12 @@ public class BonkChoy3 extends Plant {
     }
 
     private GreenfootImage[] loadResized(String prefix, int count) {
-        
         GreenfootImage[] imgs = importSprites(prefix, count);
-        
         for (GreenfootImage img : imgs) {
             if (img != null) {
-                
-                int oldWidth = img.getWidth();
-                int oldHeight = img.getHeight();
-                
-                int newWidth = (int)(oldWidth * 0.45);
-                int newHeight = (int)(oldHeight * 0.45);
-                
-                if (newWidth <= 0) newWidth = 1;
-                if (newHeight <= 0) newHeight = 1;
-                
-                img.scale(newWidth, newHeight);
+                int newWidth = (int)(img.getWidth() * 0.45);
+                int newHeight = (int)(img.getHeight() * 0.45);
+                img.scale(Math.max(1, newWidth), Math.max(1, newHeight));
             }
         }
         return imgs;
@@ -45,7 +35,6 @@ public class BonkChoy3 extends Plant {
     @Override
     public void addedToWorld(World world) {
         super.addedToWorld(world); 
-        
         world.addObject(new HealthBar(this, 50), getX(), getY());
     }
     
@@ -53,7 +42,6 @@ public class BonkChoy3 extends Plant {
     public void update() {
         if (getWorld() == null) return;
         if (!adjusted) { 
-            
             setLocation(getX(), getY() - 15); 
             adjusted = true; 
         } 
@@ -61,7 +49,6 @@ public class BonkChoy3 extends Plant {
     }
 
     private void handleNormalCombat() {
-        
         List<Zombie> targets = getIntersectingObjects(Zombie.class); 
         boolean isKO = (punchCount >= 3);
         boolean beingEaten = (hp < maxHp);
@@ -70,12 +57,12 @@ public class BonkChoy3 extends Plant {
             playLoop(isKO ? kRight : pRight, 20);
             int dmg;
             if (beingEaten) {
-                dmg = isKO ? 20 : 20;
+                dmg = isKO ? PlantRegistry.BONK3_DMG_KO : PlantRegistry.BONK3_DMG_KO - 10;
             } else {
-                dmg = isKO ? 30 : 25;
+                dmg = isKO ? PlantRegistry.BONK3_DMG_KO : PlantRegistry.BONK3_DMG_NORMAL;
             }
             
-            applyDmg(targets, 200, dmg, isKO);
+            applyDmg(targets, PlantRegistry.BONK3_ATTACK_DELAY, dmg, isKO);
         } else {
             playLoop(idle, 40);
             if (System.currentTimeMillis() - lastAttackTime > 1000) {
@@ -91,12 +78,11 @@ public class BonkChoy3 extends Plant {
             }
             if (ko) {
                 punchCount = 0;
-                this.hp += (int)(maxHp * 0.35);
-                if (this.hp > maxHp) this.hp = maxHp;
+                this.hp = Math.min(maxHp, this.hp + (int)(maxHp * 0.35));
             } else {
                 punchCount++;
             }
-            AudioManager.playSound(80, false, "bonk.mp3");
+            AudioManager.playSound(80, false, PlantAssets.SOUND_BONK);
             lastAttackTime = System.currentTimeMillis();
         }
     }
@@ -109,5 +95,4 @@ public class BonkChoy3 extends Plant {
             lastFrameTime = System.currentTimeMillis();
         }
     }
-
 }
