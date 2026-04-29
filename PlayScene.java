@@ -166,17 +166,20 @@ public class PlayScene extends World {
 
     private void handleWinLoss() {
         if (!loseOnce && hasLost()) {
-            stopAllMusic();
-            
-            AudioManager.playSound(80,false,"losemusic.mp3");
-            
-            addObject(new DelayAudio(new GreenfootSound("scream.mp3"), 70, false, 4000L), 0, 0);
             loseOnce = true;
-            Greenfoot.delay(250);
+            stopAllMusic();
+            AudioManager.playSound(80, false, "losemusic.mp3");
+            
+            addObject(new DelayAudio("scream.mp3", 70, false, 4000L), 0, 0);
+            
             addObject(new Transition(false, new ResultScreen(restartWorld), "gameover.png", 5), 365, 215);
+            
         } else if (!winOnce && hasWon()) {
             winOnce = true;
             finishLevel();
+            
+            AudioManager.playSound("winmusic.mp3");
+            
             addObject(winPlant, Greenfoot.getRandomNumber(266) + 400, 215);
         }
     }
