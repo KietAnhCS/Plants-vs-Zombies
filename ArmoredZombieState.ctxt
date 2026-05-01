@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=ArmoredZombieState
+comment1.params=zombie\ thresholds\ walkAnims\ eatAnims
+comment1.target=ArmoredZombieState(Zombie,\ int[],\ greenfoot.GreenfootImage[][],\ greenfoot.GreenfootImage[][])
+comment2.params=
+comment2.target=greenfoot.GreenfootImage[]\ getAnimation()
+comment3.params=animSet
+comment3.target=greenfoot.GreenfootImage[]\ getAnim(greenfoot.GreenfootImage[][])
+numComments=4

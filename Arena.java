@@ -13,7 +13,7 @@ public class Arena extends World {
     public int location = 0;
     private boolean daveTalking = true;
     
-    private GreenfootImage backgroundMap = new GreenfootImage("maptft2.png");
+    private GreenfootImage backgroundMap = new GreenfootImage("maptft1.png");
     private GifImage daveGif = new GifImage("Dave3.gif");
 
     public String[][][] levelData = {

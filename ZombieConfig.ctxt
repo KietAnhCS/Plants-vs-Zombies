@@ -1,0 +1,5 @@
+#BlueJ class context
+comment0.target=ZombieConfig
+comment1.params=maxHp\ damage\ thresholds\ walkKeys\ eatKeys
+comment1.target=ZombieConfig(int,\ int,\ int[],\ SpriteKey[],\ SpriteKey[])
+numComments=2

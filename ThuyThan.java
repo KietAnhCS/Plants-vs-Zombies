@@ -1,80 +1,60 @@
 import greenfoot.*;
 import java.util.List;
 
-public class ThuyThan extends Actor {
-    private int targetX, targetY;
-    private boolean isMoving = false;
-    private int speed = 10; 
-    private int pickupRange = 80; 
+public class ThuyThan extends PhysicsBody {
+    private static final int SPEED        = 10;
+    private static final int PICKUP_RANGE = 80;
 
-    private GreenfootImage imageRight;
-    private GreenfootImage imageLeft;
+    private final GreenfootImage imageRight;
+    private final GreenfootImage imageLeft;
+
+    private int     targetX, targetY;
+    private boolean isMoving = false;
 
     public ThuyThan() {
         imageRight = new GreenfootImage("thuythan.png");
         imageRight.scale(80, 80);
-        
-        imageLeft = new GreenfootImage(imageRight);
+        imageLeft  = new GreenfootImage(imageRight);
         imageLeft.mirrorHorizontally();
-        
         setImage(imageRight);
     }
 
+    @Override
     public void act() {
         handleRightClick();
         moveToTarget();
-        autoCollectObjects(); 
+        autoCollect();
     }
 
     private void handleRightClick() {
         MouseInfo mouse = Greenfoot.getMouseInfo();
-        if (mouse != null && Greenfoot.mousePressed(null) && mouse.getButton() == 3) {
-            targetX = mouse.getX();
-            targetY = mouse.getY();
-            isMoving = true;
-            
-            if (targetX < getX()) {
-                setImage(imageLeft);
-            } else {
-                setImage(imageRight);
-            }
-        }
+        if (mouse == null || !Greenfoot.mousePressed(null) || mouse.getButton() != 3) return;
+        targetX  = mouse.getX();
+        targetY  = mouse.getY();
+        isMoving = true;
+        setImage(targetX < getX() ? imageLeft : imageRight);
     }
 
     private void moveToTarget() {
-        if (isMoving) {
-            int curX = getX();
-            int curY = getY();
-            double distance = Math.hypot(targetX - curX, targetY - curY);
-
-            if (distance > speed) {
-                double dx = (targetX - curX) / distance;
-                double dy = (targetY - curY) / distance;
-                
-                int nextX = curX + (int)(dx * speed);
-                int nextY = curY + (int)(dy * speed);
-                
-                setLocation(nextX, nextY);
-            } else {
-                setLocation(targetX, targetY);
-                isMoving = false;
-            }
+        if (!isMoving) return;
+        double distance = Math.hypot(targetX - getX(), targetY - getY());
+        if (distance > SPEED) {
+            setLocation(
+                getX() + (targetX - getX()) / distance * SPEED,
+                getY() + (targetY - getY()) / distance * SPEED
+            );
+        } else {
+            setLocation(targetX, targetY);
+            isMoving = false;
         }
     }
 
-    private void autoCollectObjects() {
-        List<Sun> suns = getObjectsInRange(pickupRange, Sun.class);
-        for (Sun s : suns) {
-            if (s.getWorld() != null) {
-                s.collect(); 
-            }
+    private void autoCollect() {
+        for (Sun s : getObjectsInRange(PICKUP_RANGE, Sun.class)) {
+            if (s.getWorld() != null) s.collect();
         }
-
-        List<FallingSun> fallingSuns = getObjectsInRange(pickupRange, FallingSun.class);
-        for (FallingSun fs : fallingSuns) {
-            if (fs.getWorld() != null) {
-                fs.collectSun();
-            }
+        for (FallingSun fs : getObjectsInRange(PICKUP_RANGE, FallingSun.class)) {
+            if (fs.getWorld() != null) fs.collectSun();
         }
     }
 }

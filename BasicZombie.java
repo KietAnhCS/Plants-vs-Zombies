@@ -1,25 +1,17 @@
 import greenfoot.*;
 
 public class BasicZombie extends Zombie {
-
     public GreenfootImage[] wNormal, wArmless;
     public GreenfootImage[] eNormal, eArmless;
 
     public BasicZombie() {
-        super();
-        this.maxHp = ZombieRegistry.BASIC_HP;
-        this.hp = maxHp;
+        super(ZombieConfig.BASIC);
         this.walkSpeed = (Greenfoot.getRandomNumber(6) + 22) / 100.0;
-        this.damage = ZombieRegistry.BASIC_DAMAGE;
-        loadSprites();
+        wNormal  = importSprites(SpriteKey.BASIC_WALK.path,         7);
+        wArmless = importSprites(SpriteKey.BASIC_WALK_ARMLESS.path, 7);
+        eNormal  = importSprites(SpriteKey.BASIC_EAT.path,          7);
+        eArmless = importSprites(SpriteKey.BASIC_EAT_ARMLESS.path,  7);
         this.currentState = new BasicZombieState(this);
-    }
-
-    private void loadSprites() {
-        wNormal  = importSprites(ZombieAssets.BASIC_WALK, 7);
-        wArmless = importSprites(ZombieAssets.BASIC_WALK_ARMLESS, 7);
-        eNormal  = importSprites(ZombieAssets.BASIC_EAT, 7);
-        eArmless = importSprites(ZombieAssets.BASIC_EAT_ARMLESS, 7);
     }
 
     @Override
@@ -36,10 +28,13 @@ public class BasicZombie extends Zombie {
         if (!isAlive) return;
         AudioManager.playSound(80, false, "splat.mp3", "splat2.mp3");
         if (isLiving()) {
-            if (!fallen) hitFlash(eating ? eNormal  : wNormal,  eating ? ZombieAssets.BASIC_EAT        : ZombieAssets.BASIC_WALK);
-            else         hitFlash(eating ? eArmless : wArmless, eating ? ZombieAssets.BASIC_EAT_ARMLESS : ZombieAssets.BASIC_WALK_ARMLESS);
+            if (!fallen) hitFlash(eating ? eNormal  : wNormal,
+                                  eating ? SpriteKey.BASIC_EAT.path        : SpriteKey.BASIC_WALK.path);
+            else         hitFlash(eating ? eArmless : wArmless,
+                                  eating ? SpriteKey.BASIC_EAT_ARMLESS.path : SpriteKey.BASIC_WALK_ARMLESS.path);
         } else if (!finalDeath) {
-            hitFlash(eating ? headlesseating : headless, eating ? ZombieAssets.SHARED_HEADLESS_EAT : ZombieAssets.SHARED_HEADLESS);
+            hitFlash(eating ? headlesseating : headless,
+                     eating ? SpriteKey.SHARED_HEADLESS_EAT.path : SpriteKey.SHARED_HEADLESS.path);
         }
         super.hit(dmg);
     }

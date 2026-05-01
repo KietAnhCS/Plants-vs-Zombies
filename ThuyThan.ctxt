@@ -9,5 +9,5 @@ comment3.target=void\ handleRightClick()
 comment4.params=
 comment4.target=void\ moveToTarget()
 comment5.params=
-comment5.target=void\ autoCollectObjects()
+comment5.target=void\ autoCollect()
 numComments=6

@@ -1,41 +1,33 @@
-import greenfoot.*;  
-public class ReadySetPlant extends SpriteAnimator
-{
-    public GreenfootImage[] ready;
-    public GreenfootImage[] set;
-    public GreenfootImage plant;
-    public boolean r = true;
-    public boolean s = true;
-    public boolean p = true;
-    public int counter;
+import greenfoot.*;
+
+public class ReadySetPlant extends SpriteAnimator {
+    private final GreenfootImage[] ready;
+    private final GreenfootImage[] set;
+    private final GreenfootImage   plant;
+
+    private enum Phase { READY, SET, PLANT }
+    private Phase phase   = Phase.READY;
+    private int   counter = 0;
+
     public ReadySetPlant() {
-        ready = importSprites("Ready__",11);
-        set = importSprites("Set__",12);
+        ready = importSprites("Ready__", 11);
+        set   = importSprites("Set__",   12);
         plant = new GreenfootImage("PLANT!.png");
     }
-    public void act()
-    {
-        if (frame <= 11 && counter < 60) {
-            if (r) {
-                animate(ready, 40, false);
-            } else if (s) {
-                animate(set, 40, false);
-            } else if (p) {
+
+    @Override
+    public void act() {
+        switch (phase) {
+            case READY:
+                if (animate(ready, 40, false)) phase = Phase.SET;
+                break;
+            case SET:
+                if (animate(set, 40, false)) phase = Phase.PLANT;
+                break;
+            case PLANT:
                 setImage(plant);
-                counter++;
-            }
-        } else {
-            if (r) {
-                r = false;
-                frame = 0;
-            } else if (s) {
-                s = false;
-                frame = 0;
-            } else if (p) {
-                p = false;
-                getWorld().removeObject(this);
-                return;
-            }
+                if (++counter >= 60) getWorld().removeObject(this);
+                break;
         }
     }
 }
