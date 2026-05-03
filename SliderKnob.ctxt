@@ -2,8 +2,12 @@
 comment0.target=SliderKnob
 comment1.params=bar\ barWidth
 comment1.target=SliderKnob(SliderBar,\ int)
-comment2.params=state
-comment2.target=void\ setDragging(boolean)
+comment2.params=
+comment2.target=void\ syncMuteState()
 comment3.params=
-comment3.target=void\ act()
-numComments=4
+comment3.target=void\ updateImage()
+comment4.params=state
+comment4.target=void\ setDragging(boolean)
+comment5.params=
+comment5.target=void\ act()
+numComments=6

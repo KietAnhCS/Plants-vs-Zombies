@@ -5,7 +5,7 @@ public class GridManager extends Actor implements IPlantPlacer {
     public Plant[][] Board = new Plant[6][9];
     public int currentRowCount = 6;
     public int playerLevel = 1;
-
+    private GreenfootImage iuLogo;
     private final int HEX_R = 40;
     private final int COLS = 9;
     private final int ROWS = 6;
@@ -19,6 +19,13 @@ public class GridManager extends Actor implements IPlantPlacer {
     public GridManager() {
         GreenfootImage img = new GreenfootImage(1111, 698);
         setImage(img);
+        try {
+            iuLogo = new GreenfootImage("iu_logo.png");
+        } catch (Exception e) {
+            iuLogo = new GreenfootImage(50, 50);
+            iuLogo.setColor(new Color(0, 51, 102));
+            iuLogo.fillOval(0, 0, 50, 50);
+        }
     }
 
     @Override
@@ -39,20 +46,15 @@ public class GridManager extends Actor implements IPlantPlacer {
         int boxHeight = 40;
         int startX = 20;
         int startY = 20;
-
         canvas.setColor(new Color(0, 0, 0, 160));
         canvas.fillRect(startX + 4, startY + 4, boxWidth, boxHeight);
-
         canvas.setColor(new Color(50, 50, 50));
         canvas.fillRect(startX, startY, boxWidth, boxHeight);
-
         canvas.setColor(Color.WHITE);
         canvas.drawRect(startX, startY, boxWidth, boxHeight);
         canvas.drawRect(startX + 1, startY + 1, boxWidth - 2, boxHeight - 2);
-
         Font pixelFont = new Font("Courier New", true, false, 20);
         canvas.setFont(pixelFont);
-
         canvas.setColor(Color.BLACK);
         canvas.drawString(status, startX + 12, startY + 28);
         canvas.setColor(new Color(255, 215, 0));
@@ -74,19 +76,33 @@ public class GridManager extends Actor implements IPlantPlacer {
         int gx = getGridX(mouse.getX(), mouse.getY());
         int gy = getGridY(mouse.getX(), mouse.getY());
         if (gx < 0 || gy < 0) return;
-        Plant plant = dragging instanceof Plant ? (Plant) dragging : dragging instanceof SeedPacket ? ((SeedPacket) dragging).getPlant() : null;
+        
+        Plant plant = dragging instanceof Plant ? (Plant) dragging : 
+                      dragging instanceof SeedPacket ? ((SeedPacket) dragging).getPlant() : null;
         if (plant == null) return;
+        
         boolean can = canPlace(gx, gy, plant);
         int cx = getXCoord(gx, gy);
         int cy = getYCoord(gx, gy);
-        canvas.setColor(new Color(100, 180, 255, 120));
+        int targetSize = 65;
+        canvas.setColor(new Color(0, 100, 255, 180)); 
         fillHexagon(canvas, cx, cy);
+        
+        canvas.setColor(new Color(0, 255, 255)); 
+        drawHexagon(canvas, cx, cy);
+        drawHexagon(canvas, cx + 1, cy); 
+        GreenfootImage logoCopy = new GreenfootImage(iuLogo);
+        logoCopy.scale(targetSize, targetSize);
+        logoCopy.setTransparency(60); 
+        canvas.drawImage(logoCopy, cx - (targetSize / 2), cy - (targetSize / 2));
+        
         if (!can) {
-            canvas.setColor(new Color(255, 0, 0, 120));
+            canvas.setColor(new Color(255, 0, 0, 150));
             fillHexagon(canvas, cx, cy);
         }
+        
         canvas.setColor(Color.WHITE);
-        drawHexagon(canvas, cx, cy);
+        canvas.drawOval(cx - (targetSize / 2), cy - (targetSize / 2), targetSize, targetSize);
     }
 
     private void drawHexagon(GreenfootImage canvas, int cx, int cy) {

@@ -7,22 +7,22 @@ public class ZombieConfig {
 
     public ZombieConfig(int maxHp, int damage, int[] thresholds,
                         SpriteKey[] walkKeys, SpriteKey[] eatKeys) {
-        this.maxHp     = maxHp;
-        this.damage    = damage;
+        this.maxHp      = maxHp;
+        this.damage     = damage;
         this.thresholds = thresholds;
-        this.walkKeys  = walkKeys;
-        this.eatKeys   = eatKeys;
+        this.walkKeys   = walkKeys;
+        this.eatKeys    = eatKeys;
     }
 
     public static final ZombieConfig BASIC = new ZombieConfig(
-        150, 5,
+        ZombieRegistry.BASIC_HP, ZombieRegistry.BASIC_DAMAGE,
         new int[] { ZombieRegistry.BASIC_ARMLESS },
         new SpriteKey[] { SpriteKey.BASIC_WALK,     SpriteKey.BASIC_WALK_ARMLESS },
         new SpriteKey[] { SpriteKey.BASIC_EAT,      SpriteKey.BASIC_EAT_ARMLESS  }
     );
 
     public static final ZombieConfig CONE = new ZombieConfig(
-        300, 20,
+        ZombieRegistry.CONE_HP, ZombieRegistry.CONE_DAMAGE,
         new int[] { ZombieRegistry.CONE_D1, ZombieRegistry.CONE_D2,
                     ZombieRegistry.CONE_BARE, ZombieRegistry.CONE_ARMLESS },
         new SpriteKey[] { SpriteKey.CONE_WALK,    SpriteKey.CONE_WALK_D1,
@@ -34,7 +34,7 @@ public class ZombieConfig {
     );
 
     public static final ZombieConfig BUCKET = new ZombieConfig(
-        400, 20,
+        ZombieRegistry.BUCKET_HP, ZombieRegistry.BUCKET_DAMAGE,
         new int[] { ZombieRegistry.BUCKET_D1, ZombieRegistry.BUCKET_D2,
                     ZombieRegistry.BUCKET_BARE, ZombieRegistry.BUCKET_ARMLESS },
         new SpriteKey[] { SpriteKey.BUCKET_WALK,    SpriteKey.BUCKET_WALK_D1,
@@ -46,7 +46,7 @@ public class ZombieConfig {
     );
 
     public static final ZombieConfig BRICK = new ZombieConfig(
-        500, 20,
+        ZombieRegistry.BRICK_HP, ZombieRegistry.BRICK_DAMAGE,
         new int[] { ZombieRegistry.BRICK_D1, ZombieRegistry.BRICK_D2,
                     ZombieRegistry.BRICK_BARE, ZombieRegistry.BRICK_ARMLESS },
         new SpriteKey[] { SpriteKey.BRICK_WALK,    SpriteKey.BRICK_WALK_D1,

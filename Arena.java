@@ -61,11 +61,10 @@ public class Arena extends World {
     }
 
     private void setupInitialZombies() {
-        addObject(new Basic(), 1176, 227);
-        addObject(new Basic(), 1195, 322);
-        addObject(new Basic(), 1129, 227);
-        addObject(new Basic(), 1162, 325);
-        addObject(new IdleCone(), 1183, 396);
+        addObject(new Basic(), 1171, 212);
+        addObject(new IdleBrickhead(), 1258, 220);
+        addObject(new IdleCone(), 1144, 249);
+        addObject(new IdleBucket(), 1199, 263);
     }
 
     public void act() {

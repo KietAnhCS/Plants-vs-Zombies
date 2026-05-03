@@ -44,7 +44,7 @@ public class PlantRegistry {
     public static final long POTATO_ARMING_TIME = 3000L;
     public static final int POTATO_EXPLOSION_RANGE = 30;
     
-    public static final int PEA_DAMAGE = 1200;
+    public static final int PEA_DAMAGE = 1120;
     public static final int FIRE_PEA_DAMAGE = 40;
     public static final int NEEDLE_DAMAGE = 10;
     public static final int NEEDLE_PIERCE_DAMAGE = 12;

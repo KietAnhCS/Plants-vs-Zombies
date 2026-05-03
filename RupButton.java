@@ -20,8 +20,7 @@ public class RupButton extends Actor {
         new RarityEntry(PeashooterPacket.class, 3),
         new RarityEntry(CactusPacket.class, 3),
         new RarityEntry(PotatoPacket.class, 7),
-        new RarityEntry(RepeaterPacket.class, 0),
-        new RarityEntry(GatlingPeaPacket.class, 0)
+        new RarityEntry(RepeaterPacket.class, 0)
     };
 
     public RupButton() {
@@ -66,7 +65,6 @@ public class RupButton extends Actor {
             }
             if (currentLevel == 5) {
                 if (c == RepeaterPacket.class) entry.weight = 7;
-                if (c == GatlingPeaPacket.class) entry.weight = 3;
                 if (c == PeashooterPacket.class) entry.weight = 0;
                 if (c == PotatoPacket.class) entry.weight = 2;
             }
