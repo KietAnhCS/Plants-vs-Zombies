@@ -10,24 +10,17 @@ public PopCap()
     {   
         super(1111, 705, 1, false); 
         setPaintOrder(EndTransition.class, Transition.class);
-        
-        // --- CODE SỬA LỖI LOGO EA ---
-        // 1. Tạo một background đen thui bao phủ toàn màn hình
         GreenfootImage bg = new GreenfootImage(1111, 705);
+       
         bg.setColor(Color.BLACK);
         bg.fill();
-        
-        // 2. Nạp ảnh Logo EA vào (LƯU Ý: Bạn nhớ đổi "tên_file_logo_cua_ban.png" thành tên thật nhé)
         GreenfootImage logo = new GreenfootImage("tên_file_logo_cua_ban.png"); 
-        
-        // 3. Tính toán vị trí chính giữa màn hình bằng công thức toán học
+
         int centerX = (1111 - logo.getWidth()) / 2;
         int centerY = (705 - logo.getHeight()) / 2;
         
-        // 4. In logo lên nền đen
         bg.drawImage(logo, centerX, centerY);
         
-        // 5. Ép Greenfoot sử dụng cái hình nền xịn xò này
         setBackground(bg);
     }
 
