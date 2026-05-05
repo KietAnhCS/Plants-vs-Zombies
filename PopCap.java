@@ -14,7 +14,7 @@ public PopCap()
        
         bg.setColor(Color.BLACK);
         bg.fill();
-        GreenfootImage logo = new GreenfootImage("tên_file_logo_cua_ban.png"); 
+        GreenfootImage logo = new GreenfootImage("ea.png"); 
 
         int centerX = (1111 - logo.getWidth()) / 2;
         int centerY = (705 - logo.getHeight()) / 2;
