@@ -56,4 +56,11 @@ public class ZombieConfig {
                           SpriteKey.BRICK_EAT_D2,  SpriteKey.SHARED_EAT_BARE,
                           SpriteKey.SHARED_EAT_ARMLESS }
     );
+    
+    public static final ZombieConfig PIANO = new ZombieConfig(
+        ZombieRegistry.PIANO_HP, ZombieRegistry.PIANO_DAMAGE,
+        new int[] { ZombieRegistry.PIANO_ARMLESS },
+        new SpriteKey[] { SpriteKey.PIANO_WALK,     SpriteKey.SHARED_WALK_ARMLESS },
+        new SpriteKey[] { SpriteKey.SHARED_EAT_BARE, SpriteKey.SHARED_EAT_ARMLESS }
+    );
 }

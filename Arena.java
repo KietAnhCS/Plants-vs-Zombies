@@ -17,7 +17,7 @@ public class Arena extends World {
     private GifImage daveGif = new GifImage("Dave3.gif");
 
     public String[][][] levelData = {
-        {{"NORMAL"}, {"BRICKHEAD"}, {"BUCKETHEAD"}, {"CONEHEAD"}, null}, 
+        {{"PIANO"}, {"PIANO"}, {"PIANO"}, {"PIANO"}, {"PIANO"}}, 
         {null, {"NORMAL"}, null, {"NORMAL"}, null}, 
         {{"NORMAL"}, {"NORMAL"}, {"NORMAL"}, null, null}, 
         {null, {"CONEHEAD"}, null, {"CONEHEAD"}, {"BUCKETHEAD"}, null},
@@ -61,7 +61,7 @@ public class Arena extends World {
     }
 
     private void setupInitialZombies() {
-        addObject(new Basic(), 1171, 212);
+        addObject(new IdlePiano(), 1171, 212);
         addObject(new IdleBrickhead(), 1258, 220);
         addObject(new IdleCone(), 1144, 249);
         addObject(new IdleBucket(), 1199, 263);

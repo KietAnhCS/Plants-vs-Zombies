@@ -189,8 +189,8 @@ public class PlayScene extends World {
     }
 
     private void prepareLawnmowers() {
-        int[][] coords = {{240, 180}, {226, 300}, {180, 430}};
-        for (int i = 0; i < 3; i++) {
+        int[][] coords = {{240, 110}, {236, 210}, {228, 310}, {220, 410},{180, 510}};
+        for (int i = 0; i < 5; i++) {
             addObject(new Lawnmower(), coords[i][0], coords[i][1]);
         }
     }

@@ -23,4 +23,9 @@ public class ZombieRegistry {
     public static final int BRICK_BARE     = 200;
     public static final int BRICK_ARMLESS  = 100;
     public static final int BRICK_DAMAGE   = 20;
+    
+    
+    public static final int PIANO_HP       = 200;
+    public static final int PIANO_ARMLESS  = 50;
+    public static final int PIANO_DAMAGE   = 20;
 }

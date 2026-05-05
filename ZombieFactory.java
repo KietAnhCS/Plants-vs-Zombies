@@ -6,7 +6,8 @@ public class ZombieFactory {
         NORMAL(BasicZombie::new),
         CONEHEAD(Conehead::new),
         BUCKETHEAD(Buckethead::new),
-        BRICKHEAD(Brickhead::new);
+        BRICKHEAD(Brickhead::new),
+        PIANO(PianoZombie::new);
 
         private final java.util.function.Supplier<Zombie> supplier;
 

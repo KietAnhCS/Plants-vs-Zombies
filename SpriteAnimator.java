@@ -2,17 +2,14 @@ import greenfoot.*;
 
 public class SpriteAnimator extends PhysicsBody {
     public long deltaTime;
-    public long lastFrame    = System.nanoTime();
+    public long lastFrame = System.nanoTime();
     public long currentFrame = System.nanoTime();
     public GreenfootImage[] previousSprites = null;
     public int frame = 0;
 
-    private GreenfootImage[] flashSprites   = null;
-    private String           flashFilename  = null;
-    private int              flashFrameA    = -1;
-    private int              flashFrameB    = -1;
-    private long             flashStartTime = -1;
-    private static final long FLASH_DURATION_MS = 500;
+    private GreenfootImage[] flashSprites = null;
+    private String flashFilename = null;
+    private int flashRemainingFrames = 0;
 
     public GreenfootImage[] importSprites(String filename, int frames) {
         GreenfootImage[] sprites = new GreenfootImage[frames];
@@ -37,13 +34,11 @@ public class SpriteAnimator extends PhysicsBody {
     }
 
     public boolean animate(GreenfootImage[] sprite, long duration, boolean loop) {
-        resolveFlash();
-
         currentFrame = System.nanoTime();
-        deltaTime    = (currentFrame - lastFrame) / 1_000_000;
+        deltaTime = (currentFrame - lastFrame) / 1_000_000;
 
-        if (!sprite.equals(previousSprites)) {
-            frame           = 0;
+        if (sprite != previousSprites) {
+            frame = 0;
             previousSprites = sprite;
             setImage(sprite[0]);
             lastFrame = currentFrame;
@@ -51,45 +46,44 @@ public class SpriteAnimator extends PhysicsBody {
         }
 
         if (deltaTime >= duration) {
-            lastFrame    = currentFrame;
-            int next     = frame + 1;
-            if (next < sprite.length) {
-                frame = next;
-                setImage(sprite[frame]);
-            } else if (loop) {
-                frame = 0;
-                setImage(sprite[frame]);
+            lastFrame = currentFrame;
+            frame++;
+
+            if (frame >= sprite.length) {
+                if (loop) frame = 0;
+                else return true;
+            }
+
+            resolveFlash();
+            
+            if (flashRemainingFrames > 0) {
+                try {
+                    setImage(new GreenfootImage("flash" + flashFilename + (frame + 1) + ".png"));
+                } catch (Exception e) {
+                    setImage(sprite[frame]);
+                }
+                flashRemainingFrames--;
             } else {
-                return true;
+                setImage(sprite[frame]);
             }
         }
         return false;
     }
 
     public void hitFlash(GreenfootImage[] sprite, String filename) {
-        flashSprites   = sprite;
-        flashFilename  = filename;
-        flashFrameA    = frame < sprite.length ? frame : 0;
-        flashFrameB    = (flashFrameA + 1) < sprite.length ? flashFrameA + 1 : 0;
-        flashStartTime = System.nanoTime();
-
-        sprite[flashFrameA] = new GreenfootImage("flash" + filename + (flashFrameA + 1) + ".png");
-        sprite[flashFrameB] = new GreenfootImage("flash" + filename + (flashFrameB + 1) + ".png");
-        setImage(sprite[flashFrameA]);
+        this.flashSprites = sprite;
+        this.flashFilename = filename;
+        this.flashRemainingFrames = 1; 
+        try {
+            setImage(new GreenfootImage("flash" + filename + (frame + 1) + ".png"));
+        } catch (Exception e) {}
     }
 
     private void resolveFlash() {
-        if (flashSprites == null) return;
-        if ((System.nanoTime() - flashStartTime) / 1_000_000 < FLASH_DURATION_MS) return;
-
-        flashSprites[flashFrameA] = new GreenfootImage(flashFilename + (flashFrameA + 1) + ".png");
-        flashSprites[flashFrameB] = new GreenfootImage(flashFilename + (flashFrameB + 1) + ".png");
-
-        flashSprites   = null;
-        flashFilename  = null;
-        flashFrameA    = -1;
-        flashFrameB    = -1;
-        flashStartTime = -1;
+        if (flashRemainingFrames <= 0) {
+            flashSprites = null;
+            flashFilename = null;
+        }
     }
 
     public void setFrame(int toFrame) {

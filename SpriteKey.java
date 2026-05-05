@@ -31,7 +31,9 @@ public enum SpriteKey {
     SHARED_EAT_ARMLESS("armlesszombieeating"),
     SHARED_HEADLESS("zombieheadless"),
     SHARED_HEADLESS_EAT("headlesszombieeating"),
-    SHARED_FALL("zombiefall");
+    SHARED_FALL("zombiefall"),
+    
+    PIANO_WALK("Piano_Playing");
 
     public final String path;
 
