@@ -1,16 +1,18 @@
 import greenfoot.*;
 
 public class Repeater extends Plant {
-    private static final int   SHOTS_PER_CYCLE = 2;
+
+    private static final PlantType TYPE           = PlantType.REPEATER;
+    private static final int       SHOTS_PER_CYCLE = 2;
+
     private GreenfootImage[] idle;
     private GreenfootImage[] shoot;
-    private boolean shooting    = false;
-    private boolean inShootAnim = false;
-    private int     shootCount  = 0;
-    private long    lastShot    = System.nanoTime();
+    private PlantState state      = PlantState.IDLE;
+    private int        shootCount = 0;
+    private long       lastShot   = System.nanoTime();
 
     public Repeater() {
-        maxHp = PlantRegistry.REPEATER_HP;
+        maxHp = TYPE.hp;
         hp    = maxHp;
         idle  = importSprites(PlantAssets.REPEATER_IDLE,  7);
         shoot = importSprites(PlantAssets.REPEATER_SHOOT, 3);
@@ -19,8 +21,10 @@ public class Repeater extends Plant {
     @Override
     public void hit(int dmg) {
         if (!isLiving()) return;
-        hitFlash(inShootAnim ? shoot : idle,
-                 inShootAnim ? PlantAssets.REPEATER_SHOOT : PlantAssets.REPEATER_IDLE);
+        hitFlash(
+            state == PlantState.SHOOTING ? shoot : idle,
+            state == PlantState.SHOOTING ? PlantAssets.REPEATER_SHOOT : PlantAssets.REPEATER_IDLE
+        );
         hp -= dmg;
     }
 
@@ -30,20 +34,18 @@ public class Repeater extends Plant {
         PlayScene world = (PlayScene) getWorld();
         checkZombieInRow(world);
 
-        if (!shooting) {
-            inShootAnim = false;
+        if (state == PlantState.IDLE) {
             animate(idle, 225, true);
             return;
         }
 
         long elapsed = (System.nanoTime() - lastShot) / 1_000_000;
-        if (elapsed < PlantRegistry.REPEATER_SHOOT_DELAY) {
-            inShootAnim = false;
+        if (elapsed < TYPE.shootDelay) {
             animate(idle, 225, true);
             return;
         }
 
-        inShootAnim = true;
+        state = PlantState.SHOOTING;
         if (animate(shoot, 70, false)) {
             AudioManager.playSound(80, false, PlantAssets.SOUND_THROW, PlantAssets.SOUND_THROW2);
             world.addObject(new Pea(getYPos()), getX() + 25, getY() - 17);
@@ -51,17 +53,18 @@ public class Repeater extends Plant {
             if (shootCount >= SHOTS_PER_CYCLE) {
                 shootCount = 0;
                 lastShot   = System.nanoTime();
-                inShootAnim = false;
+                state      = PlantState.IDLE;
             }
         }
     }
 
     private void checkZombieInRow(PlayScene world) {
-        shooting = false;
+        if (state == PlantState.SHOOTING) return;
+        state = PlantState.IDLE;
         for (Zombie z : world.level.zombieRow.get(getYPos())) {
-            if (z != null && z.getWorld() != null
-                    && z.getX() > getX() && z.getX() <= world.getWidth() + 10) {
-                shooting = true;
+            if (z != null && z.getWorld() != null &&
+                z.getX() > getX() && z.getX() <= world.getWidth() + 10) {
+                state = PlantState.SHOOTING;
                 break;
             }
         }

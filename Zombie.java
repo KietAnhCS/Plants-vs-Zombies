@@ -2,32 +2,33 @@ import greenfoot.*;
 import java.util.*;
 
 public abstract class Zombie extends SpriteAnimator {
+
     protected ZombieState currentState;
     public final ZombieConfig config;
 
     public double walkSpeed;
     public int hp, maxHp;
-    public boolean isAlive = true;
-    public boolean eating = false;
-    public Plant target;
+    public boolean isAlive  = true;
+    public boolean eating   = false;
+    public Plant   target;
     public PlayScene playScene;
 
-    public boolean fallen = false;
-    public boolean spawnHead = false;
-    public boolean resetAnim = false;
+    public boolean fallen     = false;
+    public boolean spawnHead  = false;
+    public boolean resetAnim  = false;
     public boolean finalDeath = false;
-    public boolean fixAnim = false;
-    private boolean eatOnce = false;
+    public boolean fixAnim    = false;
+    private boolean eatOnce   = false;
 
     public GreenfootImage[] headless, headlesseating, fall;
 
     public Zombie(ZombieConfig config) {
-        this.config  = config;
-        this.maxHp   = config.maxHp;
-        this.hp      = config.maxHp;
-        headless      = importSprites(SpriteKey.SHARED_HEADLESS.path,     7);
+        this.config = config;
+        this.maxHp  = config.maxHp;
+        this.hp     = config.maxHp;
+        headless       = importSprites(SpriteKey.SHARED_HEADLESS.path,     7);
         headlesseating = importSprites(SpriteKey.SHARED_HEADLESS_EAT.path, 7);
-        fall          = importSprites(SpriteKey.SHARED_FALL.path,          6);
+        fall           = importSprites(SpriteKey.SHARED_FALL.path,         6);
     }
 
     @Override
@@ -40,7 +41,7 @@ public abstract class Zombie extends SpriteAnimator {
         if (!isAlive) return;
         this.hp -= dmg;
         if (this.hp <= 0) {
-            this.hp = 0;
+            this.hp      = 0;
             this.isAlive = false;
         }
     }
@@ -70,10 +71,9 @@ public abstract class Zombie extends SpriteAnimator {
     }
 
     private void updateLogic() {
-        if (currentState != null) {
-            currentState.update();
-            animate(currentState.getAnimation(), 200, true);
-        }
+        if (currentState == null) return;
+        currentState.update();
+        animate(currentState.getAnimation(), 200, true);
     }
 
     public boolean isLiving() {
@@ -92,7 +92,8 @@ public abstract class Zombie extends SpriteAnimator {
         if (yIdx < 0 || yIdx >= boardGrid.length) return false;
         for (Plant p : boardGrid[yIdx]) {
             if (p != null && p.getWorld() != null && Math.abs(p.getX() - getX()) < 40) {
-                if (p instanceof PotatoMine && ((PotatoMine) p).armed) {
+                if (p instanceof PotatoMine &&
+                    ((PotatoMine) p).getState() == PlantState.POTATO_ARMED) {
                     target = null;
                     return false;
                 }

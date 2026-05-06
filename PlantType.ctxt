@@ -1,0 +1,5 @@
+#BlueJ class context
+comment0.target=PlantType
+comment1.params=damageType\ damage\ hp\ shootDelay\ burstCount
+comment1.target=PlantType(PlantDamageType,\ int,\ int,\ long,\ int)
+numComments=2

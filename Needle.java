@@ -1,8 +1,8 @@
-import greenfoot.*; 
+import greenfoot.*;
 
-public class Needle extends Projectile
-{
+public class Needle extends Projectile {
+
     public Needle(int yPos) {
-        super("needle", 1, yPos, PlantRegistry.NEEDLE_DAMAGE, 8);
-    } 
+        super("needle", 1, yPos, PlantType.CACTUS.damage, 8);
+    }
 }

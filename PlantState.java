@@ -1,0 +1,11 @@
+public enum PlantState {
+    IDLE,
+    SHOOTING,
+    DYING,
+    POTATO_ARMING,
+    POTATO_ARMED,
+    POTATO_EXPLODING,
+    PEA_POWERED_UP,
+    BONK_PUNCHING,
+    BONK_KO_PUNCH
+}

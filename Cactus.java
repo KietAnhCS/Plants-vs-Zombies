@@ -2,25 +2,29 @@ import greenfoot.*;
 import java.util.List;
 
 public class Cactus extends Plant {
+
+    private static final PlantType TYPE = PlantType.CACTUS;
+
     private GreenfootImage[] idle;
     private GreenfootImage[] shoot;
-    private boolean shooting = false;
-    private boolean isShootingAnimation = false;
-    private long shootDelay = PlantRegistry.CACTUS_SHOOT_DELAY;
+    private PlantState state = PlantState.IDLE;
     private long lastShootTime = System.currentTimeMillis();
 
     public Cactus() {
-        maxHp = PlantRegistry.CACTUS_HP;
-        hp = maxHp;
+        maxHp = TYPE.hp;
+        hp    = maxHp;
         shoot = importSprites(PlantAssets.CACTUS_SHOOT, 2);
-        idle = importSprites(PlantAssets.CACTUS_IDLE, 4);
+        idle  = importSprites(PlantAssets.CACTUS_IDLE,  4);
         setImage(idle[0]);
     }
 
     @Override
     public void hit(int dmg) {
         if (isLiving()) {
-            hitFlash(isShootingAnimation ? shoot : idle, isShootingAnimation ? PlantAssets.CACTUS_SHOOT : PlantAssets.CACTUS_IDLE);
+            hitFlash(
+                state == PlantState.SHOOTING ? shoot : idle,
+                state == PlantState.SHOOTING ? PlantAssets.CACTUS_SHOOT : PlantAssets.CACTUS_IDLE
+            );
             hp -= dmg;
         }
     }
@@ -28,9 +32,7 @@ public class Cactus extends Plant {
     @Override
     public void update() {
         if (getWorld() == null) return;
-        
         playScene = (PlayScene) getWorld();
-
         checkZombieInRow();
         handleAction();
     }
@@ -38,21 +40,17 @@ public class Cactus extends Plant {
     private void handleAction() {
         long currentTime = System.currentTimeMillis();
 
-        if (!shooting && !isShootingAnimation) {
+        if (state == PlantState.IDLE) {
             animate(idle, 150, true);
             return;
         }
 
-        if (currentTime - lastShootTime >= shootDelay) {
-            isShootingAnimation = true;
+        if (currentTime - lastShootTime >= TYPE.shootDelay) {
+            state = PlantState.SHOOTING;
             animate(shoot, 150, false);
-
-            if (frame == 1) {
-                fireNeedle();
-            }
-
+            if (frame == 1) fireNeedle();
             if (frame >= shoot.length - 1) {
-                isShootingAnimation = false;
+                state = PlantState.IDLE;
                 lastShootTime = currentTime;
                 setFrame(0);
             }
@@ -62,25 +60,24 @@ public class Cactus extends Plant {
     }
 
     private void fireNeedle() {
-        if (getWorld() != null) {
-            AudioManager.playSound(80, false, PlantAssets.SOUND_THROW);
-            getWorld().addObject(new Needle(getYPos()), getX() + 30, getY() - 8);
-        }
+        if (getWorld() == null) return;
+        AudioManager.playSound(80, false, PlantAssets.SOUND_THROW);
+        getWorld().addObject(new Needle(getYPos()), getX() + 30, getY() - 8);
     }
 
     private void checkZombieInRow() {
         if (playScene == null || playScene.level == null) return;
-
         List<Zombie> rowZombies = playScene.level.zombieRow.get(getYPos());
         if (rowZombies == null || rowZombies.isEmpty()) {
-            shooting = false;
+            state = PlantState.IDLE;
             return;
         }
-
-        shooting = rowZombies.stream().anyMatch(z -> 
-            z.getWorld() != null && 
-            z.getX() > getX() && 
+        boolean hasTarget = rowZombies.stream().anyMatch(z ->
+            z.getWorld() != null &&
+            z.getX() > getX() &&
             z.getX() <= playScene.getWidth() + 10
         );
+        if (!hasTarget) state = PlantState.IDLE;
+        else if (state == PlantState.IDLE) state = PlantState.SHOOTING;
     }
 }

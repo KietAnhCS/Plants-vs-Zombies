@@ -17,7 +17,6 @@ public class Arena extends World {
     private GifImage daveGif = new GifImage("Dave3.gif");
 
     public String[][][] levelData = {
-        {{"PIANO"}, {"PIANO"}, {"PIANO"}, {"PIANO"}, {"PIANO"}}, 
         {null, {"NORMAL"}, null, {"NORMAL"}, null}, 
         {{"NORMAL"}, {"NORMAL"}, {"NORMAL"}, null, null}, 
         {null, {"CONEHEAD"}, null, {"CONEHEAD"}, {"BUCKETHEAD"}, null},
