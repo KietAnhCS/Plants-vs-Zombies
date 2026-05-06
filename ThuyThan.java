@@ -7,14 +7,13 @@ public class ThuyThan extends PhysicsBody {
 
     private final GreenfootImage imageRight;
     private final GreenfootImage imageLeft;
-
-    private int     targetX, targetY;
+    private int targetX, targetY;
     private boolean isMoving = false;
 
     public ThuyThan() {
         imageRight = new GreenfootImage("thuythan.png");
         imageRight.scale(80, 80);
-        imageLeft  = new GreenfootImage(imageRight);
+        imageLeft = new GreenfootImage(imageRight);
         imageLeft.mirrorHorizontally();
         setImage(imageRight);
     }
@@ -29,8 +28,8 @@ public class ThuyThan extends PhysicsBody {
     private void handleRightClick() {
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse == null || !Greenfoot.mousePressed(null) || mouse.getButton() != 3) return;
-        targetX  = mouse.getX();
-        targetY  = mouse.getY();
+        targetX = mouse.getX();
+        targetY = mouse.getY();
         isMoving = true;
         setImage(targetX < getX() ? imageLeft : imageRight);
     }
@@ -50,11 +49,14 @@ public class ThuyThan extends PhysicsBody {
     }
 
     private void autoCollect() {
-        for (Sun s : getObjectsInRange(PICKUP_RANGE, Sun.class)) {
-            if (s.getWorld() != null) s.collect();
+        List<Sun> suns = getObjectsInRange(PICKUP_RANGE, Sun.class);
+        for (Sun s : suns) {
+            s.collect();
         }
-        for (FallingSun fs : getObjectsInRange(PICKUP_RANGE, FallingSun.class)) {
-            if (fs.getWorld() != null) fs.collectSun();
+
+        List<FallingSun> fSuns = getObjectsInRange(PICKUP_RANGE, FallingSun.class);
+        for (FallingSun fs : fSuns) {
+            fs.collectSun();
         }
     }
 }

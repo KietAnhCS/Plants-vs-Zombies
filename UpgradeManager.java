@@ -29,9 +29,8 @@ public class UpgradeManager {
         Plant target = mover.targetPlant;
         if (world == null || target == null) return;
 
-        world.removeObject(mover); // Xóa con vừa bay tới nơi
+        world.removeObject(mover);
 
-        // KIỂM TRA: Còn con nào khác cũng đang bay tới target này không?
         java.util.List<Plant> plants = world.getObjects(Plant.class);
         boolean stillWaiting = false;
         for (Plant p : plants) {
@@ -41,7 +40,6 @@ public class UpgradeManager {
             }
         }
 
-        // Nếu KHÔNG còn con nào đang bay tới nữa (đã đủ 3 con tụ lại)
         if (!stillWaiting) {
             executeUpgrade(target, (PlayScene) world);
         }
@@ -55,7 +53,6 @@ public class UpgradeManager {
 
         Plant upgraded = getUpgradeResult(target);
 
-        // Xóa con đích cuối cùng
         scene.removeObject(target);
         scene.GridManager.removePlant(gx, gy);
 
@@ -64,17 +61,7 @@ public class UpgradeManager {
             scene.GridManager.Board[gy][gx] = upgraded;
             upgraded.setGridPosition(gx, gy);
             
-            // Đồng bộ lại tên cấp độ cho con mới để gộp tiếp lần sau
-            syncLevelName(upgraded);
-            
-            // Kiểm tra gộp tiếp (chuỗi combo)
             PlantCombineHandler.checkAndCombine(scene, upgraded);
         }
-    }
-
-    private static void syncLevelName(Plant p) {
-        if (p instanceof Repeater || p instanceof Cactus2 || p instanceof BonkChoy2) p.name = "Level2";
-        else if (p instanceof GatlingPea || p instanceof Cactus3 || p instanceof BonkChoy3) p.name = "Level3";
-        else p.name = "Level1";
     }
 }

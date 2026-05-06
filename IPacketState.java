@@ -1,3 +1,5 @@
+import greenfoot.*;
+
 public interface IPacketState {
     void onEnter(SeedPacket packet);
     void tick(SeedPacket packet);

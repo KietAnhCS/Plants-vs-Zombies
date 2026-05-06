@@ -1,7 +1,8 @@
+import greenfoot.*;
+
 public class SelectedState implements IPacketState {
     @Override
     public void onEnter(SeedPacket packet) {
-        packet.showBright();
     }
 
     @Override
@@ -16,9 +17,10 @@ public class SelectedState implements IPacketState {
 
     @Override
     public boolean canPurchase(SeedPacket packet) {
-        return false;
+        return true; 
     }
 
     @Override
-    public void tick(SeedPacket packet) {}
+    public void tick(SeedPacket packet) {
+    }
 }

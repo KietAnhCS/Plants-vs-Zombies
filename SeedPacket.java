@@ -29,16 +29,11 @@ public class SeedPacket extends Actor {
     @Override
     public void addedToWorld(World world) {
         playScene = (PlayScene) world;
-        onSunChanged(getCurrentSun());
     }
 
     @Override
     public void act() {
         if (state != null) state.tick(this);
-        
-        if (Greenfoot.mousePressed(this)) {
-            state.onClick(this);
-        }
     }
 
     public void setState(IPacketState newState) {
@@ -47,27 +42,33 @@ public class SeedPacket extends Actor {
     }
 
     public boolean canBePurchased() {
+        if (state instanceof AvailableState) {
+            return getCurrentSun() >= sunCost;
+        }
         return state != null && state.canPurchase(this);
     }
 
     public boolean tryPurchase() {
-        return canBePurchased();
+        if (canBePurchased()) {
+            setState(new SelectedState());
+            return true;
+        }
+        Greenfoot.playSound("gulp.mp3");
+        return false;
     }
 
-    public void confirmPlace() {
-        setState(new LockedState()); 
+    public void used() {
+        if (getWorld() != null) {
+            getWorld().removeObject(this);
+        }
     }
 
     public void cancelSelect() {
-        onSunChanged(getCurrentSun());
+        setState(new AvailableState());
     }
 
     public Plant getPlant() {
         return PlantFactory.createPlant(this.name);
-    }
-
-    public TransparentObject addImage() {
-        return null;
     }
 
     public void onSunChanged(int currentSun) {
@@ -76,29 +77,22 @@ public class SeedPacket extends Actor {
 
     public void showBright() {
         setImage(imageBright);
-        if (getImage() != null) getImage().setTransparency(255);
     }
 
     public void showDark(int alpha) {
-        setImage(imageDark);
-        if (getImage() != null) getImage().setTransparency(alpha);
     }
 
     public void updateOverlay(float progress) {
-        if (imageDark == null || combined == null) return;
-        combined.drawImage(imageDark, 0, 0);
-        overlayBuffer.clear();
-        overlayBuffer.setColor(new Color(0, 0, 0, 150));
-        int darkHeight = (int) (imageDark.getHeight() * (1f - progress));
-        if (darkHeight > 0) {
-            overlayBuffer.fillRect(0, 0, imageDark.getWidth(), darkHeight);
-        }
-        combined.drawImage(overlayBuffer, 0, 0);
-        setImage(combined);
     }
 
     public int getCurrentSun() {
         if (playScene == null || playScene.getSunManager() == null) return 0;
         return playScene.getSunManager().getSun();
+    }
+    
+    public TransparentObject addImage() {
+        TransparentObject ghost = new TransparentObject();
+        ghost.setImage(new GreenfootImage(imageBright));
+        return ghost;
     }
 }

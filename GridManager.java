@@ -240,7 +240,13 @@ public class GridManager extends Actor implements IPlantPlacer {
 
     public void removePlant(int x, int y) {
         if (x >= 0 && x < COLS && y >= 0 && y < ROWS) {
-            Board[y][x] = null;
+            Plant p = Board[y][x];
+            if (p != null) {
+                if (p.getWorld() != null) {
+                    getWorld().removeObject(p); 
+                }
+                Board[y][x] = null; 
+            }
         }
     }
 

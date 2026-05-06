@@ -10,6 +10,4 @@ comment4.params=mover
 comment4.target=void\ finalizeMerge(Plant)
 comment5.params=target\ scene
 comment5.target=void\ executeUpgrade(Plant,\ PlayScene)
-comment6.params=p
-comment6.target=void\ syncLevelName(Plant)
-numComments=7
+numComments=6

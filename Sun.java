@@ -6,7 +6,6 @@ public class Sun extends FallingObject {
     private int value = 25; 
     private PlayScene scene;
     private GreenfootImage[] sprites;
-
     private boolean pickedUp = false; 
     private long lifetimeStart;
     private boolean stationary = false;
@@ -34,7 +33,7 @@ public class Sun extends FallingObject {
         animate(sprites, 200, true);
 
         if (!pickedUp) {
-            if (Greenfoot.mouseClicked(this) || isTouching(ThuyThan.class)) {
+            if (isTouching(ThuyThan.class)) {
                 collect();
             } else {
                 handleAutoFadeOut();
@@ -47,16 +46,16 @@ public class Sun extends FallingObject {
         checkRemoval();
     }
 
-    protected void collect() {
+    public void collect() {
         if (pickedUp) return;
 
         pickedUp = true;
         setRotation(0);
-
         AudioManager.playSound(80, false, "points.mp3");
 
-        if (scene != null && scene.getSunManager() != null) {
-            scene.getSunManager().add(value);
+        PlayScene currentScene = getPlayScene();
+        if (currentScene != null && currentScene.getSunManager() != null) {
+            currentScene.getSunManager().add(this.value);
         }
     }
 
@@ -71,9 +70,10 @@ public class Sun extends FallingObject {
     }
 
     private void flyToCounter() {
-        if (scene == null) return;
+        PlayScene currentScene = getPlayScene();
+        if (currentScene == null) return;
         
-        List<SunDisplay> displays = scene.getObjects(SunDisplay.class);
+        List<SunDisplay> displays = currentScene.getObjects(SunDisplay.class);
         if (!displays.isEmpty()) {
             SunDisplay ds = displays.get(0);
             turnTowards(ds.getX(), ds.getY());
@@ -90,24 +90,37 @@ public class Sun extends FallingObject {
     }
 
     private void fadeOut(int amount) {
+        if (getImage() == null) return;
         int trans = getImage().getTransparency();
-        if (trans > amount) getImage().setTransparency(trans - amount);
-        else getImage().setTransparency(0);
+        getImage().setTransparency(Math.max(0, trans - amount));
     }
 
     private void checkRemoval() {
         if (getWorld() == null) return;
 
         boolean reachedCounter = false;
-        List<SunDisplay> displays = scene.getObjects(SunDisplay.class);
-        if (!displays.isEmpty()) {
-            SunDisplay ds = displays.get(0);
-            reachedCounter = Math.abs(getX() - ds.getX()) < 20 && Math.abs(getY() - ds.getY()) < 20;
+        PlayScene currentScene = getPlayScene();
+        
+        if (currentScene != null && pickedUp) {
+            List<SunDisplay> displays = currentScene.getObjects(SunDisplay.class);
+            if (!displays.isEmpty()) {
+                SunDisplay ds = displays.get(0);
+                reachedCounter = Math.hypot(getX() - ds.getX(), getY() - ds.getY()) < 20;
+            }
         }
 
         if (getImage().getTransparency() == 0 || (pickedUp && reachedCounter)) {
             getWorld().removeObject(this);
         }
+    }
+
+    private PlayScene getPlayScene() {
+        if (scene != null) return scene;
+        if (getWorld() instanceof PlayScene) {
+            scene = (PlayScene) getWorld();
+            return scene;
+        }
+        return null;
     }
 
     @Override

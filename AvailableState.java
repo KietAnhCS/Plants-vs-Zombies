@@ -1,27 +1,29 @@
+import greenfoot.*;
+
 public class AvailableState implements IPacketState {
     @Override
     public void onEnter(SeedPacket packet) {
-        packet.showBright();
-        packet.updateOverlay(0f);
     }
 
     @Override
     public void onSunChanged(SeedPacket packet, int currentSun) {
-        if (currentSun < packet.sunCost) {
-            packet.setState(new LockedState());
-        }
     }
 
     @Override
     public void onClick(SeedPacket packet) {
-        packet.setState(new SelectedState());
+        if (packet.getCurrentSun() >= packet.sunCost) {
+            packet.setState(new SelectedState());
+        } else {
+            Greenfoot.playSound("gulp.mp3");
+        }
     }
 
     @Override
     public boolean canPurchase(SeedPacket packet) {
-        return true;
+        return false;
     }
 
     @Override
-    public void tick(SeedPacket packet) {}
+    public void tick(SeedPacket packet) {
+    }
 }

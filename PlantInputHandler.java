@@ -10,7 +10,7 @@ public class PlantInputHandler {
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse == null) return;
 
-        if (Greenfoot.mousePressed(plant)) {
+        if (Greenfoot.mousePressed(plant) && mouse.getButton() == 1) {
             if (plant.isMerging) return;
             plant.isDragging = true;
             startX = plant.getXPos();
@@ -18,7 +18,9 @@ public class PlantInputHandler {
         }
 
         if (plant.isDragging) {
-            if (Greenfoot.mouseDragged(null)) plant.setLocation(mouse.getX(), mouse.getY());
+            if (Greenfoot.mouseDragged(null)) {
+                plant.setLocation(mouse.getX(), mouse.getY());
+            }
 
             if (Greenfoot.mouseClicked(null)) {
                 plant.isDragging = false;

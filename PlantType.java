@@ -1,32 +1,32 @@
+import greenfoot.*;
+
 public enum PlantType {
 
-    PEASHOOTER    (PlantDamageType.NORMAL,    1120,  60,  1500L, 0),
-    REPEATER      (PlantDamageType.NORMAL,    1120,  60,  1700L, 0),
-    GATLING_PEA   (PlantDamageType.NORMAL,    1120,  80,   800L, 7),
-    GATLING_PEA_2 (PlantDamageType.FIRE, 40, 100, 2000L, 5),
-    CACTUS        (PlantDamageType.NEEDLE,      10, 100,  2400L, 0),
-    CACTUS_2      (PlantDamageType.NEEDLE,      12,  60,  1500L, 0),
-    CACTUS_3      (PlantDamageType.NEEDLE,      12,  60,  1500L, 0),
-    BONK_CHOY     (PlantDamageType.NORMAL,       3, 636,   100L, 0),
-    BONK_CHOY_2   (PlantDamageType.NORMAL,       5, 1000,  200L, 0),
-    BONK_CHOY_3   (PlantDamageType.NORMAL,      25, 1200,  200L, 0),
-    POTATO_MINE   (PlantDamageType.EXPLOSIVE,    0, 100,  3000L, 0),
-    CHERRY_BOMB   (PlantDamageType.EXPLOSIVE,    0, 100,     0L, 0),
-    SNOW_PEA      (PlantDamageType.NORMAL,    1120,  60,  1500L, 0),
-    SUNFLOWER     (PlantDamageType.NORMAL,       0, 100,     0L, 0),
-    WALL_NUT      (PlantDamageType.NORMAL,       0, 400,     0L, 0);
+    PEASHOOTER    (100, PlantDamageType.NORMAL,    1500,  60,   1500L, 0),
+    REPEATER      (125, PlantDamageType.NORMAL,    30,    60,   1700L, 0),
+    GATLING_PEA   (300, PlantDamageType.NORMAL,    45,    80,   800L,  7),
+    GATLING_PEA_2 (400, PlantDamageType.FIRE,      80,    100,  2000L, 5),
+    CACTUS        (125, PlantDamageType.NEEDLE,    12,    100,  2400L, 0),
+    CACTUS_2      (250, PlantDamageType.NEEDLE,    15,    60,   1500L, 0),
+    CACTUS_3      (375, PlantDamageType.NEEDLE,    16,    60,   1500L, 0),
+    BONK_CHOY     (175, PlantDamageType.NORMAL,    30,    636,  100L,  0),
+    BONK_CHOY_2   (400, PlantDamageType.NORMAL,    40,    1000, 200L,  0),
+    BONK_CHOY_3   (600, PlantDamageType.NORMAL,    50,    1200, 200L,  0),
+    POTATO_MINE   (25,  PlantDamageType.EXPLOSIVE, 100,   100,  3000L, 0);
 
+    public final int cost;
     public final PlantDamageType damageType;
-    public final int  damage;
-    public final int  hp;
+    public final int damage;
+    public final int hp;
     public final long shootDelay;
-    public final int  burstCount;
+    public final int burstCount;
 
-    PlantType(PlantDamageType damageType, int damage, int hp,
+    PlantType(int cost, PlantDamageType damageType, int damage, int hp,
               long shootDelay, int burstCount) {
+        this.cost = cost;
         this.damageType = damageType;
-        this.damage     = damage;
-        this.hp         = hp;
+        this.damage = damage;
+        this.hp = hp;
         this.shootDelay = shootDelay;
         this.burstCount = burstCount;
     }

@@ -25,7 +25,7 @@ public class DragController extends Actor {
     }
 
     private void handleDrag(MouseInfo mouse) {
-        if (!isDragging && Greenfoot.mousePressed(null)) {
+        if (!isDragging && Greenfoot.mousePressed(null) && mouse.getButton() == 1) {
             tryPickUp(mouse);
             return;
         }
@@ -50,7 +50,7 @@ public class DragController extends Actor {
         for (Actor a : touching) {
             if (a instanceof SeedPacket) {
                 SeedPacket packet = (SeedPacket) a;
-                if (packet.canBePurchased() && packet.tryPurchase()) {
+                if (packet.tryPurchase()) {
                     ghostImage = packet.addImage();
                     plantToPlace = packet.getPlant(); 
                     
@@ -95,6 +95,7 @@ public class DragController extends Actor {
     }
 
     private boolean autoPlaceInQueue() {
+        if (plantToPlace == null) return false;
         for (int y = 5; y >= 0; y--) { 
             for (int x = 0; x < 9; x++) { 
                 if (placer.canPlace(x, y, plantToPlace)) {
@@ -106,13 +107,19 @@ public class DragController extends Actor {
     }
 
     private boolean executePlacement(int x, int y) {
+        if (selectedPacket == null) return false;
+        
         if (placer.placePlant(x, y, plantToPlace)) {
-            if (sunDisplay != null) sunDisplay.removeSun(selectedPacket.sunCost);
+            if (sunDisplay != null) {
+                sunDisplay.removeSun(selectedPacket.sunCost);
+            }
             
-            selectedPacket.confirmPlace();
+            selectedPacket.used();
             
             PlayScene scene = (PlayScene) getWorld();
-            if (scene != null) scene.checkAndCombine(plantToPlace);
+            if (scene != null) {
+                scene.checkAndCombine(plantToPlace);
+            }
             
             return true;
         }
