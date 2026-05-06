@@ -22,6 +22,6 @@ public class CactusPacket extends SeedPacket {
 
     @Override
     public Plant getPlant() { 
-        return PlantFactory.createPlant(PlantFactory.PlantType.CACTUS);
+        return PlantFactory.createPlant(PlantType.CACTUS);
     }
 }

@@ -1,47 +1,34 @@
 import greenfoot.*;
 
 public class PlantFactory {
-    
-    public enum PlantType {
-        PEASHOOTER, 
-        REPEATER, 
-        GATLINGPEA,
-        GATLINGPEA2,
-        CACTUS,
-        CACTUS2,
-        CACTUS3,
-        BONKCHOY,
-        BONKCHOY2,
-        POTATOMINE
-    }
 
     public static Plant createPlant(PlantType type) {
         if (type == null) return null;
         switch (type) {
-            case PEASHOOTER: return new Peashooter();
-            case REPEATER: return new Repeater();
-            case GATLINGPEA: return new GatlingPea();
-            case GATLINGPEA2: return new GatlingPea2();
-            case CACTUS: return new Cactus();
-            case CACTUS2: return new Cactus2();
-            case CACTUS3: return new Cactus3();
-            case BONKCHOY: return new BonkChoy();
-            case BONKCHOY2: return new BonkChoy2();
-            case POTATOMINE: return new PotatoMine();
-            default: return null;
+            case PEASHOOTER:   return new Peashooter();
+            case REPEATER:     return new Repeater();
+            case GATLING_PEA:  return new GatlingPea();
+            case GATLING_PEA_2:return new GatlingPea2();
+            case CACTUS:       return new Cactus();
+            case CACTUS_2:     return new Cactus2();
+            case CACTUS_3:     return new Cactus3();
+            case BONK_CHOY:    return new BonkChoy();
+            case BONK_CHOY_2:  return new BonkChoy2();
+            case BONK_CHOY_3:  return new BonkChoy3();
+            case POTATO_MINE:  return new PotatoMine();
+            default:           return null;
         }
     }
 
     public static SeedPacket createSeedPacket(PlantType type) {
         if (type == null) return null;
         switch (type) {
-            case PEASHOOTER: return new PeashooterPacket();
-            case REPEATER: return new RepeaterPacket();
-            case GATLINGPEA: return new GatlingPeaPacket();
-            case CACTUS: return new CactusPacket();
-            case BONKCHOY: return new BonkchoyPacket();
-            case POTATOMINE: return new PotatoPacket();
-            default: return new PeashooterPacket();
+            case PEASHOOTER:  return new PeashooterPacket();
+            case REPEATER:    return new RepeaterPacket();
+            case CACTUS:      return new CactusPacket();
+            case BONK_CHOY:   return new BonkchoyPacket();
+            case POTATO_MINE: return new PotatoPacket();
+            default:          return new PeashooterPacket();
         }
     }
 

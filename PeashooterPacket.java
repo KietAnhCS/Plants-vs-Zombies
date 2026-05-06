@@ -22,6 +22,6 @@ public class PeashooterPacket extends SeedPacket {
 
     @Override
     public Plant getPlant() { 
-        return PlantFactory.createPlant(PlantFactory.PlantType.PEASHOOTER);
+        return PlantFactory.createPlant(PlantType.PEASHOOTER);
     }
 }

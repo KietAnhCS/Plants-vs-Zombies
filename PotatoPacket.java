@@ -10,7 +10,6 @@ public class PotatoPacket extends SeedPacket {
     public TransparentObject addImage() {
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse == null) return null;
-
         TransparentObject temp = new TransparentPotato(false);
         World world = getWorld();
         if (world != null) {
@@ -21,7 +20,7 @@ public class PotatoPacket extends SeedPacket {
     }
 
     @Override
-    public Plant getPlant() { 
-        return PlantFactory.createPlant(PlantFactory.PlantType.POTATOMINE);
+    public Plant getPlant() {
+        return PlantFactory.createPlant(PlantType.POTATO_MINE);
     }
 }

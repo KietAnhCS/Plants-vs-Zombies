@@ -60,7 +60,6 @@ public class RupButton extends Actor {
             Class c = entry.packetClass;
             if (currentLevel == 2 && c == RepeaterPacket.class) entry.weight = 2;
             if (currentLevel >= 4) {
-                if (c == GatlingPeaPacket.class) entry.weight = 1;
                 if (c == CactusPacket.class) entry.weight = 0;
             }
             if (currentLevel == 5) {

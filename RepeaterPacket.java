@@ -22,6 +22,6 @@ public class RepeaterPacket extends SeedPacket {
 
     @Override
     public Plant getPlant() { 
-        return PlantFactory.createPlant(PlantFactory.PlantType.REPEATER);
+        return PlantFactory.createPlant(PlantType.REPEATER);
     }
 }
