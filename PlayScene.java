@@ -61,8 +61,9 @@ public class PlayScene extends World {
             Overlay.class, ThuyThan.class, RupButton.class, RollButton.class,
             Transition.class, WaveNotification.class, ReadySetPlant.class,
             SunDisplay.class, SeedPacket.class, SellShovel.class, Shovel.class,
+            Lawnmower.class,
             Sun.class, HealthBar.class, Pea.class, FirePea.class, Needle.class,
-            Plant.class, GridManager.class, Zombie.class, Dirt.class, Lawnmower.class
+            Plant.class, GridManager.class, Zombie.class, Dirt.class
         );
     }
 
@@ -189,7 +190,7 @@ public class PlayScene extends World {
     }
 
     private void prepareLawnmowers() {
-        int[][] coords = {{240, 110}, {236, 210}, {228, 310}, {220, 410},{180, 510}};
+        int[][] coords = {{240, 180}, {236, 240}, {225, 295}, {220, 360},{190, 420}};
         for (int i = 0; i < 5; i++) {
             addObject(new Lawnmower(), coords[i][0], coords[i][1]);
         }

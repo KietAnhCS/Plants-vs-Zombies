@@ -6,8 +6,9 @@ public class Lawnmower extends Actor
 {
     private int speed = 0;
     private boolean isMoving = false;
-    
+    private boolean isManualTrigger = false;
     private final int ROW_THRESHOLD = 40; 
+    private List<Zombie> damagedZombies = new ArrayList<>();
 
     public Lawnmower()
     {
@@ -27,46 +28,61 @@ public class Lawnmower extends Actor
         handleBoundaries();
     }
 
+    private void checkActivation()
+    {
+        if (Greenfoot.mousePressed(this)) 
+        {
+            MouseInfo mouse = Greenfoot.getMouseInfo();
+            if (mouse != null && mouse.getButton() == 1) 
+            {
+                isManualTrigger = true;
+                startEngine();
+                return;
+            }
+        }
+
+        Zombie z = (Zombie) getOneIntersectingObject(Zombie.class);
+        if (z != null && z.isLiving() && Math.abs(z.getY() - this.getY()) < ROW_THRESHOLD)
+        {
+            isManualTrigger = false;
+            startEngine();
+        }
+    }
+
+    private void startEngine() {
+        setImage("lawn_mower2.png"); 
+        speed = 8; 
+        isMoving = true;
+    }
+
     private void handleMovement()
     {
         if (getWorld() == null) return;
-        
         move(speed);
-        
         
         List<Zombie> targets = getIntersectingObjects(Zombie.class);
         
         for (Zombie z : targets) {
-            
-            if (z != null && z.getWorld() != null && Math.abs(z.getY() - this.getY()) < ROW_THRESHOLD) {
-               
-                z.takeDmg(9999); 
-                
-                if (z.getWorld() != null) {
-                    getWorld().removeObject(z);
+            if (z != null && z.isLiving() && Math.abs(z.getY() - this.getY()) < ROW_THRESHOLD) {
+                if (!damagedZombies.contains(z)) {
+                    if (isManualTrigger) {
+                        int damageToTake = z.hp / 2;
+                        if (damageToTake == 0 && z.hp > 0) damageToTake = 1;
+                        z.hit(damageToTake);
+                    } else {
+                        z.hit(9999);
+                    }
+                    damagedZombies.add(z);
                 }
             }
         }
-    }
-
-    private void checkActivation()
-    {
-    
-        Zombie z = (Zombie) getOneIntersectingObject(Zombie.class);
         
-        
-        if (z != null && Math.abs(z.getY() - this.getY()) < ROW_THRESHOLD)
-        {
-            setImage("lawn_mower2.png"); 
-            speed = 8; 
-            isMoving = true;
-        }
+        damagedZombies.removeIf(z -> z.getWorld() == null || !intersects(z));
     }
 
     private void handleBoundaries()
     {
         if (getWorld() == null) return;
-
         if (getX() >= getWorld().getWidth() - 2) {
             getWorld().removeObject(this);
         }
