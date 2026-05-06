@@ -1,9 +1,15 @@
 #BlueJ class context
 comment0.target=UpgradeManager
-comment1.params=p1\ p2
+comment1.params=mover\ target
 comment1.target=boolean\ canUpgrade(Plant,\ Plant)
 comment2.params=p
 comment2.target=Plant\ getUpgradeResult(Plant)
-comment3.params=p1\ p2
-comment3.target=Plant\ getSpecialUpgrade(Plant,\ Plant)
-numComments=4
+comment3.params=mover\ merger
+comment3.target=void\ handleMergeLogic(Plant,\ Merger)
+comment4.params=mover
+comment4.target=void\ finalizeMerge(Plant)
+comment5.params=target\ scene
+comment5.target=void\ executeUpgrade(Plant,\ PlayScene)
+comment6.params=p
+comment6.target=void\ syncLevelName(Plant)
+numComments=7

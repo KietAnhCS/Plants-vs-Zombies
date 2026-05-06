@@ -1,0 +1,5 @@
+#BlueJ class context
+comment0.target=PlantCombineHandler
+comment1.params=scene\ placedPlant
+comment1.target=void\ checkAndCombine(PlayScene,\ Plant)
+numComments=2

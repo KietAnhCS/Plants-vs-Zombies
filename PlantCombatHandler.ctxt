@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.target=PlantCombatHandler
+comment0.text=\r\n\ PlantCombatHandler\ t\u00E1ch\ bi\u1EC7t\ logic\ x\u1EED\ l\u00FD\ s\u00E1t\ th\u01B0\u01A1ng\ v\u00E0\ c\u00E1i\ ch\u1EBFt\ \r\n\ gi\u00FAp\ l\u1EDBp\ Plant\ g\u1ECDn\ g\u00E0ng\ h\u01A1n.\r\n
+comment1.params=plant
+comment1.target=PlantCombatHandler(Plant)
+comment2.params=dmg
+comment2.target=void\ takeDamage(int)
+comment2.text=\r\n\ X\u1EED\ l\u00FD\ nh\u1EADn\ s\u00E1t\ th\u01B0\u01A1ng\ cho\ c\u00E2y.\r\n
+comment3.params=
+comment3.target=void\ die()
+comment3.text=\r\n\ X\u1EED\ l\u00FD\ logic\ khi\ c\u00E2y\ ch\u1EBFt\:\ Ph\u00E1t\ \u00E2m\ thanh,\ x\u00F3a\ kh\u1ECFi\ Grid\ v\u00E0\ x\u00F3a\ kh\u1ECFi\ World.\r\n
+numComments=4

@@ -3,7 +3,7 @@ public enum PlantType {
     PEASHOOTER    (PlantDamageType.NORMAL,    1120,  60,  1500L, 0),
     REPEATER      (PlantDamageType.NORMAL,    1120,  60,  1700L, 0),
     GATLING_PEA   (PlantDamageType.NORMAL,    1120,  80,   800L, 7),
-    GATLING_PEA_2 (PlantDamageType.NORMAL,    1120, 100,  2000L, 5),
+    GATLING_PEA_2 (PlantDamageType.FIRE, 40, 100, 2000L, 5),
     CACTUS        (PlantDamageType.NEEDLE,      10, 100,  2400L, 0),
     CACTUS_2      (PlantDamageType.NEEDLE,      12,  60,  1500L, 0),
     CACTUS_3      (PlantDamageType.NEEDLE,      12,  60,  1500L, 0),

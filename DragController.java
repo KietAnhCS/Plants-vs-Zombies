@@ -91,7 +91,6 @@ public class DragController extends Actor {
 
         if (autoPlaceInQueue()) return;
 
-        System.out.println("Khong dat duoc: San da day!");
         if (selectedPacket != null) selectedPacket.cancelSelect();
     }
 

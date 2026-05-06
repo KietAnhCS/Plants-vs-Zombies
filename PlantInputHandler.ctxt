@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=PlantInputHandler
+comment1.params=plant
+comment1.target=PlantInputHandler(Plant)
+comment2.params=
+comment2.target=void\ handleMouse()
+comment3.params=
+comment3.target=void\ processDrop()
+numComments=4
