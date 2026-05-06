@@ -55,7 +55,7 @@ public class BonkChoy extends Plant {
         List<Zombie> targets = getObjectsAtOffset(25, 0, Zombie.class);
 
         if (!targets.isEmpty()) {
-            state = (punchCount >= 3) ? PlantState.BONK_KO_PUNCH : PlantState.BONK_PUNCHING;
+            state = (punchCount >= 9) ? PlantState.BONK_KO_PUNCH : PlantState.BONK_PUNCHING;
             boolean beingEaten = hp < maxHp;
 
             int dmg = (state == PlantState.BONK_KO_PUNCH ? TYPE.damage * 2 : TYPE.damage)
@@ -79,7 +79,7 @@ public class BonkChoy extends Plant {
 
         if (state == PlantState.BONK_KO_PUNCH) {
             punchCount = 0;
-            hp = Math.min(maxHp, hp + (int)(maxHp * 0.35));
+            hp = Math.min(maxHp, hp + (int)(maxHp * 0.15));
         } else {
             punchCount++;
         }

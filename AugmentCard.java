@@ -1,4 +1,5 @@
 import greenfoot.*;
+import java.util.*;
 
 public class AugmentCard extends Actor {
     private WaveManager manager;
@@ -55,10 +56,35 @@ public class AugmentCard extends Actor {
             world.getSunManager().add(150);
         } 
         else if (type.equals("TD")) {
-            world.getSunManager().add(150);
+            world.increasePlantSlots(5);
         } 
         else if (type.equals("HM")) {
-            world.getSunManager().add(150);
+            GridManager gm = world.GridManager;
+            List<Integer> emptyCols = new ArrayList<>();
+            
+            for (int c = 0; c < 9; c++) {
+                if (gm.Board[5][c] == null) {
+                    emptyCols.add(c);
+                }
+            }
+            
+            if (emptyCols.size() >= 1) {
+                Collections.shuffle(emptyCols);
+                
+                int col1 = emptyCols.get(0);
+                Plant p1 = new Peashooter();
+                gm.Board[5][col1] = p1;
+                world.addObject(p1, gm.getXCoord(col1, 5), gm.getYCoord(col1, 5));
+                
+                if (emptyCols.size() >= 2) {
+                    int col2 = emptyCols.get(1);
+                    Plant p2 = new Cactus();
+                    gm.Board[5][col2] = p2;
+                    world.addObject(p2, gm.getXCoord(col2, 5), gm.getYCoord(col2, 5));
+                }
+            }
+            
+            AudioManager.playSound(80, false, "achievement.mp3");
         }
     }
 

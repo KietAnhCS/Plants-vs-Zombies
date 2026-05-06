@@ -50,7 +50,7 @@ public class Arena extends World {
     };
     
     public SeedBank seedbank = new SeedBank(bank);   
-    public WaveManager level = new WaveManager(23500L, levelData, 15000L, true, 2, 5, 10);
+    public WaveManager level = new WaveManager(23500L, levelData, 15000L, true, 0,1,2, 5, 10);
 
     public Arena() {    
         super(1111, 698, 1, false); 

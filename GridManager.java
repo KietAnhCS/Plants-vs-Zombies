@@ -5,6 +5,7 @@ public class GridManager extends Actor implements IPlantPlacer {
     public Plant[][] Board = new Plant[6][9];
     public int currentRowCount = 6;
     public int playerLevel = 1;
+    private int bonusSlots = 0;
     private GreenfootImage iuLogo;
     private final int HEX_R = 40;
     private final int COLS = 9;
@@ -26,6 +27,10 @@ public class GridManager extends Actor implements IPlantPlacer {
             iuLogo.setColor(new Color(0, 51, 102));
             iuLogo.fillOval(0, 0, 50, 50);
         }
+    }
+
+    public void addBonusSlots(int amount) {
+        this.bonusSlots += amount;
     }
 
     @Override
@@ -160,7 +165,7 @@ public class GridManager extends Actor implements IPlantPlacer {
     }
 
     public int getMaxCapacity() {
-        return playerLevel + 3;
+        return playerLevel + 3 + bonusSlots;
     }
 
     public int getCurrentPlantCount() {

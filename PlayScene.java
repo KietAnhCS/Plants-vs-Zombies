@@ -81,6 +81,13 @@ public class PlayScene extends World {
         drawWaveUI();
     }
 
+    public void increasePlantSlots(int amount) {
+        if (GridManager != null) {
+            GridManager.addBonusSlots(amount);
+            AudioManager.playSound(80, false, "achievement.mp3");
+        }
+    }
+
     private void drawWaveUI() {
         if (level == null) return;
         

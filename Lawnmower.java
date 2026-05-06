@@ -83,7 +83,8 @@ public class Lawnmower extends Actor
     private void handleBoundaries()
     {
         if (getWorld() == null) return;
-        if (getX() >= getWorld().getWidth() - 2) {
+        
+        if (getX() >= 990) {
             getWorld().removeObject(this);
         }
     }
