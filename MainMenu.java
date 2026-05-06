@@ -1,54 +1,39 @@
-import greenfoot.*;  
+import greenfoot.*;
 
-public class MainMenu extends World
-{
-    Hitbox hitbox = new Hitbox();
-    GreenfootSound menutheme = new GreenfootSound("menutheme.mp3");
-    public MainMenu(GreenfootSound menutheme)
-    {    
-        
-        super(803, 602, 1, false); 
-        addObject(hitbox,0,0);
-        addObject(new Start(), 555, 198);
-        addObject(new More(), 532, 316);
-        addObject(new Bush(), 743, 565);
-        
-        
-        this.menutheme = menutheme;
+public class MainMenu extends World {
+    public Hitbox hitbox = new Hitbox();
+    private String menuMusicFile = "menutheme.mp3";
+
+    public MainMenu() {    
+        super(1111, 705, 1, false); 
+        setupWorld();
+    }
+
+    private void setupWorld() {
         Greenfoot.setSpeed(50);
+        
+        setPaintOrder(MuteButton.class, Start.class, More.class, Hitbox.class, ZombieHand.class, MoonGround.class);        
+        addObject(new MoonGround(), 500, 780);
+        
+        addObject(hitbox, 0, 0);
+        addObject(new Start(), 800, 198); 
+        addObject(new More(), 780, 300);  
+        
+        addObject(new MuteButton(), 1050, 50);
     }
+
     public void act() {
-        if (Greenfoot.isKeyDown("1")) {
-            menutheme.stop();
-            Greenfoot.setWorld(new CinematicIntro());
-                    
-                
-        } else if (Greenfoot.isKeyDown("2")) {
-           menutheme.stop();
-                
-            Greenfoot.setWorld(new Level1Preview());
-                    
-        } else if (Greenfoot.isKeyDown("3")) {
-            menutheme.stop();
-                
-            Greenfoot.setWorld(new Level2Preview());
-                    
-        } else if (Greenfoot.isKeyDown("4")) {
-            menutheme.stop();
-                
-            Greenfoot.setWorld(new Level3Preview());
-                    
-        }
+        moveHitbox();
     }
+
+    @Override
     public void started() {
-        if (!menutheme.isPlaying()) {
-            menutheme.setVolume(0);
-            menutheme.playLoop();
-        }
-    
+        AudioManager.playBGM(menuMusicFile);
     }
-    public void stopped() {
-        menutheme.pause();
+    
+    @Override
+    public void stopped() { 
+        AudioManager.stopBGM();
     }
 
     public void moveHitbox() {
@@ -57,5 +42,4 @@ public class MainMenu extends World
             hitbox.setLocation(mouse.getX(), mouse.getY());
         }
     }
-    
 }
