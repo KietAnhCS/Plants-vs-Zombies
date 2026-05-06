@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=Merger
+comment1.params=mover\ target
+comment1.target=Merger(greenfoot.Actor,\ greenfoot.Actor)
+comment2.params=
+comment2.target=boolean\ update()
+numComments=3
