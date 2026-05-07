@@ -16,14 +16,12 @@ public class AugmentCard extends Actor {
 
     public void act() {
         handleHover();
-        if (Greenfoot.mouseClicked(this)) {
-            MouseInfo mouse = Greenfoot.getMouseInfo();
-            if (mouse != null && mouse.getButton() == 1) {
-                AudioManager.playSound(80, false, "gravebutton.mp3");
-                applyAugmentEffect();
-                clearUI();
-                manager.nextWave();
-            }
+        MouseInfo mouse = Greenfoot.getMouseInfo();
+        if (mouse != null && mouse.getButton() == 1 && Greenfoot.mouseClicked(this)) {
+            AudioManager.playSound(80, false, "gravebutton.mp3");
+            applyAugmentEffect();
+            clearUI();
+            manager.nextWave();
         }
     }
 
@@ -33,8 +31,7 @@ public class AugmentCard extends Actor {
                 hovered = true;
                 updateImage(W_HOVER, H_HOVER);
             }
-        }
-        if (Greenfoot.mouseMoved(null) && !Greenfoot.mouseMoved(this)) {
+        } else if (Greenfoot.mouseMoved(null)) {
             if (hovered) {
                 hovered = false;
                 updateImage(W_NORMAL, H_NORMAL);
@@ -51,31 +48,27 @@ public class AugmentCard extends Actor {
     private void applyAugmentEffect() {
         PlayScene world = (PlayScene) getWorld();
         if (world == null) return;
-        
+
         if (type.equals("rerollcard")) {
             world.getSunManager().add(150);
-        } 
-        else if (type.equals("TD")) {
-            world.increasePlantSlots(5);
-        } 
-        else if (type.equals("HM")) {
+        } else if (type.equals("TD")) {
+            world.increasePlantSlots(3);
+        } else if (type.equals("HM")) {
             GridManager gm = world.GridManager;
             List<Integer> emptyCols = new ArrayList<>();
-            
+
             for (int c = 0; c < 9; c++) {
-                if (gm.Board[5][c] == null) {
-                    emptyCols.add(c);
-                }
+                if (gm.Board[5][c] == null) emptyCols.add(c);
             }
-            
-            if (emptyCols.size() >= 1) {
+
+            if (!emptyCols.isEmpty()) {
                 Collections.shuffle(emptyCols);
-                
+
                 int col1 = emptyCols.get(0);
                 Plant p1 = new Peashooter();
                 gm.Board[5][col1] = p1;
                 world.addObject(p1, gm.getXCoord(col1, 5), gm.getYCoord(col1, 5));
-                
+
                 if (emptyCols.size() >= 2) {
                     int col2 = emptyCols.get(1);
                     Plant p2 = new Cactus();
@@ -83,16 +76,15 @@ public class AugmentCard extends Actor {
                     world.addObject(p2, gm.getXCoord(col2, 5), gm.getYCoord(col2, 5));
                 }
             }
-            
+
             AudioManager.playSound(80, false, "achievement.mp3");
         }
     }
 
     private void clearUI() {
         World world = getWorld();
-        if (world != null) {
-            world.removeObjects(world.getObjects(AugmentCard.class));
-            world.removeObjects(world.getObjects(Overlay.class));
-        }
+        if (world == null) return;
+        world.removeObjects(world.getObjects(AugmentCard.class));
+        world.removeObjects(world.getObjects(Overlay.class));
     }
 }

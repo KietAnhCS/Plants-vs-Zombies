@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=SunSpawner
+comment1.params=scene
+comment1.target=SunSpawner(PlayScene)
+comment2.params=
+comment2.target=void\ update()
+numComments=3

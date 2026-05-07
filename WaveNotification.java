@@ -31,7 +31,7 @@ public class WaveNotification extends Actor
     public void handleFinalWave() {
         if (counter == 300) {
             AudioManager.playSound(70,false, "siren.mp3");
-            setImage("finalwave.png");
+            //setImage("Set_1.png");
             AudioManager.playSound(70,false, "finalwave.mp3");
         }
         

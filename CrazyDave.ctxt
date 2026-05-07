@@ -1,0 +1,25 @@
+#BlueJ class context
+comment0.target=CrazyDave
+comment1.params=scripts\ sounds
+comment1.target=CrazyDave(java.lang.String[],\ java.lang.String[])
+comment10.params=
+comment10.target=void\ playVoice()
+comment11.params=
+comment11.target=void\ finish()
+comment2.params=waveManager\ scripts\ sounds
+comment2.target=CrazyDave(WaveManager,\ java.lang.String[],\ java.lang.String[])
+comment3.params=scripts\ sounds\ waveManager
+comment3.target=CrazyDave(java.lang.String[],\ java.lang.String[],\ WaveManager)
+comment4.params=world
+comment4.target=void\ addedToWorld(greenfoot.World)
+comment5.params=
+comment5.target=void\ act()
+comment6.params=
+comment6.target=void\ updateScreen()
+comment7.params=canvas\ text
+comment7.target=void\ drawDialogue(greenfoot.GreenfootImage,\ java.lang.String)
+comment8.params=
+comment8.target=void\ handleInteraction()
+comment9.params=
+comment9.target=void\ stopCurrentSound()
+numComments=12

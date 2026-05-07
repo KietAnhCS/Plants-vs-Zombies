@@ -1,24 +1,21 @@
-import greenfoot.*;  
+import greenfoot.*;
 
-public class ResultScreen extends World
-{
-    Hitbox hitbox = new Hitbox();
-    
-    public ResultScreen(World restart)
-    {    
-        super(1111, 602, 1, false); 
-        
-        addObject(hitbox,0,0);
+public class ResultScreen extends World {
+    public Hitbox hitbox = new Hitbox();
+
+    public ResultScreen(World restartWorld) {
+        super(1111, 602, 1, false);
         Greenfoot.setSpeed(50);
-        addObject(new Retry(restart), 365, 395);
+        addObject(hitbox, 0, 0);
+        addObject(new Retry(restartWorld), 365, 395);
     }
+
     public void act() {
-        
+        moveHitbox();
     }
-    public void moveHitbox() {
+
+    private void moveHitbox() {
         MouseInfo mouse = Greenfoot.getMouseInfo();
-        if (mouse != null) {
-            hitbox.setLocation(mouse.getX(), mouse.getY());
-        }
+        if (mouse != null) hitbox.setLocation(mouse.getX(), mouse.getY());
     }
 }

@@ -88,10 +88,15 @@ public abstract class Zombie extends SpriteAnimator {
     private boolean computeEating() {
         if (playScene == null || playScene.GridManager == null) return false;
         int yIdx = getYPos();
+        if (yIdx < 0) return false;
         Plant[][] boardGrid = playScene.GridManager.Board;
-        if (yIdx < 0 || yIdx >= boardGrid.length) return false;
-        for (Plant p : boardGrid[yIdx]) {
-            if (p != null && p.getWorld() != null && Math.abs(p.getX() - getX()) < 40) {
+        if (yIdx >= boardGrid.length) return false;
+        Plant[] myRow = boardGrid[yIdx];
+        if (myRow == null) return false;
+        for (Plant p : myRow) {
+            if (p == null || p.getWorld() == null) continue;
+            if (playScene.GridManager.getGridY(p.getX(), p.getY()) != yIdx) continue;
+            if (Math.abs(p.getX() - getX()) < 40) {
                 if (p instanceof PotatoMine &&
                     ((PotatoMine) p).getState() == PlantState.POTATO_ARMED) {
                     target = null;
@@ -154,7 +159,7 @@ public abstract class Zombie extends SpriteAnimator {
     }
 
     public int getYPos() {
-        if (playScene == null || playScene.GridManager == null) return 0;
+        if (playScene == null || playScene.GridManager == null) return -1;
         return playScene.GridManager.getGridY(getX(), getY());
     }
 
