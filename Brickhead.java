@@ -7,7 +7,7 @@ public class Brickhead extends Zombie {
 
     public Brickhead() {
         super(ZombieConfig.BRICK);
-        this.walkSpeed = (Greenfoot.getRandomNumber(6) + 22) / 100.0;
+        this.walkSpeed = (Greenfoot.getRandomNumber(6) + 20) / 100.0;
         wNormal  = importSprites(SpriteKey.BRICK_WALK.path,           7);
         wD1      = importSprites(SpriteKey.BRICK_WALK_D1.path,        7);
         wD2      = importSprites(SpriteKey.BRICK_WALK_D2.path,        7);

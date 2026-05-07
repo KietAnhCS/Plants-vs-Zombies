@@ -52,7 +52,7 @@ public class AugmentCard extends Actor {
         if (world == null) return;
 
         if (type.equals("rerollcard")) {
-            world.getSunManager().add(150);
+            world.getSunManager().add(500);
         } else if (type.equals("TD")) {
             world.increasePlantSlots(3);
         } else if (type.equals("HM")) {

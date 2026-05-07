@@ -7,7 +7,7 @@ public class Conehead extends Zombie {
 
     public Conehead() {
         super(ZombieConfig.CONE);
-        this.walkSpeed = (Greenfoot.getRandomNumber(6) + 22) / 100.0;
+        this.walkSpeed = (Greenfoot.getRandomNumber(6) + 30) / 100.0;
         wNormal  = importSprites(SpriteKey.CONE_WALK.path,            7);
         wD1      = importSprites(SpriteKey.CONE_WALK_D1.path,         7);
         wD2      = importSprites(SpriteKey.CONE_WALK_D2.path,         7);

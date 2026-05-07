@@ -1,6 +1,6 @@
 public class LevelConfig {
     public static final String[][][] LEVEL_1_DATA = {
-        {{"NORMAL"}, null, null, null, null},
+            {{"NORMAL"}, null, null, null, null},
         {null, {"NORMAL"}, null, {"NORMAL"}, null},
         {{"NORMAL"}, null, {"NORMAL"}, null, {"NORMAL"}},
         
@@ -80,5 +80,4 @@ public class LevelConfig {
             {"NORMAL", "CONEHEAD", "BUCKETHEAD", "BRICKHEAD", "NORMAL", "CONEHEAD", "BUCKETHEAD", "BRICKHEAD", "BRICKHEAD", "BRICKHEAD"}
         }
     };
-
 }

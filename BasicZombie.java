@@ -6,7 +6,7 @@ public class BasicZombie extends Zombie {
 
     public BasicZombie() {
         super(ZombieConfig.BASIC);
-        this.walkSpeed = (Greenfoot.getRandomNumber(6) + 22) / 100.0;
+        this.walkSpeed = (Greenfoot.getRandomNumber(6) + 36) / 100.0;
         wNormal  = importSprites(SpriteKey.BASIC_WALK.path,         7);
         wArmless = importSprites(SpriteKey.BASIC_WALK_ARMLESS.path, 7);
         eNormal  = importSprites(SpriteKey.BASIC_EAT.path,          7);
