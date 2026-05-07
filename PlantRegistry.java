@@ -2,10 +2,10 @@ import greenfoot.*;
 
 public class PlantRegistry {
     public static final int PEA_HP = 60;
-    public static final long PEA_SHOOT_DELAY = 1500L;
+    public static final long PEA_SHOOT_DELAY = 25L;
 
     public static final int REPEATER_HP = 60;
-    public static final long REPEATER_SHOOT_DELAY = 1700L;
+    public static final long REPEATER_SHOOT_DELAY =35L;
 
     public static final int GATLING_HP = 80;
     public static final long GATLING_SHOOT_DELAY = 800L;
@@ -13,7 +13,7 @@ public class PlantRegistry {
 
     public static final int GATLING2_HP = 100;
     public static final int GATLING2_BURST_COUNT = 5;
-    public static final long GATLING2_SHOOT_DELAY = 2000L;
+    public static final long GATLING2_SHOOT_DELAY = 45L;
     public static final long GATLING2_BURST_INTERVAL = 100L;
 
     public static final int BONK_HP = 636;
@@ -44,7 +44,7 @@ public class PlantRegistry {
     public static final long POTATO_ARMING_TIME = 3000L;
     public static final int POTATO_EXPLOSION_RANGE = 30;
     
-    public static final int PEA_DAMAGE = 1120;
+    public static final int PEA_DAMAGE = 30;
     public static final int FIRE_PEA_DAMAGE = 40;
     public static final int NEEDLE_DAMAGE = 10;
     public static final int NEEDLE_PIERCE_DAMAGE = 12;

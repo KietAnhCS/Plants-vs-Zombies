@@ -10,7 +10,7 @@ public class Sun extends FallingObject {
     private boolean pickedUp = false; 
     private long lifetimeStart;
     private boolean stationary = false;
-
+    
     public Sun() {
         this(25);
     }

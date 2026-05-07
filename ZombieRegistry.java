@@ -1,9 +1,9 @@
 public class ZombieRegistry {
-    public static final int BASIC_HP       = 15500050;
+    public static final int BASIC_HP       = 300;
     public static final int BASIC_ARMLESS  = 50;
     public static final int BASIC_DAMAGE   = 5;
 
-    public static final int CONE_HP        = 30000000;
+    public static final int CONE_HP        = 350;
     public static final int CONE_D1        = 250;
     public static final int CONE_D2        = 200;
     public static final int CONE_BARE      = 100;
@@ -25,7 +25,11 @@ public class ZombieRegistry {
     public static final int BRICK_DAMAGE   = 20;
     
     
-    public static final int PIANO_HP       = 200;
-    public static final int PIANO_ARMLESS  = 50;
-    public static final int PIANO_DAMAGE   = 20;
+    public static final int PIANO_HP      = 1000;
+    public static final int PIANO_D1      = 800;
+    public static final int PIANO_D2      = 400;
+    public static final int PIANO_DAMAGE  = 20;
+    
+    public static final int RA_HP = 450;
+    public static final int RA_DAMAGE = 20;
 }

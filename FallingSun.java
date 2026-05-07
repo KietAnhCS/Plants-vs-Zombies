@@ -8,10 +8,15 @@ public class FallingSun extends FallingObject
     private boolean beenClicked = false;
     private boolean landed = false;
     private long landedTime = 0;
+    private boolean isBeingStolen = false;
 
     public FallingSun() {
         super(2.5, 0, 0, 0, 3000);
         sunSprites = importSprites("sun", 2);
+    }
+
+    public void setBeingStolen(boolean stolen) {
+        this.isBeingStolen = stolen;
     }
 
     public void act() {
@@ -46,6 +51,8 @@ public class FallingSun extends FallingObject
     }
 
     private void handleFallingAndWaiting() {
+        if (isBeingStolen) return; 
+
         if (!landed) {
             super.update();
             if (elapsedTime >= fallTime) {
@@ -78,7 +85,6 @@ public class FallingSun extends FallingObject
 
     private void checkRemoval() {
         if (getWorld() == null) return;
-        
         boolean reached = false;
         List<SunDisplay> displays = playScene.getObjects(SunDisplay.class);
         if (!displays.isEmpty()) {
@@ -86,7 +92,6 @@ public class FallingSun extends FallingObject
             double dist = Math.hypot(getX() - ds.getX(), getY() - ds.getY());
             if (beenClicked && dist < 35) reached = true;
         }
-
         if (getImage().getTransparency() == 0 || reached) {
             getWorld().removeObject(this);
         }

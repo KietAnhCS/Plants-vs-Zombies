@@ -33,8 +33,17 @@ public enum SpriteKey {
     SHARED_HEADLESS_EAT("headlesszombieeating"),
     SHARED_FALL("zombiefall"),
     
-    PIANO_WALK("Piano_Playing");
-
+    PIANO_WALK("Piano_Playing"),
+    PIANO_WALK_D1("Piano-Damaged"),
+    PIANO_WALK_D2("Piano_Playing_Damaged"),
+    PIANO_DEATH("Piano_Death"),
+    
+    RA_WALK("Piano_Playing"),
+    RA_EAT("Ra_Eating"),
+    RA_POWER_START("Ra_Power-Start"),
+    RA_POWER_LOOP("Ra_Power-Loop"),
+    RA_POWER_END("Ra_Power-End"),
+    RA_DEATH("Ra_death");
     public final String path;
 
     SpriteKey(String path) {

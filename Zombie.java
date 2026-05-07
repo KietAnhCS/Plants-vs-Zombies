@@ -18,7 +18,8 @@ public abstract class Zombie extends SpriteAnimator {
     public boolean finalDeath = false;
     public boolean fixAnim = false;
     private boolean eatOnce = false;
-
+    
+    public int targetY = -1;
     public GreenfootImage[] headless, headlesseating, fall;
 
     public Zombie(ZombieConfig config) {

@@ -58,9 +58,17 @@ public class ZombieConfig {
     );
     
     public static final ZombieConfig PIANO = new ZombieConfig(
-        ZombieRegistry.PIANO_HP, ZombieRegistry.PIANO_DAMAGE,
-        new int[] { ZombieRegistry.PIANO_ARMLESS },
-        new SpriteKey[] { SpriteKey.PIANO_WALK,     SpriteKey.SHARED_WALK_ARMLESS },
-        new SpriteKey[] { SpriteKey.SHARED_EAT_BARE, SpriteKey.SHARED_EAT_ARMLESS }
+        ZombieRegistry.PIANO_HP, 
+        ZombieRegistry.PIANO_DAMAGE,
+        new int[] { ZombieRegistry.PIANO_D1, ZombieRegistry.PIANO_D2 },
+        new SpriteKey[] { SpriteKey.PIANO_WALK, SpriteKey.PIANO_WALK_D1, SpriteKey.PIANO_WALK_D2 },
+        new SpriteKey[] { SpriteKey.PIANO_WALK, SpriteKey.PIANO_WALK_D1, SpriteKey.PIANO_WALK_D2 });
+    
+    public static final ZombieConfig RA = new ZombieConfig(
+    ZombieRegistry.RA_HP, 
+    ZombieRegistry.RA_DAMAGE,
+    new int[] {},
+    new SpriteKey[] { SpriteKey.RA_WALK},
+    new SpriteKey[] { SpriteKey.RA_EAT}
     );
 }
