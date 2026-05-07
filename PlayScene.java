@@ -2,9 +2,9 @@ import greenfoot.*;
 import java.util.*;
 
 public class PlayScene extends World {
-
     public boolean loseOnce = false;
-    public boolean winOnce  = false;
+    public boolean winOnce = false;
+    public boolean isGameOver = false;
     public GridManager GridManager = new GridManager();
     public WaveManager level;
     public FallingObject winPlant;
@@ -13,55 +13,57 @@ public class PlayScene extends World {
     public GreenfootSound CYS;
 
     public SunDisplay sunDisplay = new SunDisplay();
-    public Hitbox     hitbox     = new Hitbox();
-    public Shovel     shovel     = new Shovel();
+    public Hitbox hitbox = new Hitbox();
+    public Shovel shovel = new Shovel();
     public MuteButton mutebutton = new MuteButton();
     public RollButton rollbutton = new RollButton();
-    public RupButton  rupbutton  = new RupButton();
+    public RupButton rupbutton = new RupButton();
 
-    private SunManager      sunManager;
+    private SunManager sunManager;
     private MusicController musicController;
-    private SunSpawner      sunSpawner;
-    private WinLossHandler  winLossHandler;
-    private DebugHandler    debugHandler;
-    private boolean         isPlaying = false;
+    private SunSpawner sunSpawner;
+    private WinLossHandler winLossHandler;
+    private DebugHandler debugHandler;
+    private boolean isPlaying = false;
 
     public PlayScene(GreenfootSound CYS, WaveManager level, SeedBank seedbank,
                      World restartWorld, FallingObject winPlant, boolean isWater) {
         super(1111, 698, 1, false);
-        this.CYS          = CYS;
-        this.seedbank     = seedbank;
+        this.CYS = CYS;
+        this.seedbank = seedbank;
         this.restartWorld = restartWorld;
-        this.level        = level;
-        this.winPlant     = winPlant;
-        this.sunManager   = new SunManager();
+        this.level = level;
+        this.winPlant = winPlant;
+        this.sunManager = new SunManager();
 
         Greenfoot.setSpeed(50);
         setBackground("maptft2.png");
 
-        addObject(new SliderBar(),  850,  50);
-        addObject(mutebutton,      1050,  50);
-        addObject(GridManager,      555, 349);
-        addObject(new ThuyThan(),   110, 500);
-        addObject(seedbank,           0,   0);
-        addObject(sunDisplay,       600, 570);
+        addObject(new SliderBar(), 850, 50);
+        addObject(mutebutton, 1050, 50);
+        addObject(GridManager, 555, 349);
+        addObject(new ThuyThan(), 110, 500);
+        addObject(seedbank, 0, 0);
+        addObject(sunDisplay, 600, 570);
         sunDisplay.setLocation(600, 570);
-        addObject(hitbox,           555, 349);
-        addObject(shovel,           930, 615);
-        addObject(rollbutton,       325, 625);
-        addObject(rupbutton,        175, 625);
+        addObject(hitbox, 555, 349);
+        addObject(shovel, 930, 615);
+        addObject(rollbutton, 325, 625);
+        addObject(rupbutton, 175, 625);
 
         prepareLawnmowers();
 
         musicController = new MusicController(this);
-        sunSpawner      = new SunSpawner(this);
-        winLossHandler  = new WinLossHandler(this);
-        debugHandler    = new DebugHandler(this);
+        sunSpawner = new SunSpawner(this);
+        winLossHandler = new WinLossHandler(this);
+        debugHandler = new DebugHandler(this);
 
         applyDefaultPaintOrder();
     }
 
     public void act() {
+        if (isGameOver) return;
+
         moveHitbox();
         if (!isPlaying) {
             addObject(level, 0, 0);
@@ -75,7 +77,9 @@ public class PlayScene extends World {
         drawWaveUI();
     }
 
-    public SunManager getSunManager() { return sunManager; }
+    public SunManager getSunManager() { 
+        return sunManager; 
+    }
 
     public void stopAllMusic() {
         AudioManager.stopBGM();
@@ -91,14 +95,14 @@ public class PlayScene extends World {
     }
 
     public boolean tryPlacePlant(int gridX, int gridY, Plant newPlant) {
-        if (newPlant == null || level.choosingCard
-                || !getObjects(CrazyDave.class).isEmpty()) return false;
+        if (newPlant == null || level.choosingCard || !getObjects(CrazyDave.class).isEmpty()) return false;
         return GridManager.placePlant(gridX, gridY, newPlant);
     }
 
     public boolean hasLost() {
-        for (Zombie z : getObjects(Zombie.class))
+        for (Zombie z : getObjects(Zombie.class)) {
             if (z.getWorld() != null && z.getX() < 155) return true;
+        }
         return false;
     }
 
@@ -107,16 +111,17 @@ public class PlayScene extends World {
     }
 
     public void finishLevel() {
+        isGameOver = true;
         stopAllMusic();
-        AudioManager.playSound(80, false, "winmusic.mp3");
     }
 
     public void rollPackets() {
         if (!getSunManager().hasEnough(25)) return;
-        RupButton.RarityEntry[] pool  = rupbutton.getPoolForRoll();
+        RupButton.RarityEntry[] pool = rupbutton.getPoolForRoll();
         int total = 0;
-        for (RupButton.RarityEntry e : pool)
+        for (RupButton.RarityEntry e : pool) {
             if (e != null && e.weight > 0) total += e.weight;
+        }
         if (total <= 0) return;
 
         getSunManager().spend(25);
@@ -129,8 +134,7 @@ public class PlayScene extends World {
                 if (e == null || e.weight <= 0) continue;
                 cursor += e.weight;
                 if (rnd < cursor) {
-                    String name = e.packetClass.getSimpleName()
-                                    .replace("Packet", "").toUpperCase();
+                    String name = e.packetClass.getSimpleName().replace("Packet", "").toUpperCase();
                     newBank[i] = PlantFactory.createSeedPacket(name);
                     break;
                 }
@@ -141,14 +145,15 @@ public class PlayScene extends World {
 
     public void checkAndCombine(Plant newPlant) {
         if (newPlant == null || newPlant.isMerging || newPlant.isTarget) return;
-        if (!(newPlant instanceof Peashooter  || newPlant instanceof Repeater
-           || newPlant instanceof GatlingPea  || newPlant instanceof Cactus
-           || newPlant instanceof Cactus2     || newPlant instanceof BonkChoy
+        if (!(newPlant instanceof Peashooter || newPlant instanceof Repeater
+           || newPlant instanceof GatlingPea || newPlant instanceof Cactus
+           || newPlant instanceof Cactus2 || newPlant instanceof BonkChoy
            || newPlant instanceof BonkChoy2)) return;
 
         List<Plant> available = new ArrayList<>();
-        for (Plant p : getObjects(newPlant.getClass()))
+        for (Plant p : getObjects(newPlant.getClass())) {
             if (!p.isMerging && !p.isTarget) available.add(p);
+        }
 
         if (available.size() >= 3) {
             Plant p1 = available.get(0), p2 = available.get(1), p3 = available.get(2);
@@ -176,8 +181,13 @@ public class PlayScene extends World {
         if (m != null) hitbox.setLocation(m.getX(), m.getY());
     }
 
-    public void started() { musicController.update(); }
-    public void stopped() { AudioManager.stopBGM(); }
+    public void started() { 
+        if (!isGameOver) musicController.update(); 
+    }
+
+    public void stopped() { 
+        AudioManager.stopBGM(); 
+    }
 
     private void prepareLawnmowers() {
         int[][] coords = {{240,180},{236,240},{225,295},{220,360},{190,420}};

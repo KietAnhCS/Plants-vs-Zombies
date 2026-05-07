@@ -13,12 +13,12 @@ public abstract class Zombie extends SpriteAnimator {
     public Plant   target;
     public PlayScene playScene;
 
-    public boolean fallen     = false;
-    public boolean spawnHead  = false;
-    public boolean resetAnim  = false;
-    public boolean finalDeath = false;
-    public boolean fixAnim    = false;
-    private boolean eatOnce   = false;
+    public boolean fallen      = false;
+    public boolean spawnHead   = false;
+    public boolean resetAnim   = false;
+    public boolean finalDeath  = false;
+    public boolean fixAnim     = false;
+    private boolean eatOnce    = false;
 
     public GreenfootImage[] headless, headlesseating, fall;
 
@@ -26,15 +26,17 @@ public abstract class Zombie extends SpriteAnimator {
         this.config = config;
         this.maxHp  = config.maxHp;
         this.hp     = config.maxHp;
-        headless       = importSprites(SpriteKey.SHARED_HEADLESS.path,     7);
+        headless       = importSprites(SpriteKey.SHARED_HEADLESS.path,   7);
         headlesseating = importSprites(SpriteKey.SHARED_HEADLESS_EAT.path, 7);
-        fall           = importSprites(SpriteKey.SHARED_FALL.path,         6);
+        fall           = importSprites(SpriteKey.SHARED_FALL.path,           6);
     }
 
     @Override
     public void addedToWorld(World world) {
-        if (world instanceof PlayScene) this.playScene = (PlayScene) world;
-        world.addObject(new HealthBar(this, 60), getX(), getY() - 50);
+        if (world instanceof PlayScene) {
+            this.playScene = (PlayScene) world;
+            world.addObject(new HealthBar(this, 60), getX(), getY() - 50);
+        }
     }
 
     public void hit(int dmg) {
@@ -43,6 +45,8 @@ public abstract class Zombie extends SpriteAnimator {
         if (this.hp <= 0) {
             this.hp      = 0;
             this.isAlive = false;
+            this.target = null;
+            this.eating = false;
         }
     }
 
@@ -51,7 +55,7 @@ public abstract class Zombie extends SpriteAnimator {
     }
 
     public void walk() {
-        move(-walkSpeed);
+        if (getWorld() != null) move(-walkSpeed);
     }
 
     public void setState(ZombieState newState) {
@@ -61,7 +65,9 @@ public abstract class Zombie extends SpriteAnimator {
     @Override
     public void act() {
         if (getWorld() == null) return;
+        
         if (!getWorld().getObjects(Overlay.class).isEmpty()) return;
+
         if (isLiving()) {
             updateLogic();
             handleThresholds();
@@ -77,7 +83,7 @@ public abstract class Zombie extends SpriteAnimator {
     }
 
     public boolean isLiving() {
-        return hp > 0 && isAlive;
+        return hp > 0 && isAlive && getWorld() != null;
     }
 
     public boolean checkEating() {
@@ -86,19 +92,19 @@ public abstract class Zombie extends SpriteAnimator {
     }
 
     private boolean computeEating() {
-        if (playScene == null || playScene.GridManager == null) return false;
+        if (playScene == null || playScene.GridManager == null || getWorld() == null) return false;
+        
         int yIdx = getYPos();
-        if (yIdx < 0) return false;
-        Plant[][] boardGrid = playScene.GridManager.Board;
-        if (yIdx >= boardGrid.length) return false;
-        Plant[] myRow = boardGrid[yIdx];
+        if (yIdx < 0 || yIdx >= playScene.GridManager.Board.length) return false;
+
+        Plant[] myRow = playScene.GridManager.Board[yIdx];
         if (myRow == null) return false;
+
+        int currentX = getX();
         for (Plant p : myRow) {
             if (p == null || p.getWorld() == null) continue;
-            if (playScene.GridManager.getGridY(p.getX(), p.getY()) != yIdx) continue;
-            if (Math.abs(p.getX() - getX()) < 40) {
-                if (p instanceof PotatoMine &&
-                    ((PotatoMine) p).getState() == PlantState.POTATO_ARMED) {
+            if (Math.abs(p.getX() - currentX) < 40) {
+                if (p instanceof PotatoMine && ((PotatoMine) p).getState() == PlantState.POTATO_ARMED) {
                     target = null;
                     return false;
                 }
@@ -116,6 +122,7 @@ public abstract class Zombie extends SpriteAnimator {
             target = null;
             return;
         }
+        
         if (frame == 2 || frame == 5) {
             if (!eatOnce) {
                 eatOnce = true;
@@ -128,25 +135,43 @@ public abstract class Zombie extends SpriteAnimator {
     }
 
     public void deathAnim() {
-        if (!resetAnim) { frame = 0; resetAnim = true; }
+        if (getWorld() == null) return;
+
+        if (!resetAnim) { 
+            frame = 0; 
+            resetAnim = true; 
+            removeFromRow();
+        }
+
         if (finalDeath) {
             if (!fixAnim) {
                 fixAnim = true;
                 AudioManager.playSound(80, false, "zombie_falling_1.mp3", "zombie_falling_2.mp3");
-                if (getWorld() != null) {
-                    getWorld().addObject(new fallingZombie(fall), getX() - 12, getY() + 20);
-                    getWorld().removeObject(this);
-                }
+                
+                int lastX = getX();
+                int lastY = getY();
+                World world = getWorld();
+                
+                world.addObject(new fallingZombie(fall), lastX - 12, lastY + 20);
+                world.removeObject(this);
             }
         } else {
             if (!spawnHead) {
                 spawnHead = true;
                 AudioManager.playSound(80, false, "limbs_pop.mp3");
-                if (getWorld() != null) getWorld().addObject(new Head(), getX(), getY() - 10);
+                getWorld().addObject(new Head(), getX(), getY() - 10);
             }
-            if (eating) animate(headlesseating, 350, false);
-            else { animate(headless, 350, false); walk(); }
-            if (frame >= 6) { finalDeath = true; removeFromRow(); }
+
+            if (eating) {
+                animate(headlesseating, 350, false);
+            } else { 
+                animate(headless, 350, false); 
+                walk(); 
+            }
+
+            if (frame >= 6) { 
+                finalDeath = true; 
+            }
         }
     }
 
@@ -154,12 +179,15 @@ public abstract class Zombie extends SpriteAnimator {
         if (playScene == null || playScene.level == null) return;
         int row = getYPos();
         if (row >= 0 && row < playScene.level.zombieRow.size()) {
-            playScene.level.zombieRow.get(row).remove(this);
+            List<Zombie> rowList = playScene.level.zombieRow.get(row);
+            if (rowList.contains(this)) {
+                rowList.remove(this);
+            }
         }
     }
 
     public int getYPos() {
-        if (playScene == null || playScene.GridManager == null) return -1;
+        if (playScene == null || playScene.GridManager == null || getWorld() == null) return -1;
         return playScene.GridManager.getGridY(getX(), getY());
     }
 

@@ -18,6 +18,8 @@ public abstract class Plant extends SpriteAnimator {
 
     @Override
     public void addedToWorld(World world) {
+        if (!(world instanceof PlayScene)) return;
+        
         playScene = (PlayScene) world;
         inputHandler = new PlantInputHandler(this);
         stateManager = new PlantStateManager(this);
@@ -39,11 +41,11 @@ public abstract class Plant extends SpriteAnimator {
         }
 
         if (hp <= 0) {
-            combatHandler.die();
+            if (combatHandler != null) combatHandler.die();
             return;
         }
 
-        inputHandler.handleMouse();
+        if (inputHandler != null) inputHandler.handleMouse();
 
         if (stateManager.canAct()) {
             update();
@@ -60,24 +62,31 @@ public abstract class Plant extends SpriteAnimator {
     }
 
     private void updateTransparency() {
-        if (getImage() != null) {
-            getImage().setTransparency((isDragging || opaque) ? 125 : 255);
+        GreenfootImage img = getImage();
+        if (img != null) {
+            img.setTransparency((isDragging || opaque) ? 125 : 255);
         }
     }
     
     public void setMergingTarget(Plant target) {
-        if (target == null || target == this) return;
+        if (target == null || target == this || playScene == null) return;
+        
         this.targetPlant = target;
         this.isMerging = true;
         this.merger = new Merger(this, target);
         
-        if (playScene != null && playScene.GridManager != null) {
-            playScene.GridManager.Board[this.currentGridY][this.currentGridX] = null;
+        if (playScene.GridManager != null) {
+            int gx = getXPos();
+            int gy = getYPos();
+            if (gy >= 0 && gy < playScene.GridManager.Board.length && 
+                gx >= 0 && gx < playScene.GridManager.Board[0].length) {
+                playScene.GridManager.Board[gy][gx] = null;
+            }
         }
     }
 
     public void hit(int dmg) {
-        if (!isDragging && !isMerging && isLiving()) {
+        if (isLiving() && !isDragging && !isMerging) {
             hp -= dmg;
         }
     }
@@ -91,5 +100,5 @@ public abstract class Plant extends SpriteAnimator {
 
     public int getXPos() { return currentGridX; }
     public int getYPos() { return currentGridY; }
-    public boolean isLiving() { return hp > 0; }
+    public boolean isLiving() { return hp > 0 && getWorld() != null; }
 }

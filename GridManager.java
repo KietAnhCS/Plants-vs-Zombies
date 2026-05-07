@@ -165,7 +165,7 @@ public class GridManager extends Actor implements IPlantPlacer {
     }
 
     public int getMaxCapacity() {
-        return playerLevel + 3 + bonusSlots;
+        return playerLevel + 1 + bonusSlots;
     }
 
     public int getCurrentPlantCount() {

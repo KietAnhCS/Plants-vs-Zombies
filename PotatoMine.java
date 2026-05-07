@@ -25,8 +25,10 @@ public class PotatoMine extends Plant {
     @Override
     public void update() {
         if (getWorld() == null || isMerging || isDragging) return;
+        
         playScene = (PlayScene) getWorld();
         if (System.currentTimeMillis() - startTime < ARMING_TIME) return;
+        
         switch (state) {
             case POTATO_ARMING:
                 if (!playSFX) {
@@ -61,13 +63,18 @@ public class PotatoMine extends Plant {
 
     public void checkExplosion() {
         if (getWorld() == null || playScene == null || playScene.level == null) return;
+        
         List<Zombie> zombies = playScene.level.zombieRow.get(getYPos());
         if (zombies == null || zombies.isEmpty()) return;
-        for (Zombie z : zombies) {
-            if (z != null && z.getWorld() != null &&
-                Math.abs(z.getX() - getX()) < EXPLODE_RANGE) {
-                state = PlantState.POTATO_EXPLODING;
-                return;
+        
+        int currentX = getX();
+        for (int i = 0; i < zombies.size(); i++) {
+            Zombie z = zombies.get(i);
+            if (z != null && z.getWorld() != null) {
+                if (Math.abs(z.getX() - currentX) < EXPLODE_RANGE) {
+                    state = PlantState.POTATO_EXPLODING;
+                    return;
+                }
             }
         }
     }
@@ -75,11 +82,20 @@ public class PotatoMine extends Plant {
     private void explode() {
         World world = getWorld();
         if (world == null) return;
-        world.addObject(new Explosion(playScene.level.zombieRow.get(getYPos())), getX(), getY() - 25);
+
+        int spawnX = getX();
+        int spawnY = getY();
+        List<Zombie> targets = playScene.level.zombieRow.get(getYPos());
+
+        Explosion explosionEffect = new Explosion(targets);
+        world.addObject(explosionEffect, spawnX, spawnY - 25);
+        
         AudioManager.playSound(90, false, PlantAssets.SOUND_POTATO_EXPLODE);
+
         if (playScene != null && playScene.GridManager != null) {
             playScene.GridManager.removePlant(getXPos(), getYPos());
         }
+        
         world.removeObject(this);
     }
 }

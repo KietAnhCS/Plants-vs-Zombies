@@ -17,6 +17,7 @@ public class ReadySetPlant extends SpriteAnimator {
 
     @Override
     public void act() {
+        if (((PlayScene)getWorld()).isGameOver) return;
         switch (phase) {
             case READY:
                 if (animate(ready, 40, false)) phase = Phase.SET;

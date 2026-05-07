@@ -1,5 +1,7 @@
 import greenfoot.*;
 import java.util.*;
+import java.util.function.Supplier;
+import java.util.Random;
 
 public class AugmentCard extends Actor {
     private WaveManager manager;
@@ -56,27 +58,38 @@ public class AugmentCard extends Actor {
         } else if (type.equals("HM")) {
             GridManager gm = world.GridManager;
             List<Integer> emptyCols = new ArrayList<>();
-
+        
             for (int c = 0; c < 9; c++) {
                 if (gm.Board[5][c] == null) emptyCols.add(c);
             }
-
+        
             if (!emptyCols.isEmpty()) {
                 Collections.shuffle(emptyCols);
-
+                Random rand = new Random();
+        
+                Supplier<Plant> randomPlant = () -> {
+                    int r = rand.nextInt(4);
+                    switch (r) {
+                        case 0: return new BonkChoy();
+                        case 1: return new GatlingPea();
+                        case 2: return new GatlingPea2();
+                        case 3: return new BonkChoy2();
+                        default: return new Peashooter();
+                    }
+                };
+        
                 int col1 = emptyCols.get(0);
-                Plant p1 = new Peashooter();
+                Plant p1 = randomPlant.get();
                 gm.Board[5][col1] = p1;
                 world.addObject(p1, gm.getXCoord(col1, 5), gm.getYCoord(col1, 5));
-
+        
                 if (emptyCols.size() >= 2) {
                     int col2 = emptyCols.get(1);
-                    Plant p2 = new Cactus();
+                    Plant p2 = randomPlant.get();
                     gm.Board[5][col2] = p2;
                     world.addObject(p2, gm.getXCoord(col2, 5), gm.getYCoord(col2, 5));
                 }
             }
-
             AudioManager.playSound(80, false, "achievement.mp3");
         }
     }

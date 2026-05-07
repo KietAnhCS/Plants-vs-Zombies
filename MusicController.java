@@ -14,8 +14,8 @@ public class MusicController {
                 || !scene.getObjects(CrazyDave.class).isEmpty()) return;
 
         int    w      = scene.level.getWaveNumber();
-        String target = w <= 6 ? "sans.mp3"
-                      : (w >= 12 && w <= 16) ? "finalwavemp3.mp3"
+        String target = w <= 3 ? "sans.mp3"
+                      : (w >= 14) ? "finalwavemp3.mp3"
                       : "intro3.mp3";
 
         if (!currentBGM.equals(target)) {

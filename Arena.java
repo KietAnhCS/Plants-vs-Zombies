@@ -28,7 +28,7 @@ public class Arena extends World {
             null, null
         };
         this.seedbank = new SeedBank(bank);
-        this.level = new WaveManager(23500L, LevelConfig.LEVEL_1_DATA, 15000L, true, 2, 2, 5, 10);
+        this.level = new WaveManager(23500L, LevelConfig.LEVEL_1_DATA, 15000L, true, 2, 2, 5,10,12,14,15);
 
         String[] introScripts = {
             "Greetings, neighbor!\nWelcome to my... uh... GAME!",

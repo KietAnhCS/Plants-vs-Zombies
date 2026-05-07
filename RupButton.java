@@ -11,8 +11,8 @@ public class RupButton extends Actor {
     }
 
     private int currentLevel = 1;
-    private final int MAX_LEVEL = 5;
-    private final int UPGRADE_COST = 50;
+    private final int MAX_LEVEL = 10;
+    private final int UPGRADE_COST = 200;
     private int rollCount = 0;
 
     public RarityEntry[] weightedPool = {
@@ -60,11 +60,11 @@ public class RupButton extends Actor {
             Class c = entry.packetClass;
             if (currentLevel == 2 && c == RepeaterPacket.class) entry.weight = 2;
             if (currentLevel >= 4) {
-                if (c == CactusPacket.class) entry.weight = 0;
+                if (c == CactusPacket.class) entry.weight = 5;
             }
             if (currentLevel == 5) {
                 if (c == RepeaterPacket.class) entry.weight = 7;
-                if (c == PeashooterPacket.class) entry.weight = 0;
+                if (c == PeashooterPacket.class) entry.weight = 3;
                 if (c == PotatoPacket.class) entry.weight = 2;
             }
         }

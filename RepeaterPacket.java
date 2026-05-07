@@ -3,7 +3,7 @@ import greenfoot.*;
 public class RepeaterPacket extends SeedPacket {
 
     public RepeaterPacket() {
-        super(40000L, 125, "repeaterpacket");
+        super(40000L, 225, "repeaterpacket");
     }
 
     @Override
