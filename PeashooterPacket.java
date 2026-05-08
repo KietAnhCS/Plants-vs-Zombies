@@ -21,7 +21,11 @@ public class PeashooterPacket extends SeedPacket {
     }
 
     @Override
-    public Plant getPlant() { 
-        return PlantFactory.createPlant(PlantType.PEASHOOTER);
+    public Plant getPlant() {
+        if (playScene != null && playScene.getPlantFactory() != null) {
+            return playScene.getPlantFactory().createPlant(PlantType.PEASHOOTER);
+        }
+
+        return PlantFactory.getInstance().createPlant(PlantType.PEASHOOTER);
     }
 }

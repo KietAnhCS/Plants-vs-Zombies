@@ -20,7 +20,7 @@ public class AugmentCard extends Actor {
         handleHover();
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse != null && mouse.getButton() == 1 && Greenfoot.mouseClicked(this)) {
-            AudioManager.playSound(80, false, "gravebutton.mp3");
+            AudioManager.getInstance().playSound(80, false, "gravebutton.mp3");
             applyAugmentEffect();
             clearUI();
             manager.nextWave();
@@ -90,7 +90,7 @@ public class AugmentCard extends Actor {
                     world.addObject(p2, gm.getXCoord(col2, 5), gm.getYCoord(col2, 5));
                 }
             }
-            AudioManager.playSound(80, false, "achievement.mp3");
+            AudioManager.getInstance().playSound(80, false, "achievement.mp3");
         }
     }
 

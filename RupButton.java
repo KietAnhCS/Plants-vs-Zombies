@@ -51,7 +51,7 @@ public class RupButton extends Actor {
             
             applyChanges();
             updateAppearance();
-            AudioManager.playSound(80, false, "achievement.mp3");
+            AudioManager.getInstance().playSound(80, false, "achievement.mp3");
         }
     }
 

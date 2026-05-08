@@ -28,7 +28,7 @@ public class DelayAudio extends Actor
         long elapsed = System.currentTimeMillis() - startTime;
 
         if (elapsed >= delayTime) {
-            AudioManager.playSound(volume, loop, musicFile);
+            AudioManager.getInstance().playSound(volume, loop, musicFile);
             
             getWorld().removeObject(this);
         }

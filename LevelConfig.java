@@ -1,6 +1,5 @@
 public class LevelConfig {
     public static final String[][][] LEVEL_1_DATA = {
-            {{"RA"}, null, null, null, null},
         {null, {"NORMAL"}, null, {"NORMAL"}, null},
         {{"NORMAL"}, null, {"NORMAL"}, null, {"NORMAL"}},
         

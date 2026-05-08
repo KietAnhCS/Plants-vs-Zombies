@@ -1,8 +1,18 @@
 import greenfoot.*;
 
-public class PlantFactory {
+public class PlantFactory implements IPlantFactory {
+    
+    private static PlantFactory instance;
+    
+    public static PlantFactory getInstance() {
+        if (instance == null) {
+            instance = new PlantFactory();
+        }
+        return instance;
+    }
 
-    public static Plant createPlant(PlantType type) {
+    @Override
+    public Plant createPlant(PlantType type) {
         if (type == null) return null;
         switch (type) {
             case PEASHOOTER:    return new Peashooter();
@@ -20,38 +30,47 @@ public class PlantFactory {
         }
     }
 
-    public static SeedPacket createSeedPacket(PlantType type) {
+    @Override
+    public SeedPacket createSeedPacket(PlantType type) {
         if (type == null) return null;
         switch (type) {
-            case PEASHOOTER:  return new PeashooterPacket();
-            case REPEATER:    return new RepeaterPacket();
-            case CACTUS:      return new CactusPacket();
-            case BONK_CHOY:   return new BonkchoyPacket();
-            case POTATO_MINE: return new PotatoPacket();
-            default:          return new PeashooterPacket();
+            case PEASHOOTER:    return new SeedPacket(5000, 100, "peashooterpacket");
+            case REPEATER:      return new SeedPacket(5000, 200, "Repeater");
+            case CACTUS:        return new SeedPacket(7000, 125, "Cactus");
+            case BONK_CHOY:     return new SeedPacket(7000, 150, "bonkchoypacket");
+            case POTATO_MINE:   return new SeedPacket(15000, 25, "PotatoMine");
+            default:            return new SeedPacket(5000, 100, "Peashooter");
         }
     }
 
-    public static Plant createPlant(String typeName) {
+    @Override
+    public Plant createPlant(String typeName) {
+        if (typeName == null) return null;
         try {
             return createPlant(PlantType.valueOf(normalize(typeName)));
         } catch (Exception e) {
-            System.err.println("Error Plant: " + typeName);
             return null;
         }
     }
 
-    public static SeedPacket createSeedPacket(String typeName) {
+    @Override
+    public SeedPacket createSeedPacket(String typeName) {
+        if (typeName == null) return null;
         try {
             return createSeedPacket(PlantType.valueOf(normalize(typeName)));
         } catch (Exception e) {
-            System.err.println("Error Packet: " + typeName);
             return null;
         }
     }
 
-    private static String normalize(String name) {
-        switch (name.toUpperCase()) {
+    private String normalize(String name) {
+        if (name == null) return "";
+        String n = name.toUpperCase().replace(" ", "_");
+        
+        if (n.endsWith("_PACKET")) n = n.substring(0, n.lastIndexOf("_PACKET"));
+        if (n.endsWith("PACKET")) n = n.substring(0, n.lastIndexOf("PACKET"));
+
+        switch (n) {
             case "BONKCHOY":    return "BONK_CHOY";
             case "BONKCHOY2":   return "BONK_CHOY_2";
             case "BONKCHOY3":   return "BONK_CHOY_3";
@@ -60,7 +79,7 @@ public class PlantFactory {
             case "POTATOMINE":  return "POTATO_MINE";
             case "CACTUS2":     return "CACTUS_2";
             case "CACTUS3":     return "CACTUS_3";
-            default:            return name.toUpperCase();
+            default:            return n;
         }
     }
 }

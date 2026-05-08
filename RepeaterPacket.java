@@ -19,9 +19,15 @@ public class RepeaterPacket extends SeedPacket {
         }
         return null;
     }
-
+    
     @Override
-    public Plant getPlant() { 
-        return PlantFactory.createPlant(PlantType.REPEATER);
+    public Plant getPlant() {
+        if (playScene != null && playScene.getPlantFactory() != null) {
+            return playScene.getPlantFactory().createPlant(PlantType.REPEATER);
+        }
+
+        return PlantFactory.getInstance().createPlant(PlantType.REPEATER);
     }
+    
+    
 }

@@ -46,7 +46,7 @@ public class SellShovel extends SpriteAnimator {
         if (gx != -1 && gy != -1 && playScene.GridManager.Board[gy][gx] != null) {
             dig(gx, gy);
         } else {
-            AudioManager.playSound(80, false, "tap.mp3");
+            AudioManager.getInstance().playSound(80, false, "tap.mp3");
         }
         exit();
     }
@@ -58,17 +58,21 @@ public class SellShovel extends SpriteAnimator {
             int py = p.getY();
             
             String rawName = p.getClass().getSimpleName(); 
-            String enumName = rawName.replaceAll("([0-9])", "_$1").toUpperCase();
-            
-            if (enumName.startsWith("BONKCHOY")) enumName = enumName.replace("BONKCHOY", "BONK_CHOY");
-            if (enumName.startsWith("GATLINGPEA")) enumName = enumName.replace("GATLINGPEA", "GATLING_PEA");
-            if (enumName.startsWith("POTATOMINE")) enumName = enumName.replace("POTATOMINE", "POTATO_MINE");
+            String formattedName = rawName.replaceAll("([a-z0-9])([A-Z])", "$1_$2")
+                                         .replaceAll("([A-Z])([A-Z][a-z])", "$1_$2")
+                                         .replace(" ", "_")
+                                         .toUpperCase();
+
+            if (formattedName.contains("BONKCHOY")) formattedName = formattedName.replace("BONKCHOY", "BONK_CHOY");
+            if (formattedName.contains("GATLINGPEA")) formattedName = formattedName.replace("GATLINGPEA", "GATLING_PEA");
+            if (formattedName.contains("POTATOMINE")) formattedName = formattedName.replace("POTATOMINE", "POTATO_MINE");
+            if (formattedName.matches(".*\\d$")) formattedName = formattedName.replaceAll("(\\d)$", "_$1");
 
             int refundValue = 0;
             try {
-                refundValue = PlantType.valueOf(enumName).cost;
+                refundValue = PlantType.valueOf(formattedName).cost;
             } catch (Exception e) {
-                refundValue = p.cost > 0 ? p.cost : 25;
+                refundValue = p.getCost() > 0 ? p.getCost() : 25;
             }
 
             playScene.GridManager.Board[gy][gx] = null;
@@ -77,7 +81,7 @@ public class SellShovel extends SpriteAnimator {
             Sun s = new Sun(refundValue, true);
             playScene.addObject(s, px, py);
             
-            AudioManager.playSound(80, false, "plant.mp3");
+            AudioManager.getInstance().playSound(80, false, "plant.mp3");
         }
     }
 

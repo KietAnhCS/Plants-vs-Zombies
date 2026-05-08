@@ -1,5 +1,5 @@
 public class SunManager {
-    private int sun = 0;
+    private int sun = 99999;
 
     public boolean hasEnough(int cost) {
         return sun >= cost;

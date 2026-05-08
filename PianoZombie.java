@@ -1,49 +1,68 @@
 import greenfoot.*;
+
 public class PianoZombie extends Zombie {
     public GreenfootImage[] wNormal, wArmless;
     public GreenfootImage[] eNormal, eArmless;
-    private boolean piano = true;
+    private boolean isArmless = false;
 
     public PianoZombie() {
         super(ZombieConfig.PIANO);
-        this.walkSpeed = (Greenfoot.getRandomNumber(6) + 22) / 100.0;
 
-        wNormal  = importSprites(SpriteKey.PIANO_WALK.path,           30);
-        wArmless = importSprites(SpriteKey.SHARED_WALK_ARMLESS.path,   7);
-        eNormal  = importSprites(SpriteKey.SHARED_EAT_BARE.path,       7);
-        eArmless = importSprites(SpriteKey.SHARED_EAT_ARMLESS.path,    7);
+        // Load Animations
+        wNormal  = importSprites(ZombieAssets.PIANO_WALK.path,            30);
+        wArmless = importSprites(ZombieAssets.SHARED_WALK_ARMLESS.path,   7);
+        eNormal  = importSprites(ZombieAssets.SHARED_EAT_BARE.path,       7);
+        eArmless = importSprites(ZombieAssets.SHARED_EAT_ARMLESS.path,    7);
 
-        this.currentState = new ArmoredZombieState(
-            this,
-            config.thresholds,
-            new GreenfootImage[][] { wNormal, wArmless },
-            new GreenfootImage[][] { eNormal, eArmless }
-        );
+        // Khởi tạo trạng thái đi bộ
+        setState(new WalkingState(this));
     }
 
     @Override
     protected void handleThresholds() {
-        if (hp <= ZombieRegistry.PIANO_ARMLESS && !fallen) {
-            fallen = true;
-            AudioManager.playSound(80, false, "limbs_pop.mp3");
-            if (getWorld() != null) getWorld().addObject(new Arm(), getX() + 8, getY() + 20);
+        int currentHp = getHp();
+        
+        // Ngưỡng rơi tay/hỏng piano
+        if (currentHp <= ZombieRegistry.PIANO_ARMLESS && !isArmless) {
+            isArmless = true;
+            AudioManager.getInstance().playSound(80, false, "limbs_pop.mp3");
+            if (getWorld() != null) {
+                getWorld().addObject(new Arm(), getX() + 8, getY() + 20);
+            }
         }
     }
 
     @Override
     public void hit(int dmg) {
-        if (!isAlive) return;
-        AudioManager.playSound(80, false, "splat.mp3", "splat2.mp3");
+        if (!isLiving()) return;
 
-        if (isLiving()) {
-            if (!fallen) hitFlash(eating ? eNormal  : wNormal,
-                                  eating ? SpriteKey.SHARED_EAT_BARE.path    : SpriteKey.PIANO_WALK.path);
-            else         hitFlash(eating ? eArmless : wArmless,
-                                  eating ? SpriteKey.SHARED_EAT_ARMLESS.path : SpriteKey.SHARED_WALK_ARMLESS.path);
-        } else if (!finalDeath) {
-            hitFlash(eating ? headlesseating : headless,
-                     eating ? SpriteKey.SHARED_HEADLESS_EAT.path : SpriteKey.SHARED_HEADLESS.path);
+        AudioManager.getInstance().playSound(80, false, "splat.mp3");
+
+        String currentPath;
+        boolean isEating = checkEating();
+
+        // Logic xác định path để hitFlash (khớp với SpriteAnimator yêu cầu String)
+        if (!isArmless) {
+            currentPath = isEating ? ZombieAssets.SHARED_EAT_BARE.path : ZombieAssets.PIANO_WALK.path;
+        } else {
+            currentPath = isEating ? ZombieAssets.SHARED_EAT_ARMLESS.path : ZombieAssets.SHARED_WALK_ARMLESS.path;
         }
+
+        hitFlash(currentPath);
         super.hit(dmg);
+    }
+
+    public boolean isArmless() {
+        return this.isArmless;
+    }
+
+    public GreenfootImage[] getCurrentAnimation(boolean isEating) {
+        if (!isArmless) {
+            return isEating ? eNormal : wNormal;
+        }
+        return isEating ? eArmless : wArmless;
+    }
+
+    private void updateAnimationReference() {
     }
 }

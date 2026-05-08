@@ -3,11 +3,9 @@ import java.util.List;
 
 public class Explosion extends SpriteAnimator {
     private GreenfootImage[] explosion;
-    private List<Zombie> zombies;
     private boolean damageDealt = false;
 
-    public Explosion(List<Zombie> zombies) {
-        this.zombies = zombies;
+    public Explosion() {
         this.explosion = importSprites("spudow", 8);
         if (explosion != null && explosion.length > 0) {
             setImage(explosion[0]);
@@ -17,24 +15,17 @@ public class Explosion extends SpriteAnimator {
     @Override
     public void addedToWorld(World world) {
         if (world == null) return;
-        
         applyExplosionDamage();
     }
 
     private void applyExplosionDamage() {
-        if (damageDealt || zombies == null) return;
+        if (damageDealt) return;
 
-        int currentX = getX();
-        for (int i = zombies.size() - 1; i >= 0; i--) {
-            Zombie z = zombies.get(i);
+        List<Zombie> zombiesInRange = getObjectsInRange(80, Zombie.class);
+        
+        for (Zombie z : zombiesInRange) {
             if (z != null && z.getWorld() != null) {
-                try {
-                    if (Math.abs(z.getX() - currentX) < 60) {
-                        z.takeDmg(1800); 
-                    }
-                } catch (Exception e) {
-                    continue;
-                }
+                z.hit(1800); 
             }
         }
         damageDealt = true;
@@ -45,7 +36,9 @@ public class Explosion extends SpriteAnimator {
         if (getWorld() == null) return;
 
         if (explosion != null && frame < explosion.length) {
-            animate(explosion, 100L, false);
+            if (animate(explosion, 100L, false)) {
+                getWorld().removeObject(this);
+            }
         } else {
             getWorld().removeObject(this);
         }

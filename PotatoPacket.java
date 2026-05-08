@@ -18,9 +18,13 @@ public class PotatoPacket extends SeedPacket {
         }
         return null;
     }
-
+    
     @Override
     public Plant getPlant() {
-        return PlantFactory.createPlant(PlantType.POTATO_MINE);
+        if (playScene != null && playScene.getPlantFactory() != null) {
+            return playScene.getPlantFactory().createPlant(PlantType.POTATO_MINE);
+        }
+
+        return PlantFactory.getInstance().createPlant(PlantType.POTATO_MINE);
     }
 }

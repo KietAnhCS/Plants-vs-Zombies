@@ -17,7 +17,8 @@ public class Button extends SpriteAnimator {
         handleHover();
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse != null && mouse.getButton() == 1 && Greenfoot.mouseClicked(this)) {
-            AudioManager.playSound(80, false, "gravebutton.mp3");
+            
+            AudioManager.getInstance().playSound(80, false, "gravebutton.mp3");
             onClick();
         }
     }

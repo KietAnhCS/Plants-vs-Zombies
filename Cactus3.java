@@ -2,114 +2,97 @@ import greenfoot.*;
 import java.util.List;
 
 public class Cactus3 extends Plant {
-
-    private static final PlantType TYPE              = PlantType.CACTUS_3;
-    private static final long      POWER_UP_DURATION = GameConstants.POWER_UP_DURATION;
-    private static final long      POWER_UP_DELAY    = GameConstants.POWER_UP_SHOOT_DELAY;
-
-    private GreenfootImage[] idle;
-    private GreenfootImage[] shoot;
-    private PlantState state     = PlantState.IDLE;
-    private boolean    shootOnce = false;
-    private long powerUpStartTime;
-    private long lastFrame2 = System.nanoTime();
-    private long shootDelay = TYPE.shootDelay;
+    private static final PlantType TYPE = PlantType.CACTUS_3;
+    private GreenfootImage[] idle, shoot;
+    private boolean adjusted = false;
+    private long lastAttackTime = System.currentTimeMillis();
     private PlayScene cachedPlayScene;
+    private boolean shootOnce = false;
 
     public Cactus3() {
-        maxHp = TYPE.hp;
-        hp    = maxHp;
+        setMaxHp(TYPE.hp);
+        setHp(TYPE.hp);
+        setDamage(TYPE.damage);
+        setCost(TYPE.cost);
+        
+        idle = importSprites(PlantAssets.CACTUS_IDLE, 4);
         shoot = importSprites(PlantAssets.CACTUS_SHOOT, 2);
-        idle  = importSprites(PlantAssets.CACTUS_IDLE,  4);
-        setImage(idle[0]);
+        
+        if (idle != null && idle.length > 0) setImage(idle[0]);
     }
 
     @Override
     public void addedToWorld(World world) {
         super.addedToWorld(world);
         if (world instanceof PlayScene) cachedPlayScene = (PlayScene) world;
+        world.addObject(new HealthBar(this, 50), getX(), getY());
     }
 
     @Override
     public void hit(int dmg) {
         if (getWorld() == null || !isLiving()) return;
-        hitFlash(
-            state == PlantState.SHOOTING ? shoot : idle,
-            state == PlantState.SHOOTING ? PlantAssets.CACTUS_SHOOT : PlantAssets.CACTUS_IDLE
-        );
-        hp -= dmg;
-    }
 
-    public void activatePlantFood() {
-        state            = PlantState.PEA_POWERED_UP;
-        powerUpStartTime = System.currentTimeMillis();
-        shootDelay       = POWER_UP_DELAY;
+        String assetPath = (getState() == PlantState.SHOOTING) 
+                           ? PlantAssets.CACTUS_SHOOT 
+                           : PlantAssets.CACTUS_IDLE;
+        
+        hitFlash(assetPath);
+        
+        setHp(getHp() - dmg);
+        if (getHp() <= 0) onDeath();
     }
 
     @Override
     public void update() {
         if (getWorld() == null) return;
-        updatePowerUpStatus();
-        currentFrame = System.nanoTime();
-        handleAction();
-        if (getWorld() != null) checkZombieInRow();
+        if (!adjusted) {
+            setLocation(getX(), getY() - 15);
+            adjusted = true;
+        }
+        handleCombat();
     }
 
-    private void updatePowerUpStatus() {
-        if (state == PlantState.PEA_POWERED_UP &&
-            System.currentTimeMillis() - powerUpStartTime > POWER_UP_DURATION) {
-            state      = PlantState.IDLE;
-            shootDelay = TYPE.shootDelay;
-        }
-    }
+    private void handleCombat() {
+        if (getState() == PlantState.MERGING) return;
 
-    private void handleAction() {
-        if (state == PlantState.IDLE) {
-            animate(idle, 300, true);
-            lastFrame2 = currentFrame;
-            shootOnce  = false;
-            return;
-        }
-
-        boolean poweredUp  = state == PlantState.PEA_POWERED_UP;
-        long    deltaTime2 = (currentFrame - lastFrame2) / 1_000_000;
-
-        if (deltaTime2 < shootDelay) {
-            animate(poweredUp ? shoot : idle, poweredUp ? 2 : 200, !poweredUp);
-            shootOnce = false;
+        if (checkZombieInRow()) {
+            setState(PlantState.SHOOTING);
+            animate(shoot, 100, false);
+            executeShoot();
         } else {
-            if (!shootOnce) {
-                shootOnce = true;
-                frame     = 0;
-            }
-            if (frame >= 1 && shootOnce) executeShoot();
-            animate(shoot, poweredUp ? 2 : 10, false);
+            setState(PlantState.IDLE);
+            animate(idle, 300, true);
+            shootOnce = false;
         }
     }
 
-    private void executeShoot() {
-        if (getYPos() == -1) return;
-        AudioManager.playSound(80, false, PlantAssets.SOUND_THROW, PlantAssets.SOUND_THROW2);
-        getWorld().addObject(new Needle3(getY(), -50), getX(), getY());
-        getWorld().addObject(new Needle3(getY(),   0), getX(), getY());
-        getWorld().addObject(new Needle3(getY(),  50), getX(), getY());
-        lastFrame2 = currentFrame;
-        shootOnce  = false;
-    }
-
-    private void checkZombieInRow() {
+    private boolean checkZombieInRow() {
         int myRow = getYPos();
-        if (myRow == -1 || cachedPlayScene.level == null) {
-            if (state != PlantState.PEA_POWERED_UP) state = PlantState.IDLE;
-            return;
-        }
+        if (myRow == -1 || cachedPlayScene == null || cachedPlayScene.level == null) return false;
         List<Zombie> rowZombies = cachedPlayScene.level.zombieRow.get(myRow);
-        boolean hasTarget = rowZombies.stream().anyMatch(z ->
+        return rowZombies.stream().anyMatch(z ->
             z.getWorld() != null &&
             z.getX() > getX() &&
             z.getX() <= cachedPlayScene.getWidth() + 10
         );
-        if      ( hasTarget && state == PlantState.IDLE)     state = PlantState.SHOOTING;
-        else if (!hasTarget && state == PlantState.SHOOTING) state = PlantState.IDLE;
+    }
+
+    private void executeShoot() {
+        if (System.currentTimeMillis() - lastAttackTime <= TYPE.shootDelay) return;
+
+        if (frame >= 1 && !shootOnce) {
+            AudioManager.getInstance().playSound(80, false, PlantAssets.SOUND_THROW, PlantAssets.SOUND_THROW2);
+            
+            getWorld().addObject(new Needle3(getY(), -50), getX(), getY());
+            getWorld().addObject(new Needle3(getY(), 0), getX(), getY());
+            getWorld().addObject(new Needle3(getY(), 50), getX(), getY());
+            
+            shootOnce = true;
+            lastAttackTime = System.currentTimeMillis();
+        }
+        
+        if (frame >= shoot.length - 1) {
+            shootOnce = false;
+        }
     }
 }

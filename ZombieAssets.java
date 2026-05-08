@@ -1,4 +1,6 @@
-public enum SpriteKey {
+import greenfoot.*;
+
+public enum ZombieAssets {
     BASIC_WALK("zombiewalk"),
     BASIC_WALK_ARMLESS("armlesszombie"),
     BASIC_EAT("zombieeating"),
@@ -44,9 +46,14 @@ public enum SpriteKey {
     RA_POWER_LOOP("Ra_Power-Loop"),
     RA_POWER_END("Ra_Power-End"),
     RA_DEATH("Ra_death");
+
     public final String path;
 
-    SpriteKey(String path) {
+    ZombieAssets(String path) {
         this.path = path;
+    }
+
+    public GreenfootImage[] getImages() {
+        return new SpriteCache().getSprites(this.path, 15);
     }
 }

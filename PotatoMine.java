@@ -2,97 +2,107 @@ import greenfoot.*;
 import java.util.List;
 
 public class PotatoMine extends Plant {
-
-    private static final PlantType TYPE          = PlantType.POTATO_MINE;
-    private static final long      ARMING_TIME   = TYPE.shootDelay;
-    private static final int       EXPLODE_RANGE = GameConstants.POTATO_EXPLOSION_RANGE;
+    private static final PlantType TYPE      = PlantType.POTATO_MINE;
+    private static final long      ARMING_TIME   = TYPE.shootDelay; 
+    private static final int        EXPLODE_RANGE = GameConstants.POTATO_EXPLOSION_RANGE;
 
     private GreenfootImage[] idle;
     private GreenfootImage[] arm;
-    private PlantState state    = PlantState.POTATO_ARMING;
-    private boolean    playSFX  = false;
-    private long       startTime;
+    private boolean playSFX  = false;
+    private long startTime;
 
     public PotatoMine() {
-        maxHp     = TYPE.hp;
-        hp        = maxHp;
-        idle      = importSprites(PlantAssets.POTATO_IDLE,   5);
-        arm       = importSprites(PlantAssets.POTATO_ARMING, 3);
-        startTime = System.currentTimeMillis();
-        if (arm != null && arm.length > 0) setImage(arm[0]);
-    }
-
-    @Override
-    public void update() {
-        if (getWorld() == null || isMerging || isDragging) return;
+        setMaxHp(TYPE.hp);
+        setHp(TYPE.hp);
+        setDamage(TYPE.damage);
+        setCost(TYPE.cost);
         
-        playScene = (PlayScene) getWorld();
-        if (System.currentTimeMillis() - startTime < ARMING_TIME) return;
+        this.idle = importSprites(PlantAssets.POTATO_IDLE, 5);
+        this.arm  = importSprites(PlantAssets.POTATO_ARMING, 3);
+        this.startTime = System.currentTimeMillis();
         
-        switch (state) {
-            case POTATO_ARMING:
-                if (!playSFX) {
-                    AudioManager.playSound(80, false, PlantAssets.SOUND_DIRT_RISE);
-                    playSFX = true;
-                }
-                animate(arm, 200, false);
-                if (frame >= arm.length - 1) state = PlantState.POTATO_ARMED;
-                break;
-            case POTATO_ARMED:
-                animate(idle, 200, true);
-                checkExplosion();
-                break;
-            case POTATO_EXPLODING:
-                explode();
-                break;
+        if (arm != null && arm.length > 0) {
+            setImage(arm[0]);
         }
+        
+        setState(PlantState.POTATO_ARMING);
     }
 
     @Override
     public void hit(int dmg) {
         if (getWorld() == null || !isLiving()) return;
-        if (state == PlantState.POTATO_ARMING) {
-            hp -= dmg;
-            hitFlash(arm, PlantAssets.POTATO_ARMING);
+
+        String assetPath = (getState() == PlantState.POTATO_ARMED) 
+                           ? PlantAssets.POTATO_IDLE 
+                           : PlantAssets.POTATO_ARMING;
+        
+        hitFlash(assetPath);
+        
+        setHp(getHp() - dmg);
+        if (getHp() <= 0) onDeath();
+    }
+
+    @Override
+    public void update() {
+        if (getWorld() == null || isDragging) return;
+        
+        PlayScene playScene = (PlayScene) getWorld();
+
+        if (getState() == PlantState.POTATO_ARMING && (System.currentTimeMillis() - startTime < ARMING_TIME)) {
+            return; 
+        }
+
+        switch (getState()) {
+            case POTATO_ARMING:
+                if (!playSFX) {
+                    AudioManager.getInstance().playSound(80, false, PlantAssets.SOUND_DIRT_RISE);
+                    playSFX = true;
+                }
+                
+                if (animate(arm, 200, false)) {
+                    setState(PlantState.POTATO_ARMED);
+                    setFrame(0);
+                }
+                break;
+
+            case POTATO_ARMED:
+                animate(idle, 200, true);
+                checkExplosion(playScene);
+                break;
+
+            case POTATO_EXPLODING:
+                executeExplosion(playScene);
+                break;
         }
     }
 
-    public PlantState getState() {
-        return state;
-    }
-
-    public void checkExplosion() {
-        if (getWorld() == null || playScene == null || playScene.level == null) return;
+    private void checkExplosion(PlayScene playScene) {
+        if (playScene == null || playScene.level == null) return;
         
         List<Zombie> zombies = playScene.level.zombieRow.get(getYPos());
         if (zombies == null || zombies.isEmpty()) return;
         
         int currentX = getX();
-        for (int i = 0; i < zombies.size(); i++) {
-            Zombie z = zombies.get(i);
+        for (Zombie z : zombies) {
             if (z != null && z.getWorld() != null) {
                 if (Math.abs(z.getX() - currentX) < EXPLODE_RANGE) {
-                    state = PlantState.POTATO_EXPLODING;
-                    return;
+                    setState(PlantState.POTATO_EXPLODING);
+                    break;
                 }
             }
         }
     }
 
-    private void explode() {
+    private void executeExplosion(PlayScene playScene) {
         World world = getWorld();
         if (world == null) return;
 
-        int spawnX = getX();
-        int spawnY = getY();
-        List<Zombie> targets = playScene.level.zombieRow.get(getYPos());
-
-        Explosion explosionEffect = new Explosion(targets);
-        world.addObject(explosionEffect, spawnX, spawnY - 25);
+        Explosion explosionEffect = new Explosion();
+        world.addObject(explosionEffect, getX(), getY() - 25);
         
-        AudioManager.playSound(90, false, PlantAssets.SOUND_POTATO_EXPLODE);
+        AudioManager.getInstance().playSound(90, false, PlantAssets.SOUND_POTATO_EXPLODE);
 
-        if (playScene != null && playScene.GridManager != null) {
+        if (playScene.GridManager != null) {
             playScene.GridManager.removePlant(getXPos(), getYPos());
         }
         

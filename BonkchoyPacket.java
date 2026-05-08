@@ -21,6 +21,10 @@ public class BonkchoyPacket extends SeedPacket {
 
     @Override
     public Plant getPlant() {
-        return PlantFactory.createPlant(PlantType.BONK_CHOY);
+        if (playScene != null && playScene.getPlantFactory() != null) {
+            return playScene.getPlantFactory().createPlant(PlantType.BONK_CHOY);
+        }
+
+        return PlantFactory.getInstance().createPlant(PlantType.BONK_CHOY);
     }
 }

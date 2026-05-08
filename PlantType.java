@@ -3,7 +3,7 @@ import greenfoot.*;
 public enum PlantType {
 
     PEASHOOTER    (100, PlantDamageType.NORMAL,    10,  200,   1500L, 0),
-    REPEATER      (125, PlantDamageType.NORMAL,    30,    200,   1700L, 2),
+    REPEATER      (125, PlantDamageType.NORMAL,    10,    200,   1700L, 2),
     GATLING_PEA   (300, PlantDamageType.NORMAL,    60,    200,   800L,  7),
     GATLING_PEA_2 (400, PlantDamageType.FIRE,      80,    200,  2000L, 5),
     CACTUS        (125, PlantDamageType.NEEDLE,    12,    200,  2400L, 0),

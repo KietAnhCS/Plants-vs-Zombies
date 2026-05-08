@@ -1,7 +1,12 @@
 public enum PlantState {
+    // System States (Cần thiết cho logic kéo thả/nâng cấp của dự án)
     IDLE,
-    SHOOTING,
+    DRAGGING,
+    MERGING,
     DYING,
+
+    // Action States (Logic chiến đấu)
+    SHOOTING,
     POTATO_ARMING,
     POTATO_ARMED,
     POTATO_EXPLODING,

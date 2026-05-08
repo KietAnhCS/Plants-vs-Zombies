@@ -1,13 +1,11 @@
 #BlueJ class context
 comment0.target=UpgradeManager
-comment1.params=mover\ target
-comment1.target=boolean\ canUpgrade(Plant,\ Plant)
-comment2.params=p
-comment2.target=Plant\ getUpgradeResult(Plant)
-comment3.params=mover\ merger
-comment3.target=void\ handleMergeLogic(Plant,\ Merger)
-comment4.params=mover
-comment4.target=void\ finalizeMerge(Plant)
-comment5.params=target\ scene
-comment5.target=void\ executeUpgrade(Plant,\ PlayScene)
-numComments=6
+comment1.params=factory\ eventBus
+comment1.target=UpgradeManager(IPlantFactory,\ PlantEventBus)
+comment2.params=
+comment2.target=PlantEventBus\ getEventBus()
+comment3.params=p
+comment3.target=Plant\ getUpgradeResult(Plant)
+comment4.params=target
+comment4.target=Plant\ merge(Plant)
+numComments=5

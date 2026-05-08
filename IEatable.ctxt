@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=IEatable
+comment1.params=zombie
+comment1.target=boolean\ canBeEatenBy(Zombie)
+comment2.params=damage
+comment2.target=void\ hit(int)
+numComments=3

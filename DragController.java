@@ -14,7 +14,7 @@ public class DragController extends Actor {
     public DragController(SunDisplay sunDisplay, IPlantPlacer placer) {
         this.sunDisplay = sunDisplay;
         this.placer = placer;
-        setImage((GreenfootImage) null);
+        setImage((GreenfootImage) null); // Actor điều khiển không cần hình ảnh riêng
     }
 
     @Override
@@ -25,6 +25,7 @@ public class DragController extends Actor {
     }
 
     private void handleDrag(MouseInfo mouse) {
+        // Nhấn chuột trái để nhặt túi hạt giống
         if (!isDragging && Greenfoot.mousePressed(null) && mouse.getButton() == 1) {
             tryPickUp(mouse);
             return;
@@ -33,6 +34,7 @@ public class DragController extends Actor {
         if (isDragging && ghostImage != null) {
             updateGhostPosition(mouse);
 
+            // Thả chuột hoặc click để đặt cây
             if (Greenfoot.mouseClicked(null) || Greenfoot.mouseDragEnded(null)) {
                 processPlacement();
                 cleanup();
@@ -44,14 +46,15 @@ public class DragController extends Actor {
         PlayScene scene = (PlayScene) getWorld();
         if (scene == null || scene.hitbox == null) return;
 
-        scene.moveHitbox();
+        scene.moveHitbox(); // Cập nhật vị trí hitbox theo chuột
         List<Actor> touching = scene.hitbox.getTouching();
 
         for (Actor a : touching) {
             if (a instanceof SeedPacket) {
                 SeedPacket packet = (SeedPacket) a;
+                // Kiểm tra xem đủ tiền và hồi chiêu chưa
                 if (packet.tryPurchase()) {
-                    ghostImage = packet.addImage();
+                    ghostImage = packet.addImage(); // Lấy ảnh mờ của cây
                     plantToPlace = packet.getPlant(); 
                     
                     if (ghostImage != null && getWorld() != null) {
@@ -72,12 +75,15 @@ public class DragController extends Actor {
         int gx = placer.getGridX(mx, my);
         int gy = placer.getGridY(mx, my);
 
+        // Nếu chuột đang nằm trong một ô có thể đặt được
         if (gx >= 0 && gy >= 0 && plantToPlace != null && placer.canPlace(gx, gy, plantToPlace)) {
+            // Hút Ghost Image vào giữa ô lục giác
             ghostImage.setLocation(placer.getXCoord(gx, gy), placer.getYCoord(gx, gy));
             ghostImage.setTransparent(true);
             lastGx = gx;
             lastGy = gy;
         } else {
+            // Bay tự do theo chuột nếu không ở trong ô hợp lệ
             ghostImage.setLocation(mx, my);
             ghostImage.setTransparent(false);
             lastGx = lastGy = -1;
@@ -89,13 +95,16 @@ public class DragController extends Actor {
             if (executePlacement(lastGx, lastGy)) return;
         }
 
+        // Nếu thả chuột ra ngoài Grid, tự động tìm chỗ trống ở hàng Bench (hàng 5)
         if (autoPlaceInQueue()) return;
 
+        // Nếu không đặt được đâu cả thì hủy chọn
         if (selectedPacket != null) selectedPacket.cancelSelect();
     }
 
     private boolean autoPlaceInQueue() {
         if (plantToPlace == null) return false;
+        // Ưu tiên hàng 5 (hàng chờ/bench) từ dưới lên
         for (int y = 5; y >= 0; y--) { 
             for (int x = 0; x < 9; x++) { 
                 if (placer.canPlace(x, y, plantToPlace)) {
@@ -108,19 +117,15 @@ public class DragController extends Actor {
 
     private boolean executePlacement(int x, int y) {
         if (selectedPacket == null) return false;
-        
         if (placer.placePlant(x, y, plantToPlace)) {
             if (sunDisplay != null) {
                 sunDisplay.removeSun(selectedPacket.sunCost);
             }
-            
             selectedPacket.used();
-            
             PlayScene scene = (PlayScene) getWorld();
             if (scene != null) {
-                scene.checkAndCombine(plantToPlace);
+                PlantCombineHandler.checkAndCombine(scene, plantToPlace);
             }
-            
             return true;
         }
         return false;

@@ -9,7 +9,7 @@ public class VictoryScreen extends World {
         super(1111, 698, 1); 
         this.victoryGif = new GifImage("victorygif.gif");
         
-        AudioManager.playSound(80, false, "victory.mp3");
+        AudioManager.getInstance().playSound(80, false, "victory.mp3");
         
         GreenfootImage bg = new GreenfootImage(1111, 698);
         bg.setColor(Color.BLACK);

@@ -1,40 +1,62 @@
 import greenfoot.*;
 
 public class Merger {
+    private Plant source;
+    private Plant target;
+    private double speed = 15.0;
 
-    private Actor mover;
-    private Actor target;
-    private double speed = 20.0;
-
-    public Merger(Actor mover, Actor target) {
-        this.mover = mover;
+    public Merger(Plant source, Plant target, UpgradeManager upgradeManager) {
+        this.source = source;
         this.target = target;
     }
 
     public boolean update() {
-        if (mover == null || mover.getWorld() == null || target == null || target.getWorld() == null) {
+        if (source == null || source.getWorld() == null || target == null || target.getWorld() == null) {
             return true;
         }
 
-        int targetX = target.getX();
-        int targetY = target.getY();
-        int moverX = mover.getX();
-        int moverY = mover.getY();
+        double tx = target.getX();
+        double ty = target.getY();
+        double sx = source.getX();
+        double sy = source.getY();
 
-        int dx = targetX - moverX;
-        int dy = targetY - moverY;
+        double dx = tx - sx;
+        double dy = ty - sy;
         double distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance < speed) {
-            mover.setLocation(targetX, targetY);
+        if (distance <= speed) {
+            source.setLocation((int)tx, (int)ty);
+            finalizeEffect();
             return true;
         }
 
-        double angle = Math.atan2(dy, dx);
-        int nextX = moverX + (int) (Math.cos(angle) * speed);
-        int nextY = moverY + (int) (Math.sin(angle) * speed);
-
-        mover.setLocation(nextX, nextY);
+        double vx = (dx / distance) * speed;
+        double vy = (dy / distance) * speed;
+        
+        source.setLocation((int)(sx + vx), (int)(sy + vy));
+        
         return false;
+    }
+
+    private void finalizeEffect() {
+        if (source != null && source.getWorld() != null) {
+            source.getWorld().removeObject(source);
+        }
+    }
+
+    public void startMerge() {
+        if (source != null) source.setState(PlantState.MERGING);
+        if (target != null) target.setState(PlantState.MERGING);
+    }
+
+    public void cancel() {
+        if (source != null && source.getWorld() != null) {
+            source.setState(PlantState.IDLE);
+            source.syncGridPosition();
+            source.getImage().setTransparency(255);
+        }
+        if (target != null && target.getWorld() != null) {
+            target.setState(PlantState.IDLE);
+        }
     }
 }

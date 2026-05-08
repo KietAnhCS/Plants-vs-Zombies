@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=IZombieEventListener
+comment1.params=zombie
+comment1.target=void\ onZombieDied(Zombie)
+comment2.params=zombie\ damage
+comment2.target=void\ onZombieHit(Zombie,\ int)
+comment3.params=zombie\ target
+comment3.target=void\ onZombieAteTarget(Zombie,\ IEatable)
+comment4.params=zombie\ newState
+comment4.target=void\ onZombieStateChanged(Zombie,\ IZombieState)
+numComments=5

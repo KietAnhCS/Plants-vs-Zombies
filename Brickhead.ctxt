@@ -6,4 +6,6 @@ comment2.params=
 comment2.target=void\ handleThresholds()
 comment3.params=dmg
 comment3.target=void\ hit(int)
-numComments=4
+comment4.params=isEating
+comment4.target=greenfoot.GreenfootImage[]\ getCurrentAnimation(boolean)
+numComments=5

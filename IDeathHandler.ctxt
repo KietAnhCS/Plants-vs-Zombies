@@ -1,0 +1,5 @@
+#BlueJ class context
+comment0.target=IDeathHandler
+comment1.params=zombie
+comment1.target=void\ handleDeath(Zombie)
+numComments=2

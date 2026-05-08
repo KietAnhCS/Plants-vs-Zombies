@@ -21,7 +21,7 @@ public class WaveNotification extends Actor
     
     private void handleNormalWave() {
         if (counter == 300) {
-            AudioManager.playSound(70,false, "siren.mp3");
+            AudioManager.getInstance().playSound(70,false, "siren.mp3");
         }
         if (counter >300) {
             getWorld().removeObject(this);
@@ -30,9 +30,9 @@ public class WaveNotification extends Actor
     
     public void handleFinalWave() {
         if (counter == 300) {
-            AudioManager.playSound(70,false, "siren.mp3");
+            AudioManager.getInstance().playSound(70,false, "siren.mp3");
             //setImage("Set_1.png");
-            AudioManager.playSound(70,false, "finalwave.mp3");
+            AudioManager.getInstance().playSound(70,false, "finalwave.mp3");
         }
         
         if (counter > 450) {

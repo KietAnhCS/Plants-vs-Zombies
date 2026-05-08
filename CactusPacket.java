@@ -19,9 +19,13 @@ public class CactusPacket extends SeedPacket {
         }
         return null;
     }
-
+    
     @Override
-    public Plant getPlant() { 
-        return PlantFactory.createPlant(PlantType.CACTUS);
+    public Plant getPlant() {
+        if (playScene != null && playScene.getPlantFactory() != null) {
+            return playScene.getPlantFactory().createPlant(PlantType.CACTUS);
+        }
+
+        return PlantFactory.getInstance().createPlant(PlantType.CACTUS);
     }
 }

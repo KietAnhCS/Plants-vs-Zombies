@@ -31,8 +31,11 @@ public class Start extends Button {
         if (!clicked) {
             clicked = true;
             AudioManager.stopBGM();
-            AudioManager.playSound(80, false, "gravebutton.mp3");
-            AudioManager.playSound(80, false, "losemusic.mp3");
+            AudioManager.getInstance().playSound(80, false, "losemusic.mp3");
+            AudioManager.getInstance().playSound(80, false, "losemusic.mp3");
+            
+            AudioManager.getInstance().playSound(80, false, "gravebutton.mp3");
+            AudioManager.getInstance().playSound(80, false, "losemusic.mp3");
             getWorld().addObject(new DelayAudio("evillaugh.mp3", 80, false, 1000L), 0, 0);
             getWorld().addObject(new ZombieHand(), 300, 500);
         } else {

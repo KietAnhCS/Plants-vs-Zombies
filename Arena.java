@@ -21,20 +21,23 @@ public class Arena extends World {
     }
 
     private void initComponents() {
+        // Fix lỗi non-static: Gọi thông qua getInstance() của PlantFactory
+        PlantFactory factory = PlantFactory.getInstance();
+        
         SeedPacket[] bank = {
-            PlantFactory.createSeedPacket("PEASHOOTER"), 
-            PlantFactory.createSeedPacket("PEASHOOTER"), 
-            PlantFactory.createSeedPacket("BONKCHOY"), 
+            factory.createSeedPacket("PEASHOOTER"), 
+            factory.createSeedPacket("PEASHOOTER"), 
+            factory.createSeedPacket("BONKCHOY"), 
             null, null
         };
+        
         this.seedbank = new SeedBank(bank);
-        this.level = new WaveManager(23500L, LevelConfig.LEVEL_1_DATA, 15000L, true, 2, 2, 5,10,12,14,15);
+        this.level = new WaveManager(23500L, LevelConfig.LEVEL_1_DATA, 15000L, true, 2, 2, 5, 10, 12, 14, 15);
 
         String[] introScripts = {
             "Greetings, neighbor!\nWelcome to my... uh... GAME!",
             "They call me Crazy Dave.\nBut you can just call me... Crazy Dave!\nI own this joint.",
             "Expect the unexpected!\nI've cooked up some brand-new,\nbrain-protecting madness just for you!",
-            
             "Let's get crackin'!\nWabby Wabbo!"
         };
         String[] introSounds = {

@@ -11,7 +11,7 @@ public class SeedPacket extends Actor {
     private final GreenfootImage overlayBuffer;
     private final GreenfootImage combined;
 
-    private PlayScene playScene;
+    protected PlayScene playScene;
 
     public SeedPacket(long rechargeTime, int sunCost, String name) {
         this.rechargeTime = rechargeTime;
@@ -68,7 +68,10 @@ public class SeedPacket extends Actor {
     }
 
     public Plant getPlant() {
-        return PlantFactory.createPlant(this.name);
+        if (playScene != null && playScene.getPlantFactory() != null) {
+            return playScene.getPlantFactory().createPlant(this.name);
+        }
+        return PlantFactory.getInstance().createPlant(this.name);
     }
 
     public void onSunChanged(int currentSun) {

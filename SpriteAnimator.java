@@ -1,32 +1,21 @@
 import greenfoot.*;
 
 public class SpriteAnimator extends PhysicsBody {
-    public long deltaTime;
-    public long lastFrame = System.nanoTime();
-    public long currentFrame = System.nanoTime();
-    public GreenfootImage[] previousSprites = null;
+    private static SpriteCache cache = new SpriteCache();
+    
+    private long lastMillis = System.currentTimeMillis();
+    private GreenfootImage[] previousSprites = null;
     public int frame = 0;
 
-    private GreenfootImage[] flashSprites = null;
-    private String flashFilename = null;
     private int flashRemainingFrames = 0;
+    private String flashFilename = null;
 
     public GreenfootImage[] importSprites(String filename, int frames) {
-        GreenfootImage[] sprites = new GreenfootImage[frames];
-        for (int i = 0; i < frames; i++) {
-            sprites[i] = new GreenfootImage(filename + (i + 1) + ".png");
-        }
-        return sprites;
+        return cache.getSprites(filename, frames);
     }
 
     public GreenfootImage[] importSprites(String filename, int frames, double scaleFactor) {
-        GreenfootImage[] sprites = new GreenfootImage[frames];
-        for (int i = 0; i < frames; i++) {
-            GreenfootImage img = new GreenfootImage(filename + (i + 1) + ".png");
-            img.scale((int)(img.getWidth() * scaleFactor), (int)(img.getHeight() * scaleFactor));
-            sprites[i] = img;
-        }
-        return sprites;
+        return cache.getSprites(filename, frames, scaleFactor);
     }
 
     public boolean animate(GreenfootImage[] sprite, long duration) {
@@ -34,63 +23,78 @@ public class SpriteAnimator extends PhysicsBody {
     }
 
     public boolean animate(GreenfootImage[] sprite, long duration, boolean loop) {
-        currentFrame = System.nanoTime();
-        deltaTime = (currentFrame - lastFrame) / 1_000_000;
+        if (sprite == null || sprite.length == 0) return false;
 
         if (sprite != previousSprites) {
             frame = 0;
             previousSprites = sprite;
-            setImage(sprite[0]);
-            lastFrame = currentFrame;
+            applyImageWithOpacity(sprite[0]);
+            lastMillis = System.currentTimeMillis();
             return false;
         }
 
-        if (deltaTime >= duration) {
-            lastFrame = currentFrame;
+        long currentMillis = System.currentTimeMillis();
+        long elapsed = currentMillis - lastMillis;
+
+        if (elapsed >= duration) {
+            lastMillis = currentMillis - (elapsed % duration);
             frame++;
 
             if (frame >= sprite.length) {
-                if (loop) frame = 0;
-                else return true;
+                if (loop) {
+                    frame = 0;
+                } else {
+                    frame = sprite.length - 1;
+                    applyImageWithOpacity(sprite[frame]);
+                    return true;
+                }
             }
 
-            resolveFlash();
-            
             if (flashRemainingFrames > 0) {
                 try {
-                    setImage(new GreenfootImage("flash" + flashFilename + (frame + 1) + ".png"));
+                    String path = "images/flash" + flashFilename + (frame + 1) + ".png";
+                    applyImageWithOpacity(new GreenfootImage(path));
                 } catch (Exception e) {
-                    setImage(sprite[frame]);
+                    applyImageWithOpacity(sprite[frame]);
                 }
                 flashRemainingFrames--;
             } else {
-                setImage(sprite[frame]);
+                applyImageWithOpacity(sprite[frame]);
             }
         }
         return false;
     }
 
-    public void hitFlash(GreenfootImage[] sprite, String filename) {
-        this.flashSprites = sprite;
+    private void applyImageWithOpacity(GreenfootImage img) {
+        if (img == null) return;
+        if (this instanceof Plant) {
+            Plant p = (Plant) this;
+            int alpha = p.opaque ? 160 : 255;
+            if (img.getTransparency() != alpha) {
+                img.setTransparency(alpha);
+            }
+        }
+        setImage(img);
+    }
+
+    public void hitFlash(String filename) {
         this.flashFilename = filename;
-        this.flashRemainingFrames = 1; 
+        this.flashRemainingFrames = 2; 
         try {
-            setImage(new GreenfootImage("flash" + filename + (frame + 1) + ".png"));
+            String path = "images/flash" + filename + (frame + 1) + ".png";
+            applyImageWithOpacity(new GreenfootImage(path));
         } catch (Exception e) {}
     }
 
-    private void resolveFlash() {
-        if (flashRemainingFrames <= 0) {
-            flashSprites = null;
-            flashFilename = null;
-        }
-    }
-
     public void setFrame(int toFrame) {
-        frame = toFrame - 1;
+        this.frame = Math.max(0, toFrame - 1);
     }
 
     public int getCurrentFrame() {
         return frame + 1;
+    }
+    
+    public static void clearAnimationCache() {
+        cache.clearCache();
     }
 }

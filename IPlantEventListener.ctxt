@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=IPlantEventListener
+comment1.params=plant
+comment1.target=void\ onPlantDied(Plant)
+comment2.params=plant\ damage
+comment2.target=void\ onPlantHit(Plant,\ int)
+comment3.params=source\ target
+comment3.target=void\ onPlantMerged(Plant,\ Plant)
+comment4.params=plant\ newState
+comment4.target=void\ onPlantStateChanged(Plant,\ PlantState)
+numComments=5

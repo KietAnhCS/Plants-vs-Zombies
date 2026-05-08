@@ -21,7 +21,7 @@ public class Shovel extends PhysicsBody {
         PlayScene scene = (PlayScene) getWorld();
         selected = true;
         setImage(IMG_SELECTED);
-        AudioManager.playSound(80, false, "shovel.mp3");
+        AudioManager.getInstance().playSound(80, false, "shovel.mp3");
         scene.addObject(new SellShovel(this, scene, getX(), getY()), mouse.getX(), mouse.getY());
     }
 
