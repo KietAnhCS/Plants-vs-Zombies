@@ -1,7 +1,7 @@
 #BlueJ class context
 comment0.target=ZombieFactory
 comment1.params=type
-comment1.target=Zombie\ createZombie(ZombieFactory.ZombieType)
+comment1.target=Zombie\ createZombie(ZombieType)
 comment2.params=typeName
 comment2.target=Zombie\ createZombie(java.lang.String)
 numComments=3

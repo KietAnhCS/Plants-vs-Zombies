@@ -28,4 +28,9 @@ public class ZombieRegistry {
     public static final int PIANO_HP       = 700;
     public static final int PIANO_ARMLESS  = 50;
     public static final int PIANO_DAMAGE   = 20;
+    
+    public static final int RA_HP          = 600;
+    public static final int RA_BARE        = 200;
+    public static final int RA_ARMLESS     = 100;
+    public static final int RA_DAMAGE      = 20;
 }

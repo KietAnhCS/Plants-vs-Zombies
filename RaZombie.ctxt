@@ -1,0 +1,25 @@
+#BlueJ class context
+comment0.target=RaZombie
+comment1.params=
+comment1.target=RaZombie()
+comment10.params=
+comment10.target=void\ resetStealing()
+comment11.params=
+comment11.target=void\ deathAnim()
+comment2.params=path\ count
+comment2.target=greenfoot.GreenfootImage[]\ importAndScale(java.lang.String,\ int)
+comment3.params=
+comment3.target=void\ act()
+comment4.params=
+comment4.target=void\ handleThresholds()
+comment5.params=
+comment5.target=void\ handleSunStealingLogic()
+comment6.params=
+comment6.target=void\ processStealing()
+comment7.params=
+comment7.target=void\ cancelStealing()
+comment8.params=
+comment8.target=FallingSun\ getBestSunToSteal()
+comment9.params=sun
+comment9.target=boolean\ isClosestZombieTo(FallingSun)
+numComments=12

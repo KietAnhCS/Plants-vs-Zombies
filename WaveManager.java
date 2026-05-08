@@ -71,7 +71,7 @@ public class WaveManager extends Actor {
             case WAITING_FOR_REWARD:
                 if (now - stateTimer >= 3000) {
                     if (wave > 0) {
-                        playScene.addObject(new Sun(300, true), 555, 300);
+                        playScene.addObject(new Sun(400, true), 555, 300);
                     }
                     stateTimer = now;
                     currentState = WaveState.WAITING_FOR_DAVE;
