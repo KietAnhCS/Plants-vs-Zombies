@@ -101,23 +101,34 @@ public class PlayScene extends World {
     }
 
     public boolean tryPlacePlant(int gridX, int gridY, Plant newPlant) {
-        if (newPlant == null || level.choosingCard || !getObjects(CrazyDave.class).isEmpty()) return false;
+        if (newPlant == null || level == null) return false;
+        if (level.choosingCard || !getObjects(CrazyDave.class).isEmpty()) return false;
+        
         boolean placed = GridManager.placePlant(gridX, gridY, newPlant);
-        if (placed) PlantCombineHandler.checkAndCombine(this, newPlant);
+        if (placed) {
+            PlantCombineHandler.checkAndCombine(this, newPlant);
+        }
         return placed;
     }
 
     public void rollPackets() {
         if (!getSunManager().hasEnough(25)) return;
+        
         RupButton.RarityEntry[] pool = rupbutton.getPoolForRoll();
         int total = 0;
-        for (RupButton.RarityEntry e : pool) if (e != null && e.weight > 0) total += e.weight;
+        for (RupButton.RarityEntry e : pool) {
+            if (e != null && e.weight > 0) total += e.weight;
+        }
+        
         if (total <= 0) return;
+        
         getSunManager().spend(25);
         AudioManager.getInstance().playSound(80, false, "achievement.mp3");
+        
         SeedPacket[] newBank = new SeedPacket[3];
         for (int i = 0; i < 3; i++) {
-            int rnd = Greenfoot.getRandomNumber(total), cursor = 0;
+            int rnd = Greenfoot.getRandomNumber(total);
+            int cursor = 0;
             for (RupButton.RarityEntry e : pool) {
                 if (e == null || e.weight <= 0) continue;
                 cursor += e.weight;
@@ -132,7 +143,8 @@ public class PlayScene extends World {
     }
 
     public boolean hasLost() {
-        for (Zombie z : getObjects(Zombie.class)) {
+        List<Zombie> zombies = getObjects(Zombie.class);
+        for (Zombie z : zombies) {
             if (z.getWorld() != null && z.getX() < 155) return true;
         }
         return false;
@@ -167,10 +179,16 @@ public class PlayScene extends World {
 
     private void updateMergers() {
         Iterator<Merger> it = activeMergers.iterator();
-        while (it.hasNext()) if (it.next().update()) it.remove();
+        while (it.hasNext()) {
+            if (it.next().update()) {
+                it.remove();
+            }
+        }
     }
 
-    public void addActiveMerger(Merger m) { activeMergers.add(m); }
+    public void addActiveMerger(Merger m) { 
+        activeMergers.add(m); 
+    }
 
     public void moveHitbox() {
         MouseInfo m = Greenfoot.getMouseInfo();
@@ -178,23 +196,37 @@ public class PlayScene extends World {
     }
 
     private void prepareLawnmowers() {
-        int[][] coords = {{240,180},{236,240},{225,295},{220,360},{190,420}};
-        for (int[] c : coords) addObject(new Lawnmower(), c[0], c[1]);
+        int[][] coords = {{240,180}, {236,240}, {225,295}, {220,360}, {190,420}};
+        for (int[] c : coords) {
+            addObject(new Lawnmower(), c[0], c[1]);
+        }
     }
 
     private void drawWaveUI() {
         if (level == null) return;
         GreenfootImage canvas = getBackground();
         String text = "WAVE " + level.getWaveNumber();
+        
         canvas.setColor(new Color(0, 0, 0, 160));
         canvas.fillRect(24, 84, 140, 40);
+        
         canvas.setColor(Color.WHITE);
         canvas.drawRect(20, 80, 140, 40);
+        
         canvas.setFont(new Font("Courier New", true, false, 22));
         canvas.setColor(new Color(0, 191, 255));
         canvas.drawString(text, 40, 107);
     }
-    public List<Merger> getActiveMergers() { return activeMergers; }
-    public void started() { if (!isGameOver) musicController.update(); }
-    public void stopped() { AudioManager.stopBGM(); }
+
+    public List<Merger> getActiveMergers() { 
+        return activeMergers; 
+    }
+
+    public void started() { 
+        if (!isGameOver && musicController != null) musicController.update(); 
+    }
+
+    public void stopped() { 
+        AudioManager.stopBGM(); 
+    }
 }

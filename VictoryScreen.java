@@ -1,20 +1,21 @@
 import greenfoot.*;
-import java.util.List;
 
 public class VictoryScreen extends World {
-    private GifImage victoryGif;
-    private boolean gifFinished = false;
-
-    public VictoryScreen() {    
+    public VictoryScreen() {  
         super(1111, 698, 1); 
-        this.victoryGif = new GifImage("victorygif.gif");
         
-        AudioManager.getInstance().playSound(80, false, "victory.mp3");
-        
+        // Tạo nền đen trước
         GreenfootImage bg = new GreenfootImage(1111, 698);
         bg.setColor(Color.BLACK);
         bg.fill();
         setBackground(bg);
+        
+        // Phát nhạc (Đảm bảo file tồn tại)
+        try {
+            AudioManager.getInstance().playSound(80, false, "victory.mp3");
+        } catch (Exception e) {
+            System.out.println("Không tìm thấy file nhạc thắng cuộc");
+        }
         
         prepare();
     }
@@ -24,21 +25,11 @@ public class VictoryScreen extends World {
     }
 
     private class VictoryGifActor extends Actor {
-        public void act() {
-            if (!gifFinished) {
-                GreenfootImage current = victoryGif.getCurrentImage();
-                setImage(current);
-                
-                List<GreenfootImage> images = victoryGif.getImages();
-                if (images != null && !images.isEmpty()) {
-                    if (current == images.get(images.size() - 1)) {
-                        gifFinished = true;
-                    }
-                }
-            }
-        }
-    }
+        private GifImage gif = new GifImage("victorygif.gif");
 
-    public void act() {
+        public void act() {
+            // Đơn giản nhất là setImage liên tục để GIF chạy
+            setImage(gif.getCurrentImage());
+        }
     }
 }

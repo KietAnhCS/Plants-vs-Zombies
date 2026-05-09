@@ -3,14 +3,13 @@ import java.util.*;
 
 public class GridManager extends Actor implements IPlantPlacer {
     public Plant[][] Board = new Plant[6][9];
-    public int currentRowCount = 6;
     public int playerLevel = 1;
     private int bonusSlots = 0;
     private GreenfootImage iuLogo;
 
     private final int HEX_R = 40;
     private final int COLS = 9;
-    private final int ROWS = 6;
+    private final int ROWS = 6; 
     private final int ORIGIN_X = 285;
     private final int ORIGIN_Y = 200;
     private final double HEX_W = HEX_R * Math.sqrt(3);
@@ -30,8 +29,84 @@ public class GridManager extends Actor implements IPlantPlacer {
         }
     }
 
-    public void addBonusSlots(int amount) {
-        this.bonusSlots += amount;
+    public int getCurrentPlantCount() {
+        int count = 0;
+        for (int r = 0; r <= 4; r++) { 
+            for (int c = 0; c < COLS; c++) {
+                if (Board[r][c] != null) count++;
+            }
+        }
+        return count;
+    }
+
+    public int getMaxCapacity() {
+        return playerLevel + 1 + bonusSlots;
+    }
+
+    public boolean canPlace(int x, int y, Plant plant) {
+        if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return false;
+        
+        Plant target = Board[y][x];
+        if (target != null && target != plant) return false;
+
+        if (y <= 4) {
+            boolean isAlreadyInCombatZone = false;
+            for (int r = 0; r <= 4; r++) {
+                for (int c = 0; c < COLS; c++) {
+                    if (Board[r][c] == plant) isAlreadyInCombatZone = true;
+                }
+            }
+            if (!isAlreadyInCombatZone && getCurrentPlantCount() >= getMaxCapacity()) {
+                return false; 
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean placePlant(int x, int y, Plant plant) {
+        if (!canPlace(x, y, plant)) {
+            returnBackToSafePos(plant);
+            return false;
+        }
+
+        for (int r = 0; r < ROWS; r++)
+            for (int c = 0; c < COLS; c++)
+                if (Board[r][c] == plant) Board[r][c] = null;
+
+        Board[y][x] = plant;
+        plant.setGridPosition(x, y);
+        
+        int tx = getXCoord(x, y);
+        int ty = getYCoord(x, y);
+
+        if (plant.getWorld() == null) getWorld().addObject(plant, tx, ty);
+        else plant.setLocation(tx, ty);
+
+        if (getWorld() instanceof PlayScene) {
+            PlantCombineHandler.checkAndCombine((PlayScene) getWorld(), plant);
+        }
+        return true;
+    }
+
+    private void returnBackToSafePos(Plant plant) {
+        for (int r = 0; r < ROWS; r++) {
+            for (int c = 0; c < COLS; c++) {
+                if (Board[r][c] == plant) {
+                    plant.setLocation(getXCoord(c, r), getYCoord(c, r));
+                    return;
+                }
+            }
+        }
+
+        for (int c = 0; c < COLS; c++) {
+            if (Board[5][c] == null) {
+                placePlant(c, 5, plant);
+                return;
+            }
+        }
+        
+        if (plant.getWorld() != null) getWorld().removeObject(plant);
     }
 
     @Override
@@ -43,6 +118,22 @@ public class GridManager extends Actor implements IPlantPlacer {
         if (dragging != null) {
             drawFullGrid(canvas);
             drawGridHighlights(canvas, dragging);
+        }
+        
+        if (Greenfoot.getRandomNumber(30) == 0) {
+            autoCheckAllCombines();
+        }
+    }
+
+    private void autoCheckAllCombines() {
+        if (!(getWorld() instanceof PlayScene)) return;
+        for (int r = 0; r <= 4; r++) {
+            for (int c = 0; c < COLS; c++) {
+                Plant p = Board[r][c];
+                if (p != null) {
+                    PlantCombineHandler.checkAndCombine((PlayScene) getWorld(), p);
+                }
+            }
         }
     }
 
@@ -64,10 +155,12 @@ public class GridManager extends Actor implements IPlantPlacer {
     }
 
     private void drawFullGrid(GreenfootImage canvas) {
-        canvas.setColor(new Color(100, 180, 255, 60));
-        for (int r = 0; r < ROWS; r++)
-            for (int c = 0; c < COLS; c++)
+        for (int r = 0; r < ROWS; r++) {
+            canvas.setColor(r == 5 ? new Color(255, 255, 255, 40) : new Color(100, 180, 255, 60));
+            for (int c = 0; c < COLS; c++) {
                 drawHexagon(canvas, getXCoord(c, r), getYCoord(c, r));
+            }
+        }
     }
 
     private void drawGridHighlights(GreenfootImage canvas, Actor dragging) {
@@ -103,18 +196,6 @@ public class GridManager extends Actor implements IPlantPlacer {
         canvas.drawOval(cx - (targetSize / 2), cy - (targetSize / 2), targetSize, targetSize);
     }
 
-    public int[] getGridPos(int mx, int my) {
-        int bestX = -1, bestY = -1;
-        double minD = 65.0; 
-        for (int r = 0; r < ROWS; r++) {
-            for (int c = 0; c < COLS; c++) {
-                double d = Math.hypot(mx - getXCoord(c, r), my - getYCoord(c, r));
-                if (d < minD) { minD = d; bestX = c; bestY = r; }
-            }
-        }
-        return new int[] { bestX, bestY };
-    }
-
     private void drawHexagon(GreenfootImage canvas, int cx, int cy) {
         int[] px = new int[6], py = new int[6];
         for (int i = 0; i < 6; i++) {
@@ -144,99 +225,52 @@ public class GridManager extends Actor implements IPlantPlacer {
         return (int) (ORIGIN_Y + row * STEP_Y);
     }
 
-    public int getMaxCapacity() {
-        return playerLevel + 1 + bonusSlots;
-    }
-
-    public int getCurrentPlantCount() {
-        int count = 0;
-        for (int r = 0; r < 5; r++) // Chỉ đếm 5 hàng đầu
-            for (int c = 0; c < COLS; c++)
-                if (Board[r][c] != null) count++;
-        return count;
-    }
-
-    public boolean canPlace(int x, int y, Plant plant) {
-        if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return false;
-        Plant target = Board[y][x];
-        
-        if (target == null && y < 5) { 
-            boolean alreadyInTop = false;
-            for (int r = 0; r < 6; r++)
-                for (int c = 0; c < COLS; c++)
-                    if (Board[r][c] == plant) alreadyInTop = true;
-
-            if (!alreadyInTop && getCurrentPlantCount() >= getMaxCapacity()) return false;
-        }
-
-        return target == null || target == plant;
-    }
-
-    @Override
-    public boolean placePlant(int x, int y, Plant plant) {
-        if (!canPlace(x, y, plant)) {
-            returnBackToBench(plant);
-            return false;
-        }
-
-        for (int r = 0; r < ROWS; r++)
-            for (int c = 0; c < COLS; c++)
-                if (Board[r][c] == plant) Board[r][c] = null;
-
-        Board[y][x] = plant;
-        plant.setGridPosition(x, y);
-        int tx = getXCoord(x, y);
-        int ty = getYCoord(x, y);
-
-        if (plant.getWorld() == null) getWorld().addObject(plant, tx, ty);
-        else plant.setLocation(tx, ty);
-
-        if (getWorld() instanceof PlayScene) {
-            PlantCombineHandler.checkAndCombine((PlayScene) getWorld(), plant);
-        }
-        return true;
-    }
-
-    private void returnBackToBench(Plant plant) {
-        for (int r = 0; r < ROWS; r++)
-            for (int c = 0; c < COLS; c++)
-                if (Board[r][c] == plant) {
-                    plant.setLocation(getXCoord(c, r), getYCoord(c, r));
-                    return;
-                }
-
-        for (int c = 0; c < COLS; c++) {
-            if (Board[5][c] == null) {
-                Board[5][c] = plant;
-                plant.setGridPosition(c, 5);
-                int bx = getXCoord(c, 5), by = getYCoord(c, 5);
-                if (plant.getWorld() == null) getWorld().addObject(plant, bx, by);
-                else plant.setLocation(bx, by);
-                return;
+    public int[] getGridPos(int mx, int my) {
+        int bestX = -1, bestY = -1;
+        double minD = 50.0; 
+        for (int r = 0; r < ROWS; r++) {
+            for (int c = 0; c < COLS; c++) {
+                double d = Math.hypot(mx - getXCoord(c, r), my - getYCoord(c, r));
+                if (d < minD) { minD = d; bestX = c; bestY = r; }
             }
         }
-        
-        if (plant.getWorld() != null) getWorld().removeObject(plant);
-    }
-
-    public void removePlant(int x, int y) {
-        if (x >= 0 && x < COLS && y >= 0 && y < ROWS) {
-            Board[y][x] = null;
-        }
+        return new int[] { bestX, bestY };
     }
 
     private Actor getDraggingActor() {
         if (getWorld() == null) return null;
-        for (Plant p : getWorld().getObjects(Plant.class))
-            if (p.isDragging) return p;
+        for (Plant p : getWorld().getObjects(Plant.class)) if (p.isDragging) return p;
         for (SeedPacket s : getWorld().getObjects(SeedPacket.class)) {
             MouseInfo m = Greenfoot.getMouseInfo();
             if (m != null && Greenfoot.mouseDragged(s)) return s;
         }
         return null;
     }
+    
+    public void removePlant(int x, int y) {
+        if (x >= 0 && x < COLS && y >= 0 && y < ROWS) {
+            Board[y][x] = null;
+        }
+    }
+    
+    public void removePlantFromBoard(Plant plant) {
+        for (int r = 0; r < ROWS; r++) {
+            for (int c = 0; c < COLS; c++) {
+                if (Board[r][c] == plant) {
+                    Board[r][c] = null;
+                    return;
+                }
+            }
+        }
+    }
 
-    public int clampRow(int row) { return Math.max(0, Math.min(row, ROWS - 1)); }
     public int getGridX(int mx, int my) { return getGridPos(mx, my)[0]; }
     public int getGridY(int mx, int my) { return getGridPos(mx, my)[1]; }
+    public void addBonusSlots(int amount) { this.bonusSlots += amount; }
+    
+    public int clampRow(int row) {
+        if (row < 0) return 0;
+        if (row >= ROWS) return ROWS - 1;
+        return row;
+    }
 }

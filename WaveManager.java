@@ -4,6 +4,8 @@ import java.util.*;
 public class WaveManager extends Actor {
     private WaveState currentState = WaveState.BATTLE;
     private long stateTimer = 0;
+    private long lastClearTime = 0; // Biến dùng để đếm 5 giây không có zombie
+    private int winDelayCounter = 0;
 
     public String[][][] levelData;
     public long waveTime;
@@ -45,13 +47,15 @@ public class WaveManager extends Actor {
         if (getWorld() != null) getWorld().addObject(new ReadySetPlant(), 620, 295);
         currentState = WaveState.PREPARING_NEXT_WAVE;
         stateTimer = System.currentTimeMillis();
+        lastClearTime = 0;
     }
 
     public void act() {
-        if (playScene == null || playScene.isGameOver) return;
+        if (playScene == null) playScene = (PlayScene)getWorld(); // Đảm bảo playScene không null
+        if (playScene.isGameOver) return;
         if (wave == -1) return;
 
-        cleanZombieRows();
+        cleanZombieRows(); // Dọn dẹp danh sách zombie đã chết
         handlePerRowSpawning();
 
         long now = System.currentTimeMillis();
@@ -59,23 +63,43 @@ public class WaveManager extends Actor {
         switch (currentState) {
             case BATTLE:
                 if (choosingCard) return;
+                
                 if (allClear()) {
-                    if (wave >= levelData.length) {
-                        finishedSending = true;
-                        if (!hasWonNotification()) { // Tránh add trùng
-                             playScene.addObject(new WaveNotification(true), 360, 215);
+                    // Nếu sân sạch, bắt đầu đếm thời gian
+                    if (lastClearTime == 0) lastClearTime = now;
+                    
+                    // Nếu đã hết 5 giây (5000ms) HOẶC đã là wave cuối cùng
+                    if (now - lastClearTime >= 5000 || wave >= levelData.length) {
+                        
+                        if (wave >= levelData.length) {
+                            if (!finishedSending) {
+                                finishedSending = true;
+                                playScene.addObject(new WaveNotification(true), 360, 215);
+                            }
+                            
+                            winDelayCounter++;
+                            // Đợi thêm một chút sau thông báo wave cuối để chuyển màn hình
+                            if (winDelayCounter > 150) { 
+                                Greenfoot.setWorld(new VictoryScreen());
+                            }
+                            return;
+                        } else {
+                            // Nếu chưa hết wave, chuyển sang nhận thưởng
+                            lastClearTime = 0;
+                            stateTimer = now;
+                            currentState = WaveState.WAITING_FOR_REWARD;
                         }
-                        return;
                     }
-                    stateTimer = now;
-                    currentState = WaveState.WAITING_FOR_REWARD;
+                } else {
+                    // Nếu có zombie xuất hiện lại, reset bộ đếm
+                    lastClearTime = 0;
                 }
                 break;
 
             case WAITING_FOR_REWARD:
-                if (now - stateTimer >= 2000) { // Giảm thời gian chờ cho mượt
-                    if (wave > 0 && wave % 2 == 0) { // Ví dụ: Cứ 2 wave tặng 1 sun lớn
-                        playScene.addObject(new Sun(400, true), 900, 300);
+                if (now - stateTimer >= 3000) {
+                    if (wave > 0) {
+                        playScene.addObject(new Sun(300, true), 555, 300);
                     }
                     stateTimer = now;
                     currentState = WaveState.WAITING_FOR_DAVE;
@@ -83,7 +107,7 @@ public class WaveManager extends Actor {
                 break;
 
             case WAITING_FOR_DAVE:
-                if (now - stateTimer >= 1500) {
+                if (now - stateTimer >= 3000) {
                     if (wave == daveWave) {
                         triggerDaveDialogue();
                         currentState = WaveState.DAVE_TALKING;
@@ -97,6 +121,13 @@ public class WaveManager extends Actor {
                 }
                 break;
 
+            case WAITING_FOR_AUGMENT:
+                if (now - stateTimer >= 5000) {
+                    triggerCardSelection();
+                    currentState = WaveState.SELECTING_AUGMENT;
+                }
+                break;
+
             case PREPARING_NEXT_WAVE:
                 long delay = (isFirstWave ? firstWave : 3000L);
                 if (now - stateTimer >= delay) {
@@ -107,15 +138,10 @@ public class WaveManager extends Actor {
                     launchWave();
                 }
                 break;
-            
-            default: break;
-        }
-    }
 
-    // Hàm dọn dẹp zombie chết để cây không bắn vào khoảng không
-    private void cleanZombieRows() {
-        for (ArrayList<Zombie> row : zombieRow) {
-            row.removeIf(z -> z.getWorld() == null || !z.isLiving());
+            case DAVE_TALKING:
+            case SELECTING_AUGMENT:
+                break;
         }
     }
 
@@ -125,6 +151,7 @@ public class WaveManager extends Actor {
             playScene.addObject(new WaveNotification(wave == levelData.length - 1), 360, 215);
             wave++;
             currentState = WaveState.BATTLE;
+            lastClearTime = 0; // Reset bộ đếm khi wave mới bắt đầu
         }
     }
 
@@ -134,24 +161,24 @@ public class WaveManager extends Actor {
     }
 
     private boolean allClear() {
-        // Kiểm tra zombie thực tế trên sân
         if (!playScene.getObjects(Zombie.class).isEmpty()) return false;
-        // Kiểm tra zombie đang đợi trong hàng chờ spawn
         for (ArrayList<Zombie> q : spawnQueues) if (!q.isEmpty()) return false;
         return true;
     }
 
-    private boolean hasWonNotification() {
-        return !playScene.getObjects(WaveNotification.class).isEmpty();
+    private void cleanZombieRows() {
+        for (ArrayList<Zombie> row : zombieRow) {
+            row.removeIf(z -> z.getWorld() == null || !z.isLiving());
+        }
     }
 
     private void handlePerRowSpawning() {
         long now = System.currentTimeMillis();
         for (int i = 0; i < 6; i++) {
             ArrayList<Zombie> q = spawnQueues.get(i);
-            if (!q.isEmpty() && now - lastSpawnTime[i] >= 1500) {
+            if (!q.isEmpty() && now - lastSpawnTime[i] >= 2000) {
                 Zombie z = q.remove(0);
-                int x = 950 + Greenfoot.getRandomNumber(40);
+                int x = 915 + Greenfoot.getRandomNumber(36);
                 int y = playScene.GridManager.getYCoord(8, i) - 20;
                 playScene.addObject(z, x, y);
                 zombieRow.get(i).add(z);
@@ -162,32 +189,26 @@ public class WaveManager extends Actor {
 
     private void spawnZombies(String[][] waveData) {
         if (waveData == null) return;
+        GridManager board = playScene.GridManager;
         for (int r = 0; r < waveData.length; r++) {
             if (waveData[r] == null) continue;
-            int row = playScene.GridManager.clampRow(r);
+            int row = board.clampRow(r);
             for (String id : waveData[r]) {
                 Zombie z = ZombieFactory.createZombie(id);
                 if (z != null) spawnQueues.get(row).add(z);
             }
-            lastSpawnTime[row] = System.currentTimeMillis() - 1500;
+            lastSpawnTime[row] = System.currentTimeMillis() - 2000;
         }
-    }
-
-    public void nextWave() {
-        playScene.removeObjects(playScene.getObjects(Overlay.class));
-        playScene.removeObjects(playScene.getObjects(AugmentCard.class));
-        choosingCard = false;
-        stateTimer = System.currentTimeMillis();
-        currentState = WaveState.PREPARING_NEXT_WAVE;
+        playScene.addObject(new FixOrder(this, 10), 0, 0);
     }
 
     private void triggerDaveDialogue() {
         String[] lines = {
-            "Làm tốt lắm neighbor!\nSân cỏ của ngươi trông\nsạch bóng zombie rồi đấy!", 
-            "Chiến thắng có mùi vị... tacos!\nTa sẽ tặng ngươi thêm Sun\nmỗi khi thắng wave!", 
-            "Ồ! Hệ thống Augment Card!\nChọn lấy thẻ bổ trợ để giúp\ncây của ngươi mạnh hơn!"
-        };
-        String[] voices = {"crazydavecrazy.mp3", "crazydaveextralong1.mp3", "crazydaveextralong2.mp3"};
+            "Good job, neighbor!\nYour lawn is looking\nremarkably zombie-free!", 
+            "Victory smells like... tacos!\nI'm giving you 300 extra Sun\nevery time you win!", 
+            "Ooh! The Augment Card system!\nGrab those rewards to give your plants\nsome serious [oomph]!",
+            "Quick tip: click those Lawn Mower\nand watch 'em go!\nThey don't just sit there looking pretty,\nyou know!"};
+        String[] voices = {"crazydavecrazy.mp3", "crazydaveextralong1.mp3", "crazydaveextralong2.mp3", "crazydaveextralong3.mp3"};
         playScene.addObject(new CrazyDave(this, lines, voices), 555, 349);
     }
 
@@ -198,7 +219,20 @@ public class WaveManager extends Actor {
         for (int i = 0; i < 3; i++)
             playScene.addObject(new AugmentCard(this, pool[i], null), 255 + (i * 300), 349);
         fixOrder();
-        AudioManager.getInstance().playSound(80, false, "hugewave.mp3");
+        AudioManager.getInstance().playSound(70, false, "hugewave.mp3");
+    }
+
+    public void onDaveFinished() {
+        stateTimer = System.currentTimeMillis();
+        currentState = WaveState.WAITING_FOR_AUGMENT;
+    }
+
+    public void nextWave() {
+        playScene.removeObjects(playScene.getObjects(Overlay.class));
+        playScene.removeObjects(playScene.getObjects(AugmentCard.class));
+        choosingCard = false;
+        stateTimer = System.currentTimeMillis();
+        currentState = WaveState.PREPARING_NEXT_WAVE;
     }
 
     public void fixOrder() {
@@ -210,21 +244,12 @@ public class WaveManager extends Actor {
         playScene = (PlayScene) world;
         playScene.addObject(new Progress(this), 490, 25);
     }
-    
-    public void onDaveFinished() {
-        stateTimer = System.currentTimeMillis();
-        
-        currentState = WaveState.WAITING_FOR_AUGMENT;
-        
-        AudioManager.getInstance().playSound(80, false, "points.mp3");
-    }
-    
-    public int getWaveNumber() {
-        return Math.max(0, this.wave);
-    }
-    
+
     public boolean hasWon() {
         return wave >= levelData.length && allClear();
     }
-    
+
+    public int getWaveNumber() {
+        return Math.max(0, wave - 1);
+    }
 }
