@@ -42,15 +42,19 @@ public class RaZombie extends Zombie {
 
     @Override
     public void act() {
-        if (getWorld() == null || !isLiving()) {
-            if (!isLiving()) deathAnim();
+        if (getWorld() == null) return;
+        if (!getWorld().getObjects(Overlay.class).isEmpty()) return;
+    
+        if (!isLiving()) {
+            deathAnim();
             return;
         }
-
+    
         handleSunStealingLogic();
-        
+    
         if (!isStealing) {
             updateLogic();
+            handleThresholds();
         }
     }
 
@@ -182,7 +186,7 @@ public class RaZombie extends Zombie {
         targetSun = null;
     }
 
-    public void deathAnim() {
+    protected void deathAnim() {
         if (!resetAnim) { 
             setFrame(1); 
             resetAnim = true;

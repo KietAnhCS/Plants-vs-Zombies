@@ -19,7 +19,6 @@ public class RupButton extends Actor {
         new RarityEntry(BonkchoyPacket.class, 1),
         new RarityEntry(PeashooterPacket.class, 3),
         new RarityEntry(CactusPacket.class, 3),
-        new RarityEntry(PotatoPacket.class, 7),
         new RarityEntry(RepeaterPacket.class, 0)
     };
 
@@ -34,7 +33,7 @@ public class RupButton extends Actor {
     public RarityEntry[] getPoolForRoll() {
         if (rollCount < 2) {
             rollCount++;
-            return new RarityEntry[]{ new RarityEntry(PotatoPacket.class, 100) };
+            return new RarityEntry[]{ new RarityEntry(PeashooterPacket.class, 100) };
         }
         return weightedPool;
     }
@@ -65,7 +64,6 @@ public class RupButton extends Actor {
             if (currentLevel == 5) {
                 if (c == RepeaterPacket.class) entry.weight = 7;
                 if (c == PeashooterPacket.class) entry.weight = 3;
-                if (c == PotatoPacket.class) entry.weight = 2;
             }
         }
     }

@@ -2,6 +2,4 @@
 comment0.target=PlantCombineHandler
 comment1.params=scene\ target
 comment1.target=void\ checkAndCombine(PlayScene,\ Plant)
-comment2.params=scene\ target\ sources
-comment2.target=void\ executeImmediateMerge(PlayScene,\ Plant,\ java.util.List)
-numComments=3
+numComments=2

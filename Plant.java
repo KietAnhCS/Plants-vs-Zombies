@@ -21,6 +21,8 @@ public abstract class Plant extends SpriteAnimator {
     protected int currentGridX;
     protected int currentGridY;
 
+    private int lastAlpha = -1;
+
     public int getHp() { return hp; }
     public int getMaxHp() { return maxHp; }
     public int getDamage() { return damage; }
@@ -65,13 +67,13 @@ public abstract class Plant extends SpriteAnimator {
             if (this.eventBus == null && scene.getUpgradeManager() != null) {
                 this.eventBus = scene.getUpgradeManager().getEventBus();
             }
-            
+
             this.inputHandler = new PlantInputHandler(this);
             this.stateManager = new PlantStateManager(this);
             this.combatHandler = new PlantCombatHandler(this);
 
             syncGridPosition();
-            
+
             if (!isMerging) {
                 scene.addObject(new Dirt(), getX(), getY() + 30);
             }
@@ -96,16 +98,19 @@ public abstract class Plant extends SpriteAnimator {
         if (stateManager != null) stateManager.update();
         if (inputHandler != null) inputHandler.handleMouse();
 
-        if (stateManager != null && stateManager.canAct() && isLiving()) {
+        if (stateManager != null && stateManager.canAct() && isLiving() && !isDragging) {
             update();
         }
     }
 
     private void updateTransparency() {
-        if (getImage() != null) {
-            int alpha = isDragging ? 125 : (opaque ? 160 : 255);
-            getImage().setTransparency(alpha);
-        }
+        if (getImage() == null) return;
+        int alpha = isDragging ? 125 : (opaque ? 160 : 255);
+        if (alpha == lastAlpha) return;
+        lastAlpha = alpha;
+        GreenfootImage copy = new GreenfootImage(getImage());
+        copy.setTransparency(alpha);
+        setImage(copy);
     }
 
     protected void handleMergeMovement() {
@@ -113,32 +118,34 @@ public abstract class Plant extends SpriteAnimator {
             isMerging = false;
             return;
         }
-
-        int targetX = targetPlant.getX();
-        int targetY = targetPlant.getY();
-
-        int dx = (targetX - getX()) / 5;
-        int dy = (targetY - getY()) / 5;
-
-        setLocation(getX() + dx, getY() + dy);
-
-        if (Math.abs(getX() - targetX) < 5 && Math.abs(getY() - targetY) < 5) {
+    
+        double tx = targetPlant.getExactX();
+        double ty = targetPlant.getExactY();
+        double sx = getExactX();
+        double sy = getExactY();
+        double dx = tx - sx;
+        double dy = ty - sy;
+        double distance = Math.sqrt(dx * dx + dy * dy);
+    
+        if (distance <= 15) {
             if (getWorld() instanceof PlayScene) {
                 PlayScene scene = (PlayScene) getWorld();
                 scene.addActiveMerger(new Merger(this, targetPlant, scene.getUpgradeManager()));
             }
             getWorld().removeObject(this);
+            return;
         }
+    
+        double speed = 15.0;
+        setLocation(sx + (dx / distance) * speed, sy + (dy / distance) * speed);
     }
 
     public abstract void update();
 
     public void hit(int dmg) {
         if (!isLiving() || isDragging || isMerging) return;
-
         this.hp -= dmg;
         onHit(dmg);
-
         if (this.hp <= 0) {
             this.hp = 0;
             onDeath();

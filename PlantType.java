@@ -12,7 +12,7 @@ public enum PlantType {
     BONK_CHOY     (175, PlantDamageType.NORMAL,    5,    400,  300L,  0),
     BONK_CHOY_2   (400, PlantDamageType.NORMAL,    20,    650, 300L,  0),
     BONK_CHOY_3   (600, PlantDamageType.NORMAL,    30,    800, 300L,  0),
-    POTATO_MINE   (25,  PlantDamageType.EXPLOSIVE, 150,   100000,  10000L, 0);
+    POTATO_MINE (25, PlantDamageType.EXPLOSIVE, 1800, 200, 3000L, 0);
 
     public final int cost;
     public final PlantDamageType damageType;

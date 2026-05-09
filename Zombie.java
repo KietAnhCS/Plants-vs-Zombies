@@ -2,35 +2,58 @@ import greenfoot.*;
 import java.util.*;
 
 public abstract class Zombie extends SpriteAnimator implements IDamageable, IGridObject {
+    public ZombieConfig config;
+    public PlayScene playScene;
+
     private int hp;
     private int maxHp;
     private double walkSpeed;
-    private boolean isAlive;
+    private boolean isAlive = true;
     private IZombieState currentState;
-    public ZombieConfig config;
     private ZombieEventBus eventBus;
-    private IDeathHandler deathHandler;
-    private IAudioService audio;
-    private IEatable target;
-    private int eatTimer = 0;
-    private final int EAT_COOLDOWN = 30;
+
+    public Plant target;
+    public boolean eating = false;
+
+    private boolean resetAnim  = false;
+    private boolean spawnHead  = false;
+    private boolean finalDeath = false;
+    private boolean fixAnim    = false;
+    private boolean eatOnce    = false;
+
+    public GreenfootImage[] headless, headlesseating, fall;
 
     public Zombie(ZombieConfig config) {
-        this.config = config;
-        this.maxHp = config.maxHp;
-        this.hp = config.maxHp;
+        this.config    = config;
+        this.maxHp     = config.maxHp;
+        this.hp        = config.maxHp;
         this.walkSpeed = config.walkSpeed;
-        this.isAlive = true;
-        this.eventBus = new ZombieEventBus();
-        this.audio = AudioManager.getInstance();
-        this.deathHandler = new ZombieDeathHandler(audio, eventBus);
+        this.eventBus  = new ZombieEventBus();
+
+        headless       = importSprites(ZombieAssets.SHARED_HEADLESS.path,     7);
+        headlesseating = importSprites(ZombieAssets.SHARED_HEADLESS_EAT.path, 7);
+        fall           = importSprites(ZombieAssets.SHARED_FALL.path,          6);
+    }
+
+    @Override
+    public void addedToWorld(World world) {
+        if (world instanceof PlayScene) {
+            this.playScene = (PlayScene) world;
+            world.addObject(new HealthBar(this, 60), getX(), getY() - 50);
+        }
     }
 
     @Override
     public void act() {
-        if (getWorld() == null || !isAlive) return;
-        updateLogic();
-        handleThresholds();
+        if (getWorld() == null) return;
+        if (!getWorld().getObjects(Overlay.class).isEmpty()) return;
+
+        if (isLiving()) {
+            updateLogic();
+            handleThresholds();
+        } else {
+            deathAnim();
+        }
     }
 
     @Override
@@ -39,46 +62,29 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
         this.hp -= dmg;
         eventBus.publishHit(this, dmg);
         if (this.hp <= 0) {
-            this.hp = 0;
+            this.hp     = 0;
             this.isAlive = false;
-            deathHandler.handleDeath(this);
-        }
-    }
-
-    public void walk() {
-        if (getWorld() != null) {
-            setLocation(getX() - (int) walkSpeed, getY());
         }
     }
 
     @Override
     public boolean isLiving() {
-        return isAlive && hp > 0;
+        return hp > 0 && isAlive && getWorld() != null;
     }
 
-    public boolean checkEating() {
-        List<IEatable> targets = getObjectsAtOffset(-(getImage().getWidth() / 2), 0, IEatable.class);
-        if (!targets.isEmpty()) {
-            this.target = targets.get(0);
-            return true;
-        }
-        this.target = null;
-        return false;
+    @Override
+    public int getHp() {
+        return hp;
     }
 
-    public void playEating() {
-        if (target != null && target.canBeEatenBy(this)) {
-            if (eatTimer <= 0) {
-                audio.playSound(80, false, ZombieAssets.SHARED_HEADLESS_EAT.path);
-                target.hit(config.damage);
-                eventBus.publishAteTarget(this, target);
-                eatTimer = EAT_COOLDOWN;
-            } else {
-                eatTimer--;
-            }
-        } else {
-            eatTimer = 0;
-        }
+    @Override
+    public int getYPos() {
+        if (playScene == null || playScene.GridManager == null || getWorld() == null) return -1;
+        return playScene.GridManager.getGridY(getX(), getY());
+    }
+
+    public void walk() {
+        if (getWorld() != null) move(-walkSpeed);
     }
 
     public void setState(IZombieState newState) {
@@ -88,40 +94,107 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
         eventBus.publishStateChanged(this, newState);
     }
 
+    public boolean checkEating() {
+        this.eating = computeEating();
+        return this.eating;
+    }
+
+    private boolean computeEating() {
+        if (playScene == null || playScene.GridManager == null || getWorld() == null) return false;
+        int yIdx = getYPos();
+        if (yIdx < 0 || yIdx >= playScene.GridManager.Board.length) return false;
+        
+        Plant[] myRow = playScene.GridManager.Board[yIdx];
+        if (myRow == null) return false;
+        
+        int currentX = getX();
+        for (Plant p : myRow) {
+            if (p == null || p.getWorld() == null) continue;
+            
+            // Logic đã được đơn giản hóa: Chạm vào bất kỳ cây nào là ăn luôn
+            if (Math.abs(p.getX() - currentX) < 40) {
+                target = p;
+                return true;
+            }
+        }
+        target = null;
+        return false;
+    }
+
+    public void playEating() {
+        if (target == null || target.getWorld() == null) {
+            eating = false;
+            target = null;
+            return;
+        }
+        if (frame == 2 || frame == 5) {
+            if (!eatOnce) {
+                eatOnce = true;
+                AudioManager.playSound(70, false, "chomp.mp3", "chomp2.mp3");
+                target.hit(config.damage);
+            }
+        } else {
+            eatOnce = false;
+        }
+    }
+
     public GreenfootImage[] getDeadSprites() {
-        return importSprites(config.deadAnimation, config.deadFrames);
+        return fall;
     }
 
-    @Override
-    public int getYPos() {
-        return (getY() - 100) / 100;
-    }
+    protected void deathAnim() {
+        if (getWorld() == null) return;
 
-    @Override
-    public int getHp() {
-        return this.hp;
-    }
+        if (!resetAnim) {
+            frame = 0;
+            resetAnim = true;
+            removeFromRow();
+            eventBus.publishDeath(this);
+            target = null;
+        }
 
-    protected void updateLogic() {
-        if (currentState != null) {
-            currentState.update();
-            if (!(currentState instanceof DeadState)) {
-                animate(currentState.getAnimation(), 200, true);
+        if (finalDeath) {
+            if (!fixAnim) {
+                fixAnim = true;
+                AudioManager.playSound(80, false, "zombie_falling_1.mp3", "zombie_falling_2.mp3");
+                getWorld().addObject(new FallingZombie(fall), getX(), getY());
+                getWorld().removeObject(this);
+            }
+        } else {
+            if (!spawnHead) {
+                spawnHead = true;
+                AudioManager.getInstance().playSound(80, false, "limbs_pop.mp3");
+                getWorld().addObject(new Head(), getX() + 10, getY() - 20);
+            }
+
+            boolean isAnimFinished;
+            if (checkEating()) {
+                isAnimFinished = animate(headlesseating, 350, false);
+                playEating();
+            } else {
+                isAnimFinished = animate(headless, 350, false);
+                walk();
+            }
+
+            if (isAnimFinished || frame >= 6) {
+                finalDeath = true;
             }
         }
     }
 
+    protected void updateLogic() {
+        if (currentState == null) return;
+        currentState.update();
+        animate(currentState.getAnimation(), 200, true);
+    }
+
     protected void removeFromRow() {
-        if (getWorld() instanceof PlayScene) {
-            PlayScene scene = (PlayScene) getWorld();
-            List<Zombie> row = scene.level.zombieRow.get(getYPos());
-            if (row != null) row.remove(this);
+        if (playScene == null || playScene.level == null) return;
+        int row = getYPos();
+        if (row >= 0 && row < playScene.level.zombieRow.size()) {
+            playScene.level.zombieRow.get(row).remove(this);
         }
     }
 
     protected abstract void handleThresholds();
-
-    public void setDeathHandler(IDeathHandler handler) {
-        this.deathHandler = handler;
-    }
 }

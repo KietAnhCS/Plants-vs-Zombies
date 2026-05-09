@@ -25,7 +25,6 @@ public class PlantFactory implements IPlantFactory {
             case BONK_CHOY:     return new BonkChoy();
             case BONK_CHOY_2:   return new BonkChoy2();
             case BONK_CHOY_3:   return new BonkChoy3();
-            case POTATO_MINE:   return new PotatoMine();
             default:            return null;
         }
     }

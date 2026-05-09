@@ -18,7 +18,6 @@ public class WaveManager extends Actor {
 
     private final ArrayList<ArrayList<Zombie>> spawnQueues = new ArrayList<>();
     private final long[] lastSpawnTime = new long[6];
-    // zombieRow dùng để quản lý zombie theo hàng cho cây bắn
     public final ArrayList<ArrayList<Zombie>> zombieRow = new ArrayList<>();
 
     public PlayScene playScene;
@@ -52,7 +51,6 @@ public class WaveManager extends Actor {
         if (playScene == null || playScene.isGameOver) return;
         if (wave == -1) return;
 
-        // CỰC KỲ QUAN TRỌNG: Dọn dẹp Zombie chết khỏi bộ nhớ mỗi frame
         cleanZombieRows();
         handlePerRowSpawning();
 
@@ -77,7 +75,7 @@ public class WaveManager extends Actor {
             case WAITING_FOR_REWARD:
                 if (now - stateTimer >= 2000) { // Giảm thời gian chờ cho mượt
                     if (wave > 0 && wave % 2 == 0) { // Ví dụ: Cứ 2 wave tặng 1 sun lớn
-                        playScene.addObject(new Sun(400, true), 555, 300);
+                        playScene.addObject(new Sun(400, true), 900, 300);
                     }
                     stateTimer = now;
                     currentState = WaveState.WAITING_FOR_DAVE;
@@ -151,7 +149,6 @@ public class WaveManager extends Actor {
         long now = System.currentTimeMillis();
         for (int i = 0; i < 6; i++) {
             ArrayList<Zombie> q = spawnQueues.get(i);
-            // Spawn giãn cách 1.5s để mượt hơn 2s
             if (!q.isEmpty() && now - lastSpawnTime[i] >= 1500) {
                 Zombie z = q.remove(0);
                 int x = 950 + Greenfoot.getRandomNumber(40);

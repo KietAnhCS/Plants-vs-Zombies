@@ -15,7 +15,7 @@ public class PlantAssets {
     public static final String GATLING_PEA        = "GatlingPea"; 
 
     public static final String POTATO_IDLE        = "potato";    
-    public static final String POTATO_ARMING      = "potatomine"; 
+    public static final String POTATO_ARMED      = "potatomine"; 
 
     public static final String SOUND_THROW        = "throw.mp3";
     public static final String SOUND_THROW2       = "throw2.mp3";

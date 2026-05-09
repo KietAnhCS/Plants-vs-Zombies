@@ -1,64 +1,53 @@
 import greenfoot.*;
+import java.util.List;
 
 public class PlantStateManager {
     private Plant plant;
-    private PlantState currentState;
 
     public PlantStateManager(Plant plant) {
         this.plant = plant;
-        this.currentState = PlantState.IDLE;
     }
 
     public void update() {
         if (plant.getWorld() == null) return;
 
-        if (plant.getHp() <= 0 && currentState != PlantState.DYING) {
-            setState(PlantState.DYING);
-            return;
+        // Xử lý logic chết: Bắt buộc chuyển sang DYING nếu hết máu
+        if (plant.getHp() <= 0 && plant.getState() != PlantState.DYING) {
+            plant.setState(PlantState.DYING);
         }
-
-        handleStateTransitions();
-    }
-
-    private void handleStateTransitions() {
     }
 
     public boolean isBusy() {
-        return currentState == PlantState.DRAGGING || 
-               currentState == PlantState.MERGING || 
-               currentState == PlantState.DYING;
+        PlantState s = plant.getState();
+        // Cây đang bận (không thể bắn/hành động) nếu đang được kéo, ghép hoặc đang chết
+        return s == PlantState.DRAGGING || 
+               s == PlantState.MERGING || 
+               s == PlantState.DYING;
     }
 
-    public PlantState getCurrentState() {
-        return currentState;
-    }
-
-    public void setState(PlantState newState) {
-        if (this.currentState == newState) return;
-        
-        this.currentState = newState;
-        updatePlantAppearance();
-    }
-
-    private void updatePlantAppearance() {
-        GreenfootImage img = plant.getImage();
-        if (img == null) return;
-        
-        if (currentState == PlantState.DRAGGING) {
-            img.setTransparency(125);
-        } else {
-            img.setTransparency(255);
-        }
-    }
-
+    // Hàm quyết định xem hàm update() của PotatoMine có được chạy hay không
     public boolean canAct() {
-        if (plant.getWorld() == null) return false;
+        // 1. Kiểm tra an toàn cơ bản
+        if (plant.getWorld() == null || plant.getHp() <= 0) return false;
         
-        PlayScene scene = (PlayScene) plant.getWorld();
-        boolean hasOverlay = !scene.getObjects(Overlay.class).isEmpty();
-        
-        boolean isOnBench = plant.getYPos() == 5;
+        // 2. Nếu cây đang bận (kéo, ghép, chết) -> không hoạt động
+        if (isBusy()) return false;
 
-        return !isBusy() && !hasOverlay && !isOnBench && plant.getHp() > 0;
+        PlayScene scene = (PlayScene) plant.getWorld();
+        
+        // 3. Kiểm tra Overlay (Cửa sổ UI, Menu...). Chỉ chặn khi thực sự có Overlay tồn tại.
+        List<Overlay> overlays = scene.getObjects(Overlay.class);
+        if (overlays != null && !overlays.isEmpty()) {
+            return false;
+        }
+
+        // 4. Kiểm tra xem cây có nằm trên hàng chờ không (Giả sử Y = 5 là hàng chờ)
+        // NẾU BẠN VẪN LỖI SAU KHI SỬA, HÃY THỬ COMMENT DÒNG DƯỚI ĐÂY LẠI
+        if (plant.getYPos() == 5) {
+            return false;
+        }
+
+        // Vượt qua tất cả -> Cho phép cây chạy logic riêng của nó!
+        return true; 
     }
 }

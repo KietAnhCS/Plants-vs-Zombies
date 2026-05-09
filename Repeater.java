@@ -7,17 +7,14 @@ public class Repeater extends Plant {
     private boolean adjusted = false;
     private long lastAttackTime = System.currentTimeMillis();
     private PlayScene cachedPlayScene;
-    private boolean shootOnce = false;
 
     public Repeater() {
         setMaxHp(TYPE.hp);
         setHp(TYPE.hp);
         setDamage(TYPE.damage);
         setCost(TYPE.cost);
-        
-        idle = importSprites(PlantAssets.REPEATER_IDLE, 7);
+        idle  = importSprites(PlantAssets.REPEATER_IDLE, 7);
         shoot = importSprites(PlantAssets.REPEATER_SHOOT, 3);
-        
         if (idle != null && idle.length > 0) setImage(idle[0]);
     }
 
@@ -31,15 +28,8 @@ public class Repeater extends Plant {
     @Override
     public void hit(int dmg) {
         if (getWorld() == null || !isLiving()) return;
-
-        String assetPath = (getState() == PlantState.SHOOTING) 
-                           ? PlantAssets.REPEATER_SHOOT 
-                           : PlantAssets.REPEATER_IDLE;
-        
-        hitFlash(assetPath);
-        
-        setHp(getHp() - dmg);
-        if (getHp() <= 0) onDeath();
+        hitFlash(getState() == PlantState.SHOOTING ? PlantAssets.REPEATER_SHOOT : PlantAssets.REPEATER_IDLE);
+        super.hit(dmg);
     }
 
     @Override
@@ -54,15 +44,13 @@ public class Repeater extends Plant {
 
     private void handleCombat() {
         if (getState() == PlantState.MERGING) return;
-
         if (checkZombieInRow()) {
             setState(PlantState.SHOOTING);
-            animate(shoot, 100, false);
+            animate(shoot, 100, true);
             executeShoot();
         } else {
             setState(PlantState.IDLE);
             animate(idle, 300, true);
-            shootOnce = false;
         }
     }
 
@@ -79,21 +67,10 @@ public class Repeater extends Plant {
 
     private void executeShoot() {
         if (System.currentTimeMillis() - lastAttackTime <= TYPE.shootDelay) return;
-
-        if (frame >= 1 && !shootOnce) {
-            // Repeater bắn 2 viên đậu liên tiếp
-            for (int i = 0; i < 2; i++) {
-                AudioManager.getInstance().playSound(80, false, PlantAssets.SOUND_THROW);
-                // Bạn có thể thêm một chút delay nhỏ giữa 2 viên nếu Pea có hỗ trợ offset
-                getWorld().addObject(new Pea(getYPos()), getX() + 25 + (i * 15), getY() - 17);
-            }
-            
-            shootOnce = true;
-            lastAttackTime = System.currentTimeMillis();
+        for (int i = 0; i < 2; i++) {
+            AudioManager.getInstance().playSound(80, false, PlantAssets.SOUND_THROW);
+            getWorld().addObject(new Pea(getYPos()), getX() + 25 + (i * 15), getY() - 17);
         }
-        
-        if (frame >= shoot.length - 1) {
-            shootOnce = false;
-        }
+        lastAttackTime = System.currentTimeMillis();
     }
 }

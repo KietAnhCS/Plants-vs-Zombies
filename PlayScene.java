@@ -194,7 +194,7 @@ public class PlayScene extends World {
         canvas.setColor(new Color(0, 191, 255));
         canvas.drawString(text, 40, 107);
     }
-
+    public List<Merger> getActiveMergers() { return activeMergers; }
     public void started() { if (!isGameOver) musicController.update(); }
     public void stopped() { AudioManager.stopBGM(); }
 }
