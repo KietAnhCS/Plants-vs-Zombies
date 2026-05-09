@@ -24,9 +24,6 @@ public class SeedBank extends Actor {
         dragController = new DragController(sunDisplay, (IPlantPlacer) scene.GridManager);
         scene.addObject(dragController, 0, 0);
         
-        if (sunDisplay.getWorld() == null) {
-            scene.addObject(sunDisplay, 600, 600);
-        }
 
         placePacketsInWorld(scene);
         spawnBonkchoyAtBench(scene);
