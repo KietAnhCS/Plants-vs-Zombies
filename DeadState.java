@@ -10,19 +10,24 @@ public class DeadState implements IZombieState {
 
     @Override
     public void enter() {
+        // Reset frame để bắt đầu diễn hoạt cảnh ngã xuống từ đầu
         zombie.setFrame(0);
-        if (zombie.getWorld() instanceof PlayScene) {
-            PlayScene scene = (PlayScene) zombie.getWorld();
-            if (scene.level != null && scene.level.zombieRow != null) {
-                scene.level.zombieRow.get(zombie.getYPos()).remove(zombie);
-            }
-        }
+        
+        // Dọn dẹp các mục tiêu đang ăn để không làm lỗi Plant
+        zombie.target = null;
+        zombie.eating = false;
+        
+        // Gửi sự kiện zombie chết (nếu cần bus sự kiện)
+        // zombie.removeFromRow(); // Thường lớp Zombie cha sẽ lo việc này
     }
 
     @Override
     public void update() {
-        if (hasFinishedDeathAnim) return;
-        if (zombie.animate(getAnimation(), 200, false)) {
+        if (hasFinishedDeathAnim || zombie.getWorld() == null) return;
+
+        // Chạy animation ngã (không lặp lại - loop = false)
+        // getAnimation() sẽ trả về mảng 'fall' của zombie
+        if (zombie.animate(getAnimation(), 250, false)) {
             hasFinishedDeathAnim = true;
             cleanup();
         }
@@ -31,6 +36,8 @@ public class DeadState implements IZombieState {
     private void cleanup() {
         World world = zombie.getWorld();
         if (world != null) {
+            // Thêm hiệu ứng âm thanh ngã cuối cùng nếu muốn
+            // AudioManager.playSound(80, false, "zombie_falling_1.mp3");
             world.removeObject(zombie);
         }
     }
@@ -40,6 +47,6 @@ public class DeadState implements IZombieState {
 
     @Override
     public GreenfootImage[] getAnimation() {
-        return zombie.getDeadSprites();
+        return zombie.getDeadSprites(); // Trả về mảng ảnh 'fall'
     }
 }

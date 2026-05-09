@@ -5,21 +5,21 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
     public ZombieConfig config;
     public PlayScene playScene;
 
-    private int hp;
-    private int maxHp;
-    private double walkSpeed;
-    private boolean isAlive = true;
-    private IZombieState currentState;
-    private ZombieEventBus eventBus;
+    protected int hp;
+    protected int maxHp;
+    protected double walkSpeed;
+    protected boolean isAlive = true;
+    protected IZombieState currentState;
+    protected ZombieEventBus eventBus;
 
     public Plant target;
     public boolean eating = false;
 
-    private boolean resetAnim  = false;
-    private boolean spawnHead  = false;
-    private boolean finalDeath = false;
-    private boolean fixAnim    = false;
-    private boolean eatOnce    = false;
+    protected boolean resetAnim  = false;
+    protected boolean spawnHead  = false;
+    protected boolean finalDeath = false;
+    protected boolean fixAnim    = false;
+    protected boolean eatOnce    = false;
 
     public GreenfootImage[] headless, headlesseating, fall;
 
@@ -30,9 +30,9 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
         this.walkSpeed = config.walkSpeed;
         this.eventBus  = new ZombieEventBus();
 
-        headless       = importSprites(ZombieAssets.SHARED_HEADLESS.path,     7);
-        headlesseating = importSprites(ZombieAssets.SHARED_HEADLESS_EAT.path, 7);
-        fall           = importSprites(ZombieAssets.SHARED_FALL.path,          6);
+        headless       = importSprites(ZombieAssets.SHARED_HEADLESS.path,      ZombieAssets.SHARED_HEADLESS.count);
+        headlesseating = importSprites(ZombieAssets.SHARED_HEADLESS_EAT.path, ZombieAssets.SHARED_HEADLESS_EAT.count);
+        fall           = importSprites(ZombieAssets.SHARED_FALL.path,          ZombieAssets.SHARED_FALL.count);
     }
 
     @Override
@@ -73,9 +73,7 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
     }
 
     @Override
-    public int getHp() {
-        return hp;
-    }
+    public int getHp() { return hp; }
 
     @Override
     public int getYPos() {
@@ -109,10 +107,9 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
         
         int currentX = getX();
         for (Plant p : myRow) {
-            if (p == null || p.getWorld() == null) continue;
+            if (p == null || p.getWorld() == null || p.getHp() <= 0) continue;
             
-            // Logic đã được đơn giản hóa: Chạm vào bất kỳ cây nào là ăn luôn
-            if (Math.abs(p.getX() - currentX) < 40) {
+            if (currentX - p.getX() < 40 && currentX - p.getX() > 0) {
                 target = p;
                 return true;
             }
@@ -122,7 +119,7 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
     }
 
     public void playEating() {
-        if (target == null || target.getWorld() == null) {
+        if (target == null || target.getWorld() == null || target.getHp() <= 0) {
             eating = false;
             target = null;
             return;
@@ -136,10 +133,6 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
         } else {
             eatOnce = false;
         }
-    }
-
-    public GreenfootImage[] getDeadSprites() {
-        return fall;
     }
 
     protected void deathAnim() {
@@ -176,7 +169,7 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
                 walk();
             }
 
-            if (isAnimFinished || frame >= 6) {
+            if (isAnimFinished || frame >= headless.length - 1) {
                 finalDeath = true;
             }
         }
@@ -192,9 +185,16 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
         if (playScene == null || playScene.level == null) return;
         int row = getYPos();
         if (row >= 0 && row < playScene.level.zombieRow.size()) {
-            playScene.level.zombieRow.get(row).remove(this);
+            List<Zombie> rowList = playScene.level.zombieRow.get(row);
+            if (rowList.contains(this)) {
+                rowList.remove(this);
+            }
         }
     }
-
+    
+    public GreenfootImage[] getDeadSprites() {
+        return this.fall;
+    }
+    
     protected abstract void handleThresholds();
 }

@@ -8,6 +8,4 @@ comment3.params=dmg
 comment3.target=void\ hit(int)
 comment4.params=
 comment4.target=boolean\ isArmless()
-comment5.params=
-comment5.target=void\ updateAnimationReference()
-numComments=6
+numComments=5

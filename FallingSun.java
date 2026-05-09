@@ -46,8 +46,6 @@ public class FallingSun extends FallingObject
     public void collectSun() {
         if (beenClicked) return;
         beenClicked = true;
-        AudioManager.getInstance().playSound(80, false, "losemusic.mp3");
-        
         AudioManager.getInstance().playSound(80, false, "points.mp3");
         playScene.getSunManager().add(25);
     }
