@@ -7,6 +7,17 @@ public class PopCap extends World {
     public PopCap() {
         super(1111, 705, 1, false);
         setPaintOrder(EndTransition.class, Transition.class);
+        
+        GreenfootImage bg = new GreenfootImage(1111, 705);
+        bg.setColor(Color.BLACK);
+        bg.fill();
+        
+        GreenfootImage logo = new GreenfootImage("ea.png");
+        int centerX = (1111 - logo.getWidth()) / 2;
+        int centerY = (705 - logo.getHeight()) / 2;
+        bg.drawImage(logo, centerX, centerY);
+        
+        setBackground(bg);
     }
 
     @Override

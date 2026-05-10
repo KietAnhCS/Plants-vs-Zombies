@@ -1,6 +1,3 @@
-// ═══════════════════════════════════════════════════════
-// Button.java
-// ═══════════════════════════════════════════════════════
 import greenfoot.*;
 
 public class Button extends SpriteAnimator {
@@ -17,8 +14,6 @@ public class Button extends SpriteAnimator {
         handleHover();
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse != null && mouse.getButton() == 1 && Greenfoot.mouseClicked(this)) {
-            
-            AudioManager.getInstance().playSound(80, false, "gravebutton.mp3");
             onClick();
         }
     }
@@ -28,12 +23,19 @@ public class Button extends SpriteAnimator {
         if (world == null) return;
 
         boolean isHovered = false;
-        if (world instanceof MainMenu) {
-            isHovered = this.intersects(((MainMenu) world).hitbox);
-        } else if (world instanceof ResultScreen) {
-            isHovered = this.intersects(((ResultScreen) world).hitbox);
-        } else {
-            isHovered = Greenfoot.mouseMoved(this);
+        MouseInfo mouse = Greenfoot.getMouseInfo();
+        
+        if (mouse != null) {
+            int mouseX = mouse.getX();
+            int mouseY = mouse.getY();
+            
+            int width = getImage().getWidth();
+            int height = getImage().getHeight();
+            
+            if (mouseX >= getX() - width / 2 && mouseX <= getX() + width / 2 && 
+                mouseY >= getY() - height / 2 && mouseY <= getY() + height / 2) {
+                isHovered = true; 
+            }
         }
 
         setImage(isHovered ? hover : idle);

@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=SettingsResumeButton
+comment1.params=
+comment1.target=SettingsResumeButton()
+comment2.params=world
+comment2.target=void\ addedToWorld(greenfoot.World)
+comment3.params=img
+comment3.target=void\ addTextToImage(greenfoot.GreenfootImage)
+comment4.params=
+comment4.target=void\ onClick()
+numComments=5

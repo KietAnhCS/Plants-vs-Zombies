@@ -4,7 +4,7 @@ import java.util.*;
 public class WaveManager extends Actor {
     private WaveState currentState = WaveState.BATTLE;
     private long stateTimer = 0;
-    private long lastClearTime = 0;// Biến dùng để đếm 5 giây không có zombie
+    private long lastClearTime = 0;
     private int winDelayCounter = 0;
 
     public String[][][] levelData;
@@ -146,7 +146,7 @@ public class WaveManager extends Actor {
             playScene.addObject(new WaveNotification(wave == levelData.length - 1), 360, 215);
             wave++;
             currentState = WaveState.BATTLE;
-            lastClearTime = 0; // Reset bộ đếm khi wave mới bắt đầu
+            lastClearTime = 0; 
         }
     }
 

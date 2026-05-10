@@ -16,7 +16,7 @@ public class PlayScene extends World {
     public SunDisplay sunDisplay = new SunDisplay();
     public Hitbox hitbox = new Hitbox();
     public Shovel shovel = new Shovel();
-    public MuteButton mutebutton = new MuteButton();
+    
     public RollButton rollbutton = new RollButton();
     public RupButton rupbutton = new RupButton();
     
@@ -29,6 +29,8 @@ public class PlayScene extends World {
     private List<Merger> activeMergers = new ArrayList<>();
     private boolean isPlaying = false;
 
+    private boolean isMenuOpen = false;
+    public static boolean isPaused = false; 
     public PlayScene(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater) {
         super(1111, 698, 1, false);
         this.CYS = CYS;
@@ -43,8 +45,6 @@ public class PlayScene extends World {
         setBackground("maptft2.png");
         
         addObject(GridManager, 555, 349);
-        addObject(new SliderBar(), 850, 50);
-        addObject(mutebutton, 1050, 50);
         addObject(new ThuyThan(), 110, 500);
         addObject(seedbank, 0, 0);
         addObject(sunDisplay, 600, 570);
@@ -61,10 +61,17 @@ public class PlayScene extends World {
         debugHandler = new DebugHandler(this);
         
         applyDefaultPaintOrder();
+        isPaused = false; 
     }
 
     public void act() {
-        if (isGameOver) return;
+        String key = Greenfoot.getKey();
+        if ("escape".equals(key) && !isMenuOpen) {
+            openSettingsMenu();
+        }
+
+        if (isGameOver || isPaused) return; 
+
         moveHitbox();
         
         if (!isPlaying && level != null) {
@@ -81,17 +88,49 @@ public class PlayScene extends World {
         drawWaveUI();
     }
 
-    public PlantFactory getPlantFactory() {
-        return PlantFactory.getInstance();
+
+    public void openSettingsMenu() {
+        if (!isMenuOpen) {
+            isPaused = true; 
+            
+            int centerX = getWidth() / 2;
+            int centerY = getHeight() / 2;
+            
+            SettingsMenuPanel panel = new SettingsMenuPanel();
+            addObject(panel, centerX, centerY);
+            
+            int panelHeight = panel.getImage().getHeight();
+            int panelTopY = centerY - panelHeight / 2; 
+
+            int bgmDrawY = 120; 
+            int sfxDrawY = 220; 
+            
+            int bgmAbsY = panelTopY + bgmDrawY;
+            int sfxAbsY = panelTopY + sfxDrawY;
+
+            addObject(new SliderBar("BGM"), centerX + 40, bgmAbsY);
+            addObject(new SliderBar("SFX"), centerX + 40, sfxAbsY);
+            addObject(new SettingsResumeButton(), centerX, centerY + 190); 
+            
+            isMenuOpen = true;
+        }
     }
 
-    public UpgradeManager getUpgradeManager() {
-        return upgradeManager;
+    public void closeSettingsMenu() {
+        if (isMenuOpen) {
+            removeObjects(getObjects(SettingsMenuPanel.class));
+            removeObjects(getObjects(SliderBar.class));
+            removeObjects(getObjects(SliderKnob.class)); 
+            removeObjects(getObjects(SettingsResumeButton.class));
+            
+            isPaused = false; 
+            isMenuOpen = false;
+        }
     }
 
-    public SunManager getSunManager() {
-        return sunManager;
-    }
+    public PlantFactory getPlantFactory() { return PlantFactory.getInstance(); }
+    public UpgradeManager getUpgradeManager() { return upgradeManager; }
+    public SunManager getSunManager() { return sunManager; }
 
     public void increasePlantSlots(int amount) {
         if (GridManager != null) {
@@ -150,13 +189,9 @@ public class PlayScene extends World {
         return false;
     }
 
-    public boolean hasWon() {
-        return level != null && level.hasWon();
-    }
+    public boolean hasWon() { return level != null && level.hasWon(); }
 
-    public void finishLevel() {
-        this.isGameOver = true;
-    }
+    public void finishLevel() { this.isGameOver = true; }
 
     public void stopAllMusic() {
         AudioManager.stopBGM();
@@ -164,10 +199,10 @@ public class PlayScene extends World {
         if (musicController != null) musicController.resetBGM();
     }
 
-    public void applyDefaultPaintOrder() {
+public void applyDefaultPaintOrder() {
         setPaintOrder(
+            SettingsResumeButton.class, SliderKnob.class, SliderBar.class, SettingsMenuPanel.class, 
             CrazyDave.class, Transition.class, AugmentCard.class, Overlay.class,
-            SliderKnob.class, SliderBar.class, MuteButton.class,
             ThuyThan.class, RupButton.class, RollButton.class,
             WaveNotification.class, ReadySetPlant.class,
             SunDisplay.class, SeedPacket.class, SellShovel.class, Shovel.class,
@@ -186,9 +221,7 @@ public class PlayScene extends World {
         }
     }
 
-    public void addActiveMerger(Merger m) { 
-        activeMergers.add(m); 
-    }
+    public void addActiveMerger(Merger m) { activeMergers.add(m); }
 
     public void moveHitbox() {
         MouseInfo m = Greenfoot.getMouseInfo();
@@ -218,15 +251,11 @@ public class PlayScene extends World {
         canvas.drawString(text, 40, 107);
     }
 
-    public List<Merger> getActiveMergers() { 
-        return activeMergers; 
-    }
+    public List<Merger> getActiveMergers() { return activeMergers; }
 
     public void started() { 
         if (!isGameOver && musicController != null) musicController.update(); 
     }
 
-    public void stopped() { 
-        AudioManager.stopBGM(); 
-    }
+    public void stopped() { AudioManager.stopBGM(); }
 }

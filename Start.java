@@ -1,19 +1,21 @@
 import greenfoot.*;
 
 public class Start extends Button {
-    private boolean         clicked = false;
-    private int             counter = 0;
+    private boolean clicked = false;
+    private int counter = 0;
     private GreenfootImage[] startAnim;
 
     public Start() {
         super("start1.png", "start2.png");
-
         startAnim = importSprites("start", 2);
-        scaleAll(startAnim, 1.25);
-
-        scaleImage(idle,  1.25);
-        scaleImage(hover, 1.25);
+        
+        double scaleFactor = 0.9;
+        
+        scaleAll(startAnim, scaleFactor);
+        scaleImage(idle, scaleFactor);
+        scaleImage(hover, scaleFactor);
         setImage(idle);
+        setRotation(2);
     }
 
     public void act() {
@@ -30,14 +32,12 @@ public class Start extends Button {
     protected void onClick() {
         if (!clicked) {
             clicked = true;
-            AudioManager.stopBGM();
-            AudioManager.getInstance().playSound(80, false, "losemusic.mp3");
-            AudioManager.getInstance().playSound(80, false, "losemusic.mp3");
-            
+            AudioManager.stopBGM(); 
             AudioManager.getInstance().playSound(80, false, "gravebutton.mp3");
             AudioManager.getInstance().playSound(80, false, "losemusic.mp3");
+            
             getWorld().addObject(new DelayAudio("evillaugh.mp3", 80, false, 1000L), 0, 0);
-            getWorld().addObject(new ZombieHand(), 300, 500);
+            getWorld().addObject(new ZombieHand(), 250, 450);
         } else {
             Greenfoot.setWorld(new Arena());
         }

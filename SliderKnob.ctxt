@@ -1,7 +1,7 @@
 #BlueJ class context
 comment0.target=SliderKnob
-comment1.params=bar\ barWidth
-comment1.target=SliderKnob(SliderBar,\ int)
+comment1.params=bar\ barWidth\ type
+comment1.target=SliderKnob(SliderBar,\ int,\ java.lang.String)
 comment2.params=
 comment2.target=void\ syncMuteState()
 comment3.params=

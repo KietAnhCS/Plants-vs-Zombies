@@ -1,36 +1,35 @@
 import greenfoot.*;
+
 public class SliderKnob extends Actor {
     private boolean dragging = false;
     private SliderBar bar;
     private int barWidth;
+    private String type;
 
-    public SliderKnob(SliderBar bar, int barWidth) {
+    public SliderKnob(SliderBar bar, int barWidth, String type) {
         this.bar = bar;
         this.barWidth = barWidth;
+        this.type = type;
         updateImage();
     }
 
-    public void syncMuteState() {
-        updateImage();
-    }
+    public void syncMuteState() { updateImage(); }
 
     private void updateImage() {
         GreenfootImage img = new GreenfootImage(25, 25);
-        if (AudioManager.isMuted()) {
+        if (AudioManager.getInstance().isMuted()) {
             img.setColor(Color.DARK_GRAY);
         } else {
-            img.setColor(new Color(128, 0, 128));
+            img.setColor(new Color(128, 0, 128)); 
         }
         img.fillOval(0, 0, 24, 24);
         setImage(img);
     }
 
-    public void setDragging(boolean state) {
-        this.dragging = state;
-    }
+    public void setDragging(boolean state) { this.dragging = state; }
 
     public void act() {
-        if (AudioManager.isMuted()) {
+        if (AudioManager.getInstance().isMuted()) {
             dragging = false;
             return;
         }
@@ -50,7 +49,10 @@ public class SliderKnob extends Actor {
                 setLocation(mouseX, bar.getY());
 
                 double percent = (double)(mouseX - leftLimit) / barWidth;
-                AudioManager.setMasterVolume((int)(percent * 100));
+                int newVolume = (int)(percent * 100);
+                
+                if (type.equals("BGM")) AudioManager.getInstance().setBGMVolume(newVolume);
+                else AudioManager.getInstance().setSFXVolume(newVolume);
             }
         }
     }

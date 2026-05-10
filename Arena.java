@@ -12,16 +12,23 @@ public class Arena extends World {
     private WaveManager level;
     private SeedBank seedbank;
 
-    public Arena() {    
+    private boolean isMenuOpen = false;
+    public static boolean isPaused = false; 
+
+public Arena() {    
         super(1111, 698, 1, false); 
-        setPaintOrder(CrazyDave.class, SeedPacket.class, IdleZombie.class);
+        
+        setPaintOrder(SettingsResumeButton.class, SliderKnob.class, SliderBar.class, SettingsMenuPanel.class, 
+                      CrazyDave.class, SeedPacket.class, IdleZombie.class);
+                      
         initComponents();
         refreshBackground();
         setupInitialZombies();
+        
+        isPaused = false; 
     }
 
     private void initComponents() {
-        // Fix lỗi non-static: Gọi thông qua getInstance() của PlantFactory
         PlantFactory factory = PlantFactory.getInstance();
         
         SeedPacket[] bank = {
@@ -50,6 +57,15 @@ public class Arena extends World {
     }
 
     public void act() {
+        String key = Greenfoot.getKey();
+        if ("escape".equals(key) && !isMenuOpen) {
+            openSettingsMenu();
+        }
+
+        if (isPaused) {
+            return; 
+        }
+
         switch (currentState) {
             case DAVE_TALKING:
                 break;
@@ -60,9 +76,48 @@ public class Arena extends World {
         }
     }
 
+    public void openSettingsMenu() {
+        if (!isMenuOpen) {
+            isPaused = true;
+            
+            int centerX = getWidth() / 2;
+            int centerY = getHeight() / 2;
+            
+            SettingsMenuPanel panel = new SettingsMenuPanel();
+            addObject(panel, centerX, centerY);
+            
+            int panelHeight = panel.getImage().getHeight();
+            int panelTopY = centerY - panelHeight / 2; 
+
+            int bgmDrawY = 120; 
+            int sfxDrawY = 220; 
+            
+            int bgmAbsY = panelTopY + bgmDrawY;
+            int sfxAbsY = panelTopY + sfxDrawY;
+
+            addObject(new SliderBar("BGM"), centerX + 40, bgmAbsY);
+            addObject(new SliderBar("SFX"), centerX + 40, sfxAbsY);
+            addObject(new SettingsResumeButton(), centerX, centerY + 190); 
+            
+            isMenuOpen = true;
+        }
+    }
+
+    public void closeSettingsMenu() {
+        if (isMenuOpen) {
+            removeObjects(getObjects(SettingsMenuPanel.class));
+            removeObjects(getObjects(SliderBar.class));
+            removeObjects(getObjects(SliderKnob.class)); 
+            removeObjects(getObjects(SettingsResumeButton.class));
+            
+            isPaused = false; 
+            isMenuOpen = false;
+        }
+    }
+
     public void startScrollSequence() {
         currentState = GameState.SCROLLING;
-        AudioManager.playBGM("awooga.mp3");
+        AudioManager.getInstance().playBGM("awooga.mp3");
     }
 
     private void runScrollSequence() {
@@ -81,14 +136,14 @@ public class Arena extends World {
         location += speed;
         refreshBackground();
         for (Actor a : getObjects(Actor.class)) {
-            if (!(a instanceof CrazyDave)) {
+            if (!(a instanceof CrazyDave) && !(a instanceof SettingsMenuPanel) && !(a instanceof SliderBar) && !(a instanceof SliderKnob) && !(a instanceof SettingsResumeButton)) {
                 a.setLocation(a.getX() + speed, a.getY());
             }
         }
     }
 
     private void transitionToPlayScene() {
-        AudioManager.stopBGM();
+        AudioManager.getInstance().stopBGM();
         Greenfoot.setWorld(new PlayScene(null, level, seedbank, this, null, true));
     }
 

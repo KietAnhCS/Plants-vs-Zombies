@@ -1,7 +1,7 @@
 #BlueJ class context
 comment0.target=SliderBar
-comment1.params=
-comment1.target=SliderBar()
+comment1.params=type
+comment1.target=SliderBar(java.lang.String)
 comment2.params=
 comment2.target=void\ updateImage()
 comment3.params=world

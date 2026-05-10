@@ -4,7 +4,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class AudioManager implements IAudioService {
     private static final AudioManager INSTANCE = new AudioManager();
-    private static int masterVolume = 50;
+    
+    private static int bgmVolume = 50;
+    private static int sfxVolume = 50;
+    
     private static boolean isMuted = false;
     private static GreenfootSound currentBGM = null;
     private static List<GreenfootSound> activeSounds = new CopyOnWriteArrayList<>();
@@ -27,7 +30,9 @@ public class AudioManager implements IAudioService {
         String selectedFile = files[index];
         try {
             GreenfootSound s = new GreenfootSound(selectedFile);
-            s.setVolume(volume >= 0 ? volume : masterVolume);
+            
+            s.setVolume(sfxVolume); 
+            
             if (loop) s.playLoop(); else s.play();
             activeSounds.add(s);
         } catch (Exception e) {
@@ -36,14 +41,14 @@ public class AudioManager implements IAudioService {
     }
 
     public static void playSound(String... files) {
-        playSound(masterVolume, false, files);
+        playSound(sfxVolume, false, files);
     }
 
     public static void playBGM(String file) {
         stopBGM();
         try {
             currentBGM = new GreenfootSound(file);
-            currentBGM.setVolume(masterVolume);
+            currentBGM.setVolume(bgmVolume);
             if (!isMuted) currentBGM.playLoop();
         } catch (Exception e) {
             System.err.println("Error BGM: " + file);
@@ -69,24 +74,30 @@ public class AudioManager implements IAudioService {
         if (isMuted) cleanUpSounds();
     }
 
-    public static void setMasterVolume(int volume) {
-        masterVolume = Math.max(0, Math.min(100, volume));
-        if (currentBGM != null) currentBGM.setVolume(masterVolume);
+    public static void setBGMVolume(int volume) {
+        bgmVolume = Math.max(0, Math.min(100, volume));
+        if (currentBGM != null) currentBGM.setVolume(bgmVolume);
+    }
+
+    public static void setSFXVolume(int volume) {
+        sfxVolume = Math.max(0, Math.min(100, volume));
         for (GreenfootSound s : activeSounds) {
             try {
-                if (s.isPlaying()) s.setVolume(masterVolume);
+                if (s.isPlaying()) s.setVolume(sfxVolume);
             } catch (Exception e) {
                 activeSounds.remove(s);
             }
         }
     }
 
+    public static int getBGMVolume() { return bgmVolume; }
+    public static int getSFXVolume() { return sfxVolume; }
+
     private static void cleanUpSounds() {
         activeSounds.removeIf(s -> !s.isPlaying());
     }
 
     public static boolean isMuted() { return isMuted; }
-    public static int getVolume() { return masterVolume; }
 
     public static boolean isSoundPlaying(String file) {
         if (currentBGM != null && currentBGM.isPlaying()) return true;
