@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=ZombieDeathHandler
+comment1.params=audio\ eventBus
+comment1.target=ZombieDeathHandler(IAudioService,\ ZombieEventBus)
+comment2.params=zombie
+comment2.target=void\ handleDeath(Zombie)
+numComments=3

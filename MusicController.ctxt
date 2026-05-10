@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=MusicController
+comment1.params=scene
+comment1.target=MusicController(PlayScene)
+comment2.params=
+comment2.target=void\ resetBGM()
+comment3.params=
+comment3.target=void\ update()
+numComments=4

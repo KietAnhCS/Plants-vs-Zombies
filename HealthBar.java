@@ -8,6 +8,8 @@ public class HealthBar extends Actor {
     private long lastDamageTime;
     private final int DELAY_MS = 750; 
     private int oldHp;
+    private int lastDrawnHp = -1;
+    private double lastDrawnDisplayHp = -1;
 
     public HealthBar(Actor owner, int width) {
         this.owner = owner;
@@ -19,7 +21,9 @@ public class HealthBar extends Actor {
             if (getWorld() != null) getWorld().removeObject(this);
             return;
         }
-        setLocation(owner.getX() - (owner instanceof BonkChoy ? 45 : 0), owner.getY() - 30);
+        
+        int xOffset = (owner instanceof BonkChoy) ? 45 : 0;
+        setLocation(owner.getX() - xOffset, owner.getY() - 30);
         update();
     }
 
@@ -28,10 +32,16 @@ public class HealthBar extends Actor {
         int maxHp = 1;
 
         if (owner instanceof Plant) {
-            hp = ((Plant)owner).hp; maxHp = ((Plant)owner).maxHp;
+            Plant p = (Plant) owner;
+            hp = p.getHp(); 
+            maxHp = p.getMaxHp();
         } else if (owner instanceof Zombie) {
-            hp = ((Zombie)owner).hp; maxHp = ((Zombie)owner).maxHp;
-        } else return;
+            Zombie z = (Zombie) owner;
+            hp = z.getHp(); 
+            maxHp = z.config.maxHp;
+        } else {
+            return;
+        }
 
         if (maxHp <= 0) maxHp = 1;
         if (hp < 0) hp = 0;
@@ -51,24 +61,35 @@ public class HealthBar extends Actor {
             oldHp = hp;
         }
 
+        if (hp == lastDrawnHp && displayHp == lastDrawnDisplayHp) {
+            return;
+        }
+
+        lastDrawnHp = hp;
+        lastDrawnDisplayHp = displayHp;
+
         GreenfootImage img = new GreenfootImage(width + 2, height + 2);
+        
         img.setColor(new Color(30, 30, 30)); 
         img.fillRect(1, 1, width, height);
 
         int redWidth = (int) ((displayHp / maxHp) * width);
         if (redWidth > 0) {
             img.setColor(new Color(220, 30, 30)); 
-            img.fillRect(1, 1, redWidth, height);
+            img.fillRect(1, 1, Math.min(redWidth, width), height);
         }
 
         int greenWidth = (int) (((double)hp / maxHp) * width);
         if (greenWidth > 0) {
+            int drawGreen = Math.min(greenWidth, width);
             img.setColor(new Color(170, 220, 70)); 
-            img.fillRect(1, 1, greenWidth, height);
+            img.fillRect(1, 1, drawGreen, height);
+            
             img.setColor(new Color(140, 190, 50));
-            img.fillRect(1, height/2, greenWidth, height/2);
+            img.fillRect(1, height / 2, drawGreen, height / 2);
+            
             img.setColor(new Color(110, 160, 40));
-            img.fillRect(1, (height/4)*3, greenWidth, height/4);
+            img.fillRect(1, (height / 4) * 3, drawGreen, height / 4);
         }
 
         img.setColor(new Color(0, 0, 0, 160));

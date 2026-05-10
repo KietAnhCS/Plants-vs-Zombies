@@ -1,18 +1,31 @@
 import greenfoot.*;
 
-public class CactusPacket extends SeedPacket
-{
+public class CactusPacket extends SeedPacket {
+
     public CactusPacket() {
-        super(40000L, false, 125, "cactuspacket");
-        
+        super(40000L, 125, "cactuspacket");
+    }
+
+    @Override
+    public TransparentObject addImage() {
+        MouseInfo mouse = Greenfoot.getMouseInfo();
+        if (mouse == null) return null;
+
+        TransparentObject temp = new TransparentCactus(false);
+        World world = getWorld();
+        if (world != null) {
+            world.addObject(temp, mouse.getX(), mouse.getY());
+            return temp;
+        }
+        return null;
     }
     
-    public TransparentObject addImage() {
-        TransparentObject temp = new TransparentCactus(false);
-        ((PlayScene)getWorld()).addObject(temp, Greenfoot.getMouseInfo().getX(), Greenfoot.getMouseInfo().getY());
-        return temp;
-    }
+    @Override
     public Plant getPlant() {
-        return new Cactus();
+        if (playScene != null && playScene.getPlantFactory() != null) {
+            return playScene.getPlantFactory().createPlant(PlantType.CACTUS);
+        }
+
+        return PlantFactory.getInstance().createPlant(PlantType.CACTUS);
     }
 }

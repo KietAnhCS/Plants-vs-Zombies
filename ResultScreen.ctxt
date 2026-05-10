@@ -1,6 +1,6 @@
 #BlueJ class context
 comment0.target=ResultScreen
-comment1.params=restart
+comment1.params=restartWorld
 comment1.target=ResultScreen(greenfoot.World)
 comment2.params=
 comment2.target=void\ act()

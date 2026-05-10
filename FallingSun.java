@@ -1,4 +1,6 @@
 import greenfoot.*;
+import java.util.*;
+
 public class FallingSun extends FallingObject
 {
     private PlayScene playScene;
@@ -6,10 +8,15 @@ public class FallingSun extends FallingObject
     private boolean beenClicked = false;
     private boolean landed = false;
     private long landedTime = 0;
+    private boolean isBeingStolen = false;
 
     public FallingSun() {
         super(2.5, 0, 0, 0, 3000);
         sunSprites = importSprites("sun", 2);
+    }
+
+    public void setBeingStolen(boolean stolen) {
+        this.isBeingStolen = stolen;
     }
 
     public void act() {
@@ -20,7 +27,9 @@ public class FallingSun extends FallingObject
         playScene = (PlayScene) getWorld();
         if (playScene == null) return;
         if (!playScene.getObjects(Overlay.class).isEmpty()) return;
+
         animate(sunSprites, 200, true);
+
         if (!beenClicked) {
             if (Greenfoot.mouseClicked(this) || isTouching(ThuyThan.class)) {
                 collectSun();
@@ -30,19 +39,20 @@ public class FallingSun extends FallingObject
         } else {
             flyToCounter();
         }
+
         checkRemoval();
     }
 
     public void collectSun() {
         if (beenClicked) return;
         beenClicked = true;
-        AudioPlayer.play(90, "points.mp3");
-        if (playScene.seedbank != null && playScene.seedbank.sunCounter != null) {
-            playScene.seedbank.sunCounter.addSun(25);
-        }
+        AudioManager.getInstance().playSound(80, false, "points.mp3");
+        playScene.getSunManager().add(25);
     }
 
     private void handleFallingAndWaiting() {
+        if (isBeingStolen) return; 
+
         if (!landed) {
             super.update();
             if (elapsedTime >= fallTime) {
@@ -57,11 +67,13 @@ public class FallingSun extends FallingObject
     }
 
     private void flyToCounter() {
-        if (playScene.seedbank != null && playScene.seedbank.sunCounter != null) {
-            int targetX = playScene.seedbank.sunCounter.getX();
-            int targetY = playScene.seedbank.sunCounter.getY();
-            turnTowards(targetX, targetY);
+        List<SunDisplay> displays = playScene.getObjects(SunDisplay.class);
+        if (!displays.isEmpty()) {
+            SunDisplay ds = displays.get(0);
+            turnTowards(ds.getX(), ds.getY());
             move(25);
+        } else {
+            fadeOut(25);
         }
     }
 
@@ -72,11 +84,15 @@ public class FallingSun extends FallingObject
     }
 
     private void checkRemoval() {
-        if (playScene.seedbank == null || playScene.seedbank.sunCounter == null) return;
-        int targetX = playScene.seedbank.sunCounter.getX();
-        int targetY = playScene.seedbank.sunCounter.getY();
-        double dist = Math.hypot(getX() - targetX, getY() - targetY);
-        if (getImage().getTransparency() == 0 || (beenClicked && dist < 35)) {
+        if (getWorld() == null) return;
+        boolean reached = false;
+        List<SunDisplay> displays = playScene.getObjects(SunDisplay.class);
+        if (!displays.isEmpty()) {
+            SunDisplay ds = displays.get(0);
+            double dist = Math.hypot(getX() - ds.getX(), getY() - ds.getY());
+            if (beenClicked && dist < 35) reached = true;
+        }
+        if (getImage().getTransparency() == 0 || reached) {
             getWorld().removeObject(this);
         }
     }

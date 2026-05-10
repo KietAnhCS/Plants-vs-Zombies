@@ -1,10 +1,12 @@
 import greenfoot.*;
 import java.util.*;
+
 public class Sun extends FallingObject {
-    public int sunValue = 25; 
-    private PlayScene playScene;
-    private GreenfootImage[] sunSprites;
-    private boolean beenClicked = false; 
+
+    private int value = 25; 
+    private PlayScene scene;
+    private GreenfootImage[] sprites;
+    private boolean pickedUp = false; 
     private long lifetimeStart;
     private boolean stationary = false;
 
@@ -14,22 +16,24 @@ public class Sun extends FallingObject {
 
     public Sun(int value) {
         super(-3.5, 0.15, Random.Int(-1, 1), 1, 800L); 
-        this.sunValue = value;
-        sunSprites = importSprites("sun", 2);
+        this.value = value;
+        sprites = importSprites("sun", 2);
     }
 
     public Sun(int value, boolean stationary) {
         super(0, 0, 0, 0, 0L);
-        this.sunValue = value;
+        this.value = value;
         this.stationary = stationary;
-        sunSprites = importSprites("sun", 2);
+        sprites = importSprites("sun", 2);
     }
 
     public void update() {
         if (getWorld() == null) return;
-        animate(sunSprites, 200, true);
-        if (!beenClicked) {
-            if (Greenfoot.mouseClicked(this) || isTouching(ThuyThan.class)) {
+
+        animate(sprites, 200, true);
+
+        if (!pickedUp) {
+            if (isTouching(ThuyThan.class)) {
                 collect();
             } else {
                 handleAutoFadeOut();
@@ -38,21 +42,21 @@ public class Sun extends FallingObject {
         } else {
             flyToCounter();
         }
+
         checkRemoval();
     }
 
-    private void collect() {
-        if (beenClicked) return;
-        beenClicked = true;
+    public void collect() {
+        if (pickedUp) return;
+
+        pickedUp = true;
         setRotation(0);
-        AudioPlayer.play(90, "points.mp3");
-        playScene.seedbank.sunCounter.addSun(sunValue);
-    }
+        AudioManager.getInstance().playSound(80, false, "points.mp3");
 
-    public boolean isPickedUp() { return beenClicked; }
-
-    public void collectByHero() {
-        collect();
+        PlayScene currentScene = getPlayScene();
+        if (currentScene != null && currentScene.getSunManager() != null) {
+            currentScene.getSunManager().add(this.value);
+        }
     }
 
     private void applyFallingPhysics() {
@@ -66,8 +70,17 @@ public class Sun extends FallingObject {
     }
 
     private void flyToCounter() {
-        turnTowards(SunCounter.x, SunCounter.y);
-        move(15);
+        PlayScene currentScene = getPlayScene();
+        if (currentScene == null) return;
+        
+        List<SunDisplay> displays = currentScene.getObjects(SunDisplay.class);
+        if (!displays.isEmpty()) {
+            SunDisplay ds = displays.get(0);
+            turnTowards(ds.getX(), ds.getY());
+            move(15);
+        } else {
+            fadeOut(25);
+        }
     }
 
     private void handleAutoFadeOut() {
@@ -77,22 +90,44 @@ public class Sun extends FallingObject {
     }
 
     private void fadeOut(int amount) {
+        if (getImage() == null) return;
         int trans = getImage().getTransparency();
-        if (trans > amount) getImage().setTransparency(trans - amount);
-        else getImage().setTransparency(0);
+        getImage().setTransparency(Math.max(0, trans - amount));
     }
 
     private void checkRemoval() {
         if (getWorld() == null) return;
-        boolean reachedCounter = Math.abs(getX() - SunCounter.x) < 20 && Math.abs(getY() - SunCounter.y) < 20;
-        if (getImage().getTransparency() == 0 || (beenClicked && reachedCounter)) {
+
+        boolean reachedCounter = false;
+        PlayScene currentScene = getPlayScene();
+        
+        if (currentScene != null && pickedUp) {
+            List<SunDisplay> displays = currentScene.getObjects(SunDisplay.class);
+            if (!displays.isEmpty()) {
+                SunDisplay ds = displays.get(0);
+                reachedCounter = Math.hypot(getX() - ds.getX(), getY() - ds.getY()) < 20;
+            }
+        }
+
+        if (getImage().getTransparency() == 0 || (pickedUp && reachedCounter)) {
             getWorld().removeObject(this);
         }
     }
 
+    private PlayScene getPlayScene() {
+        if (scene != null) return scene;
+        if (getWorld() instanceof PlayScene) {
+            scene = (PlayScene) getWorld();
+            return scene;
+        }
+        return null;
+    }
+
     @Override
     public void addedToWorld(World world) {
-        playScene = (PlayScene) world;
+        if (world instanceof PlayScene) {
+            scene = (PlayScene) world;
+        }
         lifetimeStart = System.currentTimeMillis(); 
     }
 }

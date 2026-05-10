@@ -1,54 +1,71 @@
 import greenfoot.*;
 
-public class Progress extends Actor
-{
-    
-    public long currentFrame = System.currentTimeMillis();
-    public long lastFrame = System.currentTimeMillis();
-    public long deltaTime = System.currentTimeMillis();
-    public WaveManager level;
-    
-    public GreenfootImage bar = new GreenfootImage(428, 14);
-    
-    public Progress(WaveManager level) {
-        this.level = level;
-        
-        
+public class Progress extends Actor {
+    private WaveManager waveMgr;
+    private GreenfootImage baseImage;
+    private final int BAR_WIDTH = 428;
+    private final int BAR_HEIGHT = 14;
+    private final int X_OFFSET = 14;
+    private final int Y_OFFSET = 14;
+
+    public Progress(WaveManager waveMgr) {
+        this.waveMgr = waveMgr;
+        this.baseImage = new GreenfootImage("progress.png"); 
+        setImage(new GreenfootImage(baseImage));
     }
+
+    @Override
     public void addedToWorld(World world) {
-        for (int i : level.hugeWaves) {
-            if (i == level.level.length-1) {
-                getWorld().addObject(new Flag(), 290, 21);
+        if (waveMgr == null || waveMgr.levelData == null) return;
+        
+        int totalWaves = waveMgr.levelData.length;
+        for (int waveIdx : waveMgr.hugeWaves) {
+            int flagX;
+            if (waveIdx >= totalWaves - 1) {
+                flagX = getX() - (BAR_WIDTH / 2) + 15;
             } else {
-                int x = 700-(int)((double)(i+1)/(level.level.length)*428);
-                getWorld().addObject(new Flag(), x, 21);
+                double ratio = (double) (waveIdx + 1) / totalWaves;
+                flagX = getX() + (BAR_WIDTH / 2) - (int)(ratio * BAR_WIDTH);
             }
-            
+            world.addObject(new Flag(), flagX, getY());
         }
     }
-    public void act()
-    {
-        currentFrame = System.currentTimeMillis();
-        deltaTime = (currentFrame - lastFrame);
-        if (level.wave != -1) {
-            if (deltaTime > 2000L) {
-                bar.setColor(new Color(240, 240, 128));
-                bar.fillRect((int)(428-428*((double)(level.wave+1)/level.level.length)), 0, (int)(428*((double)(level.wave+1)/level.level.length)), 14);
-                getImage().drawImage(bar, 14, 14);
-                bar.setColor(new Color(192, 224, 96));
-                bar.fillRect((int)(428-428*((double)(level.wave+1)/level.level.length)), 5, (int)(428*((double)(level.wave+1)/level.level.length)), 14);
-                getImage().drawImage(bar, 14, 14);
-                bar.setColor(new Color(152, 200, 80));
-                bar.fillRect((int)(428-428*((double)(level.wave+1)/level.level.length)), 7, (int)(428*((double)(level.wave+1)/level.level.length)), 14);
-                getImage().drawImage(bar, 14, 14);
-                bar.setColor(new Color(128, 184, 64));
-                bar.fillRect((int)(428-428*((double)(level.wave+1)/level.level.length)), 9, (int)(428*((double)(level.wave+1)/level.level.length)), 14);
-                getImage().drawImage(bar, 14, 14);
-                bar.setColor(new Color(80, 160, 32));
-                bar.fillRect((int)(428-428*((double)(level.wave+1)/level.level.length)), 11, (int)(428*((double)(level.wave+1)/level.level.length)), 14);
-                getImage().drawImage(bar, 14, 14);
-            }
-            
+
+    @Override
+    public void act() {
+        if (waveMgr == null || waveMgr.wave == -1) return;
+        updateBar();
+    }
+
+    private void updateBar() {
+        GreenfootImage currentImg = new GreenfootImage(baseImage);
+        int totalWaves = waveMgr.levelData.length;
+        
+        double progress = (double) (waveMgr.wave + 1) / totalWaves;
+        int fillWidth = (int) (BAR_WIDTH * progress);
+        
+        if (fillWidth > 0) {
+            int startX = BAR_WIDTH - fillWidth;
+
+            drawGradientRect(currentImg, startX, fillWidth);
+        }
+        
+        setImage(currentImg);
+    }
+
+    private void drawGradientRect(GreenfootImage img, int startX, int width) {
+        int[] colorsY = {0, 5, 7, 9, 11};
+        Color[] colors = {
+            new Color(240, 240, 128), 
+            new Color(192, 224, 96),
+            new Color(152, 200, 80),
+            new Color(128, 184, 64),
+            new Color(80, 160, 32)    
+        };
+
+        for (int i = 0; i < colors.length; i++) {
+            img.setColor(colors[i]);
+            img.fillRect(X_OFFSET + startX, Y_OFFSET + colorsY[i], width, BAR_HEIGHT - colorsY[i]);
         }
     }
 }

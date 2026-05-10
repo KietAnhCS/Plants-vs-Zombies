@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=Merger
+comment1.params=source\ target\ upgradeManager
+comment1.target=Merger(Plant,\ Plant,\ UpgradeManager)
+comment2.params=
+comment2.target=boolean\ update()
+comment3.params=
+comment3.target=void\ markArrived()
+comment4.params=scene
+comment4.target=void\ finalizeEffect(PlayScene)
+comment5.params=
+comment5.target=void\ cancel()
+numComments=6

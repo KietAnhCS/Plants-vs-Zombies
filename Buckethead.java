@@ -1,93 +1,87 @@
-import greenfoot.*; 
+import greenfoot.*;
 
-public class Buckethead extends Zombie
-{
-    public boolean bucket = true;
-    public GreenfootImage[] walk, armless, eat, armlesseat;
-    public GreenfootImage[] bucketheadwalk, bucketheadwalkd, bucketheadwalkdd;
-    public GreenfootImage[] bucketheadeat, bucketheadeatd, bucketheadeatdd;
-    
+public class Buckethead extends Zombie {
+    public GreenfootImage[] wNormal, wD1, wD2, wBare, wArmless;
+    public GreenfootImage[] eNormal, eD1, eD2, eBare, eArmless;
+    private boolean bucket = true;
+    private boolean fallen = false;
+
     public Buckethead() {
-        super();
-        walk = importSprites("zombiewalk", 7);
-        eat = importSprites("zombieeating", 7);
-        armlesseat = importSprites("armlesszombieeating", 7);
-        armless = importSprites("armlesszombie", 7);
+        super(ZombieConfig.BUCKET);
         
-        bucketheadwalk = importSprites("bucketheadwalk", 7);
-        bucketheadwalkd = importSprites("bucketheadwalkd", 7);
-        bucketheadwalkdd = importSprites("bucketheadwalkdd", 7);
-        bucketheadeat = importSprites("bucketheadeat", 7);
-        bucketheadeatd = importSprites("bucketheadeatd", 7);
-        bucketheadeatdd = importSprites("bucketheadeatdd", 7);
+        // Load Animations
+        wNormal  = importSprites(ZombieAssets.BUCKET_WALK.path,           7);
+        wD1      = importSprites(ZombieAssets.BUCKET_WALK_D1.path,        7);
+        wD2      = importSprites(ZombieAssets.BUCKET_WALK_D2.path,        7);
+        wBare    = importSprites(ZombieAssets.SHARED_WALK_BARE.path,     7);
+        wArmless = importSprites(ZombieAssets.SHARED_WALK_ARMLESS.path,  7);
         
-        walkSpeed = Random.Double(22, 28);
-        maxHp = 450;
-        hp = maxHp;
-        this.damage = 35;
+        eNormal  = importSprites(ZombieAssets.BUCKET_EAT.path,            7);
+        eD1      = importSprites(ZombieAssets.BUCKET_EAT_D1.path,         7);
+        eD2      = importSprites(ZombieAssets.BUCKET_EAT_D2.path,         7);
+        eBare    = importSprites(ZombieAssets.SHARED_EAT_BARE.path,      7);
+        eArmless = importSprites(ZombieAssets.SHARED_EAT_ARMLESS.path,   7);
+        
+        setState(new WalkingState(this));
     }
 
     @Override
-    public void update() {
-        if (hp > 375) {
-            handleAnimation(bucketheadwalk, bucketheadeat);
-        } else if (hp > 200) {
-            handleAnimation(bucketheadwalkd, bucketheadeatd);
-        } else if (hp > 100) {
-            handleAnimation(bucketheadwalkdd, bucketheadeatdd);
-        } else {
-            if (bucket) {
-                bucket = false;
-                if (PlayScene != null) PlayScene.addObject(new Bucket(), getX(), getY() - 25);
-            }
-            
-            if (hp > 50) {
-                handleAnimation(walk, eat);
-            } else {
-                if (!fallen) {
-                    fallen = true;
-                    AudioPlayer.play(80, "limbs_pop.mp3");
-                    if (PlayScene != null) PlayScene.addObject(new Arm(), getX() + 8, getY() + 20);
-                }
-                handleAnimation(armless, armlesseat);
-            }
+    protected void handleThresholds() {
+        int currentHp = getHp();
+        
+        // Rơi xô
+        if (currentHp <= ZombieRegistry.BUCKET_BARE && bucket) {
+            bucket = false;
+            AudioManager.getInstance().playSound(80, false, "limbs_pop.mp3");
+            if (getWorld() != null) getWorld().addObject(new Bucket(), getX(), getY() - 25);
         }
-    }
-
-    private void handleAnimation(GreenfootImage[] walkAnim, GreenfootImage[] eatAnim) {
-        if (!isEating()) {
-            animate(walkAnim, 350, true);
-            move(-walkSpeed);
-        } else {
-            animate(eatAnim, 200, true);
-            playEating();
+        
+        // Rơi tay
+        if (currentHp <= ZombieRegistry.BUCKET_ARMLESS && !fallen) {
+            fallen = true;
+            AudioManager.getInstance().playSound(80, false, "limbs_pop.mp3");
+            if (getWorld() != null) getWorld().addObject(new Arm(), getX() + 8, getY() + 20);
         }
     }
 
     @Override
     public void hit(int dmg) {
-        if (bucket) {
-            AudioPlayer.play(70, "shieldhit.mp3", "shieldhit2.mp3");
+        if (!isLiving()) return;
+
+        // Âm thanh kim loại nếu còn xô, âm thanh thịt nếu mất xô
+        AudioManager.getInstance().playSound(80, false, bucket ? "shieldhit.mp3" : "splat.mp3");
+
+        String path;
+        int currentHp = getHp();
+        boolean isEating = checkEating();
+
+        // Xác định đường dẫn Flash (chỉ truyền String cho SpriteAnimator)
+        if (currentHp > ZombieRegistry.BUCKET_D1) {
+            path = isEating ? ZombieAssets.BUCKET_EAT.path : ZombieAssets.BUCKET_WALK.path;
+        } else if (currentHp > ZombieRegistry.BUCKET_D2) {
+            path = isEating ? ZombieAssets.BUCKET_EAT_D1.path : ZombieAssets.BUCKET_WALK_D1.path;
+        } else if (currentHp > ZombieRegistry.BUCKET_BARE) {
+            path = isEating ? ZombieAssets.BUCKET_EAT_D2.path : ZombieAssets.BUCKET_WALK_D2.path;
+        } else if (!fallen) {
+            path = isEating ? ZombieAssets.SHARED_EAT_BARE.path : ZombieAssets.SHARED_WALK_BARE.path;
         } else {
-            AudioPlayer.play(70, "splat.mp3", "splat2.mp3", "splat3.mp3");
-        }
-        
-        if (isLiving()) {
-            if (hp > 375) {
-                hitFlash(eating ? bucketheadeat : bucketheadwalk, eating ? "bucketheadeat" : "bucketheadwalk");
-            } else if (hp > 200) {
-                hitFlash(eating ? bucketheadeatd : bucketheadwalkd, eating ? "bucketheadeatd" : "bucketheadwalkd");
-            } else if (hp > 100) {
-                hitFlash(eating ? bucketheadeatdd : bucketheadwalkdd, eating ? "bucketheadeatdd" : "bucketheadwalkdd");
-            } else if (!fallen) {
-                hitFlash(eating ? eat : walk, eating ? "zombieeating" : "zombiewalk");
-            } else {
-                hitFlash(eating ? armlesseat : armless, eating ? "armlesszombieeating" : "armlesszombie");
-            }
-        } else if (!finalDeath) {
-            hitFlash(eating ? headlesseating : headless, eating ? "headlesszombieeating" : "zombieheadless");
+            path = isEating ? ZombieAssets.SHARED_EAT_ARMLESS.path : ZombieAssets.SHARED_WALK_ARMLESS.path;
         }
 
+        hitFlash(path);
         super.hit(dmg);
+    }
+
+    public boolean isArmless() {
+        return this.fallen;
+    }
+
+    public GreenfootImage[] getCurrentAnimation(boolean isEating) {
+        int currentHp = getHp();
+        if (currentHp > ZombieRegistry.BUCKET_D1) return isEating ? eNormal : wNormal;
+        if (currentHp > ZombieRegistry.BUCKET_D2) return isEating ? eD1 : wD1;
+        if (currentHp > ZombieRegistry.BUCKET_BARE) return isEating ? eD2 : wD2;
+        if (!fallen) return isEating ? eBare : wBare;
+        return isEating ? eArmless : wArmless;
     }
 }

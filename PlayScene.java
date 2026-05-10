@@ -1,260 +1,232 @@
-import greenfoot.*; 
+import greenfoot.*;
 import java.util.*;
-import java.util.List;
-import java.util.ArrayList;
 
-public class PlayScene extends World {  
-    private long lastSunSpawnTime;
-    private boolean isPlaying = false;
-    public boolean lose = false;
+public class PlayScene extends World {
     public boolean loseOnce = false;
     public boolean winOnce = false;
-    private boolean isWaterMap = true; 
+    public boolean isGameOver = false;
     
     public GridManager GridManager = new GridManager();
-    public GreenfootSound Grasswalk = new GreenfootSound("intro3.mp3");
-    public GreenfootSound easyWaveMusic = new GreenfootSound("sans.mp3");
-    public GreenfootSound finalWaveMusic = new GreenfootSound("finalwavemp3.mp3");
-    
-    private GreenfootSound currentlyPlaying;
-
-    public GreenfootSound CYS;
-    public World restartWorld;
+    public WaveManager level;
     public FallingObject winPlant;
+    public SeedBank seedbank;
+    public World restartWorld;
+    public GreenfootSound CYS;
     
-    public SeedPacket[] bank = {};
-    public SeedBank seedbank; 
+    public SunDisplay sunDisplay = new SunDisplay();
     public Hitbox hitbox = new Hitbox();
     public Shovel shovel = new Shovel();
-    
+    public MuteButton mutebutton = new MuteButton();
     public RollButton rollbutton = new RollButton();
     public RupButton rupbutton = new RupButton();
-    public WaveManager level;
+    
+    private SunManager sunManager;
+    private MusicController musicController;
+    private SunSpawner sunSpawner;
+    private WinLossHandler winLossHandler;
+    private DebugHandler debugHandler;
+    private UpgradeManager upgradeManager;
+    private List<Merger> activeMergers = new ArrayList<>();
+    private boolean isPlaying = false;
 
-    public PlayScene(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater) {      
-        super(1111, 698, 1, false); 
-        this.isWaterMap = isWater;
+    public PlayScene(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater) {
+        super(1111, 698, 1, false);
         this.CYS = CYS;
         this.seedbank = seedbank;
         this.restartWorld = restartWorld;
         this.level = level;
         this.winPlant = winPlant;
-        lastSunSpawnTime = System.currentTimeMillis();
+        this.sunManager = new SunManager();
+        this.upgradeManager = new UpgradeManager(PlantFactory.getInstance(), new PlantEventBus());
         
         Greenfoot.setSpeed(50);
         setBackground("maptft2.png");
         
-        addObject(GridManager, 555, 349); 
-        addObject(new ThuyThan(), 110, 642);
-        addObject(seedbank, 0, 0); 
+        addObject(GridManager, 555, 349);
+        addObject(new SliderBar(), 850, 50);
+        addObject(mutebutton, 1050, 50);
+        addObject(new ThuyThan(), 110, 500);
+        addObject(seedbank, 0, 0);
+        addObject(sunDisplay, 600, 570);
         addObject(hitbox, 555, 349);
         addObject(shovel, 930, 615);
-        addObject(rollbutton, 250, 625);
-        addObject(rupbutton, 250, 575);
+        addObject(rollbutton, 325, 625);
+        addObject(rupbutton, 175, 625);
         
         prepareLawnmowers();
-        finalWaveMusic.setVolume(70);
-        easyWaveMusic.setVolume(70);
-
-        setPaintOrder(
-            AugmentCard.class,
-            Overlay.class,
-            ThuyThan.class,
-            RupButton.class,
-            RollButton.class,    
-            Transition.class,
-            WaveNotification.class,
-            ReadySetPlant.class,
-            SunCounter.class,
-            SeedPacket.class,
-            SellShovel.class,
-            Shovel.class,
-            Sun.class,
-            
-            HealthBar.class,
-            Plant.class,          
-            GridManager.class,   
-            Zombie.class,
-            Projectile.class,
-            Dirt.class,
-            Lawnmower.class
-        );
+        
+        musicController = new MusicController(this);
+        sunSpawner = new SunSpawner(this);
+        winLossHandler = new WinLossHandler(this);
+        debugHandler = new DebugHandler(this);
+        
+        applyDefaultPaintOrder();
     }
 
     public void act() {
-        moveHitbox(); 
-        if (!isPlaying) {
+        if (isGameOver) return;
+        moveHitbox();
+        
+        if (!isPlaying && level != null) {
             addObject(level, 0, 0);
             isPlaying = true;
             level.startLevel();
         }
-        updateGameMusic();
-        handleSunSpawn();
-        handleWinLoss();
-        checkDebugKeys();
-    }
-
-    private void updateGameMusic() {
-        if (level == null || loseOnce || winOnce) return;
         
-        int currentWave = level.getWaveNumber()-1;
-        showText("Wave: " + currentWave, 100, 100);
-
-        GreenfootSound targetMusic;
-
-        if (currentWave >= 1 && currentWave <= 6) {
-            targetMusic = easyWaveMusic;
-        } else if (currentWave >= 12 && currentWave <= 16) {
-            targetMusic = finalWaveMusic;
-        } else {
-            targetMusic = Grasswalk;
-        }
-
-        if (currentlyPlaying != targetMusic) {
-            stopAllMusic();
-            currentlyPlaying = targetMusic;
-            currentlyPlaying.playLoop();
-        }
+        musicController.update();
+        sunSpawner.update();
+        winLossHandler.update();
+        debugHandler.update();
+        updateMergers();
+        drawWaveUI();
     }
 
-    private void stopAllMusic() {
-        if (Grasswalk.isPlaying()) Grasswalk.stop();
-        if (easyWaveMusic.isPlaying()) easyWaveMusic.stop();
-        if (finalWaveMusic.isPlaying()) finalWaveMusic.stop();
-        if (CYS != null && CYS.isPlaying()) CYS.stop();
+    public PlantFactory getPlantFactory() {
+        return PlantFactory.getInstance();
     }
 
-    private void handleSunSpawn() {
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastSunSpawnTime >= 30000) {
-            lastSunSpawnTime = currentTime;
-            int x = Greenfoot.getRandomNumber(700) + 200;
-            addObject(new FallingSun(), x, -30);
-        }
+    public UpgradeManager getUpgradeManager() {
+        return upgradeManager;
     }
 
-    public void rollPackets() {
-        RupButton rup = rupbutton;
-        if (seedbank.getSun() >= 25) {
-            int totalWeight = 0;
-            for (RupButton.RarityEntry entry : rup.weightedPool) {
-                if (entry.weight > 0) totalWeight += entry.weight;
-            }
-            if (totalWeight <= 0) return; 
-
-            seedbank.addSun(-25); 
-            AudioPlayer.play(80, "achievement.mp3");
-
-            SeedPacket[] newBank = new SeedPacket[3]; 
-            for (int i = 0; i < 3; i++) {
-                int randomNumber = Greenfoot.getRandomNumber(totalWeight);
-                int cursor = 0;
-                for (RupButton.RarityEntry entry : rup.weightedPool) {
-                    if (entry.weight <= 0) continue;
-                    cursor += entry.weight;
-                    if (randomNumber < cursor) {
-                        try {
-                            newBank[i] = (SeedPacket) entry.packetClass.getDeclaredConstructor().newInstance();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                    }
-                }
-            }
-            seedbank.updateBank(newBank);
-        }
+    public SunManager getSunManager() {
+        return sunManager;
     }
 
-    private void handleWinLoss() {
-        if (!loseOnce && hasLost()) {
-            stopAllMusic();
-            AudioPlayer.play(80, "losemusic.mp3");
-            addObject(new DelayAudio(new GreenfootSound("scream.mp3"), 70, false, 4000L), 0, 0);
-            loseOnce = true;
-            Greenfoot.delay(250);
-            addObject(new Transition(false, new ResultScreen(restartWorld), "gameover.png", 5), 365, 215);
-        } else if (!winOnce && hasWon()) {
-            winOnce = true;
-            finishLevel();
-            addObject(winPlant, Greenfoot.getRandomNumber(266) + 400, 215);
-        }
-    }
-
-    private void prepareLawnmowers() {
-        int[][] coordinates = {{240, 180}, {226, 300}, {180, 430}};
-        for (int i = 0; i < 3; i++) {
-            addObject(new Lawnmower(), coordinates[i][0], coordinates[i][1]);
+    public void increasePlantSlots(int amount) {
+        if (GridManager != null) {
+            GridManager.addBonusSlots(amount);
+            AudioManager.getInstance().playSound(80, false, "achievement.mp3");
         }
     }
 
     public boolean tryPlacePlant(int gridX, int gridY, Plant newPlant) {
-        if (newPlant == null || level.choosingCard) return false;
-        return GridManager.placePlant(gridX, gridY, newPlant);
+        if (newPlant == null || level == null) return false;
+        if (level.choosingCard || !getObjects(CrazyDave.class).isEmpty()) return false;
+        
+        boolean placed = GridManager.placePlant(gridX, gridY, newPlant);
+        if (placed) {
+            PlantCombineHandler.checkAndCombine(this, newPlant);
+        }
+        return placed;
+    }
+
+    public void rollPackets() {
+        if (!getSunManager().hasEnough(25)) return;
+        
+        RupButton.RarityEntry[] pool = rupbutton.getPoolForRoll();
+        int total = 0;
+        for (RupButton.RarityEntry e : pool) {
+            if (e != null && e.weight > 0) total += e.weight;
+        }
+        
+        if (total <= 0) return;
+        
+        getSunManager().spend(25);
+        AudioManager.getInstance().playSound(80, false, "achievement.mp3");
+        
+        SeedPacket[] newBank = new SeedPacket[3];
+        for (int i = 0; i < 3; i++) {
+            int rnd = Greenfoot.getRandomNumber(total);
+            int cursor = 0;
+            for (RupButton.RarityEntry e : pool) {
+                if (e == null || e.weight <= 0) continue;
+                cursor += e.weight;
+                if (rnd < cursor) {
+                    String name = e.packetClass.getSimpleName().replace("Packet", "").toUpperCase();
+                    newBank[i] = getPlantFactory().createSeedPacket(name);
+                    break;
+                }
+            }
+        }
+        seedbank.updateBank(newBank);
     }
 
     public boolean hasLost() {
         List<Zombie> zombies = getObjects(Zombie.class);
-        for (Zombie i : zombies) {
-            if (i.getWorld() != null && i.getX() < 125) return true;
+        for (Zombie z : zombies) {
+            if (z.getWorld() != null && z.getX() < 155) return true;
         }
         return false;
     }
-    
-    public void checkAndCombine(Plant newPlant) {
-        if (newPlant == null || newPlant.isMerging || newPlant.isTarget) return;
-        if (!(newPlant instanceof Peashooter|| newPlant instanceof Repeater ||  newPlant instanceof GatlingPea || newPlant instanceof Cactus || 
-              newPlant instanceof Cactus2 || newPlant instanceof BonkChoy || newPlant instanceof BonkChoy2)) {
-            return; 
-        }
-    
-        List<? extends Plant> plants = getObjects(newPlant.getClass());
-        List<Plant> available = new ArrayList<>();
-        for (Plant p : plants) {
-            if (!p.isMerging && !p.isTarget) available.add(p);
-        }
-    
-        if (available.size() >= 3) {
-            Plant p1 = available.get(0);
-            Plant p2 = available.get(1);
-            Plant p3 = available.get(2);
-            p3.isTarget = true; 
-            p1.setMergingTarget(p3);
-            p2.setMergingTarget(p3);
-        }
-    }
 
-    public boolean hasWon() { return level.hasWon(); }
-
-    public void moveHitbox() {
-        MouseInfo mouse = Greenfoot.getMouseInfo();
-        if (mouse != null) hitbox.setLocation(mouse.getX(), mouse.getY());
-    }
-
-    private void checkDebugKeys() {
-        String key = Greenfoot.getKey();
-        if ("1".equals(key)) { 
-            stopAllMusic();
-            Greenfoot.setWorld(new Arena()); 
-        }
-        if ("r".equals(key)) rollPackets(); 
+    public boolean hasWon() {
+        return level != null && level.hasWon();
     }
 
     public void finishLevel() {
-        stopAllMusic();
-        AudioPlayer.play(70, "winmusic.mp3");
+        this.isGameOver = true;
     }
 
-    public void started() {
-        if (currentlyPlaying != null) {
-            currentlyPlaying.playLoop();
-        }
-        Greenfoot.setSpeed(50);          
+    public void stopAllMusic() {
+        AudioManager.stopBGM();
+        if (CYS != null && CYS.isPlaying()) CYS.stop();
+        if (musicController != null) musicController.resetBGM();
     }
 
-    public void stopped() {
-        if (currentlyPlaying != null && currentlyPlaying.isPlaying()) {
-            currentlyPlaying.pause();
+    public void applyDefaultPaintOrder() {
+        setPaintOrder(
+            CrazyDave.class, Transition.class, AugmentCard.class, Overlay.class,
+            SliderKnob.class, SliderBar.class, MuteButton.class,
+            ThuyThan.class, RupButton.class, RollButton.class,
+            WaveNotification.class, ReadySetPlant.class,
+            SunDisplay.class, SeedPacket.class, SellShovel.class, Shovel.class,
+            Lawnmower.class, Sun.class, HealthBar.class,
+            Pea.class, FirePea.class, Needle.class, Zombie.class,
+            Plant.class, GridManager.class, Dirt.class
+        );
+    }
+
+    private void updateMergers() {
+        Iterator<Merger> it = activeMergers.iterator();
+        while (it.hasNext()) {
+            if (it.next().update()) {
+                it.remove();
+            }
         }
+    }
+
+    public void addActiveMerger(Merger m) { 
+        activeMergers.add(m); 
+    }
+
+    public void moveHitbox() {
+        MouseInfo m = Greenfoot.getMouseInfo();
+        if (m != null) hitbox.setLocation(m.getX(), m.getY());
+    }
+
+    private void prepareLawnmowers() {
+        int[][] coords = {{240,180}, {236,240}, {225,295}, {220,360}, {190,420}};
+        for (int[] c : coords) {
+            addObject(new Lawnmower(), c[0], c[1]);
+        }
+    }
+
+    private void drawWaveUI() {
+        if (level == null) return;
+        GreenfootImage canvas = getBackground();
+        String text = "WAVE " + level.getWaveNumber();
+        
+        canvas.setColor(new Color(0, 0, 0, 160));
+        canvas.fillRect(24, 84, 140, 40);
+        
+        canvas.setColor(Color.WHITE);
+        canvas.drawRect(20, 80, 140, 40);
+        
+        canvas.setFont(new Font("Courier New", true, false, 22));
+        canvas.setColor(new Color(0, 191, 255));
+        canvas.drawString(text, 40, 107);
+    }
+
+    public List<Merger> getActiveMergers() { 
+        return activeMergers; 
+    }
+
+    public void started() { 
+        if (!isGameOver && musicController != null) musicController.update(); 
+    }
+
+    public void stopped() { 
+        AudioManager.stopBGM(); 
     }
 }

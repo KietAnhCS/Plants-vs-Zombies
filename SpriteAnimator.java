@@ -1,135 +1,91 @@
-import greenfoot.*; 
-import java.util.Timer;
-import java.io.*;
-
-public class SpriteAnimator extends PhysicsBody
-{
-    
-    public long deltaTime;
-    public long lastFrame = System.nanoTime();
-    public long currentFrame = System.nanoTime();
-    public GreenfootImage[] previousSprites = null;
-    
+import greenfoot.*;
+public class SpriteAnimator extends PhysicsBody {
+    private static SpriteCache cache = new SpriteCache();
+    private long lastMillis = 0;
+    private GreenfootImage[] previousSprites = null;
     public int frame = 0;
-    
+    private int flashRemainingFrames = 0;
+    private String flashFilename = null;
+
     public GreenfootImage[] importSprites(String filename, int frames) {
-        GreenfootImage[] temp = new GreenfootImage[frames];
-        for (int i = 0; i < frames; i++) {
-            GreenfootImage scale = new GreenfootImage(filename+(i+1)+".png");
-            
-            temp[i] = scale;
-        }
-        return temp;
+        return cache.getSprites(filename, frames);
     }
-    
+
     public GreenfootImage[] importSprites(String filename, int frames, double scaleFactor) {
-        GreenfootImage[] temp = new GreenfootImage[frames];
-        for (int i = 0; i < frames; i++) {
-            GreenfootImage scale = new GreenfootImage(filename+(i+1)+".png");
-            scale.scale((int)(scale.getWidth()*scaleFactor), (int)(scale.getHeight()*scaleFactor));
-            temp[i] = scale;
-        }
-        return temp;
+        return cache.getSprites(filename, frames, scaleFactor);
     }
-    
-    
-    
-    public void animate(GreenfootImage[] sprite, long duration) {
-        currentFrame = System.nanoTime();
-        deltaTime = (currentFrame - lastFrame) / 1000000;
-        
-        
-        if (deltaTime > duration) {
-            lastFrame = currentFrame;    
-            frame++;
-            if (frame < sprite.length) {
-                setImage(sprite[frame]);
-            }
 
-        }
-        if (frame < sprite.length) {
-            
-        } else {
-            
+    public boolean animate(GreenfootImage[] sprite, long duration) {
+        return animate(sprite, duration, true);
+    }
+
+    public boolean animate(GreenfootImage[] sprite, long duration, boolean loop) {
+        if (sprite == null || sprite.length == 0) return false;
+        if (sprite != previousSprites) {
             frame = 0;
-            setImage(sprite[frame]);
-        }
-        if (!sprite.equals(previousSprites)) {
-            setImage(sprite[frame]);
             previousSprites = sprite;
+            flashRemainingFrames = 0;
+            flashFilename = null;
+            lastMillis = 0;
+            setImage(sprite[0]);
+            return false;
         }
-        
-           
-    }
-    
-    public void animate(GreenfootImage[] sprite, long duration, boolean loop) {
-        currentFrame = System.nanoTime();
-        deltaTime = (currentFrame - lastFrame) / 1000000;
-           
-        if (deltaTime > duration) {
-            
-            lastFrame = currentFrame;    
+        long currentMillis = System.currentTimeMillis();
+        if (lastMillis == 0) lastMillis = currentMillis;
+        long elapsed = currentMillis - lastMillis;
+        if (elapsed >= duration) {
+            lastMillis = currentMillis;
             frame++;
-            if (frame < sprite.length) {
+            if (frame >= sprite.length) {
+                frame = loop ? 0 : sprite.length - 1;
+                if (!loop) {
+                    setImage(sprite[frame]);
+                    return true;
+                }
+            }
+            if (flashRemainingFrames > 0) {
+                try {
+                    setImage(new GreenfootImage("images/flash" + flashFilename + (frame + 1) + ".png"));
+                } catch (Exception e) {
+                    setImage(sprite[frame]);
+                }
+                flashRemainingFrames--;
+            } else {
                 setImage(sprite[frame]);
             }
         }
-        if (frame < sprite.length) {
-            
-        } else if (loop) {
-            
-            frame = 0;
-            setImage(sprite[frame]);
-        } else {
-            
-        }
-        if (!sprite.equals(previousSprites)) {
-            if (frame < sprite.length) {
-                setImage(sprite[frame]);
-                previousSprites = sprite;
-            }
-        }
-               
-        
-
-        
+        return false;
     }
+
+    private void applyImageWithOpacity(GreenfootImage img) {
+        if (img == null) return;
+        if (this instanceof Plant) {
+            Plant p = (Plant) this;
+            GreenfootImage copy = new GreenfootImage(img);
+            copy.setTransparency(p.opaque ? 160 : 255);
+            setImage(copy);
+            return;
+        }
+        setImage(img);
+    }
+
+    public void hitFlash(String filename) {
+        this.flashFilename = filename;
+        this.flashRemainingFrames = 2;
+        try {
+            setImage(new GreenfootImage("images/flash" + filename + (frame + 1) + ".png"));
+        } catch (Exception e) {}
+    }
+
     public void setFrame(int toFrame) {
-        frame = toFrame-1;
-    
+        this.frame = Math.max(0, toFrame - 1);
     }
-    
+
     public int getCurrentFrame() {
-        return frame+1;
-    }
-    public void hitFlash(GreenfootImage[] sprite, String filename) {
-        int tempFrame = frame;
-        int flashFrame = tempFrame+1;
-        if (tempFrame >= sprite.length) {
-            tempFrame = 0;
-            flashFrame = 1;
-          
-        } else if (flashFrame >= sprite.length) {
-            flashFrame = 0;
-        }
-      
-        
-        
-        GreenfootImage first = new GreenfootImage("flash"+filename+(tempFrame+1)+".png");
-        GreenfootImage second = new GreenfootImage("flash"+filename+(flashFrame+1)+".png");
- 
-        sprite[tempFrame] = first;
-        sprite[flashFrame] = second;
-        
-        
-        setImage(sprite[tempFrame]);
-        
-        Timer timer = new Timer();
-        timer.schedule(new Timer1(sprite, filename, tempFrame,flashFrame), 500L); 
-       
+        return frame + 1;
     }
 
-   
-    
-
+    public static void clearAnimationCache() {
+        cache.clearCache();
+    }
 }

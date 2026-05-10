@@ -1,92 +1,91 @@
-import greenfoot.*; 
+import greenfoot.*;
 
-public class Brickhead extends Zombie
-{
+public class Brickhead extends Zombie {
+    public GreenfootImage[] wNormal, wD1, wD2, wBare, wArmless;
+    public GreenfootImage[] eNormal, eD1, eD2, eBare, eArmless;
     private boolean brick = true;
-    public GreenfootImage[] walk, armless, eat, armlesseat;
-    public GreenfootImage[] brickheadwalk, brickheadwalkd, brickheadwalkdd;
-    public GreenfootImage[] brickheadeat, brickheadeatd, brickheadeatdd;
-    
+    private boolean fallen = false;
+
     public Brickhead() {
-        super(); 
-        walk = importSprites("zombiewalk", 7);
-        eat = importSprites("zombieeating", 7);
-        armlesseat = importSprites("armlesszombieeating", 7);
-        armless = importSprites("armlesszombie", 7);
-        brickheadwalk = importSprites("brickhead", 7);
-        brickheadwalkd = importSprites("brickheadd", 7);
-        brickheadwalkdd = importSprites("brickheaddd", 7);
-        brickheadeat = importSprites("brickheadeat", 7);
-        brickheadeatd = importSprites("brickheadeatd", 7);
-        brickheadeatdd = importSprites("brickheadeatdd", 7);
-        
-        walkSpeed = Random.Double(22, 28);
-        maxHp = 300;
-        hp = maxHp;
-        this.damage = 150; 
+        super(ZombieConfig.BRICK);
+        this.walkSpeed = (Greenfoot.getRandomNumber(6) + 20) / 100.0;
+
+        // Load Animations sử dụng .count để tránh lỗi file
+        wNormal  = importSprites(ZombieAssets.BRICK_WALK.path,         ZombieAssets.BRICK_WALK.count);
+        wD1      = importSprites(ZombieAssets.BRICK_WALK_D1.path,      ZombieAssets.BRICK_WALK_D1.count);
+        wD2      = importSprites(ZombieAssets.BRICK_WALK_D2.path,      ZombieAssets.BRICK_WALK_D2.count);
+        wBare    = importSprites(ZombieAssets.SHARED_WALK_BARE.path,    ZombieAssets.SHARED_WALK_BARE.count);
+        wArmless = importSprites(ZombieAssets.SHARED_WALK_ARMLESS.path, ZombieAssets.SHARED_WALK_ARMLESS.count);
+
+        eNormal  = importSprites(ZombieAssets.BRICK_EAT.path,          ZombieAssets.BRICK_EAT.count);
+        eD1      = importSprites(ZombieAssets.BRICK_EAT_D1.path,       ZombieAssets.BRICK_EAT_D1.count);
+        eD2      = importSprites(ZombieAssets.BRICK_EAT_D2.path,       ZombieAssets.BRICK_EAT_D2.count);
+        eBare    = importSprites(ZombieAssets.SHARED_EAT_BARE.path,    ZombieAssets.SHARED_EAT_BARE.count);
+        eArmless = importSprites(ZombieAssets.SHARED_EAT_ARMLESS.path, ZombieAssets.SHARED_EAT_ARMLESS.count);
+
+        setState(new WalkingState(this));
     }
 
     @Override
-    public void update() {
-        if (hp > 200) {
-            handleAnimation(brickheadwalk, brickheadeat);
-        } 
-        else if (hp > 100) {
-            handleAnimation(brickheadwalkd, brickheadeatd);
-        } 
-        else if (hp > 50) {
-            handleAnimation(brickheadwalkdd, brickheadeatdd);
-        } 
-        else {
-            if (brick) {
-                brick = false;
-                if (PlayScene != null) PlayScene.addObject(new Brick(), getX(), getY() - 25);
-            }
+    protected void handleThresholds() {
+        int currentHp = getHp();
 
-            if (hp > 25) {
-                handleAnimation(walk, eat);
-            } 
-            else {
-                if (!fallen) {
-                    fallen = true;
-                    AudioPlayer.play(80, "limbs_pop.mp3");
-                    if (PlayScene != null) PlayScene.addObject(new Arm(), getX() + 8, getY() + 20);
-                }
-                handleAnimation(armless, armlesseat);
-            }
+        // Rơi nón gạch
+        if (currentHp <= ZombieRegistry.BRICK_BARE && brick) {
+            brick = false;
+            AudioManager.getInstance().playSound(80, false, "limbs_pop.mp3");
+            if (getWorld() != null) getWorld().addObject(new Brick(), getX(), getY() - 25);
         }
-    }
 
-    private void handleAnimation(GreenfootImage[] walkAnim, GreenfootImage[] eatAnim) {
-        if (!isEating()) {
-            animate(walkAnim, 350, true);
-            move(-walkSpeed);
-        } else {
-            animate(eatAnim, 200, true);
-            playEating();
+        // Rơi tay
+        if (currentHp <= ZombieRegistry.BRICK_ARMLESS && !fallen) {
+            fallen = true;
+            AudioManager.getInstance().playSound(80, false, "limbs_pop.mp3");
+            if (getWorld() != null) getWorld().addObject(new Arm(), getX() + 8, getY() + 20);
         }
     }
 
     @Override
     public void hit(int dmg) {
-        AudioPlayer.play(70, "splat.mp3", "splat2.mp3", "splat3.mp3");
+        if (getHp() <= 0 && !isLiving() && finalDeath) return;
 
         if (isLiving()) {
-            if (hp > 200) {
-                hitFlash(eating ? brickheadeat : brickheadwalk, eating ? "brickheadeat" : "brickhead");
-            } else if (hp > 100) {
-                hitFlash(eating ? brickheadeatd : brickheadwalkd, eating ? "brickheadeatd" : "brickheadd");
-            } else if (hp > 50) {
-                hitFlash(eating ? brickheadeatdd : brickheadwalkdd, eating ? "brickheadeatdd" : "brickheaddd");
-            } else if (!fallen) {
-                hitFlash(eating ? eat : walk, eating ? "zombieeating" : "zombiewalk");
-            } else {
-                hitFlash(eating ? armlesseat : armless, eating ? "armlesszombieeating" : "armlesszombie");
-            }
-        } else if (!finalDeath) {
-            hitFlash(eating ? headlesseating : headless, eating ? "headlesszombieeating" : "zombieheadless");
-        }
+            // Âm thanh tương ứng (gạch: kim loại, không gạch: splat)
+            AudioManager.getInstance().playSound(80, false, brick ? "shieldhit.mp3" : "splat.mp3");
+            
+            ZombieAssets asset;
+            int currentHp = getHp();
 
-        super.hit(dmg); 
+            // Xác định Asset để lấy path cho hitFlash (1 tham số)
+            if (currentHp > ZombieRegistry.BRICK_D1) {
+                asset = eating ? ZombieAssets.BRICK_EAT : ZombieAssets.BRICK_WALK;
+            } else if (currentHp > ZombieRegistry.BRICK_D2) {
+                asset = eating ? ZombieAssets.BRICK_EAT_D1 : ZombieAssets.BRICK_WALK_D1;
+            } else if (currentHp > ZombieRegistry.BRICK_BARE) {
+                asset = eating ? ZombieAssets.BRICK_EAT_D2 : ZombieAssets.BRICK_WALK_D2;
+            } else if (!fallen) {
+                asset = eating ? ZombieAssets.SHARED_EAT_BARE : ZombieAssets.SHARED_WALK_BARE;
+            } else {
+                asset = eating ? ZombieAssets.SHARED_EAT_ARMLESS : ZombieAssets.SHARED_WALK_ARMLESS;
+            }
+
+            hitFlash(asset.path);
+
+        } else if (!finalDeath) {
+            AudioManager.getInstance().playSound(80, false, "splat.mp3");
+            ZombieAssets asset = eating ? ZombieAssets.SHARED_HEADLESS_EAT : ZombieAssets.SHARED_HEADLESS;
+            
+            hitFlash(asset.path);
+        }
+        super.hit(dmg);
+    }
+
+    public GreenfootImage[] getCurrentAnimation(boolean isEating) {
+        int currentHp = getHp();
+        if (currentHp > ZombieRegistry.BRICK_D1) return isEating ? eNormal : wNormal;
+        if (currentHp > ZombieRegistry.BRICK_D2) return isEating ? eD1 : wD1;
+        if (currentHp > ZombieRegistry.BRICK_BARE) return isEating ? eD2 : wD2;
+        if (!fallen) return isEating ? eBare : wBare;
+        return isEating ? eArmless : wArmless;
     }
 }

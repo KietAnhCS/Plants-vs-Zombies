@@ -1,129 +1,104 @@
 import greenfoot.*;
-import java.util.*;
+import java.util.List;
 
-public class GatlingPea2 extends Plant
-{
-    private GreenfootImage[] idle;
-    private GreenfootImage[] shoot;
-    private int shootCount = 0;
-    private boolean resetFrame = false;
-    private boolean shooting = false;
+public class GatlingPea2 extends Plant {
+    private static final PlantType TYPE = PlantType.GATLING_PEA_2;
+    private GreenfootImage[] idle, shoot;
+    private boolean adjusted = false;
+    private long lastAttackTime = System.currentTimeMillis();
+    private PlayScene cachedPlayScene;
     
-    private boolean isPoweredUp = false;
-    private long powerUpStartTime;
-    private final long POWER_UP_DURATION = 3000L;
-    
-    private long baseShootDelay = 2000L; 
-    private long shootDelay = 2000L;      
-    
-    private long lastFrame2 = System.nanoTime();
-    private long deltaTime2;
+    private int burstCount = 0;
+    private long lastBurstTime = 0;
+    private static final int BURST_INTERVAL = 80; // Tốc độ ra đạn trong loạt (nhanh hơn lv1)
 
     public GatlingPea2() {
-        maxHp = 60;
-        hp = maxHp;
-        shoot = importSprites("GatlingPea", 19);
-        idle = importSprites("GatlingPea", 19);
-        setImage(idle[0]);
+        setMaxHp(TYPE.hp);
+        setHp(TYPE.hp);
+        setDamage(TYPE.damage);
+        setCost(TYPE.cost);
+        
+        // Sử dụng ảnh gốc, không scale bằng code để giữ độ nét
+        idle = importSprites(PlantAssets.GATLING_PEA, 19);
+        shoot = importSprites(PlantAssets.GATLING_PEA, 19);
+        
+        if (idle != null && idle.length > 0) setImage(idle[0]);
     }
 
-    public void activatePlantFood() {
-        this.isPoweredUp = true;
-        this.powerUpStartTime = System.currentTimeMillis();
-        this.shootDelay = 40L; 
-        this.hp = maxHp;
+    @Override
+    public void addedToWorld(World world) {
+        super.addedToWorld(world);
+        if (world instanceof PlayScene) cachedPlayScene = (PlayScene) world;
+        world.addObject(new HealthBar(this, 50), getX(), getY());
     }
 
     @Override
     public void hit(int dmg) {
-        if (getWorld() != null && isLiving()) {
-            hp -= dmg;
-        }
+        if (getWorld() == null || !isLiving()) return;
+        
+        // Fix lỗi hitFlash truyền String như yêu cầu lớp cha
+        hitFlash(PlantAssets.GATLING_PEA);
+        
+        setHp(getHp() - dmg);
+        if (getHp() <= 0) onDeath();
     }
 
     @Override
     public void update() {
         if (getWorld() == null) return;
-
-        if (isPoweredUp) {
-            if (System.currentTimeMillis() - powerUpStartTime > POWER_UP_DURATION) {
-                isPoweredUp = false;
-                shootDelay = baseShootDelay;
-            }
+        if (!adjusted) {
+            setLocation(getX(), getY() - 15);
+            adjusted = true;
         }
-
-        PlayScene = (PlayScene)getWorld();
-        currentFrame = System.nanoTime();
-
-        handleAction();
-        checkZombieInRow();
+        handleCombat();
     }
 
-    private void handleAction() {
-        deltaTime2 = (currentFrame - lastFrame2) / 1000000;
+    private void handleCombat() {
+        if (getState() == PlantState.MERGING) return;
 
-        if (isPoweredUp) {
-            executeShootingLogic();
-        } 
-        else if (shooting) {
-            if (shootCount >= 5) {
-                if (deltaTime2 >= shootDelay) {
-                    shootCount = 0;
-                } else {
-                    animate(idle, 225, true);
-                }
-            } else {
-                executeShootingLogic();
-            }
-        } else {
-            animate(idle, 225, true);
-            shootCount = 0;
-            lastFrame2 = currentFrame - (shootDelay * 1000000);
-        }
-    }
-
-    private void executeShootingLogic() {
-        if (!resetFrame) {
-            setFrame(1);
-            resetFrame = true;
-        }
+        boolean hasTarget = checkZombieInRow();
         
-        int animSpeed = isPoweredUp ? 10 : 15; 
-        animate(shoot, animSpeed, false);
-
-        if (frame >= 7) {
-            int myRow = getYPos();
-            if (getWorld() != null && myRow != -1) {
-                AudioPlayer.play(80, "throw.mp3", "throw2.mp3");
-                PlayScene.addObject(new FirePea(myRow), getX() + 25, getY() - 17);
-                
-                setFrame(1); 
-                shootCount++;
-                
-                if (shootCount >= 5 && !isPoweredUp) {
-                    lastFrame2 = System.nanoTime();
-                    resetFrame = false;
-                }
-            }
+        // Vẫn tiếp tục bắn nốt loạt đạn nếu zombie chết giữa chừng
+        if (hasTarget || burstCount > 0) {
+            setState(PlantState.SHOOTING);
+            animate(shoot, 60, false);
+            executeShoot();
+        } else {
+            setState(PlantState.IDLE);
+            animate(idle, 60, true);
         }
     }
 
-    private void checkZombieInRow() {
+    private boolean checkZombieInRow() {
         int myRow = getYPos();
-        if (myRow == -1 || PlayScene.level == null || PlayScene.level.zombieRow == null) return;
+        if (myRow == -1 || cachedPlayScene == null || cachedPlayScene.level == null) return false;
+        List<Zombie> rowZombies = cachedPlayScene.level.zombieRow.get(myRow);
+        return rowZombies.stream().anyMatch(z ->
+            z.getWorld() != null &&
+            z.getX() > getX() &&
+            z.getX() <= cachedPlayScene.getWidth() + 10
+        );
+    }
 
-        List<Zombie> zombiesInRow = PlayScene.level.zombieRow.get(myRow);
-        if (zombiesInRow == null || zombiesInRow.isEmpty()) {
-            shooting = false;
-        } else {
-            boolean found = false;
-            for (Zombie i : zombiesInRow) {
-                if (i != null && i.getWorld() != null && i.getX() > getX() && i.getX() <= PlayScene.getWidth() + 10) {
-                    found = true;
-                    break;
-                }
+    private void executeShoot() {
+        long currentTime = System.currentTimeMillis();
+
+        // Kiểm tra xem đã đến lúc bắt đầu loạt bắn mới chưa
+        if (burstCount == 0) {
+            if (currentTime - lastAttackTime >= TYPE.shootDelay) {
+                burstCount = 4; // Loạt 4 viên
+                lastAttackTime = currentTime;
             }
-            shooting = found;
+        }
+
+        // Thực hiện bắn từng viên FirePea trong loạt
+        if (burstCount > 0 && currentTime - lastBurstTime >= BURST_INTERVAL) {
+            AudioManager.getInstance().playSound(80, false, PlantAssets.SOUND_THROW);
+            // Level 2 bắn FirePea (Đạn lửa)
+            getWorld().addObject(new FirePea(getYPos()), getX() + 25, getY() - 17);
+            
+            burstCount--;
+            lastBurstTime = currentTime;
         }
     }
 }

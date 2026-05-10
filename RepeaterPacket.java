@@ -1,22 +1,33 @@
-import greenfoot.*;  
+import greenfoot.*;
 
-public class RepeaterPacket extends SeedPacket
-{
-    /**
-     * Act - do whatever the RepeaterPacket wants to do. This method is called whenever
-     * the 'Act' or 'Run' button gets pressed in the environment.
-     */
+public class RepeaterPacket extends SeedPacket {
+
     public RepeaterPacket() {
-        super(1L, true, 225, "repeaterpacket");
-        
+        super(40000L, 225, "repeaterpacket");
+    }
+
+    @Override
+    public TransparentObject addImage() {
+        MouseInfo mouse = Greenfoot.getMouseInfo();
+        if (mouse == null) return null;
+
+        TransparentObject temp = new TransparentRepeater(false);
+        World world = getWorld();
+        if (world != null) {
+            world.addObject(temp, mouse.getX(), mouse.getY());
+            return temp;
+        }
+        return null;
     }
     
-    public TransparentObject addImage() {
-        TransparentObject temp = new TransparentRepeater(false);
-        ((PlayScene)getWorld()).addObject(temp, Greenfoot.getMouseInfo().getX(), Greenfoot.getMouseInfo().getY());
-        return temp;
-    }
+    @Override
     public Plant getPlant() {
-        return new Repeater();
+        if (playScene != null && playScene.getPlantFactory() != null) {
+            return playScene.getPlantFactory().createPlant(PlantType.REPEATER);
+        }
+
+        return PlantFactory.getInstance().createPlant(PlantType.REPEATER);
     }
+    
+    
 }

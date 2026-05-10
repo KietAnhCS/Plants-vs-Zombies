@@ -1,4 +1,7 @@
 import greenfoot.*;
+import java.util.*;
+import java.util.function.Supplier;
+import java.util.Random;
 
 public class AugmentCard extends Actor {
     private WaveManager manager;
@@ -15,14 +18,12 @@ public class AugmentCard extends Actor {
 
     public void act() {
         handleHover();
-        if (Greenfoot.mouseClicked(this)) {
-            MouseInfo mouse = Greenfoot.getMouseInfo();
-            if (mouse != null && mouse.getButton() == 1) {
-                AudioPlayer.play(100, "gravebutton.mp3");
-                applyAugmentEffect();
-                clearUI();
-                manager.nextWave();
-            }
+        MouseInfo mouse = Greenfoot.getMouseInfo();
+        if (mouse != null && mouse.getButton() == 1 && Greenfoot.mouseClicked(this)) {
+            AudioManager.getInstance().playSound(80, false, "gravebutton.mp3");
+            applyAugmentEffect();
+            clearUI();
+            manager.nextWave();
         }
     }
 
@@ -32,8 +33,7 @@ public class AugmentCard extends Actor {
                 hovered = true;
                 updateImage(W_HOVER, H_HOVER);
             }
-        }
-        if (Greenfoot.mouseMoved(null) && !Greenfoot.mouseMoved(this)) {
+        } else if (Greenfoot.mouseMoved(null)) {
             if (hovered) {
                 hovered = false;
                 updateImage(W_NORMAL, H_NORMAL);
@@ -49,18 +49,55 @@ public class AugmentCard extends Actor {
 
     private void applyAugmentEffect() {
         PlayScene world = (PlayScene) getWorld();
-        if (world != null && world.seedbank != null) {
-            if (type.equals("rerollcard")) world.seedbank.addSun(150);
-            else if (type.equals("TD")) world.seedbank.addSun(150);
-            else if (type.equals("HM")) world.seedbank.addSun(150);
+        if (world == null) return;
+
+        if (type.equals("rerollcard")) {
+            world.getSunManager().add(500);
+        } else if (type.equals("TD")) {
+            world.increasePlantSlots(3);
+        } else if (type.equals("HM")) {
+            GridManager gm = world.GridManager;
+            List<Integer> emptyCols = new ArrayList<>();
+        
+            for (int c = 0; c < 9; c++) {
+                if (gm.Board[5][c] == null) emptyCols.add(c);
+            }
+        
+            if (!emptyCols.isEmpty()) {
+                Collections.shuffle(emptyCols);
+                Random rand = new Random();
+        
+                Supplier<Plant> randomPlant = () -> {
+                    int r = rand.nextInt(4);
+                    switch (r) {
+                        case 0: return new BonkChoy();
+                        case 1: return new GatlingPea();
+                        case 2: return new GatlingPea2();
+                        case 3: return new BonkChoy2();
+                        default: return new Peashooter();
+                    }
+                };
+        
+                int col1 = emptyCols.get(0);
+                Plant p1 = randomPlant.get();
+                gm.Board[5][col1] = p1;
+                world.addObject(p1, gm.getXCoord(col1, 5), gm.getYCoord(col1, 5));
+        
+                if (emptyCols.size() >= 2) {
+                    int col2 = emptyCols.get(1);
+                    Plant p2 = randomPlant.get();
+                    gm.Board[5][col2] = p2;
+                    world.addObject(p2, gm.getXCoord(col2, 5), gm.getYCoord(col2, 5));
+                }
+            }
+            AudioManager.getInstance().playSound(80, false, "achievement.mp3");
         }
     }
 
     private void clearUI() {
         World world = getWorld();
-        if (world != null) {
-            world.removeObjects(world.getObjects(AugmentCard.class));
-            world.removeObjects(world.getObjects(Overlay.class));
-        }
+        if (world == null) return;
+        world.removeObjects(world.getObjects(AugmentCard.class));
+        world.removeObjects(world.getObjects(Overlay.class));
     }
 }

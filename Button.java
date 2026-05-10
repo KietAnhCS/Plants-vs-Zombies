@@ -1,34 +1,43 @@
-import greenfoot.*;  
+// ═══════════════════════════════════════════════════════
+// Button.java
+// ═══════════════════════════════════════════════════════
+import greenfoot.*;
 
-public class Button extends SpriteAnimator
-{
+public class Button extends SpriteAnimator {
     public GreenfootImage idle;
     public GreenfootImage hover;
+
     public Button(String idle, String hover) {
-        this.idle = new GreenfootImage(idle);
+        this.idle  = new GreenfootImage(idle);
         this.hover = new GreenfootImage(hover);
-        setImage(idle);
+        setImage(this.idle);
     }
-    public void act()
-    {
+
+    public void act() {
+        handleHover();
         MouseInfo mouse = Greenfoot.getMouseInfo();
-        ResultScreen world = (ResultScreen)getWorld();
-        if (mouse != null) {
-            world.moveHitbox();
-            if (this.intersects(world.hitbox)) {
-                setImage(hover);
-            } else {
-                setImage(idle);
-            }
-            if (Greenfoot.mouseClicked(this)) {
-                AudioPlayer.play(100, "gravebutton.mp3");
-                update(); 
-            }
+        if (mouse != null && mouse.getButton() == 1 && Greenfoot.mouseClicked(this)) {
+            
+            AudioManager.getInstance().playSound(80, false, "gravebutton.mp3");
+            onClick();
         }
-        
-      
     }
-    public void update() {
-        
+
+    protected void handleHover() {
+        World world = getWorld();
+        if (world == null) return;
+
+        boolean isHovered = false;
+        if (world instanceof MainMenu) {
+            isHovered = this.intersects(((MainMenu) world).hitbox);
+        } else if (world instanceof ResultScreen) {
+            isHovered = this.intersects(((ResultScreen) world).hitbox);
+        } else {
+            isHovered = Greenfoot.mouseMoved(this);
+        }
+
+        setImage(isHovered ? hover : idle);
     }
+
+    protected void onClick() {}
 }

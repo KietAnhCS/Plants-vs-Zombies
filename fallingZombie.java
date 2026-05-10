@@ -1,28 +1,16 @@
-import greenfoot.*; 
-public class fallingZombie extends SpriteAnimator
-{
-    public GreenfootImage[] fall;
+import greenfoot.*;
+
+public class FallingZombie extends SpriteAnimator {
+    private GreenfootImage[] images;
     
-    
-    public fallingZombie(GreenfootImage[] fall) {
-        this.fall = fall;
+    public FallingZombie(GreenfootImage[] imgs) {
+        this.images = imgs;
+        if (images != null) setImage(images[0]);
     }
-    public void act()
-    {
-        if (getImage().getTransparency() <= 0) {
+    
+    public void act() {
+        if (animate(images, 150, false)) {
             getWorld().removeObject(this);
-            return;
-        }
-        if (frame <= 7) {
-        
-        
-        animate(fall, 200, false);
-        } else {
-            if (getImage().getTransparency()-3 <= 0) {
-                getImage().setTransparency(0);
-            } else {
-                getImage().setTransparency(getImage().getTransparency()-3);
-            }
         }
     }
 }

@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=WinLossHandler
+comment1.params=scene
+comment1.target=WinLossHandler(PlayScene)
+comment2.params=
+comment2.target=void\ update()
+comment3.params=
+comment3.target=void\ handleWin()
+comment4.params=
+comment4.target=void\ handleLoss()
+numComments=5

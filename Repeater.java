@@ -1,90 +1,76 @@
-import greenfoot.*; 
-public class Repeater extends Plant
-{
-    private GreenfootImage[] idle;
-    private GreenfootImage[] shoot;
-    private boolean shootOnce = false;
-    private int shootCount = 0;
-    private boolean resetFrame = false;
-    private boolean shooting = false;
-    private long shootDelay = 1700L;
-    private long lastFrame2 = System.nanoTime();
-    private long deltaTime2;
-    
+import greenfoot.*;
+import java.util.List;
+
+public class Repeater extends Plant {
+    private static final PlantType TYPE = PlantType.REPEATER;
+    private GreenfootImage[] idle, shoot;
+    private boolean adjusted = false;
+    private long lastAttackTime = System.currentTimeMillis();
+    private PlayScene cachedPlayScene;
+
     public Repeater() {
-        maxHp = 60;
-        hp = maxHp;
-        shoot = importSprites("repeatershoot", 3);
-        idle = importSprites("repeater", 7);
+        setMaxHp(TYPE.hp);
+        setHp(TYPE.hp);
+        setDamage(TYPE.damage);
+        setCost(TYPE.cost);
+        idle  = importSprites(PlantAssets.REPEATER_IDLE, 7);
+        shoot = importSprites(PlantAssets.REPEATER_SHOOT, 3);
+        if (idle != null && idle.length > 0) setImage(idle[0]);
     }
-   
+
+    @Override
+    public void addedToWorld(World world) {
+        super.addedToWorld(world);
+        if (world instanceof PlayScene) cachedPlayScene = (PlayScene) world;
+        world.addObject(new HealthBar(this, 50), getX(), getY());
+    }
+
+    @Override
     public void hit(int dmg) {
-        if (isLiving()) {
-            if (!shootOnce) {
-                hitFlash(idle, "repeater");
-            } else {
-                hitFlash(shoot, "repeatershoot");  
-                
-            }
-            hp = hp-dmg;
-        }
+        if (getWorld() == null || !isLiving()) return;
+        hitFlash(getState() == PlantState.SHOOTING ? PlantAssets.REPEATER_SHOOT : PlantAssets.REPEATER_IDLE);
+        super.hit(dmg);
     }
+
+    @Override
     public void update() {
         if (getWorld() == null) return;
-        
-        PlayScene world = (PlayScene)getWorld();
-        currentFrame = System.nanoTime();
-        if (!shooting) {
-            animate(idle, 225, true);
-            lastFrame2 = System.nanoTime();
-        } else {
-            
-            deltaTime2 = (currentFrame - lastFrame2) / 1000000;
-            if (deltaTime2 < shootDelay) {
-                animate(idle, 225, true);
-                shootCount = 0;
-                resetFrame = false;
-            } else {
-                if (shootCount >= 4) {
-                    lastFrame2 = currentFrame;
-                }
-                if (!resetFrame) {
-                    setFrame(1);
-                    resetFrame = true;
-                }
-                
-                if (frame >= 4) {
-                    AudioPlayer.play(80, "throw.mp3", "throw2.mp3");
-                    
-                    if (getWorld() != null) {
-                        world.addObject(new Pea(getYPos()), getX() + 25, getY() - 17);
-                    }
-                    
-                    PlayScene.addObject(new Pea(getYPos()), getX()+25,getY()-17);
-                    setFrame(1);
-                    setImage("repeatershoot1.png");
-                    shootCount++;
-                }
-                animate(shoot, 70, false);
-                
-                
-            }
-            
-            
+        if (!adjusted) {
+            setLocation(getX(), getY() - 15);
+            adjusted = true;
         }
-        if (world.level.zombieRow.get(getYPos()).size() == 0) {
-            shooting = false;
+        handleCombat();
+    }
+
+    private void handleCombat() {
+        if (getState() == PlantState.MERGING) return;
+        if (checkZombieInRow()) {
+            setState(PlantState.SHOOTING);
+            animate(shoot, 100, true);
+            executeShoot();
         } else {
-            boolean foundZombie = false;
-            for (Zombie i : world.level.zombieRow.get(getYPos())) {
-                
-                if (i != null && i.getWorld() != null && i.getX() > getX() && i.getX() <= world.getWidth() + 10) {
-                    foundZombie = true;
-                    break;
-                }
-            }
-            shooting = foundZombie;                      
+            setState(PlantState.IDLE);
+            animate(idle, 300, true);
         }
     }
- 
+
+    private boolean checkZombieInRow() {
+        int myRow = getYPos();
+        if (myRow == -1 || cachedPlayScene == null || cachedPlayScene.level == null) return false;
+        List<Zombie> rowZombies = cachedPlayScene.level.zombieRow.get(myRow);
+        return rowZombies.stream().anyMatch(z ->
+            z.getWorld() != null &&
+            z.getX() > getX() &&
+            z.getX() <= cachedPlayScene.getWidth() + 10
+        );
+    }
+
+    private void executeShoot() {
+        if (System.currentTimeMillis() - lastAttackTime <= TYPE.shootDelay) return;
+        for (int i = 0; i < 2; i++) {
+            AudioManager.getInstance().playSound(80, false, PlantAssets.SOUND_THROW);
+            getWorld().addObject(new Pea(getYPos()), getX() + 25 + (i * 15), getY() - 17);
+        }
+        lastAttackTime = System.currentTimeMillis();
+    }
 }

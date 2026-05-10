@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=SliderBar
+comment1.params=
+comment1.target=SliderBar()
+comment2.params=
+comment2.target=void\ updateImage()
+comment3.params=world
+comment3.target=void\ addedToWorld(greenfoot.World)
+comment4.params=
+comment4.target=void\ act()
+comment5.params=
+comment5.target=int\ getBarWidth()
+numComments=6

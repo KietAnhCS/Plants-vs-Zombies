@@ -1,0 +1,17 @@
+#BlueJ class context
+comment0.target=PlantEventBus
+comment1.params=
+comment1.target=PlantEventBus()
+comment2.params=listener
+comment2.target=void\ subscribe(IPlantEventListener)
+comment3.params=listener
+comment3.target=void\ unsubscribe(IPlantEventListener)
+comment4.params=plant
+comment4.target=void\ publishDeath(Plant)
+comment5.params=plant\ damage
+comment5.target=void\ publishHit(Plant,\ int)
+comment6.params=source\ target
+comment6.target=void\ publishMerge(Plant,\ Plant)
+comment7.params=plant\ newState
+comment7.target=void\ publishStateChanged(Plant,\ PlantState)
+numComments=8

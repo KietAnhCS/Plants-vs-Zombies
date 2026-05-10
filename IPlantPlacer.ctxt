@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=IPlantPlacer
+comment1.params=worldX\ worldY
+comment1.target=int\ getGridX(int,\ int)
+comment2.params=worldX\ worldY
+comment2.target=int\ getGridY(int,\ int)
+comment3.params=gx\ gy\ plant
+comment3.target=boolean\ canPlace(int,\ int,\ Plant)
+comment4.params=gx\ gy\ plant
+comment4.target=boolean\ placePlant(int,\ int,\ Plant)
+comment5.params=gx\ gy
+comment5.target=int\ getXCoord(int,\ int)
+comment6.params=gx\ gy
+comment6.target=int\ getYCoord(int,\ int)
+numComments=7

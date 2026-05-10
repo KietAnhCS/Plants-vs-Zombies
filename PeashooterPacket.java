@@ -1,18 +1,31 @@
-import greenfoot.*;  
+import greenfoot.*;
 
-public class PeashooterPacket extends SeedPacket
-{
+public class PeashooterPacket extends SeedPacket {
+
     public PeashooterPacket() {
-        super(1L, true, 100, "peashooterpacket");
-        
+        super(40000L, 100, "peashooterpacket");
     }
-    
+
+    @Override
     public TransparentObject addImage() {
+        MouseInfo mouse = Greenfoot.getMouseInfo();
+        if (mouse == null) return null;
+
         TransparentObject temp = new TransparentPeashooter(false);
-        ((PlayScene)getWorld()).addObject(temp, Greenfoot.getMouseInfo().getX(), Greenfoot.getMouseInfo().getY());
-        return temp;
+        World world = getWorld();
+        if (world != null) {
+            world.addObject(temp, mouse.getX(), mouse.getY());
+            return temp;
+        }
+        return null;
     }
+
+    @Override
     public Plant getPlant() {
-        return new Peashooter();
+        if (playScene != null && playScene.getPlantFactory() != null) {
+            return playScene.getPlantFactory().createPlant(PlantType.PEASHOOTER);
+        }
+
+        return PlantFactory.getInstance().createPlant(PlantType.PEASHOOTER);
     }
 }

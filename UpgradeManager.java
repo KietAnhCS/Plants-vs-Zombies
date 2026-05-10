@@ -1,10 +1,14 @@
 import greenfoot.*;
 
 public class UpgradeManager {
-    public static boolean canUpgrade(Plant p1, Plant p2) {
-        if (p1 == null || p2 == null) return false;
-        
-        return false;
+    private PlantEventBus eventBus;
+
+    public UpgradeManager(IPlantFactory factory, PlantEventBus eventBus) {
+        this.eventBus = eventBus;
+    }
+
+    public PlantEventBus getEventBus() {
+        return eventBus;
     }
 
     public static Plant getUpgradeResult(Plant p) {
@@ -18,8 +22,8 @@ public class UpgradeManager {
         return null;
     }
 
-    public static Plant getSpecialUpgrade(Plant p1, Plant p2) {
-        
-        return null;
+    // Hàm merge cũ có thể bỏ hoặc xóa bớt để không gọi chéo gây lỗi biến mất
+    public Plant merge(Plant target) {
+        return getUpgradeResult(target); 
     }
 }

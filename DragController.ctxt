@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.target=DragController
+comment1.params=sunDisplay\ placer
+comment1.target=DragController(SunDisplay,\ IPlantPlacer)
+comment10.params=
+comment10.target=void\ cleanup()
+comment2.params=
+comment2.target=void\ act()
+comment3.params=mouse
+comment3.target=void\ tryPickUp(greenfoot.MouseInfo)
+comment4.params=mx\ my
+comment4.target=void\ updatePlantPosition(int,\ int)
+comment5.params=mouse
+comment5.target=void\ processDrop(greenfoot.MouseInfo)
+comment6.params=
+comment6.target=void\ autoPlaceOrCancel()
+comment7.params=scene
+comment7.target=boolean\ autoPlace(PlayScene)
+comment8.params=scene
+comment8.target=void\ confirmPlacement(PlayScene)
+comment9.params=
+comment9.target=void\ cancelPlacement()
+numComments=11

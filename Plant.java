@@ -1,204 +1,198 @@
 import greenfoot.*;
-import java.util.List;
-import java.util.ArrayList;
-
-class Merger {
-    private Actor mover;
-    private Actor target;
-    private double speed = 20.0;
-
-    public Merger(Actor mover, Actor target) {
-        this.mover = mover;
-        this.target = target;
-    }
-
-    public boolean update() {
-        if (target == null || target.getWorld() == null || mover.getWorld() == null) return true;
-        
-        int dx = target.getX() - mover.getX();
-        int dy = target.getY() - mover.getY();
-        double distance = Math.sqrt(dx * dx + dy * dy);
-        
-        if (distance < speed) {
-            mover.setLocation(target.getX(), target.getY());
-            return true;
-        } else {
-            double angle = Math.atan2(dy, dx);
-            mover.setLocation(mover.getX() + (int)(Math.cos(angle) * speed), 
-                             mover.getY() + (int)(Math.sin(angle) * speed));
-            return false;
-        }
-    }
-}
 
 public abstract class Plant extends SpriteAnimator {
-    public int cost, maxHp, hp, damage;
-    public boolean isAlive = true, opaque = false;
-    public PlayScene PlayScene;
-
-    private boolean isDragging = false;
-    private int startGridX, startGridY;
-    private int currentGridX, currentGridY;
-
-    private Merger merger;
-    public Plant targetPlant;
+    public boolean isDragging = false;
+    public boolean opaque = false;
     public boolean isMerging = false;
     public boolean isTarget = false;
+    protected Plant targetPlant = null;
 
-    public void setMergingTarget(Plant target) {
-        if (target == null) return;
+    private int hp;
+    private int maxHp;
+    private int damage;
+    private int cost;
+    private PlantState state;
 
-        if (PlayScene != null && PlayScene.GridManager != null) {
-            PlayScene.GridManager.Board[this.currentGridY][this.currentGridX] = null;
-        }
+    private PlantEventBus eventBus;
+    private PlantInputHandler inputHandler;
+    private PlantStateManager stateManager;
+    private PlantCombatHandler combatHandler;
 
-        this.targetPlant = target;
-        target.isTarget = true;
-        this.merger = new Merger(this, target);
-        this.isMerging = true;
+    protected int currentGridX;
+    protected int currentGridY;
+
+    private int lastAlpha = -1;
+
+    public int getHp() { return hp; }
+    public int getMaxHp() { return maxHp; }
+    public int getDamage() { return damage; }
+    public int getCost() { return cost; }
+
+    public void setHp(int hp) { this.hp = hp; }
+    public void setMaxHp(int maxHp) { this.maxHp = maxHp; }
+    public void setDamage(int damage) { this.damage = damage; }
+    public void setCost(int cost) { this.cost = cost; }
+
+    public PlantState getState() { return state; }
+
+    public void setState(PlantState state) {
+        this.state = state;
+        this.isDragging = (state == PlantState.DRAGGING);
+        if (eventBus != null) eventBus.publishStateChanged(this, state);
     }
 
-    public void act() {
-        World worldRef = getWorld();
-        if (worldRef == null) return;
-        PlayScene = (PlayScene) worldRef;
+    public void setEventBus(PlantEventBus eventBus) {
+        this.eventBus = eventBus;
+    }
 
-        if (isMerging) {
-            if (merger.update()) {
-                onMergeReached();
+    public void setMergingTarget(Plant target) {
+        if (target == null || target == this) return;
+        this.targetPlant = target;
+        this.isMerging = true;
+
+        if (getWorld() instanceof PlayScene) {
+            PlayScene scene = (PlayScene) getWorld();
+            if (scene.GridManager != null) {
+                scene.GridManager.Board[currentGridY][currentGridX] = null;
             }
+        }
+    }
+
+    @Override
+    public void addedToWorld(World world) {
+        super.addedToWorld(world);
+        if (world instanceof PlayScene) {
+            PlayScene scene = (PlayScene) world;
+
+            if (this.eventBus == null && scene.getUpgradeManager() != null) {
+                this.eventBus = scene.getUpgradeManager().getEventBus();
+            }
+
+            this.inputHandler = new PlantInputHandler(this);
+            this.stateManager = new PlantStateManager(this);
+            this.combatHandler = new PlantCombatHandler(this);
+
+            syncGridPosition();
+
+            if (!isMerging) {
+                scene.addObject(new Dirt(), getX(), getY() + 30);
+            }
+
+            if (state == null) {
+                setState(PlantState.IDLE);
+            }
+        }
+    }
+
+    @Override
+    public void act() {
+        if (getWorld() == null) return;
+
+        updateTransparency();
+
+        if (isMerging && targetPlant != null) {
+            handleMergeMovement();
             return;
         }
 
-        if (!PlayScene.getObjects(Overlay.class).isEmpty()) return;
+        if (stateManager != null) stateManager.update();
+        if (inputHandler != null) inputHandler.handleMouse();
 
-        handleMouse();
-        
-        if (getWorld() == null) return;
-
-        if (isLiving()) {
-            if (!isDragging) {
-                if (currentGridY < 5) {
-                    update();
-                }
-            }
-            if (getImage() != null) {
-                getImage().setTransparency((isDragging || opaque) ? 125 : 255);
-            }
-        } else {
-            handleDeath();
+        if (stateManager != null && stateManager.canAct() && isLiving() && !isDragging) {
+            update();
         }
     }
 
-    private void onMergeReached() {
-        World worldRef = getWorld();
-        if (worldRef == null) return;
-        PlayScene world = (PlayScene) worldRef;
-
-        Plant target = this.targetPlant; 
-        if (target == null) return;
-
-        int gx = target.getXPos();
-        int gy = target.getYPos();
-        int tx = target.getX();
-        int ty = target.getY();
-
-        world.removeObject(this);
-
-        List<Plant> allPlants = world.getObjects(Plant.class);
-        int activeMergers = 0;
-        for (Plant p : allPlants) {
-            if (p.getClass() == this.getClass() && p.isMerging && p.targetPlant == target) {
-                activeMergers++;
-            }
-        }
-
-        if (activeMergers == 0 && target.getWorld() != null) {
-            Plant upgraded = UpgradeManager.getUpgradeResult(target);
-            world.GridManager.removePlant(gx, gy);
-
-            if (upgraded != null) {
-                world.addObject(upgraded, tx, ty);
-                world.GridManager.updateBoardData(gx, gy, upgraded);
-                world.checkAndCombine(upgraded);
-            }
-        }
+    private void updateTransparency() {
+        if (getImage() == null) return;
+        int alpha = isDragging ? 125 : (opaque ? 160 : 255);
+        if (alpha == lastAlpha) return;
+        lastAlpha = alpha;
+        GreenfootImage copy = new GreenfootImage(getImage());
+        copy.setTransparency(alpha);
+        setImage(copy);
     }
 
-    private void handleDeath() {
-        World worldRef = getWorld();
-        if (worldRef == null) return;
-
-        AudioPlayer.play(80, "gulp.mp3");
-        if (PlayScene.GridManager != null) {
-            PlayScene.GridManager.removePlant(currentGridX, currentGridY);
-        }
-        worldRef.removeObject(this);
-    }
-
-    private void handleMouse() {
-        MouseInfo mouse = Greenfoot.getMouseInfo();
-        if (mouse == null) return;
-    
-        if (!isDragging && Greenfoot.mousePressed(this)) {
-            if (mouse.getButton() == 1) {
-                if (isTarget || isMerging) return;
-                isDragging = true;
-                startGridX = currentGridX;
-                startGridY = currentGridY;
-            }
+    protected void handleMergeMovement() {
+        if (targetPlant == null || targetPlant.getWorld() == null) {
+            isMerging = false;
+            return;
         }
     
-        if (isDragging) {
-            if (Greenfoot.mouseDragged(null)) {
-                setLocation(mouse.getX(), mouse.getY());
+        double tx = targetPlant.getExactX();
+        double ty = targetPlant.getExactY();
+        double sx = getExactX();
+        double sy = getExactY();
+        double dx = tx - sx;
+        double dy = ty - sy;
+        double distance = Math.sqrt(dx * dx + dy * dy);
+    
+        if (distance <= 15) {
+            if (getWorld() instanceof PlayScene) {
+                PlayScene scene = (PlayScene) getWorld();
+                scene.addActiveMerger(new Merger(this, targetPlant, scene.getUpgradeManager()));
             }
-            
-            if (Greenfoot.mouseClicked(null) || Greenfoot.mouseClicked(this)) {
-                isDragging = false;
-                if (getWorld() == null) return;
-            
-                int nx = PlayScene.GridManager.getGridX(mouse.getX(), mouse.getY());
-                int ny = PlayScene.GridManager.getGridY(mouse.getX(), mouse.getY());
-                
-                if (nx < 0 || ny < 0) {
-                    returnToOldPosition();
-                } else if (PlayScene.GridManager.placePlant(nx, ny, this)) {
-                    currentGridX = nx;
-                    currentGridY = ny;
-                    PlayScene.checkAndCombine(this);
-                } else {
-                    returnToOldPosition();
-                }
-            }
+            getWorld().removeObject(this);
+            return;
         }
-    }
-
-    private void returnToOldPosition() {
-        int ox = PlayScene.GridManager.getXCoord(startGridX, startGridY);
-        int oy = PlayScene.GridManager.getYCoord(startGridX, startGridY);
-        setLocation(ox, oy);
-        currentGridX = startGridX;
-        currentGridY = startGridY;
-    }
-
-    public void hit(int dmg) { 
-        if (isDragging || isMerging) return;
-        hp -= dmg; 
+    
+        double speed = 15.0;
+        setLocation(sx + (dx / distance) * speed, sy + (dy / distance) * speed);
     }
 
     public abstract void update();
 
+    public void hit(int dmg) {
+        if (!isLiving() || isDragging || isMerging) return;
+        this.hp -= dmg;
+        onHit(dmg);
+        if (this.hp <= 0) {
+            this.hp = 0;
+            onDeath();
+        }
+    }
+
+    protected void onHit(int dmg) {
+        if (eventBus != null) eventBus.publishHit(this, dmg);
+    }
+
+    protected void onDeath() {
+        setState(PlantState.DYING);
+        if (eventBus != null) eventBus.publishDeath(this);
+
+        if (getWorld() instanceof PlayScene) {
+            PlayScene scene = (PlayScene) getWorld();
+            if (scene.GridManager != null) {
+                scene.GridManager.removePlant(currentGridX, currentGridY);
+            }
+        }
+
+        if (combatHandler != null) combatHandler.die();
+        if (getWorld() != null) {
+            getWorld().removeObject(this);
+        }
+    }
+
+    public void syncGridPosition() {
+        if (getWorld() instanceof PlayScene) {
+            PlayScene scene = (PlayScene) getWorld();
+            if (scene.GridManager != null) {
+                int[] pos = scene.GridManager.getGridPos(getX(), getY());
+                this.currentGridX = pos[0];
+                this.currentGridY = pos[1];
+            }
+        }
+    }
+
     public int getXPos() { return currentGridX; }
     public int getYPos() { return currentGridY; }
 
-    @Override
-    public void addedToWorld(World world) {
-        PlayScene = (PlayScene)world;
-        currentGridX = PlayScene.GridManager.getGridX(getX(), getY());
-        currentGridY = PlayScene.GridManager.getGridY(getX(), getY());
-        PlayScene.addObject(new Dirt(), getX(), getY() + 30);
+    public boolean isLiving() {
+        return hp > 0 && getWorld() != null && state != PlantState.DYING;
     }
 
-    public boolean isLiving() { return hp > 0; }
+    public void setGridPosition(int gx, int gy) {
+        this.currentGridX = gx;
+        this.currentGridY = gy;
+    }
 }

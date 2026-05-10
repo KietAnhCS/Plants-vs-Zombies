@@ -1,98 +1,101 @@
 import greenfoot.*;
 
-public class SeedPacket extends Actor
-{
-    public long deltaTime;
-    public long rechargeTime; 
-    public long lastFrame; 
-    
-    public int sunCost;
-    public String name;
-    
-    public boolean recharged = false; 
-    public boolean selected = false;  
-    
-    private GreenfootImage imageBright; 
-    private GreenfootImage imageDark;   
-    private GreenfootImage rechargeOverlay; 
-    
-    private PlayScene PlayScene;
-    private boolean doneRechargeTime = false;
+public class SeedPacket extends Actor {
+    public final int sunCost;
+    public final String name;
+    public final long rechargeTime;
+    private IPacketState state;
 
-    public boolean isUsed = false; 
+    private final GreenfootImage imageBright;
+    private final GreenfootImage imageDark;
+    private final GreenfootImage overlayBuffer;
+    private final GreenfootImage combined;
 
-    public SeedPacket(long rechargeTime, boolean recharged, int sunCost, String name) {
+    protected PlayScene playScene;
+
+    public SeedPacket(long rechargeTime, int sunCost, String name) {
         this.rechargeTime = rechargeTime;
-        this.recharged = recharged;
         this.sunCost = sunCost;
-        this.name = name;
+        this.name = name.toUpperCase();
+        this.imageBright = new GreenfootImage(name.toLowerCase() + "1.png");
+        this.imageDark = new GreenfootImage(name.toLowerCase() + "2.png");
+        this.overlayBuffer = new GreenfootImage(imageDark.getWidth(), imageDark.getHeight());
+        this.combined = new GreenfootImage(imageDark.getWidth(), imageDark.getHeight());
         
-        this.imageBright = new GreenfootImage(name + "1.png"); 
-        this.imageDark = new GreenfootImage(name + "2.png");   
-        
-        this.lastFrame = System.currentTimeMillis();
-        setImage(imageDark);
+        this.state = new AvailableState(); 
+        setImage(imageBright);
     }
 
+    @Override
     public void addedToWorld(World world) {
-        PlayScene = (PlayScene)world;
-        rechargeOverlay = new GreenfootImage(imageBright.getWidth(), imageBright.getHeight());
-        doneRechargeTime = true;
-        recharged = true;
-        
-        updateAppearance();
+        playScene = (PlayScene) world;
     }
 
+    @Override
     public void act() {
-        if (!isUsed) {
-            doneRechargeTime = true;
-            recharged = true;
-        }
-        updateAppearance();
+        if (state != null) state.tick(this);
     }
 
-    private void updateCooldown() {
-        if (!doneRechargeTime) {
-            deltaTime = System.currentTimeMillis() - lastFrame;
-            if (deltaTime >= rechargeTime) {
-                doneRechargeTime = true;
-                recharged = true; 
-            }
-        }
+    public void setState(IPacketState newState) {
+        this.state = newState;
+        newState.onEnter(this);
     }
 
-    public void updateAppearance() {
-        if (PlayScene == null || PlayScene.seedbank == null) return;
-
-        if (isUsed) {
-            setImage(imageDark);
-            getImage().setTransparency(130);
-            recharged = false; 
-            return;
+    public boolean canBePurchased() {
+        if (state instanceof AvailableState) {
+            return getCurrentSun() >= sunCost;
         }
+        return state != null && state.canPurchase(this);
+    }
 
-        int currentSun = PlayScene.seedbank.sunCounter.sun; 
-        if (currentSun < sunCost || selected) {
-            setImage(imageDark);
-            recharged = (currentSun >= sunCost); 
-        } else {
-            setImage(imageBright);
-            getImage().setTransparency(255); 
-            recharged = true;
+    public boolean tryPurchase() {
+        if (canBePurchased()) {
+            setState(new SelectedState());
+            return true;
+        }
+        Greenfoot.playSound("gulp.mp3");
+        return false;
+    }
+
+    public void used() {
+        if (getWorld() != null) {
+            getWorld().removeObject(this);
         }
     }
 
-    public void startRecharge() {
-        
-        this.isUsed = true; 
-        this.recharged = false;
-        updateAppearance();
+    public void cancelSelect() {
+        setState(new AvailableState());
     }
 
-    public void setSelected(boolean bool) {
-        this.selected = bool;
+    public Plant getPlant() {
+        if (playScene != null && playScene.getPlantFactory() != null) {
+            return playScene.getPlantFactory().createPlant(this.name);
+        }
+        return PlantFactory.getInstance().createPlant(this.name);
     }
 
-    public TransparentObject addImage() { return null; }
-    public Plant getPlant() { return null; }
+    public void onSunChanged(int currentSun) {
+        if (state != null) state.onSunChanged(this, currentSun);
+    }
+
+    public void showBright() {
+        setImage(imageBright);
+    }
+
+    public void showDark(int alpha) {
+    }
+
+    public void updateOverlay(float progress) {
+    }
+
+    public int getCurrentSun() {
+        if (playScene == null || playScene.getSunManager() == null) return 0;
+        return playScene.getSunManager().getSun();
+    }
+    
+    public TransparentObject addImage() {
+        TransparentObject ghost = new TransparentObject();
+        ghost.setImage(new GreenfootImage(imageBright));
+        return ghost;
+    }
 }

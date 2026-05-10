@@ -2,6 +2,8 @@
 comment0.target=FixOrder
 comment1.params=level\ delayTimeMillis
 comment1.target=FixOrder(WaveManager,\ long)
-comment2.params=
-comment2.target=void\ act()
-numComments=3
+comment2.params=world
+comment2.target=void\ addedToWorld(greenfoot.World)
+comment3.params=
+comment3.target=void\ act()
+numComments=4

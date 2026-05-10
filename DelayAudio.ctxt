@@ -1,11 +1,9 @@
 #BlueJ class context
 comment0.target=DelayAudio
-comment1.params=music\ volume\ loop\ delayTime
-comment1.target=DelayAudio(greenfoot.GreenfootSound,\ int,\ boolean,\ long)
-comment2.params=music\ stop\ volume\ loop\ delayTime
-comment2.target=DelayAudio(greenfoot.GreenfootSound,\ greenfoot.GreenfootSound,\ int,\ boolean,\ long)
-comment3.params=world
-comment3.target=void\ addedToWorld(greenfoot.World)
-comment4.params=
-comment4.target=void\ act()
-numComments=5
+comment1.params=musicFile\ volume\ loop\ delayTime
+comment1.target=DelayAudio(java.lang.String,\ int,\ boolean,\ long)
+comment2.params=world
+comment2.target=void\ addedToWorld(greenfoot.World)
+comment3.params=
+comment3.target=void\ act()
+numComments=4

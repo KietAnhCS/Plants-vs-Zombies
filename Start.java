@@ -1,73 +1,54 @@
-import greenfoot.*;  
-public class Start extends Button
-{
-    public boolean clicked = false;
-    GreenfootImage[] start;
-    public int counter = 0;
+import greenfoot.*;
+
+public class Start extends Button {
+    private boolean         clicked = false;
+    private int             counter = 0;
+    private GreenfootImage[] startAnim;
 
     public Start() {
         super("start1.png", "start2.png");
-        
-        start = importSprites("start", 2);
-        
-        for (int i = 0; i < start.length; i++) {
-            start[i].scale((int)(start[i].getWidth() * 1.25), (int)(start[i].getHeight() * 1.25));
-        }
-        
-        
-        if (idle != null) {
-            idle.scale((int)(idle.getWidth() * 1.25), (int)(idle.getHeight() * 1.25));
-        }
-        if (hover != null) {
-            hover.scale((int)(hover.getWidth() * 1.25), (int)(hover.getHeight() * 1.25));
-        }
-        
+
+        startAnim = importSprites("start", 2);
+        scaleAll(startAnim, 1.25);
+
+        scaleImage(idle,  1.25);
+        scaleImage(hover, 1.25);
         setImage(idle);
     }
 
-    public void act()
-    {
-        MouseInfo mouse = Greenfoot.getMouseInfo();
-        MainMenu world = (MainMenu)getWorld();
-        
+    public void act() {
         if (clicked) {
-            
-            animate(start, 80, true);
+            animate(startAnim, 80, true);
             counter++;
-            if (counter == 200) {
-                update();
-            }
+            if (counter >= 200) onClick();
         } else {
-            if (mouse != null) {
-                
-                world.moveHitbox();
-                
-                
-                if (this.intersects(world.hitbox)) {
-                    setImage(hover);
-                } else {
-                    setImage(idle);
-                }
-                
-                
-                if (Greenfoot.mouseClicked(this)) {
-                    clicked = true;
-                    world.menutheme.stop();
-                    
-                    
-                    AudioPlayer.play(80, "gravebutton.mp3");
-                    AudioPlayer.play(80, "losemusic.mp3");
-                    getWorld().addObject(new DelayAudio(new GreenfootSound("evillaugh.mp3"), 80, false, 1000L), 0, 0);
-                    
-                    
-                    getWorld().addObject(new ZombieHand(), 300, 500);
-                }
-            }
+            super.act(); 
         }
     }
 
-    public void update() {
-        
-        getWorld().addObject(new Transition(false, new Arena(), 4), 365, 315);
+    @Override
+    protected void onClick() {
+        if (!clicked) {
+            clicked = true;
+            AudioManager.stopBGM();
+            AudioManager.getInstance().playSound(80, false, "losemusic.mp3");
+            AudioManager.getInstance().playSound(80, false, "losemusic.mp3");
+            
+            AudioManager.getInstance().playSound(80, false, "gravebutton.mp3");
+            AudioManager.getInstance().playSound(80, false, "losemusic.mp3");
+            getWorld().addObject(new DelayAudio("evillaugh.mp3", 80, false, 1000L), 0, 0);
+            getWorld().addObject(new ZombieHand(), 300, 500);
+        } else {
+            Greenfoot.setWorld(new Arena());
+        }
+    }
+
+    private void scaleAll(GreenfootImage[] images, double f) {
+        for (GreenfootImage img : images)
+            img.scale((int)(img.getWidth() * f), (int)(img.getHeight() * f));
+    }
+
+    private void scaleImage(GreenfootImage img, double f) {
+        if (img != null) img.scale((int)(img.getWidth() * f), (int)(img.getHeight() * f));
     }
 }

@@ -1,131 +1,105 @@
-import greenfoot.*;  
+import greenfoot.*;
 import java.util.*;
 
 public class Arena extends World {
-    public GreenfootSound CYS = new GreenfootSound("intro3.mp3");
-    public GreenfootSound finalWaveMusic = new GreenfootSound("finalwavemp3.mp3");
-    public int count = 0;
-    public int scrollSpeed = 4;
-    public int location = 0;
-    public boolean started = false;
-    public Zombie n = null;
+    private static final int SCROLL_SPEED = 4;
+    private GameState currentState = GameState.DAVE_TALKING;
     
-    private GreenfootImage backgroundMap = new GreenfootImage("maptft2.png");
-    private GifImage daveGif = new GifImage("Dave3.gif");
-    public GreenfootSound daveVoice = new GreenfootSound("awooga.mp3");
-    private boolean isFinalMusicPlaying = false; 
-    private boolean daveTalking = true;
-
-    public Zombie[][][] level1 = {
-        {{new BasicZombie()}, null, null, null, null}, 
-        {null, {new BasicZombie()}, null, {new BasicZombie()}, null}, 
-        {{new BasicZombie()}, {new BasicZombie()}, {new BasicZombie()}, null, null}, 
-        {null, {new Conehead()}, null, {new Conehead()}, {new Buckethead()}, null},
-        {null, {new Conehead()}, null, {new Conehead()}, {new Buckethead()}, null},
-        {null, {new BasicZombie()}, null, {new BasicZombie()}, {new Buckethead()}, null},
-        {{new Buckethead()}, {new Conehead()}, null, {new BasicZombie()}, {new Buckethead()}, null},
-        {{new BasicZombie()}, {new Conehead()}, null, {new Conehead()}, {new BasicZombie()}, null},
-        {{new Buckethead()}, {new Conehead()}, null, {new Conehead()}, {new Buckethead()}, null}, 
-        {{new Conehead()}, {new Conehead()}, {new Buckethead()}, {new Conehead()}, {new Conehead()}, null},
-        {{new Brickhead()}, {new Buckethead()}, {new Buckethead()}, {new Buckethead()}, {new Brickhead()}, null},
-        
-        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {{new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-         {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, null},
-        {
-            {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-            {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-            {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-            {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-            {new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead(), new Brickhead()}, 
-            null 
-        }
-    };
-        
-    public SeedPacket[] bank = {new PeashooterPacket(), new PeashooterPacket(), new BonkchoyPacket(), null, null};
-    public SeedBank seedbank = new SeedBank(bank);   
-    public WaveManager level = new WaveManager(23500L, level1, 15000L, true, 2, 5, 10);
+    private int count = 0;
+    private int location = 0;
+    
+    private GreenfootImage backgroundMap = new GreenfootImage("maptft1.png");
+    private WaveManager level;
+    private SeedBank seedbank;
 
     public Arena() {    
         super(1111, 698, 1, false); 
-        getBackground().drawImage(backgroundMap, 0, 0);
-        addObject(new Basic(), 1176, 227);
-        addObject(new Basic(), 1195, 322);
-        addObject(new Basic(), 1129, 227);
-        addObject(new Basic(), 1162, 325);
-        addObject(new IdleCone(), 1183, 396);
-        CYS.setVolume(70);
-        daveVoice.setVolume(70);
-        finalWaveMusic.setVolume(70);
+        setPaintOrder(CrazyDave.class, SeedPacket.class, IdleZombie.class);
+        initComponents();
+        refreshBackground();
+        setupInitialZombies();
+    }
+
+    private void initComponents() {
+        // Fix lỗi non-static: Gọi thông qua getInstance() của PlantFactory
+        PlantFactory factory = PlantFactory.getInstance();
+        
+        SeedPacket[] bank = {
+            factory.createSeedPacket("PEASHOOTER"), 
+            factory.createSeedPacket("PEASHOOTER"), 
+            factory.createSeedPacket("BONKCHOY"), 
+            null, null
+        };
+        
+        this.seedbank = new SeedBank(bank);
+        this.level = new WaveManager(23500L, LevelConfig.LEVEL_1_DATA, 15000L, true, 2, 2, 5, 10, 12, 14, 15);
+
+        String[] introScripts = {
+            "Greetings, neighbor!\nWelcome to my... uh... GAME!",
+            "They call me Crazy Dave.\nBut you can just call me... Crazy Dave!\nI own this joint.",
+            "Expect the unexpected!\nI've cooked up some brand-new,\nbrain-protecting madness just for you!",
+            "Let's get crackin'!\nWabby Wabbo!"
+        };
+        String[] introSounds = {
+            "crazydavecrazy.mp3", 
+            "crazydaveextralong1.mp3", 
+            "crazydaveextralong2.mp3", 
+            "crazydaveextralong3.mp3"
+        };
+        addObject(new CrazyDave(introScripts, introSounds), 555, 349);
     }
 
     public void act() {
-        if (daveTalking) {
-            handleDave();
-        } else {
-            if (count == 0) {
-                getBackground().drawImage(backgroundMap, 0, 0);
-            }
-            count++;
-            bgScrollAnimate();
+        switch (currentState) {
+            case DAVE_TALKING:
+                break;
+            case SCROLLING:
+                count++;
+                runScrollSequence();
+                break;
         }
     }
 
-    private void handleDave() {
-        GreenfootImage bg = getBackground();
-        bg.drawImage(backgroundMap, 0, 0);
-        GreenfootImage currentDave = daveGif.getCurrentImage();
-        if (currentDave.getWidth() != 600) {
-            currentDave.scale(600, 400);
-        }
-        bg.drawImage(currentDave, 0, getHeight() - 400);
-        if (!daveVoice.isPlaying()) daveVoice.playLoop();
-        if (Greenfoot.mouseClicked(this)) {
-            daveVoice.stop();
-            daveTalking = false;
-            bg.drawImage(backgroundMap, 0, 0);
-        }
+    public void startScrollSequence() {
+        currentState = GameState.SCROLLING;
+        AudioManager.playBGM("awooga.mp3");
     }
 
-    public void bgScrollAnimate() {
-        if ((count > 100 && count < 160) || (count > 350 && count < 410)) {
-            if (count > 100 && count < 160) location -= scrollSpeed;
-            else location += scrollSpeed;
-            scrollBGimage(location);
+    private void runScrollSequence() {
+        if (count > 100 && count < 160) {
+            applyScroll(-SCROLL_SPEED);
+        } else if (count > 350 && count < 410) {
+            applyScroll(SCROLL_SPEED);
         } else if (count == 450) {
             removeObjects(getObjects(IdleZombie.class));
         } else if (count == 500) {
-            CYS.stop(); 
-            finalWaveMusic.stop();
-            Greenfoot.setWorld(new PlayScene(CYS, level, seedbank, this, null, true));
+            transitionToPlayScene();
         }
     }
-    
-    public void scrollBGimage(int offset) {
-        GreenfootImage bg = getBackground(); 
-        bg.drawImage(backgroundMap, offset, 0);  
+
+    private void applyScroll(int speed) {
+        location += speed;
+        refreshBackground();
         for (Actor a : getObjects(Actor.class)) {
-            if (a.getWorld() != null) {
-                if (count > 100 && count < 160) a.setLocation(a.getX() - scrollSpeed, a.getY());
-                else a.setLocation(a.getX() + scrollSpeed, a.getY());
+            if (!(a instanceof CrazyDave)) {
+                a.setLocation(a.getX() + speed, a.getY());
             }
-        } 
+        }
+    }
+
+    private void transitionToPlayScene() {
+        AudioManager.stopBGM();
+        Greenfoot.setWorld(new PlayScene(null, level, seedbank, this, null, true));
+    }
+
+    private void refreshBackground() {
+        getBackground().drawImage(backgroundMap, location, 0);
+    }
+
+    private void setupInitialZombies() {
+        addObject(new Basic(), 1171, 212);
+        addObject(new IdleBrickhead(), 1258, 22);
+        addObject(new IdleCone(), 1150, 252);
+        addObject(new IdleBucket(), 1199, 265);
     }
 }

@@ -1,73 +1,37 @@
 import greenfoot.*;
 import java.util.*;
 
-public class GridManager extends Actor {
+public class GridManager extends Actor implements IPlantPlacer {
     public Plant[][] Board = new Plant[6][9];
-    public int currentRowCount = 6;
     public int playerLevel = 1;
+    private int bonusSlots = 0;
+    private GreenfootImage iuLogo;
 
     private final int HEX_R = 40;
-    private final int COLS  = 9;
-    private final int ROWS  = 6;
-
+    private final int COLS = 9;
+    private final int ROWS = 6; 
     private final int ORIGIN_X = 285;
     private final int ORIGIN_Y = 200;
-
-    private final double HEX_W  = HEX_R * Math.sqrt(3);
-    private final double HEX_H  = HEX_R * 2.0;
+    private final double HEX_W = HEX_R * Math.sqrt(3);
+    private final double HEX_H = HEX_R * 2.0;
     private final double STEP_X = HEX_W;
     private final double STEP_Y = HEX_H * 0.75;
 
     public GridManager() {
         GreenfootImage img = new GreenfootImage(1111, 698);
-        img.clear();
         setImage(img);
-    }
-
-    public void act() {
-        drawGridHighlights();
-    }
-    
-    public int getXCoord(int col, int row) {
-        double offset = (row % 2 == 1) ? HEX_W / 2.0 : 0;
-        return (int)(ORIGIN_X + col * STEP_X + offset);
-    }
-
-    public int getYCoord(int col, int row) {
-        return (int)(ORIGIN_Y + row * STEP_Y);
-    }
-
-    public int getGridX(int mx, int my) {
-        int best = -1;
-        double minD = HEX_R * 1.1;
-        for (int r = 0; r < ROWS; r++) {
-            for (int c = 0; c < COLS; c++) {
-                double d = Math.hypot(mx - getXCoord(c, r), my - getYCoord(c, r));
-                if (d < minD) { minD = d; best = c; }
-            }
+        try {
+            iuLogo = new GreenfootImage("iu_logo.png");
+        } catch (Exception e) {
+            iuLogo = new GreenfootImage(50, 50);
+            iuLogo.setColor(new Color(0, 51, 102));
+            iuLogo.fillOval(0, 0, 50, 50);
         }
-        return best;
-    }
-
-    public int getGridY(int mx, int my) {
-        int best = -1;
-        double minD = HEX_R * 1.1;
-        for (int r = 0; r < ROWS; r++) {
-            for (int c = 0; c < COLS; c++) {
-                double d = Math.hypot(mx - getXCoord(c, r), my - getYCoord(c, r));
-                if (d < minD) { minD = d; best = r; }
-            }
-        }
-        return best;
-    }
-
-    public int getMaxCapacity() {
-        return playerLevel;
     }
 
     public int getCurrentPlantCount() {
         int count = 0;
-        for (int r = 0; r < 5; r++) {
+        for (int r = 0; r <= 4; r++) { 
             for (int c = 0; c < COLS; c++) {
                 if (Board[r][c] != null) count++;
             }
@@ -75,179 +39,238 @@ public class GridManager extends Actor {
         return count;
     }
 
-    private void drawGridHighlights() {
-        GreenfootImage canvas = getImage();
-        canvas.clear();
-
-        String status = "Plants: " + getCurrentPlantCount() + "/" + getMaxCapacity();
-        canvas.setColor(Color.WHITE);
-        canvas.drawString(status, 10, 20);
-
-        MouseInfo mouse = Greenfoot.getMouseInfo();
-        if (mouse == null) return;
-
-        Actor dragging = getDraggingActor();
-        if (dragging == null) return;
-
-        int gx = getGridX(mouse.getX(), mouse.getY());
-        int gy = getGridY(mouse.getX(), mouse.getY());
-        if (gx < 0 || gy < 0) return;
-
-        Plant plant = dragging instanceof Plant ? (Plant) dragging
-                    : dragging instanceof SeedPacket ? ((SeedPacket) dragging).getPlant()
-                    : null;
-        if (plant == null) return;
-
-        boolean can = canPlace(gx, gy, plant);
-        int cx = getXCoord(gx, gy);
-        int cy = getYCoord(gx, gy);
-
-        int[] px = new int[6];
-        int[] py = new int[6];
-        for (int i = 0; i < 6; i++) {
-            double angle = Math.toRadians(60 * i);
-            px[i] = (int)(cx + HEX_R * Math.cos(angle));
-            py[i] = (int)(cy + HEX_R * Math.sin(angle));
-        }
-
-        canvas.setColor(can ? new Color(0, 255, 0, 100) : new Color(255, 0, 0, 100));
-        canvas.fillPolygon(px, py, 6);
-        canvas.setColor(can ? Color.GREEN : Color.RED);
-        canvas.drawPolygon(px, py, 6);
-    }
-
-    public void drawFullGrid(GreenfootImage canvas) {
-        canvas.setColor(new Color(255, 255, 255, 30));
-        for (int r = 0; r < ROWS; r++) {
-            for (int c = 0; c < COLS; c++) {
-                int cx = getXCoord(c, r);
-                int cy = getYCoord(c, r);
-                int[] px = new int[6];
-                int[] py = new int[6];
-                for (int i = 0; i < 6; i++) {
-                    double angle = Math.toRadians(60 * i);
-                    px[i] = (int)(cx + HEX_R * Math.cos(angle));
-                    py[i] = (int)(cy + HEX_R * Math.sin(angle));
-                }
-                canvas.drawPolygon(px, py, 6);
-            }
-        }
-    }
-
-    private Actor getDraggingActor() {
-        for (Plant p : getWorld().getObjects(Plant.class))
-            if (p.getImage().getTransparency() < 255) return p;
-        for (SeedPacket s : getWorld().getObjects(SeedPacket.class))
-            if (Greenfoot.mouseDragged(s) || Greenfoot.mousePressed(s) || Greenfoot.mouseClicked(s)) return s;
-        return null;
+    public int getMaxCapacity() {
+        return playerLevel + 1 + bonusSlots;
     }
 
     public boolean canPlace(int x, int y, Plant plant) {
         if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return false;
         
         Plant target = Board[y][x];
-        
-        if (y < 5) {
-            boolean isAlreadyInTopFive = false;
-            for (int r = 0; r < 5; r++) {
+        if (target != null && target != plant) return false;
+
+        if (y <= 4) {
+            boolean isAlreadyInCombatZone = false;
+            for (int r = 0; r <= 4; r++) {
                 for (int c = 0; c < COLS; c++) {
-                    if (Board[r][c] == plant) isAlreadyInTopFive = true;
+                    if (Board[r][c] == plant) isAlreadyInCombatZone = true;
                 }
             }
-
-            if (target == null && !isAlreadyInTopFive) {
-                if (getCurrentPlantCount() >= getMaxCapacity()) return false;
+            if (!isAlreadyInCombatZone && getCurrentPlantCount() >= getMaxCapacity()) {
+                return false; 
             }
         }
-        
-        if (target == null || target == plant) return true;
-        return UpgradeManager.canUpgrade(plant, target);
-    }
-
-    public void updateBoardData(int x, int y, Plant plant) {
-        if (x >= 0 && x < COLS && y >= 0 && y < ROWS)
-            Board[y][x] = plant;
-    }
-
-    public boolean placePlant(int x, int y, Plant plant) {
-        if (!canPlace(x, y, plant)) {
-            returnBackToBench(plant);
-            return false;
-        }
-
-        int tx = getXCoord(x, y);
-        int ty = getYCoord(x, y);
-        Plant target = Board[y][x];
-
-        int oldR = -1, oldC = -1;
-        for (int r = 0; r < ROWS; r++)
-            for (int c = 0; c < COLS; c++)
-                if (Board[r][c] == plant) { oldR = r; oldC = c; }
-
-        if (target != null && target != plant) {
-            Plant special = UpgradeManager.getSpecialUpgrade(plant, target);
-            if (special != null) {
-                if (oldR >= 0) Board[oldR][oldC] = null;
-                removePlant(x, y);
-                if (plant.getWorld() != null) getWorld().removeObject(plant);
-                getWorld().addObject(special, tx, ty);
-                Board[y][x] = special;
-                return true;
-            }
-            returnBackToBench(plant);
-            return false;
-        }
-
-        if (oldR >= 0) Board[oldR][oldC] = null;
-        Board[y][x] = plant;
-        if (plant.getWorld() == null)
-            getWorld().addObject(plant, tx, ty);
-        else
-            plant.setLocation(tx, ty);
-
-        if (getWorld() instanceof PlayScene)
-            ((PlayScene) getWorld()).checkAndCombine(plant);
         return true;
     }
 
-    private void returnBackToBench(Plant plant) {
+    @Override
+    public boolean placePlant(int x, int y, Plant plant) {
+        if (!canPlace(x, y, plant)) {
+            returnBackToSafePos(plant);
+            return false;
+        }
+
         for (int r = 0; r < ROWS; r++)
             for (int c = 0; c < COLS; c++)
-                if (Board[r][c] == plant) return;
+                if (Board[r][c] == plant) Board[r][c] = null;
 
-        List<Integer> emptyCols = new ArrayList<>();
-        for (int c = 0; c < COLS; c++) {
-            if (Board[5][c] == null) emptyCols.add(c);
+        Board[y][x] = plant;
+        plant.setGridPosition(x, y);
+        
+        int tx = getXCoord(x, y);
+        int ty = getYCoord(x, y);
+
+        if (plant.getWorld() == null) getWorld().addObject(plant, tx, ty);
+        else plant.setLocation(tx, ty);
+
+        if (getWorld() instanceof PlayScene) {
+            PlantCombineHandler.checkAndCombine((PlayScene) getWorld(), plant);
+        }
+        return true;
+    }
+
+    private void returnBackToSafePos(Plant plant) {
+        for (int r = 0; r < ROWS; r++) {
+            for (int c = 0; c < COLS; c++) {
+                if (Board[r][c] == plant) {
+                    plant.setLocation(getXCoord(c, r), getYCoord(c, r));
+                    return;
+                }
+            }
         }
 
-        if (!emptyCols.isEmpty()) {
-            int randomCol = emptyCols.get(Greenfoot.getRandomNumber(emptyCols.size()));            int bx = getXCoord(randomCol, 5);
-            int by = getYCoord(randomCol, 5);
-            
-            if (plant.getWorld() == null) {
-                getWorld().addObject(plant, bx, by);
-            } else {
-                plant.setLocation(bx, by);
+        for (int c = 0; c < COLS; c++) {
+            if (Board[5][c] == null) {
+                placePlant(c, 5, plant);
+                return;
             }
-            Board[5][randomCol] = plant;
-        } else {
-            if (plant.getWorld() != null) getWorld().removeObject(plant);
+        }
+        
+        if (plant.getWorld() != null) getWorld().removeObject(plant);
+    }
+
+    @Override
+    public void act() {
+        GreenfootImage canvas = getImage();
+        canvas.clear();
+        drawStatus(canvas);
+        Actor dragging = getDraggingActor();
+        if (dragging != null) {
+            drawFullGrid(canvas);
+            drawGridHighlights(canvas, dragging);
+        }
+        
+        if (Greenfoot.getRandomNumber(30) == 0) {
+            autoCheckAllCombines();
         }
     }
 
+    private void autoCheckAllCombines() {
+        if (!(getWorld() instanceof PlayScene)) return;
+        for (int r = 0; r <= 4; r++) {
+            for (int c = 0; c < COLS; c++) {
+                Plant p = Board[r][c];
+                if (p != null) {
+                    PlantCombineHandler.checkAndCombine((PlayScene) getWorld(), p);
+                }
+            }
+        }
+    }
+
+    private void drawStatus(GreenfootImage canvas) {
+        String status = "PLANTS: " + getCurrentPlantCount() + "/" + getMaxCapacity();
+        int sx = 20, sy = 20;
+        canvas.setColor(new Color(0, 0, 0, 160));
+        canvas.fillRect(sx + 4, sy + 4, 180, 40);
+        canvas.setColor(new Color(50, 50, 50));
+        canvas.fillRect(sx, sy, 180, 40);
+        canvas.setColor(Color.WHITE);
+        canvas.drawRect(sx, sy, 180, 40);
+        canvas.drawRect(sx + 1, sy + 1, 178, 38);
+        canvas.setFont(new Font("Courier New", true, false, 20));
+        canvas.setColor(Color.BLACK);
+        canvas.drawString(status, sx + 12, sy + 28);
+        canvas.setColor(new Color(255, 215, 0));
+        canvas.drawString(status, sx + 10, sy + 26);
+    }
+
+    private void drawFullGrid(GreenfootImage canvas) {
+        for (int r = 0; r < ROWS; r++) {
+            canvas.setColor(r == 5 ? new Color(255, 255, 255, 40) : new Color(100, 180, 255, 60));
+            for (int c = 0; c < COLS; c++) {
+                drawHexagon(canvas, getXCoord(c, r), getYCoord(c, r));
+            }
+        }
+    }
+
+    private void drawGridHighlights(GreenfootImage canvas, Actor dragging) {
+        MouseInfo mouse = Greenfoot.getMouseInfo();
+        if (mouse == null) return;
+        int[] grid = getGridPos(mouse.getX(), mouse.getY());
+        int gx = grid[0], gy = grid[1];
+        if (gx < 0 || gy < 0) return;
+
+        Plant plant = null;
+        if (dragging instanceof Plant) plant = (Plant) dragging;
+        else if (dragging instanceof SeedPacket) plant = ((SeedPacket) dragging).getPlant();
+        
+        if (plant == null) return;
+
+        boolean can = canPlace(gx, gy, plant);
+        int cx = getXCoord(gx, gy);
+        int cy = getYCoord(gx, gy);
+        int targetSize = 65;
+
+        canvas.setColor(can ? new Color(0, 100, 255, 180) : new Color(255, 0, 0, 150));
+        fillHexagon(canvas, cx, cy);
+
+        canvas.setColor(new Color(0, 255, 255));
+        drawHexagon(canvas, cx, cy);
+
+        GreenfootImage logoCopy = new GreenfootImage(iuLogo);
+        logoCopy.scale(targetSize, targetSize);
+        logoCopy.setTransparency(60);
+        canvas.drawImage(logoCopy, cx - (targetSize / 2), cy - (targetSize / 2));
+
+        canvas.setColor(Color.WHITE);
+        canvas.drawOval(cx - (targetSize / 2), cy - (targetSize / 2), targetSize, targetSize);
+    }
+
+    private void drawHexagon(GreenfootImage canvas, int cx, int cy) {
+        int[] px = new int[6], py = new int[6];
+        for (int i = 0; i < 6; i++) {
+            double angle = Math.toRadians(60 * i - 90);
+            px[i] = (int) (cx + HEX_R * Math.cos(angle));
+            py[i] = (int) (cy + HEX_R * Math.sin(angle));
+        }
+        canvas.drawPolygon(px, py, 6);
+    }
+
+    private void fillHexagon(GreenfootImage canvas, int cx, int cy) {
+        int[] px = new int[6], py = new int[6];
+        for (int i = 0; i < 6; i++) {
+            double angle = Math.toRadians(60 * i - 90);
+            px[i] = (int) (cx + HEX_R * Math.cos(angle));
+            py[i] = (int) (cy + HEX_R * Math.sin(angle));
+        }
+        canvas.fillPolygon(px, py, 6);
+    }
+
+    public int getXCoord(int col, int row) {
+        double offset = (row % 2 == 1) ? HEX_W / 2.0 : 0;
+        return (int) (ORIGIN_X + col * STEP_X + offset);
+    }
+
+    public int getYCoord(int col, int row) {
+        return (int) (ORIGIN_Y + row * STEP_Y);
+    }
+
+    public int[] getGridPos(int mx, int my) {
+        int bestX = -1, bestY = -1;
+        double minD = 50.0; 
+        for (int r = 0; r < ROWS; r++) {
+            for (int c = 0; c < COLS; c++) {
+                double d = Math.hypot(mx - getXCoord(c, r), my - getYCoord(c, r));
+                if (d < minD) { minD = d; bestX = c; bestY = r; }
+            }
+        }
+        return new int[] { bestX, bestY };
+    }
+
+    private Actor getDraggingActor() {
+        if (getWorld() == null) return null;
+        for (Plant p : getWorld().getObjects(Plant.class)) if (p.isDragging) return p;
+        for (SeedPacket s : getWorld().getObjects(SeedPacket.class)) {
+            MouseInfo m = Greenfoot.getMouseInfo();
+            if (m != null && Greenfoot.mouseDragged(s)) return s;
+        }
+        return null;
+    }
+    
     public void removePlant(int x, int y) {
         if (x >= 0 && x < COLS && y >= 0 && y < ROWS) {
-            Plant p = Board[y][x];
-            if (p != null) {
-                if (p.getWorld() != null) getWorld().removeObject(p);
-                Board[y][x] = null;
+            Board[y][x] = null;
+        }
+    }
+    
+    public void removePlantFromBoard(Plant plant) {
+        for (int r = 0; r < ROWS; r++) {
+            for (int c = 0; c < COLS; c++) {
+                if (Board[r][c] == plant) {
+                    Board[r][c] = null;
+                    return;
+                }
             }
         }
     }
 
+    public int getGridX(int mx, int my) { return getGridPos(mx, my)[0]; }
+    public int getGridY(int mx, int my) { return getGridPos(mx, my)[1]; }
+    public void addBonusSlots(int amount) { this.bonusSlots += amount; }
+    
     public int clampRow(int row) {
         if (row < 0) return 0;
-        if (row >= currentRowCount) return currentRowCount - 1;
+        if (row >= ROWS) return ROWS - 1;
         return row;
     }
 }

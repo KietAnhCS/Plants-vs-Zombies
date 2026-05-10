@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=PlantStateManager
+comment1.params=plant
+comment1.target=PlantStateManager(Plant)
+comment2.params=
+comment2.target=void\ update()
+comment3.params=
+comment3.target=boolean\ isBusy()
+comment4.params=
+comment4.target=boolean\ canAct()
+numComments=5

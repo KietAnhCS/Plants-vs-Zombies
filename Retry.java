@@ -1,13 +1,15 @@
-import greenfoot.*; 
+import greenfoot.*;
 
-public class Retry extends Button
-{
-    public World restart;
-    public Retry(World restart) {
+public class Retry extends Button {
+    private final World restartWorld;
+
+    public Retry(World restartWorld) {
         super("retry1.png", "retry2.png");
-        this.restart = restart;
+        this.restartWorld = restartWorld;
     }
-    public void update() {
-        getWorld().addObject(new Transition(false, restart, 10), 365, 215);
+
+    @Override
+    protected void onClick() {
+        Greenfoot.setWorld(restartWorld);
     }
 }

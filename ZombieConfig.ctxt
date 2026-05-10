@@ -1,0 +1,5 @@
+#BlueJ class context
+comment0.target=ZombieConfig
+comment1.params=maxHp\ damage\ walkSpeed\ name\ thresholds\ walkKeys\ eatKeys\ deadAnimation\ deadFrames
+comment1.target=ZombieConfig(int,\ int,\ double,\ java.lang.String,\ int[],\ ZombieAssets[],\ ZombieAssets[],\ java.lang.String,\ int)
+numComments=2
