@@ -1,6 +1,5 @@
 import greenfoot.*;
 import java.util.List;
-
 public class Cactus3 extends Plant {
     private static final PlantType TYPE = PlantType.CACTUS_3;
     private GreenfootImage[] idle, shoot;
@@ -14,10 +13,8 @@ public class Cactus3 extends Plant {
         setHp(TYPE.hp);
         setDamage(TYPE.damage);
         setCost(TYPE.cost);
-        
-        idle = importSprites(PlantAssets.CACTUS_IDLE, 4);
+        idle  = importSprites(PlantAssets.CACTUS_IDLE,  4);
         shoot = importSprites(PlantAssets.CACTUS_SHOOT, 2);
-        
         if (idle != null && idle.length > 0) setImage(idle[0]);
     }
 
@@ -25,19 +22,13 @@ public class Cactus3 extends Plant {
     public void addedToWorld(World world) {
         super.addedToWorld(world);
         if (world instanceof PlayScene) cachedPlayScene = (PlayScene) world;
-        world.addObject(new HealthBar(this, 50), getX(), getY());
+        
     }
 
     @Override
     public void hit(int dmg) {
         if (getWorld() == null || !isLiving()) return;
-
-        String assetPath = (getState() == PlantState.SHOOTING) 
-                           ? PlantAssets.CACTUS_SHOOT 
-                           : PlantAssets.CACTUS_IDLE;
-        
-        hitFlash(assetPath);
-        
+        hitFlash(getState() == PlantState.SHOOTING ? PlantAssets.CACTUS_SHOOT : PlantAssets.CACTUS_IDLE);
         setHp(getHp() - dmg);
         if (getHp() <= 0) onDeath();
     }
@@ -54,11 +45,20 @@ public class Cactus3 extends Plant {
 
     private void handleCombat() {
         if (getState() == PlantState.MERGING) return;
-
+        long currentTime = System.currentTimeMillis();
         if (checkZombieInRow()) {
             setState(PlantState.SHOOTING);
-            animate(shoot, 100, false);
-            executeShoot();
+            if (currentTime - lastAttackTime >= TYPE.shootDelay) {
+                animate(shoot, 100, false);
+                executeShoot();
+                if (frame >= shoot.length - 1) {
+                    lastAttackTime = currentTime;
+                    shootOnce = false;
+                }
+            } else {
+                animate(idle, 300, true);
+                shootOnce = false;
+            }
         } else {
             setState(PlantState.IDLE);
             animate(idle, 300, true);
@@ -78,21 +78,12 @@ public class Cactus3 extends Plant {
     }
 
     private void executeShoot() {
-        if (System.currentTimeMillis() - lastAttackTime <= TYPE.shootDelay) return;
-
         if (frame >= 1 && !shootOnce) {
             AudioManager.getInstance().playSound(80, false, PlantAssets.SOUND_THROW, PlantAssets.SOUND_THROW2);
-            
             getWorld().addObject(new Needle3(getY(), -50), getX(), getY());
-            getWorld().addObject(new Needle3(getY(), 0), getX(), getY());
-            getWorld().addObject(new Needle3(getY(), 50), getX(), getY());
-            
+            getWorld().addObject(new Needle3(getY(),   0), getX(), getY());
+            getWorld().addObject(new Needle3(getY(),  50), getX(), getY());
             shootOnce = true;
-            lastAttackTime = System.currentTimeMillis();
-        }
-        
-        if (frame >= shoot.length - 1) {
-            shootOnce = false;
         }
     }
 }

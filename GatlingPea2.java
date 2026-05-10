@@ -10,7 +10,7 @@ public class GatlingPea2 extends Plant {
     
     private int burstCount = 0;
     private long lastBurstTime = 0;
-    private static final int BURST_INTERVAL = 80; // Tốc độ ra đạn trong loạt (nhanh hơn lv1)
+    private static final int BURST_INTERVAL = 80; 
 
     public GatlingPea2() {
         setMaxHp(TYPE.hp);
@@ -18,7 +18,6 @@ public class GatlingPea2 extends Plant {
         setDamage(TYPE.damage);
         setCost(TYPE.cost);
         
-        // Sử dụng ảnh gốc, không scale bằng code để giữ độ nét
         idle = importSprites(PlantAssets.GATLING_PEA, 19);
         shoot = importSprites(PlantAssets.GATLING_PEA, 19);
         
@@ -29,7 +28,7 @@ public class GatlingPea2 extends Plant {
     public void addedToWorld(World world) {
         super.addedToWorld(world);
         if (world instanceof PlayScene) cachedPlayScene = (PlayScene) world;
-        world.addObject(new HealthBar(this, 50), getX(), getY());
+        
     }
 
     @Override

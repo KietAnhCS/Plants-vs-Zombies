@@ -1,5 +1,4 @@
 import greenfoot.*;
-
 public class Conehead extends Zombie {
     public GreenfootImage[] wNormal, wD1, wD2, wBare, wArmless;
     public GreenfootImage[] eNormal, eD1, eD2, eBare, eArmless;
@@ -10,15 +9,15 @@ public class Conehead extends Zombie {
         super(ZombieConfig.CONE);
         this.walkSpeed = (Greenfoot.getRandomNumber(6) + 25) / 100.0;
 
-        wNormal  = importSprites(ZombieAssets.CONE_WALK.path,         ZombieAssets.CONE_WALK.count);
-        wD1      = importSprites(ZombieAssets.CONE_WALK_D1.path,      ZombieAssets.CONE_WALK_D1.count);
-        wD2      = importSprites(ZombieAssets.CONE_WALK_D2.path,      ZombieAssets.CONE_WALK_D2.count);
-        wBare    = importSprites(ZombieAssets.SHARED_WALK_BARE.path,    ZombieAssets.SHARED_WALK_BARE.count);
-        wArmless = importSprites(ZombieAssets.SHARED_WALK_ARMLESS.path, ZombieAssets.SHARED_WALK_ARMLESS.count);
+        wNormal  = importSprites(ZombieAssets.CONE_WALK.path,          ZombieAssets.CONE_WALK.count);
+        wD1      = importSprites(ZombieAssets.CONE_WALK_D1.path,       ZombieAssets.CONE_WALK_D1.count);
+        wD2      = importSprites(ZombieAssets.CONE_WALK_D2.path,       ZombieAssets.CONE_WALK_D2.count);
+        wBare    = importSprites(ZombieAssets.SHARED_WALK_BARE.path,   ZombieAssets.SHARED_WALK_BARE.count);
+        wArmless = importSprites(ZombieAssets.SHARED_WALK_ARMLESS.path,ZombieAssets.SHARED_WALK_ARMLESS.count);
 
-        eNormal  = importSprites(ZombieAssets.CONE_EAT.path,          ZombieAssets.CONE_EAT.count);
-        eD1      = importSprites(ZombieAssets.CONE_EAT_D1.path,       ZombieAssets.CONE_EAT_D1.count);
-        eD2      = importSprites(ZombieAssets.CONE_EAT_D2.path,       ZombieAssets.CONE_EAT_D2.count);
+        eNormal  = importSprites(ZombieAssets.CONE_EAT.path,           ZombieAssets.CONE_EAT.count);
+        eD1      = importSprites(ZombieAssets.CONE_EAT_D1.path,        ZombieAssets.CONE_EAT_D1.count);
+        eD2      = importSprites(ZombieAssets.CONE_EAT_D2.path,        ZombieAssets.CONE_EAT_D2.count);
         eBare    = importSprites(ZombieAssets.SHARED_EAT_BARE.path,    ZombieAssets.SHARED_EAT_BARE.count);
         eArmless = importSprites(ZombieAssets.SHARED_EAT_ARMLESS.path, ZombieAssets.SHARED_EAT_ARMLESS.count);
 
@@ -43,13 +42,10 @@ public class Conehead extends Zombie {
     @Override
     public void hit(int dmg) {
         if (getHp() <= 0 && !isLiving() && finalDeath) return;
-
         if (isLiving()) {
             AudioManager.getInstance().playSound(80, false, cone ? "plastichit.mp3" : "splat.mp3");
-            
-            ZombieAssets asset;
             int currentHp = getHp();
-
+            ZombieAssets asset;
             if (currentHp > ZombieRegistry.CONE_D1) {
                 asset = eating ? ZombieAssets.CONE_EAT : ZombieAssets.CONE_WALK;
             } else if (currentHp > ZombieRegistry.CONE_D2) {
@@ -61,7 +57,6 @@ public class Conehead extends Zombie {
             } else {
                 asset = eating ? ZombieAssets.SHARED_EAT_ARMLESS : ZombieAssets.SHARED_WALK_ARMLESS;
             }
-
             hitFlash(asset.path);
         } else if (!finalDeath) {
             AudioManager.getInstance().playSound(80, false, "splat.mp3");
@@ -70,6 +65,7 @@ public class Conehead extends Zombie {
         super.hit(dmg);
     }
 
+    @Override
     public GreenfootImage[] getCurrentAnimation(boolean isEating) {
         int currentHp = getHp();
         if (currentHp > ZombieRegistry.CONE_D1) return isEating ? eNormal : wNormal;

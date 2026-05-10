@@ -68,7 +68,6 @@ public class Cactus extends Plant {
             if (frame >= shoot.length - 1) {
                 lastShootTime = currentTime;
                 shootOnce = false;
-                // Nếu không còn zombie thì về IDLE, nếu còn thì loop tiếp
             }
         } else {
             animate(idle, 150, true);

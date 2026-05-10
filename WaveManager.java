@@ -4,7 +4,7 @@ import java.util.*;
 public class WaveManager extends Actor {
     private WaveState currentState = WaveState.BATTLE;
     private long stateTimer = 0;
-    private long lastClearTime = 0; // Biến dùng để đếm 5 giây không có zombie
+    private long lastClearTime = 0;// Biến dùng để đếm 5 giây không có zombie
     private int winDelayCounter = 0;
 
     public String[][][] levelData;
@@ -51,11 +51,11 @@ public class WaveManager extends Actor {
     }
 
     public void act() {
-        if (playScene == null) playScene = (PlayScene)getWorld(); // Đảm bảo playScene không null
+        if (playScene == null) playScene = (PlayScene)getWorld();
         if (playScene.isGameOver) return;
         if (wave == -1) return;
 
-        cleanZombieRows(); // Dọn dẹp danh sách zombie đã chết
+        cleanZombieRows(); 
         handlePerRowSpawning();
 
         long now = System.currentTimeMillis();
@@ -65,10 +65,8 @@ public class WaveManager extends Actor {
                 if (choosingCard) return;
                 
                 if (allClear()) {
-                    // Nếu sân sạch, bắt đầu đếm thời gian
                     if (lastClearTime == 0) lastClearTime = now;
                     
-                    // Nếu đã hết 5 giây (5000ms) HOẶC đã là wave cuối cùng
                     if (now - lastClearTime >= 5000 || wave >= levelData.length) {
                         
                         if (wave >= levelData.length) {
@@ -78,20 +76,17 @@ public class WaveManager extends Actor {
                             }
                             
                             winDelayCounter++;
-                            // Đợi thêm một chút sau thông báo wave cuối để chuyển màn hình
                             if (winDelayCounter > 150) { 
                                 Greenfoot.setWorld(new VictoryScreen());
                             }
                             return;
                         } else {
-                            // Nếu chưa hết wave, chuyển sang nhận thưởng
                             lastClearTime = 0;
                             stateTimer = now;
                             currentState = WaveState.WAITING_FOR_REWARD;
                         }
                     }
                 } else {
-                    // Nếu có zombie xuất hiện lại, reset bộ đếm
                     lastClearTime = 0;
                 }
                 break;
@@ -99,7 +94,7 @@ public class WaveManager extends Actor {
             case WAITING_FOR_REWARD:
                 if (now - stateTimer >= 3000) {
                     if (wave > 0) {
-                        playScene.addObject(new Sun(300, true), 555, 300);
+                        playScene.addObject(new Sun(300, true), 900, 300);
                     }
                     stateTimer = now;
                     currentState = WaveState.WAITING_FOR_DAVE;

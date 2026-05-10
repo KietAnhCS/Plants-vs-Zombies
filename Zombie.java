@@ -197,4 +197,5 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
     }
     
     protected abstract void handleThresholds();
+    public abstract GreenfootImage[] getCurrentAnimation(boolean isEating);
 }

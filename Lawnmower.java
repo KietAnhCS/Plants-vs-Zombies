@@ -66,7 +66,7 @@ public class Lawnmower extends Actor
             if (z != null && z.isLiving() && Math.abs(z.getY() - this.getY()) < ROW_THRESHOLD) {
                 if (!damagedZombies.contains(z)) {
                     if (isManualTrigger) {
-                        z.hit(9999);
+                        z.hit(400);
                     } else {
                         z.hit(9999);
                     }

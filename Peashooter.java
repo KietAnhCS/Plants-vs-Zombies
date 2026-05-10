@@ -36,8 +36,6 @@ public class Peashooter extends Plant {
         super.addedToWorld(world);
         if (world instanceof PlayScene) {
             cachedPlayScene = (PlayScene) world;
-            // Thêm thanh máu khi vừa vào thế giới
-            world.addObject(new HealthBar(this, 50), getX(), getY());
         }
     }
 
@@ -84,7 +82,6 @@ public class Peashooter extends Plant {
     }
 
     private void handleAction() {
-        // Trạng thái đứng yên
         if (getState() == PlantState.IDLE) {
             animate(idle, 300, true);
             lastFrameTimeNano = System.nanoTime();

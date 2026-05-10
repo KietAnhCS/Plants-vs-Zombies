@@ -28,7 +28,7 @@ public class GatlingPea extends Plant {
     public void addedToWorld(World world) {
         super.addedToWorld(world);
         if (world instanceof PlayScene) cachedPlayScene = (PlayScene) world;
-        world.addObject(new HealthBar(this, 50), getX(), getY());
+        
     }
 
     @Override
