@@ -1,6 +1,5 @@
 #BlueJ class context
 comment0.target=ZombieEventBus
-comment0.text=\r\n\ ZombieEventBus\:\ Trung\ t\u00E2m\ ph\u00E2n\ ph\u1ED1i\ s\u1EF1\ ki\u1EC7n\ (Event\ Dispatcher).\r\n
 comment1.params=
 comment1.target=ZombieEventBus()
 comment2.params=listener
@@ -8,17 +7,12 @@ comment2.target=void\ subscribe(IZombieEventListener)
 comment2.text=\r\n\ +\ subscribe(IZombieEventListener)\ \:\ void\r\n
 comment3.params=listener
 comment3.target=void\ unsubscribe(IZombieEventListener)
-comment3.text=\r\n\ +\ unsubscribe(IZombieEventListener)\ \:\ void\r\n
 comment4.params=zombie
 comment4.target=void\ publishDeath(Zombie)
-comment4.text=\r\n\ +\ publishDeath(Zombie)\ \:\ void\r\n
 comment5.params=zombie\ damage
 comment5.target=void\ publishHit(Zombie,\ int)
-comment5.text=\r\n\ +\ publishHit(Zombie,\ int)\ \:\ void\r\n
 comment6.params=zombie\ target
 comment6.target=void\ publishAteTarget(Zombie,\ IEatable)
-comment6.text=\r\n\ +\ publishAteTarget(Zombie,\ IEatable)\ \:\ void\r\n
 comment7.params=zombie\ newState
 comment7.target=void\ publishStateChanged(Zombie,\ IZombieState)
-comment7.text=\r\n\ +\ publishStateChanged(Zombie,\ IZombieState)\ \:\ void\r\n
 numComments=8

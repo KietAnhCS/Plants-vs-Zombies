@@ -66,8 +66,12 @@ public class PlayScene extends World {
 
     public void act() {
         String key = Greenfoot.getKey();
-        if ("escape".equals(key) && !isMenuOpen) {
-            openSettingsMenu();
+        if ("escape".equals(key)) {
+            if (!isMenuOpen) {
+                openSettingsMenu();
+            } else {
+                closeSettingsMenu();
+            }
         }
 
         if (isGameOver || isPaused) return; 
