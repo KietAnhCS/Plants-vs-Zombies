@@ -47,10 +47,10 @@ public class RollButton extends Actor {
             for (RupButton.RarityEntry entry : pool) {
                 if (entry == null) continue;
                 cursor += entry.weight;
+                
                 if (randomNumber < cursor) {
                     try {
-                        SeedPacket packet = (SeedPacket) entry.packetClass.getDeclaredConstructor().newInstance();
-                        if (packet != null) return packet;
+                        return (SeedPacket) entry.packetClass.getDeclaredConstructor().newInstance();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

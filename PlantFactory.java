@@ -37,7 +37,6 @@ public class PlantFactory implements IPlantFactory {
             case REPEATER:      return new SeedPacket(5000, 200, "Repeater");
             case CACTUS:        return new SeedPacket(7000, 125, "Cactus");
             case BONK_CHOY:     return new SeedPacket(7000, 150, "bonkchoypacket");
-            case POTATO_MINE:   return new SeedPacket(15000, 25, "PotatoMine");
             default:            return new SeedPacket(5000, 100, "Peashooter");
         }
     }

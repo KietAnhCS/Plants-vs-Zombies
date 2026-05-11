@@ -7,7 +7,6 @@ public class Sun extends FallingObject {
     private PlayScene scene;
     private GreenfootImage[] sprites;
     private boolean pickedUp = false; 
-    private long lifetimeStart;
     private boolean stationary = false;
 
     public Sun() {
@@ -36,7 +35,6 @@ public class Sun extends FallingObject {
             if (isTouching(ThuyThan.class)) {
                 collect();
             } else {
-                handleAutoFadeOut();
                 if (!stationary) applyFallingPhysics();
             }
         } else {
@@ -78,39 +76,21 @@ public class Sun extends FallingObject {
             SunDisplay ds = displays.get(0);
             turnTowards(ds.getX(), ds.getY());
             move(15);
-        } else {
-            fadeOut(25);
         }
-    }
-
-    private void handleAutoFadeOut() {
-        if ((System.currentTimeMillis() - lifetimeStart) > 12000) {
-            fadeOut(10);
-        }
-    }
-
-    private void fadeOut(int amount) {
-        if (getImage() == null) return;
-        int trans = getImage().getTransparency();
-        getImage().setTransparency(Math.max(0, trans - amount));
     }
 
     private void checkRemoval() {
-        if (getWorld() == null) return;
+        if (getWorld() == null || !pickedUp) return;
 
-        boolean reachedCounter = false;
         PlayScene currentScene = getPlayScene();
-        
-        if (currentScene != null && pickedUp) {
+        if (currentScene != null) {
             List<SunDisplay> displays = currentScene.getObjects(SunDisplay.class);
             if (!displays.isEmpty()) {
                 SunDisplay ds = displays.get(0);
-                reachedCounter = Math.hypot(getX() - ds.getX(), getY() - ds.getY()) < 20;
+                if (Math.hypot(getX() - ds.getX(), getY() - ds.getY()) < 20) {
+                    getWorld().removeObject(this);
+                }
             }
-        }
-
-        if (getImage().getTransparency() == 0 || (pickedUp && reachedCounter)) {
-            getWorld().removeObject(this);
         }
     }
 
@@ -128,6 +108,5 @@ public class Sun extends FallingObject {
         if (world instanceof PlayScene) {
             scene = (PlayScene) world;
         }
-        lifetimeStart = System.currentTimeMillis(); 
     }
 }

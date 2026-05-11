@@ -22,7 +22,7 @@ public class HealthBar extends Actor {
             return;
         }
         
-        int xOffset = (owner instanceof BonkChoy) ? 45 : 0;
+        int xOffset = (owner instanceof BonkChoy) ? 20 : 0;
         setLocation(owner.getX() - xOffset, owner.getY() - 30);
         update();
     }
