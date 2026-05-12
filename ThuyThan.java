@@ -1,10 +1,8 @@
 import greenfoot.*;
-import java.util.List;
 
 public class ThuyThan extends PhysicsBody {
     private static final int SPEED        = 10;
     private static final int PICKUP_RANGE = 80;
-
     private final GreenfootImage imageRight;
     private final GreenfootImage imageLeft;
     private int targetX, targetY;
@@ -49,14 +47,7 @@ public class ThuyThan extends PhysicsBody {
     }
 
     private void autoCollect() {
-        List<Sun> suns = getObjectsInRange(PICKUP_RANGE, Sun.class);
-        for (Sun s : suns) {
-            s.collect();
-        }
-
-        List<FallingSun> fSuns = getObjectsInRange(PICKUP_RANGE, FallingSun.class);
-        for (FallingSun fs : fSuns) {
-            fs.collectSun();
-        }
+        getObjectsInRange(PICKUP_RANGE, Sun.class).forEach(Sun::collect);
+        getObjectsInRange(PICKUP_RANGE, FallingSun.class).forEach(FallingSun::collectSun);
     }
 }
