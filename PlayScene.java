@@ -205,7 +205,7 @@ public class PlayScene extends World {
 
 public void applyDefaultPaintOrder() {
         setPaintOrder(
-            SettingsResumeButton.class, SliderKnob.class, SliderBar.class, SettingsMenuPanel.class, 
+            SettingsResumeButton.class, SliderKnob.class, SliderBar.class, SettingsMenuPanel.class, Retry.class, GameOverPanel.class, LossSequenceTransition.class,
             CrazyDave.class, Transition.class, AugmentCard.class, Overlay.class,
             ThuyThan.class, RupButton.class, RollButton.class,
             WaveNotification.class, ReadySetPlant.class,
