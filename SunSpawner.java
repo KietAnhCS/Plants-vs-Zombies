@@ -13,7 +13,7 @@ public class SunSpawner {
         if (scene.level.choosingCard
                 || !scene.getObjects(CrazyDave.class).isEmpty()) return;
         long now = System.currentTimeMillis();
-        if (now - lastSpawn >= 30000) {
+        if (now - lastSpawn >= 5000) {
             lastSpawn = now;
             scene.addObject(new FallingSun(),
                 Greenfoot.getRandomNumber(700) + 200, -30);
