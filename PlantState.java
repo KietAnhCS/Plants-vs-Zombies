@@ -4,9 +4,6 @@ public enum PlantState {
     MERGING,
     DYING,
     SHOOTING,
-    POTATO_ARMING,
-    POTATO_ARMED,
-    POTATO_EXPLODING,
     PEA_POWERED_UP,
     BONK_PUNCHING,
     BONK_KO_PUNCH

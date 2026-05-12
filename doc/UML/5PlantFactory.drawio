@@ -1,10 +1,10 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
   <diagram name="Page-1" id="QdD6okcyVvDK0g7KV-WG">
-    <mxGraphModel dx="2977" dy="1789" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1080" math="0" shadow="0">
+    <mxGraphModel dx="2084" dy="1252" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1080" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="nGWCyTgYbevATLFFKUhh-2" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="nGWCyTgYbevATLFFKUhh-2" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry width="1920" height="1080" as="geometry" />
         </mxCell>
         <mxCell id="7zSDGvP8X8VHqanYGGVI-2" value="&lt;&lt;Interface&gt;&gt;&#xa;IPlantFactory" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=53.5;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;fillColor=#0050ef;fontColor=#ffffff;strokeColor=#001DBC;" parent="1" vertex="1">
@@ -125,7 +125,7 @@
         <mxCell id="7zSDGvP8X8VHqanYGGVI-39" value="1" style="edgeLabel;resizable=0;labelBackgroundColor=none;fontSize=12;align=right;verticalAlign=top;" parent="7zSDGvP8X8VHqanYGGVI-38" vertex="1">
           <mxGeometry x="-1" relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="7zSDGvP8X8VHqanYGGVI-41" value="singleton instance" style="curved=0;startArrow=none;endArrow=none;entryX=0;entryY=0;rounded=0;entryDx=0;entryDy=0;" parent="1" edge="1">
+        <mxCell id="7zSDGvP8X8VHqanYGGVI-41" value="singleton instance" style="curved=1;startArrow=none;endArrow=none;entryX=0;entryY=0;rounded=0;entryDx=0;entryDy=0;" parent="1" edge="1">
           <mxGeometry x="0.2206" y="-19" relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="806" y="1010" />
@@ -136,7 +136,7 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="7zSDGvP8X8VHqanYGGVI-44" value="" style="curved=0;startArrow=none;endArrow=diamondThin;endSize=14;endFill=0;entryX=0.85;entryY=1;rounded=0;" parent="1" target="7zSDGvP8X8VHqanYGGVI-8" edge="1">
+        <mxCell id="7zSDGvP8X8VHqanYGGVI-44" value="" style="curved=1;startArrow=none;endArrow=diamondThin;endSize=14;endFill=0;entryX=0.85;entryY=1;rounded=0;" parent="1" target="7zSDGvP8X8VHqanYGGVI-8" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="940" y="990" />
@@ -149,11 +149,12 @@
         <mxCell id="7zSDGvP8X8VHqanYGGVI-46" value="1" style="edgeLabel;resizable=0;labelBackgroundColor=none;fontSize=12;align=left;verticalAlign=top;" parent="7zSDGvP8X8VHqanYGGVI-44" vertex="1">
           <mxGeometry x="1" relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="7zSDGvP8X8VHqanYGGVI-47" value="uses" style="curved=0;dashed=1;startArrow=none;endArrow=open;endSize=12;exitX=0;exitY=0.9;entryX=0.5;entryY=0;rounded=0;" parent="1" source="7zSDGvP8X8VHqanYGGVI-8" target="7zSDGvP8X8VHqanYGGVI-18" edge="1">
-          <mxGeometry relative="1" as="geometry">
+        <mxCell id="7zSDGvP8X8VHqanYGGVI-47" value="uses" style="curved=1;dashed=1;startArrow=none;endArrow=open;endSize=12;exitX=0;exitY=0.9;entryX=0.5;entryY=0;rounded=0;" parent="1" source="7zSDGvP8X8VHqanYGGVI-8" target="7zSDGvP8X8VHqanYGGVI-18" edge="1">
+          <mxGeometry x="-0.0952" y="29" relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="380" y="500" />
             </Array>
+            <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="7zSDGvP8X8VHqanYGGVI-48" value="creates" style="curved=1;dashed=1;startArrow=none;endArrow=open;endSize=12;exitX=0.22;exitY=1;entryX=0.5;entryY=0;rounded=0;" parent="1" source="7zSDGvP8X8VHqanYGGVI-8" target="7zSDGvP8X8VHqanYGGVI-27" edge="1">
