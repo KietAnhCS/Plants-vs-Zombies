@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=LossSequenceTransition
+comment1.params=imgName\ speed\ restartWorld
+comment1.target=LossSequenceTransition(java.lang.String,\ int,\ greenfoot.World)
+comment2.params=
+comment2.target=void\ act()
+numComments=3
