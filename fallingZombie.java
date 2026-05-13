@@ -1,9 +1,9 @@
 import greenfoot.*;
 
-public class FallingZombie extends SpriteAnimator {
+public class fallingZombie extends SpriteAnimator {
     private GreenfootImage[] images;
     
-    public FallingZombie(GreenfootImage[] imgs) {
+    public fallingZombie(GreenfootImage[] imgs) {
         this.images = imgs;
         if (images != null) setImage(images[0]);
     }
