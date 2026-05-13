@@ -8,7 +8,6 @@ public class PlayScene extends World {
     
     public GridManager GridManager = new GridManager();
     public WaveManager level;
-    public FallingObject winPlant;
     public SeedBank seedbank;
     public World restartWorld;
     public GreenfootSound CYS;
@@ -37,7 +36,6 @@ public class PlayScene extends World {
         this.seedbank = seedbank;
         this.restartWorld = restartWorld;
         this.level = level;
-        this.winPlant = winPlant;
         this.sunManager = new SunManager();
         this.upgradeManager = new UpgradeManager(PlantFactory.getInstance(), new PlantEventBus());
         
