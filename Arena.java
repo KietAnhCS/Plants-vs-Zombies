@@ -156,5 +156,7 @@ public Arena() {
         addObject(new IdleBrickhead(), 1258, 22);
         addObject(new IdleCone(), 1150, 252);
         addObject(new IdleBucket(), 1199, 265);
+        addObject(new IdleNutcracker(), 1258, 300); 
+        addObject(new IdleExcavator(), 1258, 330);
     }
 }

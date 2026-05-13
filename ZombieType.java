@@ -4,5 +4,7 @@ public enum ZombieType {
         BUCKETHEAD,
         BRICKHEAD,
         PIANO,
-        RA
+        RA,
+        NUTCRACKER,
+        EXCAVATOR
     }

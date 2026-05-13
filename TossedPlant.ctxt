@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=TossedPlant
+comment1.params=p\ ex\ ey\ gx\ isOut
+comment1.target=TossedPlant(Plant,\ int,\ int,\ int,\ boolean)
+comment2.params=
+comment2.target=void\ act()
+comment3.params=
+comment3.target=void\ land()
+numComments=4

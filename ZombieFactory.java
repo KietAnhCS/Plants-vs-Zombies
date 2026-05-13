@@ -10,6 +10,8 @@ public class ZombieFactory {
             case BRICKHEAD: return new Brickhead();
             case PIANO: return new PianoZombie();
             case RA: return new RaZombie();
+            case NUTCRACKER: return new NutcrackerZombie();
+            case EXCAVATOR: return new ExcavatorZombie();
             default: return new BasicZombie();
         }
     }
@@ -23,7 +25,9 @@ public class ZombieFactory {
                                .replace("}", "")
                                .toUpperCase();
         
-        if (name.equals("RA") || name.contains("RA")) {
+        if (name.equals("NUTCRACKER") || name.contains("NUTCRACKER")) {
+            return new NutcrackerZombie();
+        } else if (name.equals("RA") || name.contains("RA")) {
             return new RaZombie(); 
         } else if (name.equals("PIANO") || name.contains("PIANO")) {
             return new PianoZombie();
@@ -33,6 +37,8 @@ public class ZombieFactory {
             return new Buckethead();
         } else if (name.equals("BRICKHEAD") || name.contains("BRICK")) {
             return new Brickhead();
+        } else if (name.contains("EXCAVATOR")) {
+            return new ExcavatorZombie();
         }
 
         return new BasicZombie();

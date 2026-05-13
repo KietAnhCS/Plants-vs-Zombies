@@ -45,7 +45,19 @@ public enum ZombieAssets {
     RA_POWER_START("Ra_Power-Start", 10),
     RA_POWER_LOOP("Ra_Power-Loop", 10),
     RA_POWER_END("Ra_Power-End", 10),
-    RA_DEATH("Ra_death", 12);
+    RA_DEATH("Ra_death", 12),
+
+    NUTCRACKER_WALK("Nutcracker Zombie_Walking", 20),
+    NUTCRACKER_CHOP("Nutcracker Zombie_Chopping", 25),
+    NUTCRACKER_RECHARGE("Nutcracker Zombie_Recharge", 25),
+    NUTCRACKER_DEATH("Nutcracker Zombie_Death", 20),
+    NUTCRACKER_IDLE("Nutcracker Zombie_Idle", 20),
+
+    EXCAVATOR_WALK("Excavator Zombie_Walking", 20),
+    EXCAVATOR_CHOP("Excavator Zombie_Attacking", 20), 
+    EXCAVATOR_SHOVEL("Excavator Zombie_Shoveling", 25),
+    EXCAVATOR_DEATH("Excavator Zombie_Death", 20),
+    EXCAVATOR_IDLE("Excavator Zombie_Idle", 20);
 
     public final String path;
     public final int count;

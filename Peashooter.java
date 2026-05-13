@@ -16,11 +16,13 @@ public class Peashooter extends Plant {
     private PlayScene cachedPlayScene;
 
     public Peashooter() {
+        // Khởi tạo chỉ số từ hằng số Type
         setMaxHp(TYPE.hp);
         setHp(TYPE.hp);
         setDamage(TYPE.damage);
         setCost(TYPE.cost);
         
+        // Load ảnh gốc trực tiếp (Không scale)
         shoot = importSprites(PlantAssets.PEASHOOTER_SHOOT, 3);
         idle  = importSprites(PlantAssets.PEASHOOTER_IDLE,  9);
         

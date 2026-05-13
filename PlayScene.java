@@ -8,6 +8,7 @@ public class PlayScene extends World {
     
     public GridManager GridManager = new GridManager();
     public WaveManager level;
+    public FallingObject winPlant;
     public SeedBank seedbank;
     public World restartWorld;
     public GreenfootSound CYS;
@@ -36,6 +37,7 @@ public class PlayScene extends World {
         this.seedbank = seedbank;
         this.restartWorld = restartWorld;
         this.level = level;
+        this.winPlant = winPlant;
         this.sunManager = new SunManager();
         this.upgradeManager = new UpgradeManager(PlantFactory.getInstance(), new PlantEventBus());
         
@@ -203,7 +205,7 @@ public class PlayScene extends World {
 
 public void applyDefaultPaintOrder() {
         setPaintOrder(
-            SettingsResumeButton.class, SliderKnob.class, SliderBar.class, SettingsMenuPanel.class, Retry.class, GameOverPanel.class, LossSequenceTransition.class,
+            SettingsResumeButton.class, SliderKnob.class, SliderBar.class, SettingsMenuPanel.class, 
             CrazyDave.class, Transition.class, AugmentCard.class, Overlay.class,
             ThuyThan.class, RupButton.class, RollButton.class,
             WaveNotification.class, ReadySetPlant.class,
