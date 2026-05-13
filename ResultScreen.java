@@ -4,7 +4,7 @@ public class ResultScreen extends World {
     public Hitbox hitbox = new Hitbox();
 
     public ResultScreen(World restartWorld) {
-        super(1111, 698, 1, false);
+        super(1111, 602, 1, false);
         Greenfoot.setSpeed(50);
         addObject(hitbox, 0, 0);
         addObject(new Retry(restartWorld), 365, 395);

@@ -3,8 +3,8 @@ import greenfoot.*;
 public class Tombstone extends Actor {
     public Tombstone() {
         GreenfootImage img = new GreenfootImage("tombstone.png");
-        img.scale(400, 450);
+        img.scale(300, 350);
         setImage(img);
-        setRotation(0);
+        setRotation(6);
     }
 }

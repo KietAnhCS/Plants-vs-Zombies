@@ -38,4 +38,14 @@ public class ZombieRegistry {
     public static final int    RA_ARMLESS      = 100;
     public static final int    RA_DAMAGE       = 20;
     public static final double RA_SPEED        = 1.2;
+
+    public static final int    NUTCRACKER_HP       = 2000;
+    public static final int    NUTCRACKER_DAMAGE   = 100;
+    public static final double NUTCRACKER_SPEED    = 1.0;
+    public static final int    NUTCRACKER_RECHARGE_MS = 6000;
+
+    public static final int    EXCAVATOR_HP       = 600;
+    public static final int    EXCAVATOR_DAMAGE   = 20; 
+    public static final double EXCAVATOR_SPEED    = 1.1;
+    public static final long   EXCAVATOR_COOLDOWN = 10000;
 }

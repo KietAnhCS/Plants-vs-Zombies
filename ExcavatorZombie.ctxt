@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=ExcavatorZombie
+comment1.params=
+comment1.target=ExcavatorZombie()
+comment2.params=
+comment2.target=void\ act()
+comment3.params=isEating
+comment3.target=greenfoot.GreenfootImage[]\ getCurrentAnimation(boolean)
+comment4.params=
+comment4.target=greenfoot.GreenfootImage[]\ getShovelSprites()
+comment5.params=
+comment5.target=void\ handleThresholds()
+numComments=6
