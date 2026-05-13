@@ -1,7 +1,7 @@
 import greenfoot.*;
 
 public class ExcavatorShovelState implements IZombieState {
-    private Zombie zombie; // This was likely missing!
+    private Zombie zombie; 
     private boolean triggered = false;
 
     public ExcavatorShovelState(Zombie zombie) {
@@ -16,7 +16,6 @@ public class ExcavatorShovelState implements IZombieState {
 
     @Override
     public void update() {
-        // Trigger the throw at frame 15
         if (!triggered && zombie.getCurrentFrame() == 15) {
             tossPlant();
             triggered = true;

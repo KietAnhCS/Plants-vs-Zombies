@@ -47,5 +47,5 @@ public class ZombieRegistry {
     public static final int    EXCAVATOR_HP       = 600;
     public static final int    EXCAVATOR_DAMAGE   = 20; 
     public static final double EXCAVATOR_SPEED    = 1.1;
-    public static final long   EXCAVATOR_COOLDOWN = 2000;
+    public static final long   EXCAVATOR_COOLDOWN = 4000;
 }

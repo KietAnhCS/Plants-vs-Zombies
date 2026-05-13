@@ -4,7 +4,6 @@ public class IdleExcavator extends IdleZombie
 {
     GreenfootImage[] idle;
     public IdleExcavator() {
-        // Path matches your provided filename prefix
         idle = importSprites("Excavator Zombie_Idle", 20);
         if (idle != null && idle.length > 0) {
             setImage(idle[0]);

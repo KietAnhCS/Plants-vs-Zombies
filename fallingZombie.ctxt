@@ -1,7 +1,7 @@
 #BlueJ class context
-comment0.target=fallingZombie
+comment0.target=FallingZombie
 comment1.params=imgs
-comment1.target=fallingZombie(greenfoot.GreenfootImage[])
+comment1.target=FallingZombie(greenfoot.GreenfootImage[])
 comment2.params=
 comment2.target=void\ act()
 numComments=3

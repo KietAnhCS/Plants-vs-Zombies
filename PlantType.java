@@ -9,9 +9,9 @@ public enum PlantType {
     CACTUS        (125, PlantDamageType.NEEDLE,    12,   200,   2400L, 0),
     CACTUS_2      (250, PlantDamageType.NEEDLE,    25,   200,   1500L, 0),
     CACTUS_3      (375, PlantDamageType.NEEDLE,    40,   200,   1500L, 0),
-    BONK_CHOY     (175, PlantDamageType.NORMAL,    5,    20000,   300L,  0),
-    BONK_CHOY_2   (400, PlantDamageType.NORMAL,    10,   40000,   200L,  0),
-    BONK_CHOY_3   (600, PlantDamageType.NORMAL,    30,   80000,   150L,  0),
+    BONK_CHOY     (175, PlantDamageType.NORMAL,    5,    200,   300L,  0),
+    BONK_CHOY_2   (400, PlantDamageType.NORMAL,    10,   400,   200L,  0),
+    BONK_CHOY_3   (600, PlantDamageType.NORMAL,    30,   800,   150L,  0),
     POTATOMINE    (25,  PlantDamageType.EXPLOSIVE, 1800, 200,   3000L, 0);
 
     public final int cost;

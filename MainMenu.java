@@ -21,13 +21,13 @@ public class MainMenu extends World {
         addObject(hitbox, 0, 0);
         addObject(new MuteButton(), 1050, 50);
 
-        int logoX = 750; 
+        int logoX = 350; 
         int logoY = 175; 
         addObject(new PvZLogo(), logoX, logoY);
 
         tombstone = new Tombstone();
-        int tombX = 750;
-        int tombY = 510;
+        int tombX = 850;
+        int tombY = 400;
         addObject(tombstone, tombX, tombY);
 
         int startButtonY = tombY - 70;

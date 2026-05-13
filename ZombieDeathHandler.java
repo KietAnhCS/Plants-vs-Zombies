@@ -20,7 +20,7 @@ public class ZombieDeathHandler implements IDeathHandler {
         World world = zombie.getWorld();
         if (world != null) {
             world.addObject(new Head(), zombie.getX(), zombie.getY());
-            world.addObject(new fallingZombie(zombie.getDeadSprites()), zombie.getX(), zombie.getY());
+            world.addObject(new FallingZombie(zombie.getDeadSprites()), zombie.getX(), zombie.getY());
         }
         zombie.setState(new DeadState(zombie));
     }

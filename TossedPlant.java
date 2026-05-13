@@ -4,10 +4,9 @@ public class TossedPlant extends Actor {
     private Plant plantRef;
     private int endX, endY, gridX;
     private boolean out;
-    private double t = 0; // Time factor from 0.0 to 1.0
-    private double speed = 0.03; // Higher is faster flight
+    private double t = 0; 
+    private double speed = 0.03; 
 
-    // This Constructor MUST match the ExcavatorShovelState call exactly
     public TossedPlant(Plant p, int ex, int ey, int gx, boolean isOut) {
         this.plantRef = p;
         this.endX = ex;
@@ -15,7 +14,6 @@ public class TossedPlant extends Actor {
         this.gridX = gx;
         this.out = isOut;
         
-        // Use the plant's image for the flying visual
         GreenfootImage img = new GreenfootImage(p.getImage());
         img.setTransparency(200); 
         setImage(img);

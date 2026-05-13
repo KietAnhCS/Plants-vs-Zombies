@@ -37,7 +37,7 @@ public class Start extends Button {
             AudioManager.getInstance().playSound(80, false, "losemusic.mp3");
             
             getWorld().addObject(new DelayAudio("evillaugh.mp3", 80, false, 1000L), 0, 0);
-            getWorld().addObject(new ZombieHand(), 250, 450);
+            getWorld().addObject(new ZombieHand(), 250, 500);
         } else {
             Greenfoot.setWorld(new Arena());
         }

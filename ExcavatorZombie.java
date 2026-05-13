@@ -11,10 +11,10 @@ public class ExcavatorZombie extends Zombie {
             new int[]{}, null, null, null, 0
         ));
         
-        wNormal = importSprites(ZombieAssets.EXCAVATOR_WALK.path, 20);
+        wNormal = importSprites(ZombieAssets.EXCAVATOR_WALK.path, 20,0.45);
         shovel  = importSprites(ZombieAssets.EXCAVATOR_SHOVEL.path, 25);
-        chop    = importSprites(ZombieAssets.EXCAVATOR_CHOP.path, 20);
-        death   = importSprites(ZombieAssets.EXCAVATOR_DEATH.path, 20);
+        chop    = importSprites(ZombieAssets.EXCAVATOR_CHOP.path, 20,0.45);
+        death   = importSprites(ZombieAssets.EXCAVATOR_DEATH.path, 20,0.45);
 
         if (wNormal != null && wNormal.length > 0) setImage(wNormal[0]);
 

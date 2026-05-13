@@ -150,7 +150,7 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
             if (!fixAnim) {
                 fixAnim = true;
                 AudioManager.playSound(80, false, "zombie_falling_1.mp3", "zombie_falling_2.mp3");
-                getWorld().addObject(new fallingZombie(fall), getX(), getY());
+                getWorld().addObject(new FallingZombie(fall), getX(), getY());
                 getWorld().removeObject(this);
             }
         } else {

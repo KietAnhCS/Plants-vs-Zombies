@@ -16,7 +16,6 @@ public class NutcrackerRechargeState implements IZombieState {
     }
     @Override
     public void update() {
-        // Do nothing (don't walk, don't eat)
         if (System.currentTimeMillis() - startTime > duration) {
             zombie.setState(new WalkingState(zombie));
         }
@@ -25,7 +24,6 @@ public class NutcrackerRechargeState implements IZombieState {
     public void exit() {}
     @Override
     public GreenfootImage[] getAnimation() {
-        // Return the recharge sprites
         return ((NutcrackerZombie)zombie).getRechargeSprites();
     }
 }

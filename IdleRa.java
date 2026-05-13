@@ -5,7 +5,7 @@ public class IdleRa extends IdleZombie
     private static final int SCALE_WIDTH = 100;
     private static final int SCALE_HEIGHT = 100;
     public IdleRa() {
-        idle = importSprites("Ra_Idle", 39);
+        idle = importSprites("Ra_Idle", 39,0.45);
         for (GreenfootImage img : idle) {
             if (img != null) {
                 img.scale(SCALE_WIDTH, SCALE_HEIGHT);
