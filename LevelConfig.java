@@ -2,10 +2,10 @@ public class LevelConfig {
     public static final String[][][] LEVEL_1_DATA = {
         {
             {"EXCAVATOR"},
-            null,          
-            {"EXCAVATOR"},  
-            null,          
-            null           
+            {"SUN"},          
+            {"NUTCRACKER"},  
+            {"SUN"},          
+            {"EXCAVATOR"}           
         },
         
         {

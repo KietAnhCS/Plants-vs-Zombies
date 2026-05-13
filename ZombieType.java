@@ -6,5 +6,6 @@ public enum ZombieType {
         PIANO,
         RA,
         NUTCRACKER,
-        EXCAVATOR
+        EXCAVATOR,
+        SUN
     }

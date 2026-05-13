@@ -1,4 +1,8 @@
 public class ZombieRegistry {
+    public static final int    SUN_HP       = 150;
+    public static final int    SUN_DAMAGE   = 0; 
+    public static final double SUN_SPEED    = 1.0;
+    
     public static final int    BASIC_HP        = 300;
     public static final int    BASIC_ARMLESS   = 50;
     public static final int    BASIC_DAMAGE    = 20;
@@ -42,10 +46,10 @@ public class ZombieRegistry {
     public static final int    NUTCRACKER_HP       = 700;
     public static final int    NUTCRACKER_DAMAGE   = 20;
     public static final double NUTCRACKER_SPEED    = 1.0;
-    public static final int    NUTCRACKER_RECHARGE_MS = 6000;
+    public static final int    NUTCRACKER_RECHARGE_MS = 1000;
 
     public static final int    EXCAVATOR_HP       = 600;
     public static final int    EXCAVATOR_DAMAGE   = 20; 
     public static final double EXCAVATOR_SPEED    = 1.1;
-    public static final long   EXCAVATOR_COOLDOWN = 4000;
+    public static final long   EXCAVATOR_COOLDOWN = 1000;
 }

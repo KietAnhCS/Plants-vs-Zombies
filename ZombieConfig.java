@@ -25,7 +25,14 @@ public class ZombieConfig {
         this.deadAnimation = deadAnimation;
         this.deadFrames    = deadFrames;
     }
-
+    public static final ZombieConfig SUN = new ZombieConfig(
+        ZombieRegistry.SUN_HP, ZombieRegistry.SUN_DAMAGE,
+        ZombieRegistry.SUN_SPEED, "Sun",new int[0],new ZombieAssets[0],new ZombieAssets[0],  
+    "zombies/basic/die/die", 
+    10
+    );
+    
+    
     public static final ZombieConfig BASIC = new ZombieConfig(
         ZombieRegistry.BASIC_HP, ZombieRegistry.BASIC_DAMAGE,
         ZombieRegistry.BASIC_SPEED, "Basic",

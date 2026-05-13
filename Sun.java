@@ -2,19 +2,20 @@ import greenfoot.*;
 import java.util.*;
 
 public class Sun extends FallingObject {
-
-    private int value = 25; 
+    private int value = 25;
     private PlayScene scene;
     private GreenfootImage[] sprites;
-    private boolean pickedUp = false; 
+    private boolean pickedUp = false;
     private boolean stationary = false;
+    private double startY;
+    private boolean hasFinishedFalling = false;
 
     public Sun() {
         this(25);
     }
 
     public Sun(int value) {
-        super(-3.5, 0.15, Random.Int(-1, 1), 1, 800L); 
+        super(-3.5, 0.15, (Greenfoot.getRandomNumber(3) - 1), 1, 800L);
         this.value = value;
         sprites = importSprites("sun", 2);
     }
@@ -23,7 +24,16 @@ public class Sun extends FallingObject {
         super(0, 0, 0, 0, 0L);
         this.value = value;
         this.stationary = stationary;
+        this.hasFinishedFalling = stationary;
         sprites = importSprites("sun", 2);
+    }
+
+    @Override
+    public void addedToWorld(World world) {
+        if (world instanceof PlayScene) {
+            scene = (PlayScene) world;
+        }
+        this.startY = getY();
     }
 
     public void update() {
@@ -35,7 +45,9 @@ public class Sun extends FallingObject {
             if (isTouching(ThuyThan.class)) {
                 collect();
             } else {
-                if (!stationary) applyFallingPhysics();
+                if (!stationary && !hasFinishedFalling) {
+                    applyFallingPhysics();
+                }
             }
         } else {
             flyToCounter();
@@ -46,11 +58,9 @@ public class Sun extends FallingObject {
 
     public void collect() {
         if (pickedUp) return;
-
         pickedUp = true;
         setRotation(0);
         AudioManager.getInstance().playSound(80, false, "points.mp3");
-
         PlayScene currentScene = getPlayScene();
         if (currentScene != null && currentScene.getSunManager() != null) {
             currentScene.getSunManager().add(this.value);
@@ -59,18 +69,25 @@ public class Sun extends FallingObject {
 
     private void applyFallingPhysics() {
         if (elapsedTime < fallTime) {
-            double x = getExactX() + hSpeed;
-            double y = getExactY() + vSpeed;
-            setLocation(x, y);
+            double nextX = getExactX() + hSpeed;
+            double nextY = getExactY() + vSpeed;
+
+            if (nextY >= startY + 20) {
+                nextY = startY + 20;
+                hasFinishedFalling = true;
+            }
+
+            setLocation(nextX, nextY);
             turn(rotate);
             vSpeed += acceleration;
+        } else {
+            hasFinishedFalling = true;
         }
     }
 
     private void flyToCounter() {
         PlayScene currentScene = getPlayScene();
         if (currentScene == null) return;
-        
         List<SunDisplay> displays = currentScene.getObjects(SunDisplay.class);
         if (!displays.isEmpty()) {
             SunDisplay ds = displays.get(0);
@@ -81,7 +98,6 @@ public class Sun extends FallingObject {
 
     private void checkRemoval() {
         if (getWorld() == null || !pickedUp) return;
-
         PlayScene currentScene = getPlayScene();
         if (currentScene != null) {
             List<SunDisplay> displays = currentScene.getObjects(SunDisplay.class);
@@ -101,12 +117,5 @@ public class Sun extends FallingObject {
             return scene;
         }
         return null;
-    }
-
-    @Override
-    public void addedToWorld(World world) {
-        if (world instanceof PlayScene) {
-            scene = (PlayScene) world;
-        }
     }
 }

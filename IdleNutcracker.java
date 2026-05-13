@@ -4,7 +4,7 @@ public class IdleNutcracker extends IdleZombie
 {
     GreenfootImage[] idle;
     public IdleNutcracker() {
-        idle = importSprites("Nutcracker Zombie_Idle", 20);
+        idle = importSprites("Nutcracker Zombie_Idle", 20,0.45);
         if (idle != null && idle.length > 0) {
             setImage(idle[0]);
         }

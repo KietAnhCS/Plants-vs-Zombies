@@ -1,6 +1,11 @@
 import greenfoot.*;
 
 public enum ZombieAssets {
+    
+    
+    SUN_WALK("sunzombiewalk", 20),
+    SUN_EAT("sunzombieeating", 20),
+    
     BASIC_WALK("zombiewalk", 7),
     BASIC_WALK_ARMLESS("armlesszombie", 7),
     BASIC_EAT("zombieeating", 7),
@@ -54,7 +59,7 @@ public enum ZombieAssets {
     NUTCRACKER_IDLE("Nutcracker Zombie_Idle", 20),
 
     EXCAVATOR_WALK("Excavator Zombie_Walking", 20),
-    EXCAVATOR_CHOP("Excavator Zombie_Attacking", 20), 
+    EXCAVATOR_CHOP("Excavator Zombie_Eat", 20), 
     EXCAVATOR_SHOVEL("Excavator Zombie_Shoveling", 25),
     EXCAVATOR_DEATH("Excavator Zombie_Death", 20),
     EXCAVATOR_IDLE("Excavator Zombie_Idle", 20);

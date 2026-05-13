@@ -1,6 +1,7 @@
 import greenfoot.*;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Comparator;
 
 public class BonkChoy extends Plant {
     private static final PlantType TYPE = PlantType.BONK_CHOY;
@@ -48,7 +49,9 @@ public class BonkChoy extends Plant {
         List<Zombie> targets = getObjectsInRange(120, Zombie.class)
             .stream()
             .filter(z -> z.getWorld() != null && z.getX() >= getX() - 10)
+            .sorted(Comparator.comparingInt(Zombie::getX))
             .collect(Collectors.toList());
+            
         if (!targets.isEmpty()) {
             PlantState attackState = (punchCount >= 9) ? PlantState.BONK_KO_PUNCH : PlantState.BONK_PUNCHING;
             setState(attackState);
@@ -65,9 +68,12 @@ public class BonkChoy extends Plant {
 
     private void applyDmg(List<Zombie> targets, int delay, int dmg, PlantState attackState) {
         if (System.currentTimeMillis() - lastAttackTime <= delay) return;
-        for (Zombie z : targets) {
-            if (z.getWorld() != null) z.hit(dmg);
+        
+        if (!targets.isEmpty()) {
+            Zombie primaryTarget = targets.get(0);
+            if (primaryTarget.getWorld() != null) primaryTarget.hit(dmg);
         }
+        
         if (attackState == PlantState.BONK_KO_PUNCH) {
             punchCount = 0;
             setHp(Math.min(getMaxHp(), getHp() + (int)(getMaxHp() * 0.15)));

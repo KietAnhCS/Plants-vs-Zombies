@@ -5,6 +5,7 @@ public class ZombieFactory {
     public static Zombie createZombie(ZombieType type) {
         if (type == null) return new BasicZombie();
         switch (type) {
+            case SUN: return new SunZombie();
             case CONEHEAD: return new Conehead();
             case BUCKETHEAD: return new Buckethead();
             case BRICKHEAD: return new Brickhead();
@@ -39,6 +40,9 @@ public class ZombieFactory {
             return new Brickhead();
         } else if (name.contains("EXCAVATOR")) {
             return new ExcavatorZombie();
+        }
+        else if (name.contains("SUN")) {
+            return new SunZombie();
         }
 
         return new BasicZombie();
