@@ -52,8 +52,13 @@ public class AugmentCard extends Actor {
         if (world == null) return;
 
         if (type.equals("rerollcard")) {
-            world.getSunManager().add(500);
-        } else if (type.equals("TD")) {
+            List<RollButton> buttons = world.getObjects(RollButton.class);
+            if (!buttons.isEmpty()) {
+                RollButton rb = buttons.get(0);
+                rb.addFreeRolls(6); 
+            }
+        }
+        else if (type.equals("TD")) {
             world.increasePlantSlots(3);
         } else if (type.equals("HM")) {
             GridManager gm = world.GridManager;
@@ -64,33 +69,25 @@ public class AugmentCard extends Actor {
             }
         
             if (!emptyCols.isEmpty()) {
-                Collections.shuffle(emptyCols);
                 Random rand = new Random();
-        
-                Supplier<Plant> randomPlant = () -> {
-                    int r = rand.nextInt(4);
-                    switch (r) {
-                        case 0: return new BonkChoy();
-                        case 1: return new GatlingPea();
-                        case 2: return new GatlingPea2();
-                        case 3: return new BonkChoy2();
-                        default: return new Peashooter();
-                    }
-                };
-        
-                int col1 = emptyCols.get(0);
-                Plant p1 = randomPlant.get();
-                gm.Board[5][col1] = p1;
-                world.addObject(p1, gm.getXCoord(col1, 5), gm.getYCoord(col1, 5));
-        
-                if (emptyCols.size() >= 2) {
-                    int col2 = emptyCols.get(1);
-                    Plant p2 = randomPlant.get();
-                    gm.Board[5][col2] = p2;
-                    world.addObject(p2, gm.getXCoord(col2, 5), gm.getYCoord(col2, 5));
+                int randomColIndex = rand.nextInt(emptyCols.size());
+                int col = emptyCols.get(randomColIndex);
+
+                Plant p;
+                int r = rand.nextInt(4);
+                switch (r) {
+                    case 0: p = new BonkChoy(); break;
+                    case 1: p = new GatlingPea(); break;
+                    case 2: p = new GatlingPea2(); break;
+                    case 3: p = new BonkChoy2(); break;
+                    default: p = new Peashooter(); break;
                 }
+        
+                gm.Board[5][col] = p;
+                world.addObject(p, gm.getXCoord(col, 5), gm.getYCoord(col, 5));
+                
+                AudioManager.getInstance().playSound(80, false, "achievement.mp3");
             }
-            AudioManager.getInstance().playSound(80, false, "achievement.mp3");
         }
     }
 

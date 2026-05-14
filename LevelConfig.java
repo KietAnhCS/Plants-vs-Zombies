@@ -1,42 +1,11 @@
 public class LevelConfig {
     public static final String[][][] LEVEL_1_DATA = {
-        {
-            null,
-            {"SUN"},          
-            null,  
-            {"SUN"},          
-            null           
-        },
         
-        {
-            null,
-            {"EXCAVATOR", "EXCAVATOR"}, 
-            null,
-            null,
-            null
-        },
+        {{"SUN"}, null, {"SUN"}, null, null},
+        {null, {"SUN"}, null, {"SUN"}, null},
         
-        {
-            null,
-            null,
-            null,
-            {"NUTCRACKER", "NUTCRACKER"},
-            null
-        },
-
-        {
-            {"NUTCRACKER"},
-            {"NUTCRACKER"},
-            {"NUTCRACKER"},
-            {"NUTCRACKER"},
-            {"NUTCRACKER"}
-        },
-
-        {{"NORMAL"}, null, null, null, null},
-        {null, {"NORMAL"}, null, {"NORMAL"}, null},
-        
-        {{"NORMAL"}, null, {"NORMAL"}, null, {"NORMAL"}},      
-        {null, {"NORMAL", "NORMAL"}, null, {"NORMAL"}, null},
+        {{"NORMAL"}, null, {"SUN"}, null, {"NORMAL"}},      
+        {null, {"NORMAL", "NORMAL"}, null, {"EXCAVATOR"}, null},
         
         {{"CONEHEAD"}, {"NORMAL"}, {"CONEHEAD"}, {"NORMAL"}, {"CONEHEAD"}},
         {{"NORMAL", "NORMAL"}, {"CONEHEAD"}, null, {"CONEHEAD"}, {"NORMAL"}},
