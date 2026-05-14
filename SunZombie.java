@@ -9,7 +9,7 @@ public class SunZombie extends Zombie {
         this.walkSpeed = (Greenfoot.getRandomNumber(6) + 25) / 100.0;
         
         wNormal = importSprites(ZombieAssets.SUN_WALK.path, ZombieAssets.SUN_WALK.count, 0.45);
-        eNormal = importSprites(ZombieAssets.SUN_EAT.path, ZombieAssets.SUN_EAT.count, 0.45);
+        eNormal = importSprites(ZombieAssets.SUN_WALK.path, ZombieAssets.SUN_WALK.count, 0.45);
         
         setState(new WalkingState(this));
     }
@@ -17,15 +17,15 @@ public class SunZombie extends Zombie {
     private void spawnSuns() {
         if (sunSpawned || getWorld() == null) return;
         sunSpawned = true;
-
-        int count = Greenfoot.getRandomNumber(3) + 2; 
+    
+        int count = 1; 
         for (int i = 0; i < count; i++) {
-            Sun s = new Sun(25); 
+            SecretSun s = new SecretSun(); 
             getWorld().addObject(s, getX(), getY());
         }
         
-        AudioManager.getInstance().playSound(80, false, "points.mp3");
-    }
+        AudioManager.getInstance().playSound(80, false, "achievement.mp3");
+}
 
     @Override
     public void hit(int dmg) {

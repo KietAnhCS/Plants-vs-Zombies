@@ -46,7 +46,7 @@ public class BonkChoy extends Plant {
 
     private void handleCombat() {
         if (getState() == PlantState.MERGING) return;
-        List<Zombie> targets = getObjectsInRange(120, Zombie.class)
+        List<Zombie> targets = getObjectsInRange(50, Zombie.class)
             .stream()
             .filter(z -> z.getWorld() != null && z.getX() >= getX() - 10)
             .sorted(Comparator.comparingInt(Zombie::getX))

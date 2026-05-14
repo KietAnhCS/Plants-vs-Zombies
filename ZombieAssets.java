@@ -59,7 +59,7 @@ public enum ZombieAssets {
     NUTCRACKER_IDLE("Nutcracker Zombie_Idle", 20),
 
     EXCAVATOR_WALK("Excavator Zombie_Walking", 20),
-    EXCAVATOR_CHOP("Excavator Zombie_Eat", 20), 
+    EXCAVATOR_CHOP("Excavator Zombie_Eating", 20), 
     EXCAVATOR_SHOVEL("Excavator Zombie_Shoveling", 25),
     EXCAVATOR_DEATH("Excavator Zombie_Death", 20),
     EXCAVATOR_IDLE("Excavator Zombie_Idle", 20);

@@ -2,6 +2,10 @@ import greenfoot.*;
 import java.util.*;
 
 public class PlayScene extends World {
+    private long lastFPSTime = System.currentTimeMillis();
+    private int frameCount = 0;
+    private int currentFPS = 0;
+    
     public boolean loseOnce = false;
     public boolean winOnce = false;
     public boolean isGameOver = false;
@@ -240,17 +244,31 @@ public void applyDefaultPaintOrder() {
     private void drawWaveUI() {
         if (level == null) return;
         GreenfootImage canvas = getBackground();
-        String text = "WAVE " + level.getWaveNumber();
+        
+        frameCount++;
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastFPSTime >= 1000) { 
+            currentFPS = frameCount;
+            frameCount = 0;
+            lastFPSTime = currentTime;
+        }
+    
+        String waveText = "WAVE " + level.getWaveNumber();
+        String fpsText = "FPS: " + currentFPS;
         
         canvas.setColor(new Color(0, 0, 0, 160));
-        canvas.fillRect(24, 84, 140, 40);
+        canvas.fillRect(24, 84, 140, 65);
         
         canvas.setColor(Color.WHITE);
-        canvas.drawRect(20, 80, 140, 40);
+        canvas.drawRect(24, 84, 140, 65);
         
-        canvas.setFont(new Font("Courier New", true, false, 22));
+        canvas.setFont(new Font("Courier New", true, false, 20));
+        
         canvas.setColor(new Color(0, 191, 255));
-        canvas.drawString(text, 40, 107);
+        canvas.drawString(waveText, 40, 107);
+        
+        canvas.setColor(Color.GREEN); 
+        canvas.drawString(fpsText, 40, 135); 
     }
 
     public List<Merger> getActiveMergers() { return activeMergers; }
