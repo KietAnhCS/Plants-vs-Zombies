@@ -7,19 +7,19 @@ public class LevelConfig {
         {{"NORMAL"}, null, {"SUN"}, null, {"NORMAL"}},      
         {null, {"NORMAL", "NORMAL"}, null, {"EXCAVATOR"}, null},
         
-        {{"CONEHEAD"}, {"NORMAL"}, {"CONEHEAD"}, {"NORMAL"}, {"CONEHEAD"}},
-        {{"NORMAL", "NORMAL"}, {"CONEHEAD"}, null, {"CONEHEAD"}, {"NORMAL"}},
-        {{"CONEHEAD"}, {"CONEHEAD"}, {"CONEHEAD"}, {"CONEHEAD"}, {"CONEHEAD"}},
-        {{"BUCKETHEAD"}, {"CONEHEAD"}, {"BUCKETHEAD"}, {"CONEHEAD"}, {"BUCKETHEAD"}},
+        {{"CONEHEAD"}, {"EXCAVATOR"}, {"CONEHEAD"}, {"NORMAL"}, {"CONEHEAD"}},
+        {{"NORMAL", "NORMAL"}, {"CONEHEAD"}, null, {"CEXCAVATOR"}, {"NORMAL"}},
+        {{"CONEHEAD"}, {"NUTCRACKER"}, {"CONEHEAD"}, {"CONEHEAD"}, {"CONEHEAD"}},
+        {{"BUCKETHEAD"}, {"CONEHEAD"}, {"BUCKETHEAD"}, {"EXCAVATOR"}, {"NUTCRACKER"}},
         {{"CONEHEAD", "CONEHEAD"}, {"BUCKETHEAD"}, {"CONEHEAD", "CONEHEAD"}, {"BUCKETHEAD"}, {"CONEHEAD"}},
-        {{"BUCKETHEAD"}, {"BUCKETHEAD"}, {"NORMAL"}, {"BUCKETHEAD"}, {"BUCKETHEAD"}},
-        {{"BRICKHEAD"}, {"BUCKETHEAD"}, {"BUCKETHEAD"}, {"BUCKETHEAD"}, {"BRICKHEAD"}},
+        {{"EXCAVATOR"}, {"BUCKETHEAD"}, {"EXCAVATOR"}, {"BUCKETHEAD"}, {"BUCKETHEAD"}},
+        {{"BRICKHEAD"}, {"EXCAVATOR"}, {"BUCKETHEAD"}, {"BUCKETHEAD"}, {"BRICKHEAD"}},
         {
-            {"BRICKHEAD"}, 
-            {"BRICKHEAD", "BUCKETHEAD", "BRICKHEAD", "BUCKETHEAD", "BRICKHEAD", "BUCKETHEAD", "BRICKHEAD"}, 
+            {"EXCAVATOR"}, 
+            {"BRICKHEAD", "BUCKETHEAD", "BRICKHEAD", "BUCKETHEAD", "BRICKHEAD", "BUCKETHEAD", "NUTCRACKER"}, 
             null, 
             {"BUCKETHEAD", "BUCKETHEAD", "BRICKHEAD", "BRICKHEAD", "BUCKETHEAD", "BUCKETHEAD", "BRICKHEAD"}, 
-            {"BRICKHEAD"}
+            {"EXCAVATOR"}
         }
         
     };

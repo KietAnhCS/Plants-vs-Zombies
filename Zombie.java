@@ -15,24 +15,24 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
     public Plant target;
     public boolean eating = false;
 
-    protected boolean resetAnim  = false;
-    protected boolean spawnHead  = false;
+    protected boolean resetAnim = false;
+    protected boolean spawnHead = false;
     protected boolean finalDeath = false;
-    protected boolean fixAnim    = false;
-    protected boolean eatOnce    = false;
+    protected boolean fixAnim = false;
+    protected boolean eatOnce = false;
 
     public GreenfootImage[] headless, headlesseating, fall;
 
     public Zombie(ZombieConfig config) {
-        this.config    = config;
-        this.maxHp     = config.maxHp;
-        this.hp        = config.maxHp;
+        this.config = config;
+        this.maxHp = config.maxHp;
+        this.hp = config.maxHp;
         this.walkSpeed = config.walkSpeed;
-        this.eventBus  = new ZombieEventBus();
+        this.eventBus = new ZombieEventBus();
 
-        headless       = importSprites(ZombieAssets.SHARED_HEADLESS.path,      ZombieAssets.SHARED_HEADLESS.count);
+        headless = importSprites(ZombieAssets.SHARED_HEADLESS.path, ZombieAssets.SHARED_HEADLESS.count);
         headlesseating = importSprites(ZombieAssets.SHARED_HEADLESS_EAT.path, ZombieAssets.SHARED_HEADLESS_EAT.count);
-        fall           = importSprites(ZombieAssets.SHARED_FALL.path,          ZombieAssets.SHARED_FALL.count);
+        fall = importSprites(ZombieAssets.SHARED_FALL.path, ZombieAssets.SHARED_FALL.count);
     }
 
     @Override
@@ -62,7 +62,7 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
         this.hp -= dmg;
         eventBus.publishHit(this, dmg);
         if (this.hp <= 0) {
-            this.hp     = 0;
+            this.hp = 0;
             this.isAlive = false;
         }
     }
@@ -108,7 +108,6 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
         int currentX = getX();
         for (Plant p : myRow) {
             if (p == null || p.getWorld() == null || p.getHp() <= 0) continue;
-            
             if (currentX - p.getX() < 40 && currentX - p.getX() > 0) {
                 target = p;
                 return true;
@@ -144,6 +143,7 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
             removeFromRow();
             eventBus.publishDeath(this);
             target = null;
+            eating = false;
         }
 
         if (finalDeath) {
@@ -171,6 +171,7 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
 
             if (isAnimFinished || frame >= headless.length - 1) {
                 finalDeath = true;
+                frame = 0; 
             }
         }
     }
