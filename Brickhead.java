@@ -1,4 +1,5 @@
 import greenfoot.*;
+
 public class Brickhead extends Zombie {
     public GreenfootImage[] wNormal, wD1, wD2, wBare, wArmless;
     public GreenfootImage[] eNormal, eD1, eD2, eBare, eArmless;
@@ -73,5 +74,48 @@ public class Brickhead extends Zombie {
         if (currentHp > ZombieRegistry.BRICK_BARE) return isEating ? eD2 : wD2;
         if (!fallen) return isEating ? eBare : wBare;
         return isEating ? eArmless : wArmless;
+    }
+
+    @Override
+    protected void deathAnim() {
+        if (getWorld() == null) return;
+
+        if (!resetAnim) {
+            frame = 0;
+            resetAnim = true;
+            removeFromRow();
+            eventBus.publishDeath(this);
+            target = null;
+            eating = false;
+        }
+
+        if (finalDeath) {
+            if (!fixAnim) {
+                fixAnim = true;
+                AudioManager.playSound(80, false, "zombie_falling_1.mp3", "zombie_falling_2.mp3");
+                getWorld().addObject(new FallingZombie(fall), getX(), getY());
+                getWorld().removeObject(this);
+            }
+        } else {
+            if (!spawnHead) {
+                spawnHead = true;
+                AudioManager.getInstance().playSound(80, false, "limbs_pop.mp3");
+                getWorld().addObject(new Head(), getX() + 10, getY() - 20);
+            }
+
+            boolean isAnimFinished;
+            if (checkEating()) {
+                isAnimFinished = animate(headlesseating, 350, false);
+                playEating();
+            } else {
+                isAnimFinished = animate(headless, 350, false);
+                walk();
+            }
+
+            if (isAnimFinished || frame >= headless.length - 1) {
+                finalDeath = true;
+                frame = 0; 
+            }
+        }
     }
 }

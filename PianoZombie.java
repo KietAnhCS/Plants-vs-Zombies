@@ -6,8 +6,7 @@ public class PianoZombie extends Zombie {
     private boolean fallen = false;
     private boolean isCrushed = false;
     
-    private static final int SCALE_WIDTH = 110;
-    private static final int SCALE_HEIGHT = 110;
+    private GreenfootSound pianoSound = new GreenfootSound("pianozombiemusic.mp3");
     private int danceTimer = 0;
     private static final int DANCE_INTERVAL = 250; 
 
@@ -15,18 +14,30 @@ public class PianoZombie extends Zombie {
         super(ZombieConfig.PIANO);
         this.walkSpeed = (Greenfoot.getRandomNumber(6) + 22) / 100.0;
 
-        wNormal    = importSprites(ZombieAssets.PIANO_WALK.path,    ZombieAssets.PIANO_WALK.count);
-        wDamaged   = importSprites(ZombieAssets.PIANO_WALK_D1.path, ZombieAssets.PIANO_WALK_D1.count);
-        wCritical  = importSprites(ZombieAssets.PIANO_WALK_D2.path, ZombieAssets.PIANO_WALK_D2.count);
-        pianoDeath = importSprites(ZombieAssets.PIANO_DEATH.path,   ZombieAssets.PIANO_DEATH.count);
+        wNormal    = importSprites(ZombieAssets.PIANO_WALK.path,    ZombieAssets.PIANO_WALK.count, 0.45);
+        wDamaged   = importSprites(ZombieAssets.PIANO_WALK_D1.path, ZombieAssets.PIANO_WALK_D1.count, 0.45);
+        wCritical  = importSprites(ZombieAssets.PIANO_WALK_D2.path, ZombieAssets.PIANO_WALK_D2.count, 0.45);
+        pianoDeath = importSprites(ZombieAssets.PIANO_DEATH.path,   ZombieAssets.PIANO_DEATH.count, 0.45);
 
+        pianoSound.setVolume(30); 
         setState(new WalkingState(this));
+    }
+
+    @Override
+    public void addedToWorld(World world) {
+        super.addedToWorld(world);
+        pianoSound.playLoop();
     }
 
     @Override
     public void act() {
         if (getWorld() == null) return;
-        if (!getWorld().getObjects(Overlay.class).isEmpty()) return;
+        if (!getWorld().getObjects(Overlay.class).isEmpty()) {
+            if (pianoSound.isPlaying()) pianoSound.pause();
+            return;
+        } else {
+            if (!pianoSound.isPlaying() && isLiving()) pianoSound.playLoop();
+        }
 
         if (isLiving()) {
             handleCrushing();
@@ -37,7 +48,6 @@ public class PianoZombie extends Zombie {
             this.eating = false;
             walk();
             animate(getCurrentAnimation(false), 80, true);
-            if (getImage() != null) getImage().scale(SCALE_WIDTH, SCALE_HEIGHT);
         } else {
             deathAnim();
         }
@@ -106,18 +116,27 @@ public class PianoZombie extends Zombie {
     }
 
     @Override
-    public void deathAnim() {
-        if (!resetAnim) { frame = 0; resetAnim = true; }
+    protected void deathAnim() {
+        if (pianoSound.isPlaying()) pianoSound.stop();
+        
+        if (!resetAnim) { 
+            frame = 0; 
+            resetAnim = true; 
+            removeFromRow();
+            eventBus.publishDeath(this);
+            target = null;
+            eating = false;
+        }
+
         if (!isCrushed) {
-            animate(pianoDeath, 75, false);
-            if (getImage() != null) getImage().scale(SCALE_WIDTH, SCALE_HEIGHT);
-            if (frame >= pianoDeath.length - 1) {
+            if (animate(pianoDeath, 75, false) || frame >= pianoDeath.length - 1) {
                 isCrushed = true;
                 finalDeath = true;
-                removeFromRow();
             }
         } else {
-            if (getWorld() != null) getWorld().removeObject(this);
+            if (getWorld() != null) {
+                getWorld().removeObject(this);
+            }
         }
     }
 }

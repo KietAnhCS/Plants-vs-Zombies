@@ -1,4 +1,5 @@
 import greenfoot.*;
+
 public class Buckethead extends Zombie {
     public GreenfootImage[] wNormal, wD1, wD2, wBare, wArmless;
     public GreenfootImage[] eNormal, eD1, eD2, eBare, eArmless;
@@ -7,18 +8,19 @@ public class Buckethead extends Zombie {
 
     public Buckethead() {
         super(ZombieConfig.BUCKET);
+        this.walkSpeed = (Greenfoot.getRandomNumber(6) + 20) / 100.0;
 
         wNormal  = importSprites(ZombieAssets.BUCKET_WALK.path,          ZombieAssets.BUCKET_WALK.count);
         wD1      = importSprites(ZombieAssets.BUCKET_WALK_D1.path,       ZombieAssets.BUCKET_WALK_D1.count);
         wD2      = importSprites(ZombieAssets.BUCKET_WALK_D2.path,       ZombieAssets.BUCKET_WALK_D2.count);
-        wBare    = importSprites(ZombieAssets.SHARED_WALK_BARE.path,     ZombieAssets.SHARED_WALK_BARE.count);
-        wArmless = importSprites(ZombieAssets.SHARED_WALK_ARMLESS.path,  ZombieAssets.SHARED_WALK_ARMLESS.count);
+        wBare    = importSprites(ZombieAssets.SHARED_WALK_BARE.path,    ZombieAssets.SHARED_WALK_BARE.count);
+        wArmless = importSprites(ZombieAssets.SHARED_WALK_ARMLESS.path, ZombieAssets.SHARED_WALK_ARMLESS.count);
 
         eNormal  = importSprites(ZombieAssets.BUCKET_EAT.path,           ZombieAssets.BUCKET_EAT.count);
         eD1      = importSprites(ZombieAssets.BUCKET_EAT_D1.path,        ZombieAssets.BUCKET_EAT_D1.count);
         eD2      = importSprites(ZombieAssets.BUCKET_EAT_D2.path,        ZombieAssets.BUCKET_EAT_D2.count);
-        eBare    = importSprites(ZombieAssets.SHARED_EAT_BARE.path,      ZombieAssets.SHARED_EAT_BARE.count);
-        eArmless = importSprites(ZombieAssets.SHARED_EAT_ARMLESS.path,   ZombieAssets.SHARED_EAT_ARMLESS.count);
+        eBare    = importSprites(ZombieAssets.SHARED_EAT_BARE.path,     ZombieAssets.SHARED_EAT_BARE.count);
+        eArmless = importSprites(ZombieAssets.SHARED_EAT_ARMLESS.path,  ZombieAssets.SHARED_EAT_ARMLESS.count);
 
         setState(new WalkingState(this));
     }
@@ -40,22 +42,27 @@ public class Buckethead extends Zombie {
 
     @Override
     public void hit(int dmg) {
-        if (!isLiving()) return;
-        AudioManager.getInstance().playSound(80, false, bucket ? "shieldhit.mp3" : "splat.mp3");
-        int currentHp = getHp();
-        String path;
-        if (currentHp > ZombieRegistry.BUCKET_D1) {
-            path = (eating ? ZombieAssets.BUCKET_EAT : ZombieAssets.BUCKET_WALK).path;
-        } else if (currentHp > ZombieRegistry.BUCKET_D2) {
-            path = (eating ? ZombieAssets.BUCKET_EAT_D1 : ZombieAssets.BUCKET_WALK_D1).path;
-        } else if (currentHp > ZombieRegistry.BUCKET_BARE) {
-            path = (eating ? ZombieAssets.BUCKET_EAT_D2 : ZombieAssets.BUCKET_WALK_D2).path;
-        } else if (!fallen) {
-            path = (eating ? ZombieAssets.SHARED_EAT_BARE : ZombieAssets.SHARED_WALK_BARE).path;
-        } else {
-            path = (eating ? ZombieAssets.SHARED_EAT_ARMLESS : ZombieAssets.SHARED_WALK_ARMLESS).path;
+        if (getHp() <= 0 && !isLiving() && finalDeath) return;
+        if (isLiving()) {
+            AudioManager.getInstance().playSound(80, false, bucket ? "shieldhit.mp3" : "splat.mp3");
+            int currentHp = getHp();
+            ZombieAssets asset;
+            if (currentHp > ZombieRegistry.BUCKET_D1) {
+                asset = eating ? ZombieAssets.BUCKET_EAT : ZombieAssets.BUCKET_WALK;
+            } else if (currentHp > ZombieRegistry.BUCKET_D2) {
+                asset = eating ? ZombieAssets.BUCKET_EAT_D1 : ZombieAssets.BUCKET_WALK_D1;
+            } else if (currentHp > ZombieRegistry.BUCKET_BARE) {
+                asset = eating ? ZombieAssets.BUCKET_EAT_D2 : ZombieAssets.BUCKET_WALK_D2;
+            } else if (!fallen) {
+                asset = eating ? ZombieAssets.SHARED_EAT_BARE : ZombieAssets.SHARED_WALK_BARE;
+            } else {
+                asset = eating ? ZombieAssets.SHARED_EAT_ARMLESS : ZombieAssets.SHARED_WALK_ARMLESS;
+            }
+            hitFlash(asset.path);
+        } else if (!finalDeath) {
+            AudioManager.getInstance().playSound(80, false, "splat.mp3");
+            hitFlash((eating ? ZombieAssets.SHARED_HEADLESS_EAT : ZombieAssets.SHARED_HEADLESS).path);
         }
-        hitFlash(path);
         super.hit(dmg);
     }
 
@@ -67,6 +74,49 @@ public class Buckethead extends Zombie {
         if (currentHp > ZombieRegistry.BUCKET_BARE) return isEating ? eD2 : wD2;
         if (!fallen) return isEating ? eBare : wBare;
         return isEating ? eArmless : wArmless;
+    }
+
+    @Override
+    protected void deathAnim() {
+        if (getWorld() == null) return;
+
+        if (!resetAnim) {
+            frame = 0;
+            resetAnim = true;
+            removeFromRow();
+            eventBus.publishDeath(this);
+            target = null;
+            eating = false;
+        }
+
+        if (finalDeath) {
+            if (!fixAnim) {
+                fixAnim = true;
+                AudioManager.playSound(80, false, "zombie_falling_1.mp3", "zombie_falling_2.mp3");
+                getWorld().addObject(new FallingZombie(fall), getX(), getY());
+                getWorld().removeObject(this);
+            }
+        } else {
+            if (!spawnHead) {
+                spawnHead = true;
+                AudioManager.getInstance().playSound(80, false, "limbs_pop.mp3");
+                getWorld().addObject(new Head(), getX() + 10, getY() - 20);
+            }
+
+            boolean isAnimFinished;
+            if (checkEating()) {
+                isAnimFinished = animate(headlesseating, 350, false);
+                playEating();
+            } else {
+                isAnimFinished = animate(headless, 350, false);
+                walk();
+            }
+
+            if (isAnimFinished || frame >= headless.length - 1) {
+                finalDeath = true;
+                frame = 0; 
+            }
+        }
     }
 
     public boolean isArmless() {

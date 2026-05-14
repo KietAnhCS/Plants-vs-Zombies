@@ -18,24 +18,24 @@ public class SunZombie extends Zombie {
         if (sunSpawned || getWorld() == null) return;
         sunSpawned = true;
     
-        int count = 1; 
-        for (int i = 0; i < count; i++) {
-            SecretSun s = new SecretSun(); 
-            getWorld().addObject(s, getX(), getY());
-        }
+        SecretSun s = new SecretSun(); 
+        getWorld().addObject(s, getX(), getY());
         
         AudioManager.getInstance().playSound(80, false, "achievement.mp3");
-}
+    }
 
     @Override
     public void hit(int dmg) {
-        super.hit(dmg);
-        if (getHp() <= 0 && !sunSpawned) {
-            spawnSuns();
-        }
-
+        if (getHp() <= 0 && !isLiving() && finalDeath) return;
+        
         if (isLiving() || !finalDeath) {
             AudioManager.getInstance().playSound(80, false, "splat.mp3");
+        }
+        
+        super.hit(dmg);
+        
+        if (getHp() <= 0 && !sunSpawned) {
+            spawnSuns();
         }
     }
 
@@ -45,5 +45,48 @@ public class SunZombie extends Zombie {
     @Override
     public GreenfootImage[] getCurrentAnimation(boolean isEating) {
         return isEating ? eNormal : wNormal;
+    }
+
+    @Override
+    protected void deathAnim() {
+        if (getWorld() == null) return;
+
+        if (!resetAnim) {
+            frame = 0;
+            resetAnim = true;
+            removeFromRow();
+            eventBus.publishDeath(this);
+            target = null;
+            eating = false;
+        }
+
+        if (finalDeath) {
+            if (!fixAnim) {
+                fixAnim = true;
+                AudioManager.playSound(80, false, "zombie_falling_1.mp3", "zombie_falling_2.mp3");
+                getWorld().addObject(new FallingZombie(fall), getX(), getY());
+                getWorld().removeObject(this);
+            }
+        } else {
+            if (!spawnHead) {
+                spawnHead = true;
+                AudioManager.getInstance().playSound(80, false, "limbs_pop.mp3");
+                getWorld().addObject(new Head(), getX() + 10, getY() - 20);
+            }
+
+            boolean isAnimFinished;
+            if (checkEating()) {
+                isAnimFinished = animate(headlesseating, 350, false);
+                playEating();
+            } else {
+                isAnimFinished = animate(headless, 350, false);
+                walk();
+            }
+
+            if (isAnimFinished || frame >= headless.length - 1) {
+                finalDeath = true;
+                frame = 0; 
+            }
+        }
     }
 }

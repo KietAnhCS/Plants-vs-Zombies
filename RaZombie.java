@@ -2,8 +2,6 @@ import greenfoot.*;
 import java.util.List;
 
 public class RaZombie extends Zombie {
-    private static final int WIDTH = 120;
-    private static final int HEIGHT = 120;
     private static final int STEAL_COOLDOWN = 100;
     private static final int ANIM_STEAL_DELAY = 60;
 
@@ -22,20 +20,14 @@ public class RaZombie extends Zombie {
         super(ZombieConfig.RA);
         this.walkSpeed = (Greenfoot.getRandomNumber(6) + 22) / 100.0;
 
-        wNormal = importAndScale(ZombieAssets.RA_WALK, ZombieAssets.RA_WALK.count);
-        eNormal = importAndScale(ZombieAssets.RA_EAT, ZombieAssets.RA_EAT.count);
-        wDeath  = importAndScale(ZombieAssets.RA_DEATH, ZombieAssets.RA_DEATH.count);
-        sStart  = importAndScale(ZombieAssets.RA_POWER_START, ZombieAssets.RA_POWER_START.count);
-        sLoop   = importAndScale(ZombieAssets.RA_POWER_LOOP, ZombieAssets.RA_POWER_LOOP.count);
-        sEnd    = importAndScale(ZombieAssets.RA_POWER_END, ZombieAssets.RA_POWER_END.count);
+        wNormal = importSprites(ZombieAssets.RA_WALK.path, ZombieAssets.RA_WALK.count,0.45);
+        eNormal = importSprites(ZombieAssets.RA_EAT.path, ZombieAssets.RA_EAT.count,0.45);
+        wDeath  = importSprites(ZombieAssets.RA_DEATH.path, ZombieAssets.RA_DEATH.count,0.45);
+        sStart  = importSprites(ZombieAssets.RA_POWER_START.path, ZombieAssets.RA_POWER_START.count,0.45);
+        sLoop   = importSprites(ZombieAssets.RA_POWER_LOOP.path, ZombieAssets.RA_POWER_LOOP.count,0.45);
+        sEnd    = importSprites(ZombieAssets.RA_POWER_END.path, ZombieAssets.RA_POWER_END.count,0.45);
 
         setState(new WalkingState(this));
-    }
-
-    private GreenfootImage[] importAndScale(ZombieAssets asset, int count) {
-        GreenfootImage[] imgs = importSprites(asset.path, count);
-        for (GreenfootImage img : imgs) img.scale(WIDTH, HEIGHT);
-        return imgs;
     }
 
     @Override
@@ -48,7 +40,6 @@ public class RaZombie extends Zombie {
         }
 
         handleSliding();
-
         handleStealing();
 
         if (!isStealing) {
@@ -126,7 +117,6 @@ public class RaZombie extends Zombie {
             sunStolenCount++;
             getWorld().removeObject(targetSun);
             targetSun = null;
-            
             phase = StealPhase.END;
             frame = 0;
         }
