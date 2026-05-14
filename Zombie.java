@@ -192,6 +192,20 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
             }
         }
     }
+    public void forceChangeLane(int newY) {
+        removeFromRow();
+        setLocation(getX(), newY);
+        if (playScene != null && playScene.level != null) {
+            int newRow = getYPos();
+            if (newRow >= 0 && newRow < playScene.level.zombieRow.size()) {
+                playScene.level.zombieRow.get(newRow).add(this);
+            }
+        }
+    }
+    
+    protected void handleSliding() {
+        
+    }
     
     public GreenfootImage[] getDeadSprites() {
         return this.fall;

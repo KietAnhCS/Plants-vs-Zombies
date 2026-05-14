@@ -39,7 +39,11 @@ public class FallingSun extends FallingObject {
     }
 
     public void setBeingStolen(boolean stolen) { this.beingStolen = stolen; }
-
+    
+    public boolean isBeingStolen() { 
+        return this.beingStolen; 
+    }
+    
     public void collectSun() {
         PlayScene playScene = (PlayScene) getWorld();
         if (playScene != null) collectSun(playScene);

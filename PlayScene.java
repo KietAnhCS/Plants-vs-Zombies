@@ -188,7 +188,7 @@ public class PlayScene extends World {
 
     public boolean hasLost() {
         for (Zombie z : getObjects(Zombie.class)) {
-            if (z.getWorld() != null && z.getX() < 155) return true;
+            if (z.getWorld() != null && z.getX() < 100) return true;
         }
         return false;
     }
