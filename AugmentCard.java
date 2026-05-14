@@ -74,12 +74,10 @@ public class AugmentCard extends Actor {
                 int col = emptyCols.get(randomColIndex);
 
                 Plant p;
-                int r = rand.nextInt(4);
+                int r = rand.nextInt(2);
                 switch (r) {
-                    case 0: p = new BonkChoy(); break;
-                    case 1: p = new GatlingPea(); break;
-                    case 2: p = new GatlingPea2(); break;
-                    case 3: p = new BonkChoy2(); break;
+                    case 0: p = new Repeater(); break;
+                    case 1: p = new BonkChoy2(); break;
                     default: p = new Peashooter(); break;
                 }
         

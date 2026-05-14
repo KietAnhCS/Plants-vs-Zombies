@@ -2,6 +2,8 @@ import greenfoot.*;
 import java.util.*;
 
 public class PlayScene extends World {
+    private List<Merger> activeMergers = new ArrayList<>();
+    
     private long lastFPSTime = System.currentTimeMillis();
     private int frameCount = 0;
     private int currentFPS = 0;
@@ -29,7 +31,6 @@ public class PlayScene extends World {
     private WinLossHandler winLossHandler;
     private DebugHandler debugHandler;
     private UpgradeManager upgradeManager;
-    private List<Merger> activeMergers = new ArrayList<>();
     private boolean isPlaying = false;
 
     private boolean isMenuOpen = false;
@@ -69,15 +70,9 @@ public class PlayScene extends World {
 
     public WaveManager getWaveManager() { return level; }
 
+    @Override
     public void act() {
-        String key = Greenfoot.getKey();
-        if ("escape".equals(key)) {
-            if (!isMenuOpen) {
-                openSettingsMenu();
-            } else {
-                closeSettingsMenu();
-            }
-        }
+        handleKeyboard();
 
         if (isGameOver || isPaused) return; 
 
@@ -89,51 +84,53 @@ public class PlayScene extends World {
             level.startLevel();
         }
         
-        musicController.update();
-        sunSpawner.update();
-        winLossHandler.update();
-        debugHandler.update();
+        updateSystems();
         updateMergers();
         drawWaveUI();
     }
 
-    public void openSettingsMenu() {
-        if (!isMenuOpen) {
-            isPaused = true; 
-            
-            int centerX = getWidth() / 2;
-            int centerY = getHeight() / 2;
-            
-            SettingsMenuPanel panel = new SettingsMenuPanel();
-            addObject(panel, centerX, centerY);
-            
-            int panelHeight = panel.getImage().getHeight();
-            int panelTopY = centerY - panelHeight / 2; 
-
-            int bgmDrawY = 120; 
-            int sfxDrawY = 220; 
-            
-            int bgmAbsY = panelTopY + bgmDrawY;
-            int sfxAbsY = panelTopY + sfxDrawY;
-
-            addObject(new SliderBar("BGM"), centerX + 40, bgmAbsY);
-            addObject(new SliderBar("SFX"), centerX + 40, sfxAbsY);
-            addObject(new SettingsResumeButton(), centerX, centerY + 190); 
-            
-            isMenuOpen = true;
+    private void handleKeyboard() {
+        String key = Greenfoot.getKey();
+        if ("escape".equals(key)) {
+            if (!isMenuOpen) openSettingsMenu();
+            else closeSettingsMenu();
         }
     }
 
+    private void updateSystems() {
+        if (musicController != null) musicController.update();
+        if (sunSpawner != null) sunSpawner.update();
+        if (winLossHandler != null) winLossHandler.update();
+        if (debugHandler != null) debugHandler.update();
+    }
+
+    public void openSettingsMenu() {
+        if (isMenuOpen) return;
+        isPaused = true; 
+        int centerX = getWidth() / 2;
+        int centerY = getHeight() / 2;
+        
+        SettingsMenuPanel panel = new SettingsMenuPanel();
+        addObject(panel, centerX, centerY);
+        
+        int panelTopY = centerY - panel.getImage().getHeight() / 2; 
+        
+        addObject(new SliderBar("BGM"), centerX + 40, panelTopY + 120);
+        addObject(new SliderBar("SFX"), centerX + 40, panelTopY + 220);
+        addObject(new SettingsResumeButton(), centerX, centerY + 190); 
+        
+        isMenuOpen = true;
+    }
+    
     public void closeSettingsMenu() {
-        if (isMenuOpen) {
-            removeObjects(getObjects(SettingsMenuPanel.class));
-            removeObjects(getObjects(SliderBar.class));
-            removeObjects(getObjects(SliderKnob.class)); 
-            removeObjects(getObjects(SettingsResumeButton.class));
-            
-            isPaused = false; 
-            isMenuOpen = false;
-        }
+        if (!isMenuOpen) return;
+        removeObjects(getObjects(SettingsMenuPanel.class));
+        removeObjects(getObjects(SliderBar.class));
+        removeObjects(getObjects(SliderKnob.class)); 
+        removeObjects(getObjects(SettingsResumeButton.class));
+        
+        isPaused = false; 
+        isMenuOpen = false;
     }
 
     public PlantFactory getPlantFactory() { return PlantFactory.getInstance(); }
@@ -190,8 +187,7 @@ public class PlayScene extends World {
     }
 
     public boolean hasLost() {
-        List<Zombie> zombies = getObjects(Zombie.class);
-        for (Zombie z : zombies) {
+        for (Zombie z : getObjects(Zombie.class)) {
             if (z.getWorld() != null && z.getX() < 155) return true;
         }
         return false;
@@ -230,18 +226,25 @@ public class PlayScene extends World {
         }
     }
 
-    public void addActiveMerger(Merger m) { activeMergers.add(m); }
+    public void addActiveMerger(Merger m) {
+        activeMergers.add(m);
+    }
 
     public void moveHitbox() {
         MouseInfo m = Greenfoot.getMouseInfo();
         if (m != null) hitbox.setLocation(m.getX(), m.getY());
     }
 
+    private final int[][] lawnmowerCoords = {{240,180}, {236,240}, {225,295}, {220,360}, {190,420}};
+
     private void prepareLawnmowers() {
-        int[][] coords = {{240,180}, {236,240}, {225,295}, {220,360}, {190,420}};
-        for (int[] c : coords) {
+        for (int[] c : lawnmowerCoords) {
             addObject(new Lawnmower(), c[0], c[1]);
         }
+    }
+    
+    public void respawnLawnmower(int x, int y) {
+        addObject(new Lawnmower(), x, y);
     }
 
     private void drawWaveUI() {
@@ -261,24 +264,25 @@ public class PlayScene extends World {
         
         canvas.setColor(new Color(0, 0, 0, 160));
         canvas.fillRect(24, 84, 140, 65);
-        
         canvas.setColor(Color.WHITE);
         canvas.drawRect(24, 84, 140, 65);
         
         canvas.setFont(new Font("Courier New", true, false, 20));
-        
         canvas.setColor(new Color(0, 191, 255));
         canvas.drawString(waveText, 40, 107);
-        
         canvas.setColor(Color.GREEN); 
         canvas.drawString(fpsText, 40, 135); 
     }
 
     public List<Merger> getActiveMergers() { return activeMergers; }
 
+    @Override
     public void started() { 
         if (!isGameOver && musicController != null) musicController.update(); 
     }
 
-    public void stopped() { AudioManager.stopBGM(); }
+    @Override
+    public void stopped() { 
+        AudioManager.stopBGM(); 
+    }
 }

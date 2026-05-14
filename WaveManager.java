@@ -1,31 +1,18 @@
 import greenfoot.*;
 import java.util.*;
 
-/**
- * WaveManager — updated with TFT-style prep / battle / countdown phases.
- *
- * Phase flow per wave:
- *   PREP (5 s)  →  BATTLE  →  [all clear + sun]  →  COUNTDOWN (5 s)  →  PREP …
- *
- * During PREP and COUNTDOWN the player may drag/drop and merge all plants.
- * During BATTLE only bench row (row 5) allows drag/drop; rows 0-4 are locked.
- */
 public class WaveManager extends Actor {
 
-    // ── existing wave-state machine (internal transport between launch steps) ──
     private WaveState currentState = WaveState.BATTLE;
     private long stateTimer = 0;
     private long lastClearTime = 0;
     private int winDelayCounter = 0;
 
-    // ── new TFT-style phase ────────────────────────────────────────────────────
     private BattlePhase battlePhase = BattlePhase.PREP;
-    /** Timestamp when the current PREP or COUNTDOWN phase started (ms). */
     private long phaseStartTime = 0;
-    /** Duration of both PREP and COUNTDOWN windows, in milliseconds. */
-    private static final long PREP_DURATION_MS = 5_000L;
+    private static final long PREP_DURATION_MS = 10000L;
+    private static final long COUNTDOWN_DURATION_MS = 3000L;
 
-    // ── level data ─────────────────────────────────────────────────────────────
     public String[][][] levelData;
     public long waveTime;
     public long firstWave;
@@ -44,19 +31,19 @@ public class WaveManager extends Actor {
     public PlayScene playScene;
     public static final int xOffset = 950;
 
-    // ── countdown UI actor (owned by this manager) ─────────────────────────────
     private PrepCountdown countdownUI = null;
 
-    // ══════════════════════════════════════════════════════════════════════════
+    private final Map<String, Integer> lawnmowerActivatedWave = new HashMap<>();
+
     public WaveManager(long waveTime, String[][][] levelData,
                        long firstWave, boolean startAsFirst,
                        int daveWave, int... hugeWaves) {
-        this.waveTime   = waveTime;
-        this.levelData  = levelData;
-        this.firstWave  = firstWave;
+        this.waveTime    = waveTime;
+        this.levelData   = levelData;
+        this.firstWave   = firstWave;
         this.isFirstWave = startAsFirst;
-        this.daveWave   = daveWave;
-        this.hugeWaves  = hugeWaves;
+        this.daveWave    = daveWave;
+        this.hugeWaves   = hugeWaves;
         for (int i = 0; i < 6; i++) {
             spawnQueues.add(new ArrayList<>());
             zombieRow.add(new ArrayList<>());
@@ -64,43 +51,31 @@ public class WaveManager extends Actor {
         }
     }
 
-    // ── public phase accessors used by PlantInputHandler / GridManager ─────────
-    /** Whether the player is currently allowed to drag-drop plants at all. */
     public BattlePhase getBattlePhase() { return battlePhase; }
 
-    /**
-     * Called by PlantInputHandler to decide if dragging a given plant is legal.
-     *  - PREP / COUNTDOWN : all cells allowed.
-     *  - BATTLE           : only plants on bench row (row == 5) may be moved.
-     */
     public boolean canDragPlant(Plant plant) {
-        if (battlePhase == BattlePhase.PREP || battlePhase == BattlePhase.COUNTDOWN) {
-            return true;
-        }
-        // BATTLE: only bench row
+        if (battlePhase == BattlePhase.PREP || battlePhase == BattlePhase.COUNTDOWN) return true;
         return plant.getYPos() == 5;
     }
 
-    /**
-     * Called by PlantCombineHandler / merge logic to check if combining is OK.
-     *  - PREP / COUNTDOWN : anywhere.
-     *  - BATTLE           : only bench row.
-     */
     public boolean canMerge(Plant plant) {
         return canDragPlant(plant);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
+    public void trackLawnmowerUsed(int spawnX, int spawnY) {
+        String key = spawnX + "," + spawnY;
+        if (!lawnmowerActivatedWave.containsKey(key)) {
+            lawnmowerActivatedWave.put(key, wave);
+        }
+    }
+
     public void startLevel() {
         wave = 0;
         AudioManager.getInstance().playSound(80, false, "readysetplant.mp3");
         if (getWorld() != null) getWorld().addObject(new ReadySetPlant(), 620, 295);
-
-        // Begin first prep window
         enterPrep();
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
     @Override
     public void act() {
         if (playScene == null) playScene = (PlayScene) getWorld();
@@ -112,17 +87,13 @@ public class WaveManager extends Actor {
 
         long now = System.currentTimeMillis();
 
-        // ── Phase tick ───────────────────────────────────────────────────────
         switch (battlePhase) {
-
             case PREP:
-                // Update the countdown HUD
                 if (countdownUI != null) {
                     long elapsed = now - phaseStartTime;
                     int secsLeft = (int) Math.ceil((PREP_DURATION_MS - elapsed) / 1000.0);
                     countdownUI.setSeconds(Math.max(0, secsLeft));
                 }
-                // When prep timer expires, launch the wave
                 if (now - phaseStartTime >= PREP_DURATION_MS) {
                     removeCountdownUI();
                     launchWave();
@@ -131,18 +102,16 @@ public class WaveManager extends Actor {
                 break;
 
             case BATTLE:
-                // Original wave-state machine runs here
                 handleBattleState(now);
                 break;
 
             case COUNTDOWN:
-                // Post-wave 5-second window
                 if (countdownUI != null) {
                     long elapsed = now - phaseStartTime;
-                    int secsLeft = (int) Math.ceil((PREP_DURATION_MS - elapsed) / 1000.0);
+                    int secsLeft = (int) Math.ceil((COUNTDOWN_DURATION_MS - elapsed) / 1000.0);
                     countdownUI.setSeconds(Math.max(0, secsLeft));
                 }
-                if (now - phaseStartTime >= PREP_DURATION_MS) {
+                if (now - phaseStartTime >= COUNTDOWN_DURATION_MS) {
                     removeCountdownUI();
                     enterPrep();
                 }
@@ -150,27 +119,20 @@ public class WaveManager extends Actor {
         }
     }
 
-    // ── Internal wave-state machine (only runs during BATTLE phase) ───────────
     private void handleBattleState(long now) {
         switch (currentState) {
-
             case BATTLE:
                 if (choosingCard) return;
-
                 if (allClear()) {
                     if (lastClearTime == 0) lastClearTime = now;
-
                     if (now - lastClearTime >= 5000 || wave >= levelData.length) {
-
                         if (wave >= levelData.length) {
                             if (!finishedSending) {
                                 finishedSending = true;
                                 playScene.addObject(new WaveNotification(true), 360, 215);
                             }
                             winDelayCounter++;
-                            if (winDelayCounter > 150) {
-                                Greenfoot.setWorld(new VictoryScreen());
-                            }
+                            if (winDelayCounter > 150) Greenfoot.setWorld(new VictoryScreen());
                             return;
                         } else {
                             lastClearTime = 0;
@@ -185,9 +147,7 @@ public class WaveManager extends Actor {
 
             case WAITING_FOR_REWARD:
                 if (now - stateTimer >= 3000) {
-                    if (wave > 0) {
-                        playScene.addObject(new Sun(300, true), 900, 300);
-                    }
+                    if (wave > 0) playScene.addObject(new Sun(300, true), 900, 300);
                     stateTimer = now;
                     currentState = WaveState.WAITING_FOR_DAVE;
                 }
@@ -202,7 +162,6 @@ public class WaveManager extends Actor {
                         triggerCardSelection();
                         currentState = WaveState.SELECTING_AUGMENT;
                     } else {
-                        // No special event → start countdown before next wave
                         enterCountdown();
                     }
                 }
@@ -215,12 +174,10 @@ public class WaveManager extends Actor {
                 }
                 break;
 
-            // These two states pause everything; resumed externally
             case DAVE_TALKING:
             case SELECTING_AUGMENT:
                 break;
 
-            // Legacy prep state — should not occur in new flow, kept for safety
             case PREPARING_NEXT_WAVE:
                 long delay = (isFirstWave ? firstWave : 3000L);
                 if (now - stateTimer >= delay) {
@@ -235,12 +192,10 @@ public class WaveManager extends Actor {
         }
     }
 
-    // ── Phase transitions ─────────────────────────────────────────────────────
-    /** Enter the 5-second PREP window (before a wave launches). */
     private void enterPrep() {
         battlePhase = BattlePhase.PREP;
         phaseStartTime = System.currentTimeMillis();
-        currentState = WaveState.PREPARING_NEXT_WAVE; // keeps legacy compat
+        currentState = WaveState.PREPARING_NEXT_WAVE;
         spawnCountdownUI("PREP PHASE");
         if (isFirstWave) {
             AudioManager.getInstance().playSound(80, false, "awooga.mp3");
@@ -248,19 +203,19 @@ public class WaveManager extends Actor {
         }
     }
 
-    /** Enter the 5-second COUNTDOWN window (after wave is cleared + reward shown). */
     private void enterCountdown() {
         battlePhase = BattlePhase.COUNTDOWN;
         phaseStartTime = System.currentTimeMillis();
         spawnCountdownUI("NEXT WAVE IN");
     }
 
-    // ── Countdown HUD helpers ─────────────────────────────────────────────────
     private void spawnCountdownUI(String label) {
         removeCountdownUI();
         if (getWorld() != null) {
-            countdownUI = new PrepCountdown(label, (int)(PREP_DURATION_MS / 1000));
-            // Place the UI in a visible but non-intrusive corner (top-right area)
+            int secs = (battlePhase == BattlePhase.COUNTDOWN)
+                ? (int)(COUNTDOWN_DURATION_MS / 1000)
+                : (int)(PREP_DURATION_MS / 1000);
+            countdownUI = new PrepCountdown(label, secs);
             getWorld().addObject(countdownUI, 980, 60);
         }
     }
@@ -272,18 +227,34 @@ public class WaveManager extends Actor {
         countdownUI = null;
     }
 
-    // ── Wave launch ───────────────────────────────────────────────────────────
     private void launchWave() {
         if (wave >= 0 && wave < levelData.length) {
             spawnZombies(levelData[wave]);
             playScene.addObject(new WaveNotification(wave == levelData.length - 1), 360, 215);
             wave++;
+            checkLawnmowerRespawn();
             currentState = WaveState.BATTLE;
             lastClearTime = 0;
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
+    private void checkLawnmowerRespawn() {
+        if (playScene == null) return;
+        List<String> toRespawn = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : lawnmowerActivatedWave.entrySet()) {
+            if (wave - entry.getValue() >= 2) {
+                toRespawn.add(entry.getKey());
+            }
+        }
+        for (String key : toRespawn) {
+            lawnmowerActivatedWave.remove(key);
+            String[] parts = key.split(",");
+            int x = Integer.parseInt(parts[0]);
+            int y = Integer.parseInt(parts[1]);
+            playScene.addObject(new Lawnmower(), x, y);
+        }
+    }
+
     private boolean isHugeWave(int idx) {
         for (int h : hugeWaves) if (h == idx) return true;
         return false;
@@ -355,7 +326,6 @@ public class WaveManager extends Actor {
         AudioManager.getInstance().playSound(70, false, "hugewave.mp3");
     }
 
-    // ── External callbacks ────────────────────────────────────────────────────
     public void onDaveFinished() {
         stateTimer = System.currentTimeMillis();
         currentState = WaveState.WAITING_FOR_AUGMENT;
@@ -365,7 +335,6 @@ public class WaveManager extends Actor {
         playScene.removeObjects(playScene.getObjects(Overlay.class));
         playScene.removeObjects(playScene.getObjects(AugmentCard.class));
         choosingCard = false;
-        // After augment/card selection, enter countdown (not prep directly)
         enterCountdown();
     }
 

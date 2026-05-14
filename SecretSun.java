@@ -11,7 +11,6 @@ public class SecretSun extends FallingObject {
     private boolean hasFinishedFalling = false;
 
     public SecretSun() {
-        // Mặc định rơi với các thông số vật lý từ FallingObject
         super(-3.5, 0.15, (Greenfoot.getRandomNumber(3) - 1), 1, 800L);
         sprites = importSprites("srsun", 2);
     }
@@ -37,7 +36,6 @@ public class SecretSun extends FallingObject {
         animate(sprites, 200, true);
 
         if (!pickedUp) {
-            // Kiểm tra va chạm với ThuyThan (người chơi) để thu thập
             if (isTouching(ThuyThan.class)) {
                 collect();
             } else {
@@ -68,9 +66,8 @@ public class SecretSun extends FallingObject {
     private void spawnPlantsAtRowFive(PlayScene world) {
         GridManager gm = world.GridManager;
         List<Integer> emptyCols = new ArrayList<>();
-        int targetRow = 5; // Hàng 5 theo yêu cầu
+        int targetRow = 5; 
 
-        // 1. Tìm các cột còn trống ở hàng 5
         for (int c = 0; c < 9; c++) {
             if (gm.Board[targetRow][c] == null) {
                 emptyCols.add(c);
@@ -82,17 +79,15 @@ public class SecretSun extends FallingObject {
             Random rand = new Random();
 
             Supplier<Plant> randomPlant = () -> {
-                int r = Greenfoot.getRandomNumber(4); 
+                int r = Greenfoot.getRandomNumber(2); 
                 switch (r) {
                     case 0: return new Peashooter();
                     case 1: return new Cactus();
-                    case 2: return new Repeater();
-                    case 3: return new BonkChoy();
                     default: return new Peashooter();
                 }
             };
 
-            int amountToSpawn = Math.min(2, emptyCols.size());
+            int amountToSpawn = 1;
             for (int i = 0; i < amountToSpawn; i++) {
                 int col = emptyCols.get(i);
                 Plant p = randomPlant.get();

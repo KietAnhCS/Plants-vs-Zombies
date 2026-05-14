@@ -4,7 +4,6 @@ public abstract class Plant extends SpriteAnimator {
     public boolean isDragging = false;
     public boolean opaque = false;
     public boolean isMerging = false;
-    public boolean isTarget = false;
     protected Plant targetPlant = null;
 
     private int hp;
@@ -20,8 +19,9 @@ public abstract class Plant extends SpriteAnimator {
 
     protected int currentGridX;
     protected int currentGridY;
-
     private int lastAlpha = -1;
+
+    private int arrivedMergers = 0;
 
     public int getHp() { return hp; }
     public int getMaxHp() { return maxHp; }
@@ -45,15 +45,51 @@ public abstract class Plant extends SpriteAnimator {
         this.eventBus = eventBus;
     }
 
+    public void notifyMergerArrived() {
+        arrivedMergers++;
+        if (arrivedMergers >= 2) {
+            arrivedMergers = 0;
+            finalizeUpgrade();
+        }
+    }
+
+    private void finalizeUpgrade() {
+        if (!(getWorld() instanceof PlayScene)) return;
+        PlayScene scene = (PlayScene) getWorld();
+
+        Plant upgraded = UpgradeManager.getUpgradeResult(this);
+        if (upgraded == null) {
+            setState(PlantState.IDLE);
+            return;
+        }
+
+        int gx = currentGridX;
+        int gy = currentGridY;
+        int px = getX();
+        int py = getY();
+
+        if (scene.GridManager != null) scene.GridManager.removePlant(gx, gy);
+        
+        upgraded.setGridPosition(gx, gy);
+        upgraded.setState(PlantState.IDLE);
+        
+        scene.addObject(upgraded, px, py);
+        if (scene.GridManager != null) scene.GridManager.placePlant(gx, gy, upgraded);
+        scene.addObject(new Dirt(), px, py + 30);
+        
+        scene.removeObject(this);
+    }
+
     public void setMergingTarget(Plant target) {
         if (target == null || target == this) return;
         this.targetPlant = target;
         this.isMerging = true;
+        this.setState(PlantState.MERGING);
 
         if (getWorld() instanceof PlayScene) {
             PlayScene scene = (PlayScene) getWorld();
             if (scene.GridManager != null) {
-                scene.GridManager.Board[currentGridY][currentGridX] = null;
+                scene.GridManager.removePlant(currentGridX, currentGridY);
             }
         }
     }
@@ -63,31 +99,23 @@ public abstract class Plant extends SpriteAnimator {
         super.addedToWorld(world);
         if (world instanceof PlayScene) {
             PlayScene scene = (PlayScene) world;
-
             if (this.eventBus == null && scene.getUpgradeManager() != null) {
                 this.eventBus = scene.getUpgradeManager().getEventBus();
             }
-
             this.inputHandler = new PlantInputHandler(this);
             this.stateManager = new PlantStateManager(this);
             this.combatHandler = new PlantCombatHandler(this);
-
             syncGridPosition();
-
-            if (!isMerging) {
+            if (!isMerging && state != PlantState.MERGING) {
                 scene.addObject(new Dirt(), getX(), getY() + 30);
             }
-
-            if (state == null) {
-                setState(PlantState.IDLE);
-            }
+            if (state == null) setState(PlantState.IDLE);
         }
     }
 
     @Override
     public void act() {
         if (getWorld() == null) return;
-
         updateTransparency();
 
         if (isMerging && targetPlant != null) {
@@ -97,7 +125,6 @@ public abstract class Plant extends SpriteAnimator {
 
         if (stateManager != null) stateManager.update();
         if (inputHandler != null) inputHandler.handleMouse();
-
         if (stateManager != null && stateManager.canAct() && isLiving() && !isDragging) {
             update();
         }
@@ -116,34 +143,31 @@ public abstract class Plant extends SpriteAnimator {
     protected void handleMergeMovement() {
         if (targetPlant == null || targetPlant.getWorld() == null) {
             isMerging = false;
+            setState(PlantState.IDLE);
             return;
         }
-    
-        double tx = targetPlant.getExactX();
-        double ty = targetPlant.getExactY();
-        double sx = getExactX();
-        double sy = getExactY();
-        double dx = tx - sx;
-        double dy = ty - sy;
+        
+        double dx = targetPlant.getExactX() - getExactX();
+        double dy = targetPlant.getExactY() - getExactY();
         double distance = Math.sqrt(dx * dx + dy * dy);
-    
+        
         if (distance <= 15) {
             if (getWorld() instanceof PlayScene) {
                 PlayScene scene = (PlayScene) getWorld();
-                scene.addActiveMerger(new Merger(this, targetPlant, scene.getUpgradeManager()));
+                scene.addActiveMerger(new Merger(this, targetPlant));
             }
-            getWorld().removeObject(this);
+            isMerging = false;
             return;
         }
-    
+        
         double speed = 15.0;
-        setLocation(sx + (dx / distance) * speed, sy + (dy / distance) * speed);
+        setLocation(getExactX() + (dx / distance) * speed, getExactY() + (dy / distance) * speed);
     }
 
     public abstract void update();
 
     public void hit(int dmg) {
-        if (!isLiving() || isDragging || isMerging) return;
+        if (!isLiving() || isDragging || isMerging || state == PlantState.MERGING) return;
         this.hp -= dmg;
         onHit(dmg);
         if (this.hp <= 0) {
@@ -159,18 +183,12 @@ public abstract class Plant extends SpriteAnimator {
     protected void onDeath() {
         setState(PlantState.DYING);
         if (eventBus != null) eventBus.publishDeath(this);
-
         if (getWorld() instanceof PlayScene) {
             PlayScene scene = (PlayScene) getWorld();
-            if (scene.GridManager != null) {
-                scene.GridManager.removePlant(currentGridX, currentGridY);
-            }
+            if (scene.GridManager != null) scene.GridManager.removePlant(currentGridX, currentGridY);
         }
-
         if (combatHandler != null) combatHandler.die();
-        if (getWorld() != null) {
-            getWorld().removeObject(this);
-        }
+        if (getWorld() != null) getWorld().removeObject(this);
     }
 
     public void syncGridPosition() {
@@ -186,13 +204,6 @@ public abstract class Plant extends SpriteAnimator {
 
     public int getXPos() { return currentGridX; }
     public int getYPos() { return currentGridY; }
-
-    public boolean isLiving() {
-        return hp > 0 && getWorld() != null && state != PlantState.DYING;
-    }
-
-    public void setGridPosition(int gx, int gy) {
-        this.currentGridX = gx;
-        this.currentGridY = gy;
-    }
+    public boolean isLiving() { return hp > 0 && getWorld() != null && state != PlantState.DYING; }
+    public void setGridPosition(int gx, int gy) { this.currentGridX = gx; this.currentGridY = gy; }
 }

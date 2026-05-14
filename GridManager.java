@@ -9,7 +9,7 @@ public class GridManager extends Actor implements IPlantPlacer {
 
     private final int HEX_R = 40;
     private final int COLS = 9;
-    private final int ROWS = 6; 
+    private final int ROWS = 6;
     private final int ORIGIN_X = 285;
     private final int ORIGIN_Y = 200;
     private final double HEX_W = HEX_R * Math.sqrt(3);
@@ -33,7 +33,7 @@ public class GridManager extends Actor implements IPlantPlacer {
 
     public int getCurrentPlantCount() {
         int count = 0;
-        for (int r = 0; r <= 4; r++) { 
+        for (int r = 0; r <= 4; r++) {
             for (int c = 0; c < COLS; c++) {
                 if (Board[r][c] != null) count++;
             }
@@ -42,7 +42,7 @@ public class GridManager extends Actor implements IPlantPlacer {
     }
 
     public int getMaxCapacity() {
-        return playerLevel + 1 + bonusSlots;
+        return playerLevel + 4 + bonusSlots;
     }
 
     public boolean canPlace(int x, int y, Plant plant) {
@@ -63,7 +63,7 @@ public class GridManager extends Actor implements IPlantPlacer {
                 }
             }
             if (!isAlreadyInCombatZone && getCurrentPlantCount() >= getMaxCapacity()) {
-                return false; 
+                return false;
             }
         }
         return true;
@@ -76,9 +76,11 @@ public class GridManager extends Actor implements IPlantPlacer {
             return false;
         }
 
-        for (int r = 0; r < ROWS; r++)
-            for (int c = 0; c < COLS; c++)
+        for (int r = 0; r < ROWS; r++) {
+            for (int c = 0; c < COLS; c++) {
                 if (Board[r][c] == plant) Board[r][c] = null;
+            }
+        }
 
         Board[y][x] = plant;
         plant.setGridPosition(x, y);
@@ -128,24 +130,28 @@ public class GridManager extends Actor implements IPlantPlacer {
         if (dragging != null || prep) {
             drawFullGrid(canvas);
         }
+
+        int checkRate = prep ? 5 : 20;
+        if (Greenfoot.getRandomNumber(checkRate) == 0) {
+            autoCheckAllCombines();
+        }
+
         if (prep) {
             drawZombieWarning(canvas);
         }
+
         if (dragging != null) {
             drawGridHighlights(canvas, dragging);
-        }
-        
-        if (Greenfoot.getRandomNumber(30) == 0) {
-            autoCheckAllCombines();
         }
     }
 
     private void autoCheckAllCombines() {
         if (!(getWorld() instanceof PlayScene)) return;
-        for (int r = 0; r <= 4; r++) {
-            for (int c = 0; c < COLS; c++) {
+        
+        for (int r = 0; r < 6; r++) {
+            for (int c = 0; c < 9; c++) {
                 Plant p = Board[r][c];
-                if (p != null) {
+                if (p != null && p.getState() == PlantState.IDLE) {
                     PlantCombineHandler.checkAndCombine((PlayScene) getWorld(), p);
                 }
             }
@@ -294,7 +300,7 @@ public class GridManager extends Actor implements IPlantPlacer {
 
     public int[] getGridPos(int mx, int my) {
         int bestX = -1, bestY = -1;
-        double minD = 50.0; 
+        double minD = 50.0;
         for (int r = 0; r < ROWS; r++) {
             for (int c = 0; c < COLS; c++) {
                 double d = Math.hypot(mx - getXCoord(c, r), my - getYCoord(c, r));
@@ -333,7 +339,7 @@ public class GridManager extends Actor implements IPlantPlacer {
             Board[y][x] = null;
         }
     }
-    
+
     public void removePlantFromBoard(Plant plant) {
         for (int r = 0; r < ROWS; r++) {
             for (int c = 0; c < COLS; c++) {
