@@ -17,6 +17,8 @@ public class GridManager extends Actor implements IPlantPlacer {
     private final double STEP_X = HEX_W;
     private final double STEP_Y = HEX_H * 0.75;
 
+    private int blinkTick = 0;
+
     public GridManager() {
         GreenfootImage img = new GreenfootImage(1111, 698);
         setImage(img);
@@ -45,7 +47,11 @@ public class GridManager extends Actor implements IPlantPlacer {
 
     public boolean canPlace(int x, int y, Plant plant) {
         if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return false;
-        
+
+        if (isBattlePhase() && y < 5) {
+            return Board[y][x] == plant;
+        }
+
         Plant target = Board[y][x];
         if (target != null && target != plant) return false;
 
@@ -113,10 +119,19 @@ public class GridManager extends Actor implements IPlantPlacer {
     public void act() {
         GreenfootImage canvas = getImage();
         canvas.clear();
+        blinkTick++;
         drawStatus(canvas);
+
+        boolean prep = isPrepOrCountdownPhase();
         Actor dragging = getDraggingActor();
-        if (dragging != null) {
+
+        if (dragging != null || prep) {
             drawFullGrid(canvas);
+        }
+        if (prep) {
+            drawZombieWarning(canvas);
+        }
+        if (dragging != null) {
             drawGridHighlights(canvas, dragging);
         }
         
@@ -155,11 +170,63 @@ public class GridManager extends Actor implements IPlantPlacer {
     }
 
     private void drawFullGrid(GreenfootImage canvas) {
+        boolean battle = isBattlePhase();
         for (int r = 0; r < ROWS; r++) {
-            canvas.setColor(r == 5 ? new Color(255, 255, 255, 40) : new Color(100, 180, 255, 60));
+            if (r == 5) {
+                canvas.setColor(new Color(255, 255, 255, 40));
+            } else if (battle) {
+                canvas.setColor(new Color(180, 60, 60, 50));
+            } else {
+                canvas.setColor(new Color(100, 180, 255, 60));
+            }
             for (int c = 0; c < COLS; c++) {
                 drawHexagon(canvas, getXCoord(c, r), getYCoord(c, r));
             }
+        }
+    }
+
+    private void drawZombieWarning(GreenfootImage canvas) {
+        if (!(getWorld() instanceof PlayScene)) return;
+        PlayScene scene = (PlayScene) getWorld();
+        WaveManager wm = scene.getWaveManager();
+        if (wm == null) return;
+
+        int nextWave = wm.wave;
+        if (nextWave < 0 || nextWave >= wm.levelData.length) return;
+
+        String[][] waveData = wm.levelData[nextWave];
+        if (waveData == null) return;
+
+        boolean blink = (blinkTick / 15) % 2 == 0;
+        int alpha = blink ? 210 : 50;
+        int targetSize = 65;
+
+        for (int r = 0; r < waveData.length && r < ROWS; r++) {
+            if (waveData[r] == null || waveData[r].length == 0) continue;
+            int count = 0;
+            for (String id : waveData[r]) {
+                if (id != null) count++;
+            }
+            if (count == 0) continue;
+
+            int row = clampRow(r);
+            int cx = getXCoord(COLS - 1, row);
+            int cy = getYCoord(COLS - 1, row);
+
+            canvas.setColor(new Color(220, 30, 30, alpha));
+            fillHexagon(canvas, cx, cy);
+
+            GreenfootImage logoCopy = new GreenfootImage(iuLogo);
+            logoCopy.scale(targetSize, targetSize);
+            logoCopy.setTransparency(blink ? 80 : 20);
+            canvas.drawImage(logoCopy, cx - targetSize / 2, cy - targetSize / 2);
+
+            canvas.setColor(new Color(255, 80, 80, Math.min(255, alpha + 45)));
+            drawHexagon(canvas, cx, cy);
+
+            canvas.setFont(new Font("Courier New", true, false, 13));
+            canvas.setColor(new Color(255, 255, 255, Math.min(255, alpha + 45)));
+            canvas.drawString("x" + count, cx - 10, cy + 5);
         }
     }
 
@@ -246,7 +313,21 @@ public class GridManager extends Actor implements IPlantPlacer {
         }
         return null;
     }
-    
+
+    private boolean isBattlePhase() {
+        if (!(getWorld() instanceof PlayScene)) return false;
+        WaveManager wm = ((PlayScene) getWorld()).getWaveManager();
+        return wm != null && wm.getBattlePhase() == BattlePhase.BATTLE;
+    }
+
+    private boolean isPrepOrCountdownPhase() {
+        if (!(getWorld() instanceof PlayScene)) return false;
+        WaveManager wm = ((PlayScene) getWorld()).getWaveManager();
+        if (wm == null) return false;
+        BattlePhase phase = wm.getBattlePhase();
+        return phase == BattlePhase.PREP || phase == BattlePhase.COUNTDOWN;
+    }
+
     public void removePlant(int x, int y) {
         if (x >= 0 && x < COLS && y >= 0 && y < ROWS) {
             Board[y][x] = null;

@@ -1,0 +1,17 @@
+#BlueJ class context
+comment0.target=PrepCountdown
+comment0.text=\r\n\ PrepCountdown\ \u2014\ a\ compact\ HUD\ actor\ that\ displays\ a\ labelled\ countdown\ timer.\r\n\r\n\ Used\ by\ WaveManager\ to\ show\:\r\n\ \ \ \u2022\ "PREP\ PHASE\ \ 5"\ before\ each\ wave\ launches.\r\n\ \ \ \u2022\ "NEXT\ WAVE\ IN\ 5"\ after\ a\ wave\ is\ cleared\ and\ the\ reward\ sun\ has\ appeared.\r\n\r\n\ WaveManager\ calls\ setSeconds(n)\ every\ act()\ tick\ so\ the\ display\ stays\ current.\r\n\ The\ actor\ removes\ itself\ when\ WaveManager\ calls\ removeObject\ on\ it.\r\n
+comment1.params=label\ initialSeconds
+comment1.target=PrepCountdown(java.lang.String,\ int)
+comment2.params=s
+comment2.target=void\ setSeconds(int)
+comment2.text=Called\ every\ act\ by\ WaveManager\ to\ keep\ the\ number\ current.
+comment3.params=
+comment3.target=void\ act()
+comment4.params=
+comment4.target=void\ redraw()
+comment5.params=img\ x\ y\ w\ h\ r
+comment5.target=void\ fillRoundRect(greenfoot.GreenfootImage,\ int,\ int,\ int,\ int,\ int)
+comment6.params=img\ x\ y\ w\ h\ r
+comment6.target=void\ drawRoundRect(greenfoot.GreenfootImage,\ int,\ int,\ int,\ int,\ int)
+numComments=7

@@ -1,22 +1,19 @@
 import greenfoot.*;
-
 public class PlantInputHandler {
     private Plant plant;
     private int startGridX, startGridY;
     private boolean wasDragging = false;
-
     public PlantInputHandler(Plant plant) {
         this.plant = plant;
     }
-
     public void handleMouse() {
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse == null || plant.getState() == PlantState.DYING || plant.getState() == PlantState.MERGING) return;
-
         if (Greenfoot.mousePressed(plant) && mouse.getButton() == 1) {
             World world = plant.getWorld();
             if (!(world instanceof PlayScene)) return;
             PlayScene scene = (PlayScene) world;
+            if (scene.getWaveManager() != null && !scene.getWaveManager().canDragPlant(plant)) return;
             int[] grid = scene.GridManager.getGridPos(plant.getX(), plant.getY());
             startGridX = grid[0];
             startGridY = grid[1];
@@ -24,7 +21,6 @@ public class PlantInputHandler {
             wasDragging = false;
             plant.setState(PlantState.DRAGGING);
         }
-
         if (plant.isDragging) {
             if (Greenfoot.mouseDragged(null)) {
                 plant.setLocation(mouse.getX(), mouse.getY());
@@ -40,7 +36,6 @@ public class PlantInputHandler {
             }
         }
     }
-
     private void processDrop() {
         World world = plant.getWorld();
         if (!(world instanceof PlayScene)) return;
@@ -56,7 +51,6 @@ public class PlantInputHandler {
             plant.setState(PlantState.IDLE);
         }
     }
-
     private void returnToOldPosition(PlayScene scene) {
         if (startGridX >= 0 && startGridY >= 0) {
             int oldX = scene.GridManager.getXCoord(startGridX, startGridY);

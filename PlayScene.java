@@ -34,6 +34,7 @@ public class PlayScene extends World {
 
     private boolean isMenuOpen = false;
     public static boolean isPaused = false; 
+
     public PlayScene(GreenfootSound CYS, WaveManager level, SeedBank seedbank, World restartWorld, FallingObject winPlant, boolean isWater) {
         super(1111, 698, 1, false);
         this.CYS = CYS;
@@ -66,6 +67,8 @@ public class PlayScene extends World {
         isPaused = false; 
     }
 
+    public WaveManager getWaveManager() { return level; }
+
     public void act() {
         String key = Greenfoot.getKey();
         if ("escape".equals(key)) {
@@ -93,7 +96,6 @@ public class PlayScene extends World {
         updateMergers();
         drawWaveUI();
     }
-
 
     public void openSettingsMenu() {
         if (!isMenuOpen) {
@@ -205,12 +207,13 @@ public class PlayScene extends World {
         if (musicController != null) musicController.resetBGM();
     }
 
-public void applyDefaultPaintOrder() {
+    public void applyDefaultPaintOrder() {
         setPaintOrder(
             SettingsResumeButton.class, SliderKnob.class, SliderBar.class, SettingsMenuPanel.class, Retry.class, GameOverPanel.class, LossSequenceTransition.class,
             CrazyDave.class, Transition.class, AugmentCard.class, Overlay.class,
             ThuyThan.class, RupButton.class, RollButton.class,
             WaveNotification.class, ReadySetPlant.class,
+            PrepCountdown.class,
             SunDisplay.class, SeedPacket.class, SellShovel.class, Shovel.class,
             Lawnmower.class, Sun.class, HealthBar.class,
             Pea.class, FirePea.class, Needle.class, Zombie.class,
