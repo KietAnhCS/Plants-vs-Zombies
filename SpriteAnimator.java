@@ -1,11 +1,19 @@
 import greenfoot.*;
-public class SpriteAnimator extends PhysicsBody {
+
+public abstract class SpriteAnimator extends PhysicsBody {
     private static SpriteCache cache = new SpriteCache();
     private long lastMillis = 0;
     private GreenfootImage[] previousSprites = null;
     public int frame = 0;
     private int flashRemainingFrames = 0;
     private String flashFilename = null;
+
+    public abstract void update();
+    
+    @Override
+    public void act() {
+        update();
+    }
 
     public GreenfootImage[] importSprites(String filename, int frames) {
         return cache.getSprites(filename, frames);
@@ -21,37 +29,43 @@ public class SpriteAnimator extends PhysicsBody {
 
     public boolean animate(GreenfootImage[] sprite, long duration, boolean loop) {
         if (sprite == null || sprite.length == 0) return false;
+        
         if (sprite != previousSprites) {
             frame = 0;
             previousSprites = sprite;
             flashRemainingFrames = 0;
             flashFilename = null;
             lastMillis = 0;
-            setImage(sprite[0]);
+            applyImageWithOpacity(sprite[0]);
             return false;
         }
+        
         long currentMillis = System.currentTimeMillis();
         if (lastMillis == 0) lastMillis = currentMillis;
         long elapsed = currentMillis - lastMillis;
+        
         if (elapsed >= duration) {
             lastMillis = currentMillis;
             frame++;
+            
             if (frame >= sprite.length) {
                 frame = loop ? 0 : sprite.length - 1;
                 if (!loop) {
-                    setImage(sprite[frame]);
+                    applyImageWithOpacity(sprite[frame]);
                     return true;
                 }
             }
+            
             if (flashRemainingFrames > 0) {
                 try {
-                    setImage(new GreenfootImage("images/flash" + flashFilename + (frame + 1) + ".png"));
+                    GreenfootImage flashImg = new GreenfootImage("images/flash" + flashFilename + (frame + 1) + ".png");
+                    applyImageWithOpacity(flashImg);
                 } catch (Exception e) {
-                    setImage(sprite[frame]);
+                    applyImageWithOpacity(sprite[frame]);
                 }
                 flashRemainingFrames--;
             } else {
-                setImage(sprite[frame]);
+                applyImageWithOpacity(sprite[frame]);
             }
         }
         return false;
@@ -73,7 +87,8 @@ public class SpriteAnimator extends PhysicsBody {
         this.flashFilename = filename;
         this.flashRemainingFrames = 2;
         try {
-            setImage(new GreenfootImage("images/flash" + filename + (frame + 1) + ".png"));
+            GreenfootImage flashImg = new GreenfootImage("images/flash" + filename + (frame + 1) + ".png");
+            applyImageWithOpacity(flashImg);
         } catch (Exception e) {}
     }
 

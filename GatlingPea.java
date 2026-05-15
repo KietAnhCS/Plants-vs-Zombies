@@ -28,7 +28,6 @@ public class GatlingPea extends Plant {
     public void addedToWorld(World world) {
         super.addedToWorld(world);
         if (world instanceof PlayScene) cachedPlayScene = (PlayScene) world;
-        
     }
 
     @Override
@@ -94,5 +93,10 @@ public class GatlingPea extends Plant {
             burstCount--;
             lastBurstTime = currentTime;
         }
+    }
+
+    @Override
+    public String getPlantName() {
+        return TYPE.name();
     }
 }

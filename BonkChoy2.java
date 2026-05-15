@@ -77,4 +77,9 @@ public class BonkChoy2 extends Plant {
         AudioManager.getInstance().playSound(80, false, PlantAssets.SOUND_BONK);
         lastAttackTime = System.currentTimeMillis();
     }
+
+    @Override
+    public String getPlantName() {
+        return TYPE.name();
+    }
 }

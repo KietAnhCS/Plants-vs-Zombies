@@ -1,16 +1,15 @@
 import greenfoot.*;
 
 public class Dirt extends SpriteAnimator {
-    private final GreenfootImage[] dirt;
+    private final GreenfootImage[] dirtSprites;
 
     public Dirt() {
-        dirt = importSprites("dirt", 4);
+        dirtSprites = importSprites("dirt", 4);
     }
 
     @Override
-    public void act() {
-        if (getWorld() == null) return;
-        boolean isFinished = animate(dirt, 50L, false);
+    public void update() {
+        boolean isFinished = animate(dirtSprites, 50L, false);
 
         if (isFinished) {
             getWorld().removeObject(this);

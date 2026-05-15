@@ -165,6 +165,7 @@ public abstract class Plant extends SpriteAnimator {
     }
 
     public abstract void update();
+    public abstract String getPlantName();
 
     public void hit(int dmg) {
         if (!isLiving() || isDragging || isMerging || state == PlantState.MERGING) return;

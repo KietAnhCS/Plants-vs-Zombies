@@ -36,8 +36,6 @@ public enum ZombieAssets {
     SHARED_WALK_ARMLESS("armlesszombie", 7),
     SHARED_EAT_BARE("zombieeating", 7),
     SHARED_EAT_ARMLESS("armlesszombieeating", 7),
-    SHARED_HEADLESS("zombieheadless", 7),
-    SHARED_HEADLESS_EAT("headlesszombieeating", 7),
     SHARED_FALL("zombiefall", 6),
     
     PIANO_WALK("Piano_Playing", 15),

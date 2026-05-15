@@ -1,11 +1,17 @@
-import greenfoot.*;  
+import greenfoot.*;
+
 public class IdleZombie extends SpriteAnimator
 {
-    public void act()
-    {
-     
+    public IdleZombie() {
     }
+
+    @Override
     public void addedToWorld(World world) {
-        frame = Random.Int(1,4);
+
+        frame = Random.Int(1, 4);
+    }
+
+    @Override
+    public void update() {
     }
 }

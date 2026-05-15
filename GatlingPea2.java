@@ -7,20 +7,20 @@ public class GatlingPea2 extends Plant {
     private boolean adjusted = false;
     private long lastAttackTime = System.currentTimeMillis();
     private PlayScene cachedPlayScene;
-    
+
     private int burstCount = 0;
     private long lastBurstTime = 0;
-    private static final int BURST_INTERVAL = 80; 
+    private static final int BURST_INTERVAL = 80;
 
     public GatlingPea2() {
         setMaxHp(TYPE.hp);
         setHp(TYPE.hp);
         setDamage(TYPE.damage);
         setCost(TYPE.cost);
-        
-        idle = importSprites(PlantAssets.GATLING_PEA, 19);
+
+        idle  = importSprites(PlantAssets.GATLING_PEA, 19);
         shoot = importSprites(PlantAssets.GATLING_PEA, 19);
-        
+
         if (idle != null && idle.length > 0) setImage(idle[0]);
     }
 
@@ -28,18 +28,13 @@ public class GatlingPea2 extends Plant {
     public void addedToWorld(World world) {
         super.addedToWorld(world);
         if (world instanceof PlayScene) cachedPlayScene = (PlayScene) world;
-        
     }
 
     @Override
     public void hit(int dmg) {
         if (getWorld() == null || !isLiving()) return;
-        
-        // Fix lỗi hitFlash truyền String như yêu cầu lớp cha
         hitFlash(PlantAssets.GATLING_PEA);
-        
-        setHp(getHp() - dmg);
-        if (getHp() <= 0) onDeath();
+        super.hit(dmg);
     }
 
     @Override
@@ -54,10 +49,8 @@ public class GatlingPea2 extends Plant {
 
     private void handleCombat() {
         if (getState() == PlantState.MERGING) return;
-
         boolean hasTarget = checkZombieInRow();
-        
-        // Vẫn tiếp tục bắn nốt loạt đạn nếu zombie chết giữa chừng
+
         if (hasTarget || burstCount > 0) {
             setState(PlantState.SHOOTING);
             animate(shoot, 60, false);
@@ -81,23 +74,22 @@ public class GatlingPea2 extends Plant {
 
     private void executeShoot() {
         long currentTime = System.currentTimeMillis();
-
-        // Kiểm tra xem đã đến lúc bắt đầu loạt bắn mới chưa
         if (burstCount == 0) {
             if (currentTime - lastAttackTime >= TYPE.shootDelay) {
-                burstCount = 4; // Loạt 4 viên
+                burstCount = 4;
                 lastAttackTime = currentTime;
             }
         }
-
-        // Thực hiện bắn từng viên FirePea trong loạt
         if (burstCount > 0 && currentTime - lastBurstTime >= BURST_INTERVAL) {
             AudioManager.getInstance().playSound(80, false, PlantAssets.SOUND_THROW);
-            // Level 2 bắn FirePea (Đạn lửa)
             getWorld().addObject(new FirePea(getYPos()), getX() + 25, getY() - 17);
-            
             burstCount--;
             lastBurstTime = currentTime;
         }
+    }
+
+    @Override
+    public String getPlantName() {
+        return TYPE.name();
     }
 }

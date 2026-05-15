@@ -1,26 +1,30 @@
 public class LevelConfig {
     public static final String[][][] LEVEL_1_DATA = {
         
-        {{"EXCAVATOR"}, null, null, {"PIANO"}, null},
-        {{"SUN"}, {"SUN"}, {"SUN"}, {"SUN"}, {"SUN"}},
+        {null, null, {"SUN"}, null, {"SUN"}},
+        {{"SUN"}, {"NORMAL"}, {"SUN"}, {"NORMAL"}, {"SUN"}},
         
-        {{"NORMAL"}, null, {"EXCAVATOR"}, null, {"NORMAL"}},      
+        {{"CONEHEAD"}, null, {"EXCAVATOR"}, null, {"NORMAL"}},      
         {null, {"NORMAL", "NORMAL"}, null, {"EXCAVATOR"}, {"EXCAVATOR"}},
         
-        {{"CONEHEAD"}, {"EXCAVATOR"}, {"CONEHEAD"}, {"NORMAL"}, {"CONEHEAD"}},
+        {{"NORMAL"}, {"NORMAL"}, {"PIANO"}, {"NORMAL"}, {"NORMAL"}},
         {{"NORMAL", "NORMAL"}, {"NUTCRACKER"}, null, {"EXCAVATOR"}, {"NORMAL"}},
-        {{"CONEHEAD"}, {"NUTCRACKER"}, {"CONEHEAD"}, {"CONEHEAD"}, {"CONEHEAD"}},
+        {{"CONEHEAD"}, {"NUTCRACKER"}, {"CONEHEAD"}, {"BUCKETHEAD"}, {"CONEHEAD"}},
+        {{"NORMAL"}, {"NORMAL"}, {"PIANO"}, {"NORMAL"}, {"NORMAL"}},
         {{"BUCKETHEAD"}, {"EXCAVATOR"}, {"BUCKETHEAD"}, {"EXCAVATOR"}, {"NUTCRACKER"}},
-        {{"CONEHEAD", "CONEHEAD"}, {"BUCKETHEAD"}, {"CONEHEAD", "CONEHEAD"}, {"EXCAVATOR"}, {"CONEHEAD"}},
+        {{"SUN"}, {"NORMAL"}, {"SUN"}, {"NORMAL"}, {"SUN"}},
+        {{"CONEHEAD", "BRICKHEAD"}, {"BUCKETHEAD"}, {"CONEHEAD", "CONEHEAD"}, {"EXCAVATOR"}, {"CONEHEAD"}},
         {{"BUCKETHEAD"}, {"PIANO"}, {"BUCKETHEAD"}, {"BUCKETHEAD"}, {"BUCKETHEAD"}},
         {{"BRICKHEAD"}, {"EXCAVATOR"}, {"BUCKETHEAD"}, {"BUCKETHEAD"}, {"BRICKHEAD"}},
+        {{"SUN"}, {"NORMAL"}, {"SUN"}, {"NORMAL"}, {"SUN"}},
         {
             {"EXCAVATOR"}, 
-            {"BRICKHEAD", "BUCKETHEAD", "BRICKHEAD", "BUCKETHEAD", "BRICKHEAD", "BUCKETHEAD", "NUTCRACKER"}, 
-            null, 
-            {"BUCKETHEAD", "BUCKETHEAD", "BRICKHEAD", "BRICKHEAD", "BUCKETHEAD", "BUCKETHEAD", "BRICKHEAD"}, 
+            {"BRICKHEAD", "NUTCRACKER"}, 
+            {"PIANO"}, 
+            {"BUCKETHEAD", "BRICKHEAD"}, 
             {"EXCAVATOR"}
         }
+        
         
     };
 }

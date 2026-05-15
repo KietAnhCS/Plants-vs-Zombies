@@ -147,7 +147,7 @@ public class WaveManager extends Actor {
 
             case WAITING_FOR_REWARD:
                 if (now - stateTimer >= 3000) {
-                    if (wave > 0) playScene.addObject(new Sun(300, true), 900, 300);
+                    if (wave > 0) playScene.addObject(new Sun(200, true), 900, 300);
                     stateTimer = now;
                     currentState = WaveState.WAITING_FOR_DAVE;
                 }
@@ -242,7 +242,7 @@ public class WaveManager extends Actor {
         if (playScene == null) return;
         List<String> toRespawn = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : lawnmowerActivatedWave.entrySet()) {
-            if (wave - entry.getValue() >= 2) {
+            if (wave - entry.getValue() >= 3) {
                 toRespawn.add(entry.getKey());
             }
         }
@@ -305,7 +305,7 @@ public class WaveManager extends Actor {
     private void triggerDaveDialogue() {
         String[] lines = {
             "Good job, neighbor!\nYour lawn is looking\nremarkably zombie-free!",
-            "Victory smells like... tacos!\nI'm giving you 300 extra Sun\nevery time you win!",
+            "Victory smells like... tacos!\nI'm giving you 200 extra Sun\nevery time you win!",
             "Ooh! The Augment Card system!\nGrab those rewards to give your plants\nsome serious [oomph]!",
             "Quick tip: click those Lawn Mower\nand watch 'em go!\nThey don't just sit there looking pretty,\nyou know!"
         };

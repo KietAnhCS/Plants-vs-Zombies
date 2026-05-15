@@ -8,13 +8,25 @@ public class BasicZombie extends Zombie {
     public BasicZombie() {
         super(ZombieConfig.BASIC);
         this.walkSpeed = (Greenfoot.getRandomNumber(6) + 25) / 100.0;
-        
+
         wNormal  = importSprites(ZombieAssets.BASIC_WALK.path,         ZombieAssets.BASIC_WALK.count);
         wArmless = importSprites(ZombieAssets.BASIC_WALK_ARMLESS.path, ZombieAssets.BASIC_WALK_ARMLESS.count);
         eNormal  = importSprites(ZombieAssets.BASIC_EAT.path,          ZombieAssets.BASIC_EAT.count);
         eArmless = importSprites(ZombieAssets.BASIC_EAT_ARMLESS.path,  ZombieAssets.BASIC_EAT_ARMLESS.count);
-        
+
         setState(new WalkingState(this));
+    }
+
+    @Override
+    public void update() {
+        if (getWorld() == null) return;
+        if (!getWorld().getObjects(Overlay.class).isEmpty()) return;
+        if (isLiving()) {
+            updateLogic();
+            handleThresholds();
+        } else {
+            deathAnim();
+        }
     }
 
     @Override
@@ -39,7 +51,6 @@ public class BasicZombie extends Zombie {
             hitFlash(asset.path);
         } else if (!finalDeath) {
             AudioManager.getInstance().playSound(80, false, "splat.mp3");
-            hitFlash((eating ? ZombieAssets.SHARED_HEADLESS_EAT : ZombieAssets.SHARED_HEADLESS).path);
         }
         super.hit(dmg);
     }
@@ -54,7 +65,6 @@ public class BasicZombie extends Zombie {
     @Override
     protected void deathAnim() {
         if (getWorld() == null) return;
-
         if (!resetAnim) {
             frame = 0;
             resetAnim = true;
@@ -63,33 +73,13 @@ public class BasicZombie extends Zombie {
             target = null;
             eating = false;
         }
-
-        if (finalDeath) {
-            if (!fixAnim) {
-                fixAnim = true;
-                AudioManager.playSound(80, false, "zombie_falling_1.mp3", "zombie_falling_2.mp3");
+        if (!fixAnim) {
+            fixAnim = true;
+            AudioManager.playSound(80, false, "zombie_falling_1.mp3", "zombie_falling_2.mp3");
+            if (getWorld() != null) {
+                getWorld().addObject(new Head(), getX(), getY());
                 getWorld().addObject(new FallingZombie(fall), getX(), getY());
                 getWorld().removeObject(this);
-            }
-        } else {
-            if (!spawnHead) {
-                spawnHead = true;
-                AudioManager.getInstance().playSound(80, false, "limbs_pop.mp3");
-                getWorld().addObject(new Head(), getX() + 10, getY() - 20);
-            }
-
-            boolean isAnimFinished;
-            if (checkEating()) {
-                isAnimFinished = animate(headlesseating, 350, false);
-                playEating();
-            } else {
-                isAnimFinished = animate(headless, 350, false);
-                walk();
-            }
-
-            if (isAnimFinished || frame >= headless.length - 1) {
-                finalDeath = true;
-                frame = 0; 
             }
         }
     }

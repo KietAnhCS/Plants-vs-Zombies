@@ -3,9 +3,9 @@ import java.util.List;
 
 public class Peashooter extends Plant {
 
-    private static final PlantType TYPE             = PlantType.PEASHOOTER;
-    private static final long       POWER_UP_DURATION = GameConstants.POWER_UP_DURATION;
-    private static final long       POWER_UP_DELAY    = GameConstants.POWER_UP_SHOOT_DELAY;
+    private static final PlantType TYPE = PlantType.PEASHOOTER;
+    private static final long POWER_UP_DURATION = GameConstants.POWER_UP_DURATION;
+    private static final long POWER_UP_DELAY = GameConstants.POWER_UP_SHOOT_DELAY;
 
     private GreenfootImage[] idle;
     private GreenfootImage[] shoot;
@@ -137,5 +137,10 @@ public class Peashooter extends Plant {
         } else if (!hasTarget && getState() == PlantState.SHOOTING) {
             setState(PlantState.IDLE);
         }
+    }
+
+    @Override
+    public String getPlantName() {
+        return TYPE.name();
     }
 }

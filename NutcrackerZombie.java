@@ -5,45 +5,47 @@ public class NutcrackerZombie extends Zombie {
 
     public NutcrackerZombie() {
         super(new ZombieConfig(
-            ZombieRegistry.NUTCRACKER_HP, 
-            ZombieRegistry.NUTCRACKER_DAMAGE, 
-            ZombieRegistry.NUTCRACKER_SPEED, 
+            ZombieRegistry.NUTCRACKER_HP,
+            ZombieRegistry.NUTCRACKER_DAMAGE,
+            ZombieRegistry.NUTCRACKER_SPEED,
             "Nutcracker",
-            new int[]{}, 
+            new int[]{},
             null, null, null, 0
         ));
-        
-        wNormal  = importSprites(ZombieAssets.NUTCRACKER_WALK.path, 20,0.45);
-        chop     = importSprites(ZombieAssets.NUTCRACKER_CHOP.path, 25,0.45);
-        recharge = importSprites(ZombieAssets.NUTCRACKER_RECHARGE.path, 25,0.45);
-        death    = importSprites(ZombieAssets.NUTCRACKER_DEATH.path, 20,0.45);
+
+        wNormal  = importSprites(ZombieAssets.NUTCRACKER_WALK.path,     20, 0.45);
+        chop     = importSprites(ZombieAssets.NUTCRACKER_CHOP.path,     25, 0.45);
+        recharge = importSprites(ZombieAssets.NUTCRACKER_RECHARGE.path, 25, 0.45);
+        death    = importSprites(ZombieAssets.NUTCRACKER_DEATH.path,    20, 0.45);
 
         if (wNormal != null && wNormal.length > 0) setImage(wNormal[0]);
-        
+
         setState(new WalkingState(this));
     }
 
     @Override
-    public void act() {
-        if (isLiving() && currentState instanceof WalkingState) {
-            if (checkEating()) {
+    public void update() {
+        if (getWorld() == null) return;
+        if (!getWorld().getObjects(Overlay.class).isEmpty()) return;
+        if (isLiving()) {
+            if (currentState instanceof WalkingState && checkEating()) {
                 setState(new NutcrackerChoppingState(this));
                 return;
             }
+            updateLogic();
+            handleThresholds();
+        } else {
+            deathAnim();
         }
-        super.act();
     }
 
     @Override
     public void hit(int dmg) {
-        if (currentState instanceof NutcrackerRechargeState) {
-            dmg *= 2; 
-        }
-        
+        if (currentState instanceof NutcrackerRechargeState) dmg *= 2;
         if (isLiving()) {
             AudioManager.getInstance().playSound(80, false, "splat.mp3");
             String path = ZombieAssets.NUTCRACKER_WALK.path;
-            if (currentState instanceof NutcrackerChoppingState) path = ZombieAssets.NUTCRACKER_CHOP.path;
+            if (currentState instanceof NutcrackerChoppingState)  path = ZombieAssets.NUTCRACKER_CHOP.path;
             if (currentState instanceof NutcrackerRechargeState) path = ZombieAssets.NUTCRACKER_RECHARGE.path;
             hitFlash(path);
         }

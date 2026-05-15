@@ -2,6 +2,8 @@
 comment0.target=FallingZombie
 comment1.params=imgs
 comment1.target=FallingZombie(greenfoot.GreenfootImage[])
-comment2.params=
-comment2.target=void\ act()
-numComments=3
+comment2.params=world
+comment2.target=void\ addedToWorld(greenfoot.World)
+comment3.params=
+comment3.target=void\ update()
+numComments=4

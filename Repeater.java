@@ -13,8 +13,10 @@ public class Repeater extends Plant {
         setHp(TYPE.hp);
         setDamage(TYPE.damage);
         setCost(TYPE.cost);
-        idle  = importSprites(PlantAssets.REPEATER_IDLE, 7);
+
+        idle  = importSprites(PlantAssets.REPEATER_IDLE,  7);
         shoot = importSprites(PlantAssets.REPEATER_SHOOT, 3);
+
         if (idle != null && idle.length > 0) setImage(idle[0]);
     }
 
@@ -22,7 +24,6 @@ public class Repeater extends Plant {
     public void addedToWorld(World world) {
         super.addedToWorld(world);
         if (world instanceof PlayScene) cachedPlayScene = (PlayScene) world;
-        
     }
 
     @Override
@@ -72,5 +73,10 @@ public class Repeater extends Plant {
             getWorld().addObject(new Pea(getYPos()), getX() + 25 + (i * 15), getY() - 17);
         }
         lastAttackTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public String getPlantName() {
+        return TYPE.name();
     }
 }

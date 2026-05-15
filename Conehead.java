@@ -26,6 +26,18 @@ public class Conehead extends Zombie {
     }
 
     @Override
+    public void update() {
+        if (getWorld() == null) return;
+        if (!getWorld().getObjects(Overlay.class).isEmpty()) return;
+        if (isLiving()) {
+            updateLogic();
+            handleThresholds();
+        } else {
+            deathAnim();
+        }
+    }
+
+    @Override
     protected void handleThresholds() {
         int currentHp = getHp();
         if (currentHp <= ZombieRegistry.CONE_BARE && cone) {
@@ -61,7 +73,6 @@ public class Conehead extends Zombie {
             hitFlash(asset.path);
         } else if (!finalDeath) {
             AudioManager.getInstance().playSound(80, false, "splat.mp3");
-            hitFlash((eating ? ZombieAssets.SHARED_HEADLESS_EAT : ZombieAssets.SHARED_HEADLESS).path);
         }
         super.hit(dmg);
     }
@@ -69,17 +80,16 @@ public class Conehead extends Zombie {
     @Override
     public GreenfootImage[] getCurrentAnimation(boolean isEating) {
         int currentHp = getHp();
-        if (currentHp > ZombieRegistry.CONE_D1) return isEating ? eNormal : wNormal;
-        if (currentHp > ZombieRegistry.CONE_D2) return isEating ? eD1 : wD1;
+        if (currentHp > ZombieRegistry.CONE_D1)   return isEating ? eNormal : wNormal;
+        if (currentHp > ZombieRegistry.CONE_D2)   return isEating ? eD1 : wD1;
         if (currentHp > ZombieRegistry.CONE_BARE) return isEating ? eD2 : wD2;
-        if (!fallen) return isEating ? eBare : wBare;
+        if (!fallen)                               return isEating ? eBare : wBare;
         return isEating ? eArmless : wArmless;
     }
 
     @Override
     protected void deathAnim() {
         if (getWorld() == null) return;
-
         if (!resetAnim) {
             frame = 0;
             resetAnim = true;
@@ -88,33 +98,13 @@ public class Conehead extends Zombie {
             target = null;
             eating = false;
         }
-
-        if (finalDeath) {
-            if (!fixAnim) {
-                fixAnim = true;
-                AudioManager.playSound(80, false, "zombie_falling_1.mp3", "zombie_falling_2.mp3");
+        if (!fixAnim) {
+            fixAnim = true;
+            AudioManager.playSound(80, false, "zombie_falling_1.mp3", "zombie_falling_2.mp3");
+            if (getWorld() != null) {
+                getWorld().addObject(new Head(), getX(), getY());
                 getWorld().addObject(new FallingZombie(fall), getX(), getY());
                 getWorld().removeObject(this);
-            }
-        } else {
-            if (!spawnHead) {
-                spawnHead = true;
-                AudioManager.getInstance().playSound(80, false, "limbs_pop.mp3");
-                getWorld().addObject(new Head(), getX() + 10, getY() - 20);
-            }
-
-            boolean isAnimFinished;
-            if (checkEating()) {
-                isAnimFinished = animate(headlesseating, 350, false);
-                playEating();
-            } else {
-                isAnimFinished = animate(headless, 350, false);
-                walk();
-            }
-
-            if (isAnimFinished || frame >= headless.length - 1) {
-                finalDeath = true;
-                frame = 0; 
             }
         }
     }

@@ -39,7 +39,7 @@ public Arena() {
         };
         
         this.seedbank = new SeedBank(bank);
-        this.level = new WaveManager(23500L, LevelConfig.LEVEL_1_DATA, 15000L, true, 2, 2, 5, 10, 12, 14, 15);
+        this.level = new WaveManager(23500L, LevelConfig.LEVEL_1_DATA, 15000L, true, 2, 2, 5,7,9,10);
 
         String[] introScripts = {
             "Greetings, neighbor!\nWelcome to my... uh... GAME!",

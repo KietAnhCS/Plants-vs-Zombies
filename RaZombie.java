@@ -7,7 +7,7 @@ public class RaZombie extends Zombie {
 
     private GreenfootImage[] wNormal, eNormal, wDeath;
     private GreenfootImage[] sStart, sLoop, sEnd;
-    
+
     private enum StealPhase { NONE, START, LOOP, END }
     private StealPhase phase = StealPhase.NONE;
 
@@ -20,40 +20,37 @@ public class RaZombie extends Zombie {
         super(ZombieConfig.RA);
         this.walkSpeed = (Greenfoot.getRandomNumber(6) + 22) / 100.0;
 
-        wNormal = importSprites(ZombieAssets.RA_WALK.path, ZombieAssets.RA_WALK.count,0.45);
-        eNormal = importSprites(ZombieAssets.RA_EAT.path, ZombieAssets.RA_EAT.count,0.45);
-        wDeath  = importSprites(ZombieAssets.RA_DEATH.path, ZombieAssets.RA_DEATH.count,0.45);
-        sStart  = importSprites(ZombieAssets.RA_POWER_START.path, ZombieAssets.RA_POWER_START.count,0.45);
-        sLoop   = importSprites(ZombieAssets.RA_POWER_LOOP.path, ZombieAssets.RA_POWER_LOOP.count,0.45);
-        sEnd    = importSprites(ZombieAssets.RA_POWER_END.path, ZombieAssets.RA_POWER_END.count,0.45);
+        wNormal = importSprites(ZombieAssets.RA_WALK.path,        ZombieAssets.RA_WALK.count,        0.45);
+        eNormal = importSprites(ZombieAssets.RA_EAT.path,         ZombieAssets.RA_EAT.count,         0.45);
+        wDeath  = importSprites(ZombieAssets.RA_DEATH.path,       ZombieAssets.RA_DEATH.count,       0.45);
+        sStart  = importSprites(ZombieAssets.RA_POWER_START.path, ZombieAssets.RA_POWER_START.count, 0.45);
+        sLoop   = importSprites(ZombieAssets.RA_POWER_LOOP.path,  ZombieAssets.RA_POWER_LOOP.count,  0.45);
+        sEnd    = importSprites(ZombieAssets.RA_POWER_END.path,   ZombieAssets.RA_POWER_END.count,   0.45);
 
         setState(new WalkingState(this));
     }
 
     @Override
-    public void act() {
+    public void update() {
         if (getWorld() == null || !getWorld().getObjects(Overlay.class).isEmpty()) return;
-        
-        if (!isLiving()) { 
-            deathAnim(); 
-            return; 
+
+        if (!isLiving()) {
+            deathAnim();
+            return;
         }
 
         handleSliding();
+        handleThresholds();
         handleStealing();
 
         if (!isStealing) {
             boolean isEating = checkEating();
-            
-            if (currentState != null) {
-                currentState.update();
-            }
-
+            if (currentState != null) currentState.update();
             if (isEating) {
-                playEating(); 
+                playEating();
                 animate(eNormal, 200, true);
             } else {
-                walk(); 
+                walk();
                 animate(wNormal, 200, true);
             }
         }
@@ -67,28 +64,31 @@ public class RaZombie extends Zombie {
 
         switch (phase) {
             case NONE:
+                if (eating) { sunActionTimer = 0; break; }
                 if (++sunActionTimer >= STEAL_COOLDOWN) {
                     FallingSun best = getBestSun();
                     if (best != null) {
                         targetSun = best;
                         isStealing = true;
                         phase = StealPhase.START;
-                        frame = 0; 
-                        targetSun.setBeingStolen(true); 
+                        frame = 0;
+                        targetSun.setBeingStolen(true);
+                    } else {
+                        sunActionTimer = 0;
                     }
                 }
                 break;
 
             case START:
-                if (animate(sStart, ANIM_STEAL_DELAY, false)) { 
-                    phase = StealPhase.LOOP; 
-                    frame = 0; 
+                if (animate(sStart, ANIM_STEAL_DELAY, false)) {
+                    phase = StealPhase.LOOP;
+                    frame = 0;
                 }
                 break;
 
             case LOOP:
                 animate(sLoop, ANIM_STEAL_DELAY, true);
-                pullSunToward(); 
+                pullSunToward();
                 break;
 
             case END:
@@ -101,18 +101,18 @@ public class RaZombie extends Zombie {
 
     private void pullSunToward() {
         if (targetSun == null) return;
-        
+
         double dx = getX() - targetSun.getX();
         double dy = getY() - targetSun.getY();
         double dist = Math.hypot(dx, dy);
-        
+
         if (dist > 10) {
             targetSun.setLocation(
                 targetSun.getX() + (int)(dx / dist * 4),
                 targetSun.getY() + (int)(dy / dist * 4)
             );
         }
-        
+
         if (intersects(targetSun)) {
             sunStolenCount++;
             getWorld().removeObject(targetSun);
@@ -137,22 +137,21 @@ public class RaZombie extends Zombie {
         double minDist = Double.MAX_VALUE;
 
         for (FallingSun sun : suns) {
-            if (sun.isBeingStolen()) continue; 
-
+            if (sun.isBeingStolen()) continue;
             double d = Math.hypot(getX() - sun.getX(), getY() - sun.getY());
-            if (d < minDist && isClosestTo(sun)) { 
-                minDist = d; 
-                best = sun; 
+            if (d < minDist && isClosestTo(sun)) {
+                minDist = d;
+                best = sun;
             }
         }
         return best;
     }
 
     private boolean isClosestTo(FallingSun sun) {
-        List<RaZombie> otherRas = getWorld().getObjects(RaZombie.class);
-        for (RaZombie ra : otherRas) {
+        for (Object obj : getWorld().getObjects(RaZombie.class)) {
+            RaZombie ra = (RaZombie) obj;
             if (ra == this || !ra.isLiving()) continue;
-            if (Math.hypot(ra.getX() - sun.getX(), ra.getY() - sun.getY()) < 
+            if (Math.hypot(ra.getX() - sun.getX(), ra.getY() - sun.getY())<
                 Math.hypot(getX() - sun.getX(), getY() - sun.getY())) {
                 return false;
             }
@@ -171,9 +170,10 @@ public class RaZombie extends Zombie {
                 }
             }
             sunStolenCount = 0;
+            resetAnim = true;
         }
-        if (animate(wDeath, 300, false)) { 
-            getWorld().removeObject(this); 
+        if (animate(wDeath, 300, false)) {
+            getWorld().removeObject(this);
         }
     }
 
@@ -181,13 +181,12 @@ public class RaZombie extends Zombie {
     public GreenfootImage[] getCurrentAnimation(boolean isEating) {
         if (isStealing) {
             if (phase == StealPhase.START) return sStart;
-            if (phase == StealPhase.LOOP) return sLoop;
+            if (phase == StealPhase.LOOP)  return sLoop;
             return sEnd;
         }
         return isEating ? eNormal : wNormal;
     }
-    
+
     @Override
-    protected void handleThresholds() {
-    }
+    protected void handleThresholds() {}
 }

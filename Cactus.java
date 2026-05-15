@@ -109,4 +109,9 @@ public class Cactus extends Plant {
             setState(PlantState.IDLE);
         }
     }
+
+    @Override
+    public String getPlantName() {
+        return TYPE.name();
+    }
 }

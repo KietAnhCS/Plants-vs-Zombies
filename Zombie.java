@@ -1,5 +1,5 @@
 import greenfoot.*;
-import java.util.*;
+import java.util.List;
 
 public abstract class Zombie extends SpriteAnimator implements IDamageable, IGridObject {
     public ZombieConfig config;
@@ -21,6 +21,9 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
     protected boolean fixAnim = false;
     protected boolean eatOnce = false;
 
+    protected int targetY;
+    protected boolean movingY = false;
+
     public GreenfootImage[] headless, headlesseating, fall;
 
     public Zombie(ZombieConfig config) {
@@ -29,9 +32,6 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
         this.hp = config.maxHp;
         this.walkSpeed = config.walkSpeed;
         this.eventBus = new ZombieEventBus();
-
-        headless = importSprites(ZombieAssets.SHARED_HEADLESS.path, ZombieAssets.SHARED_HEADLESS.count);
-        headlesseating = importSprites(ZombieAssets.SHARED_HEADLESS_EAT.path, ZombieAssets.SHARED_HEADLESS_EAT.count);
         fall = importSprites(ZombieAssets.SHARED_FALL.path, ZombieAssets.SHARED_FALL.count);
     }
 
@@ -44,11 +44,11 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
     }
 
     @Override
-    public void act() {
+    public void update() {
         if (getWorld() == null) return;
         if (!getWorld().getObjects(Overlay.class).isEmpty()) return;
-
         if (isLiving()) {
+            handleSliding();
             updateLogic();
             handleThresholds();
         } else {
@@ -73,7 +73,9 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
     }
 
     @Override
-    public int getHp() { return hp; }
+    public int getHp() {
+        return hp;
+    }
 
     @Override
     public int getYPos() {
@@ -82,7 +84,9 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
     }
 
     public void walk() {
-        if (getWorld() != null) move(-walkSpeed);
+        if (getWorld() != null && !movingY) {
+            move(-walkSpeed);
+        }
     }
 
     public void setState(IZombieState newState) {
@@ -101,10 +105,8 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
         if (playScene == null || playScene.GridManager == null || getWorld() == null) return false;
         int yIdx = getYPos();
         if (yIdx < 0 || yIdx >= playScene.GridManager.Board.length) return false;
-        
         Plant[] myRow = playScene.GridManager.Board[yIdx];
         if (myRow == null) return false;
-        
         int currentX = getX();
         for (Plant p : myRow) {
             if (p == null || p.getWorld() == null || p.getHp() <= 0) continue;
@@ -145,29 +147,46 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
         int row = getYPos();
         if (row >= 0 && row < playScene.level.zombieRow.size()) {
             List<Zombie> rowList = playScene.level.zombieRow.get(row);
-            if (rowList.contains(this)) {
-                rowList.remove(this);
-            }
+            rowList.remove(this);
         }
+    }
+
+    public void startLaneChange(int newY) {
+        this.targetY = newY;
+        this.movingY = true;
+    }
+
+    public boolean isChangingLane() {
+        return movingY;
     }
 
     public void forceChangeLane(int newY) {
         removeFromRow();
         setLocation(getX(), newY);
         if (playScene != null && playScene.level != null) {
-            int newRow = getYPos();
+            int newRow = playScene.GridManager.getGridY(getX(), newY);
             if (newRow >= 0 && newRow < playScene.level.zombieRow.size()) {
                 playScene.level.zombieRow.get(newRow).add(this);
             }
         }
     }
-    
-    protected void handleSliding() {}
-    
+
+    protected void handleSliding() {
+        if (movingY) {
+            if (Math.abs(getY() - targetY) > 2) {
+                int step = (targetY > getY()) ? 2 : -2;
+                setLocation(getX(), getY() + step);
+            } else {
+                forceChangeLane(targetY);
+                movingY = false;
+            }
+        }
+    }
+
     public GreenfootImage[] getDeadSprites() {
         return this.fall;
     }
-    
+
     protected abstract void deathAnim();
     protected abstract void handleThresholds();
     public abstract GreenfootImage[] getCurrentAnimation(boolean isEating);

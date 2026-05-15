@@ -1,33 +1,44 @@
 import greenfoot.*;
 
 public class ReadySetPlant extends SpriteAnimator {
-    private final GreenfootImage[] ready;
-    private final GreenfootImage[] set;
-    private final GreenfootImage   plant;
+    private final GreenfootImage[] readySprites;
+    private final GreenfootImage[] setSprites;
+    private final GreenfootImage plantImage;
 
     private enum Phase { READY, SET, PLANT }
-    private Phase phase   = Phase.READY;
-    private int   counter = 0;
+    private Phase phase = Phase.READY;
+    private int counter = 0;
 
     public ReadySetPlant() {
-        ready = importSprites("Ready__", 11);
-        set   = importSprites("Set__",   12);
-        plant = new GreenfootImage("PLANT!.png");
+        readySprites = importSprites("Ready__", 11);
+        setSprites = importSprites("Set__", 12);
+        plantImage = new GreenfootImage("PLANT!.png");
     }
 
     @Override
-    public void act() {
+    public void update() {
+        if (getWorld() == null) return;
         if (((PlayScene)getWorld()).isGameOver) return;
+
         switch (phase) {
             case READY:
-                if (animate(ready, 40, false)) phase = Phase.SET;
+                if (animate(readySprites, 40, false)) {
+                    phase = Phase.SET;
+                }
                 break;
+
             case SET:
-                if (animate(set, 40, false)) phase = Phase.PLANT;
+                if (animate(setSprites, 40, false)) {
+                    phase = Phase.PLANT;
+                }
                 break;
+
             case PLANT:
-                setImage(plant);
-                if (++counter >= 60) getWorld().removeObject(this);
+                setImage(plantImage);
+                counter++;
+                if (counter >= 60) {
+                    getWorld().removeObject(this);
+                }
                 break;
         }
     }

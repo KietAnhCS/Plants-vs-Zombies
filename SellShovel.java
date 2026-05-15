@@ -1,4 +1,5 @@
 import greenfoot.*;
+import java.util.ArrayList;
 
 public class SellShovel extends SpriteAnimator {
     private final int startX, startY;
@@ -14,12 +15,13 @@ public class SellShovel extends SpriteAnimator {
     }
 
     @Override
-    public void act() {
+    public void update() {
         if (getWorld() == null) return;
         MouseInfo mouse = Greenfoot.getMouseInfo();
         if (mouse == null) return;
 
-        setLocation(mouse.getX(), mouse.getY());
+        setLocation((double)mouse.getX(), (double)mouse.getY());
+        
         updateHighlight(mouse.getX(), mouse.getY());
 
         if (Greenfoot.mouseClicked(null)) {
@@ -28,10 +30,12 @@ public class SellShovel extends SpriteAnimator {
     }
 
     private void updateHighlight(int x, int y) {
+       
         if (lastHighlighted != null) {
             lastHighlighted.opaque = false;
             lastHighlighted = null;
         }
+        
         Plant p = getPlantAt(x, y);
         if (p != null) {
             p.opaque = true;
@@ -57,24 +61,7 @@ public class SellShovel extends SpriteAnimator {
             int px = p.getX();
             int py = p.getY();
             
-            String rawName = p.getClass().getSimpleName(); 
-            String formattedName = rawName.replaceAll("([a-z0-9])([A-Z])", "$1_$2")
-                                         .replaceAll("([A-Z])([A-Z][a-z])", "$1_$2")
-                                         .replace(" ", "_")
-                                         .toUpperCase();
-
-            if (formattedName.contains("BONKCHOY")) formattedName = formattedName.replace("BONKCHOY", "BONK_CHOY");
-            if (formattedName.contains("GATLINGPEA")) formattedName = formattedName.replace("GATLINGPEA", "GATLING_PEA");
-            if (formattedName.contains("POTATOMINE")) formattedName = formattedName.replace("POTATOMINE", "POTATO_MINE");
-            if (formattedName.matches(".*\\d$")) formattedName = formattedName.replaceAll("(\\d)$", "_$1");
-
-            int refundValue = 0;
-            try {
-                refundValue = PlantType.valueOf(formattedName).cost;
-            } catch (Exception e) {
-                refundValue = p.getCost() > 0 ? p.getCost() : 25;
-            }
-
+            int refundValue = calculateRefund(p);
             playScene.GridManager.Board[gy][gx] = null;
             playScene.removeObject(p);
             
@@ -85,7 +72,23 @@ public class SellShovel extends SpriteAnimator {
         }
     }
 
+    private int calculateRefund(Plant p) {
+        String formattedName = p.getClass().getSimpleName()
+                                .replaceAll("([a-z0-9])([A-Z])", "$1_$2")
+                                .toUpperCase();
+
+        if (formattedName.contains("BONKCHOY")) formattedName = formattedName.replace("BONKCHOY", "BONK_CHOY");
+        if (formattedName.matches(".*\\d$")) formattedName = formattedName.replaceAll("(\\d)$", "_$1");
+
+        try {
+            return PlantType.valueOf(formattedName).cost;
+        } catch (Exception e) {
+            return p.getCost() > 0 ? p.getCost() : 25;
+        }
+    }
+
     private Plant getPlantAt(int x, int y) {
+        if (playScene.GridManager == null) return null;
         int gx = playScene.GridManager.getGridX(x, y);
         int gy = playScene.GridManager.getGridY(x, y);
         if (gx == -1 || gy == -1) return null;

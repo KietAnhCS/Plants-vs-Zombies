@@ -1,5 +1,6 @@
 import greenfoot.*;
 import java.util.List;
+
 public class Cactus2 extends Plant {
     private static final PlantType TYPE = PlantType.CACTUS_2;
     private GreenfootImage[] idle, shoot;
@@ -22,7 +23,6 @@ public class Cactus2 extends Plant {
     public void addedToWorld(World world) {
         super.addedToWorld(world);
         if (world instanceof PlayScene) cachedPlayScene = (PlayScene) world;
-        
     }
 
     @Override
@@ -84,5 +84,10 @@ public class Cactus2 extends Plant {
             getWorld().addObject(new Needle2(getY(),  50), getX(), getY());
             shootOnce = true;
         }
+    }
+
+    @Override
+    public String getPlantName() {
+        return TYPE.name();
     }
 }

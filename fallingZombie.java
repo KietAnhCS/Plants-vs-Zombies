@@ -1,18 +1,24 @@
 import greenfoot.*;
 
 public class FallingZombie extends SpriteAnimator {
-    private GreenfootImage[] images;
+    private GreenfootImage[] fallSprites;
     
     public FallingZombie(GreenfootImage[] imgs) {
-        this.images = imgs;
-        if (images != null && images.length > 0) {
-            setImage(images[0]);
+        this.fallSprites = imgs;
+        if (fallSprites != null && fallSprites.length > 0) {
+            setImage(fallSprites[0]);
         }
     }
     
     @Override
-    public void act() {
-        if (animate(images, 150, false)) {
+    public void addedToWorld(World world) {
+        super.addedToWorld(world);
+    }
+    
+    @Override
+    public void update() {
+        if (getWorld() == null) return;
+        if (animate(fallSprites, 150L, false)) {
             getWorld().removeObject(this);
         }
     }

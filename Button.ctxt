@@ -1,11 +1,13 @@
 #BlueJ class context
 comment0.target=Button
-comment1.params=idle\ hover
+comment1.params=idlePath\ hoverPath
 comment1.target=Button(java.lang.String,\ java.lang.String)
 comment2.params=
-comment2.target=void\ act()
+comment2.target=void\ update()
 comment3.params=
 comment3.target=void\ handleHover()
 comment4.params=
-comment4.target=void\ onClick()
-numComments=5
+comment4.target=void\ checkClick()
+comment5.params=
+comment5.target=void\ onClick()
+numComments=6
