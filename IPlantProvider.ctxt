@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=IPlantProvider
+comment1.params=cost
+comment1.target=void\ rollPackets(int)
+comment2.params=cost
+comment2.target=boolean\ canAffordRoll(int)
+comment3.params=newPackets
+comment3.target=void\ updateStore(SeedPacket[])
+comment4.params=
+comment4.target=int\ getRollCost()
+numComments=5

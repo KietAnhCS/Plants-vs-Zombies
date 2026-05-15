@@ -30,7 +30,7 @@ public class WaveManager extends Actor {
 
     public PlayScene playScene;
     public static final int xOffset = 950;
-
+    private IZombieFactory zombieFactory = new ZombieFactory();
     private PrepCountdown countdownUI = null;
 
     private final Map<String, Integer> lawnmowerActivatedWave = new HashMap<>();
@@ -294,10 +294,10 @@ public class WaveManager extends Actor {
             if (waveData[r] == null) continue;
             int row = board.clampRow(r);
             for (String id : waveData[r]) {
-                Zombie z = ZombieFactory.createZombie(id);
+                Zombie z = zombieFactory.createZombie(id);
                 if (z != null) spawnQueues.get(row).add(z);
             }
-            lastSpawnTime[row] = System.currentTimeMillis() - 2000;
+            lastSpawnTime[row] = System.currentTimeMillis() - 1000;
         }
         playScene.addObject(new FixOrder(this, 10), 0, 0);
     }

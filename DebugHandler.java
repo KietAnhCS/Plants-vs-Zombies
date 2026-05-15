@@ -13,6 +13,5 @@ public class DebugHandler {
             scene.stopAllMusic();
             Greenfoot.setWorld(new Arena());
         }
-        if ("r".equals(key)) scene.rollPackets();
     }
 }

@@ -1,9 +1,8 @@
 import greenfoot.*;
 import java.util.*;
 
-public class PlayScene extends World {
+public class PlayScene extends World implements ISceneManager, IEntitySpawner, IPlantProvider {
     private List<Merger> activeMergers = new ArrayList<>();
-    
     private long lastFPSTime = System.currentTimeMillis();
     private int frameCount = 0;
     private int currentFPS = 0;
@@ -21,7 +20,6 @@ public class PlayScene extends World {
     public SunDisplay sunDisplay = new SunDisplay();
     public Hitbox hitbox = new Hitbox();
     public Shovel shovel = new Shovel();
-    
     public RollButton rollbutton = new RollButton();
     public RupButton rupbutton = new RupButton();
     
@@ -32,7 +30,6 @@ public class PlayScene extends World {
     private DebugHandler debugHandler;
     private UpgradeManager upgradeManager;
     private boolean isPlaying = false;
-
     private boolean isMenuOpen = false;
     public static boolean isPaused = false; 
 
@@ -68,14 +65,10 @@ public class PlayScene extends World {
         isPaused = false; 
     }
 
-    public WaveManager getWaveManager() { return level; }
-
     @Override
     public void act() {
         handleKeyboard();
-
         if (isGameOver || isPaused) return; 
-
         moveHitbox();
         
         if (!isPlaying && level != null) {
@@ -84,79 +77,81 @@ public class PlayScene extends World {
             level.startLevel();
         }
         
+        spawn();
         updateSystems();
         updateMergers();
         drawWaveUI();
     }
 
-    private void handleKeyboard() {
-        String key = Greenfoot.getKey();
-        if ("escape".equals(key)) {
-            if (!isMenuOpen) openSettingsMenu();
-            else closeSettingsMenu();
-        }
+    @Override
+    public void pauseGame() {
+        isPaused = true;
     }
 
-    private void updateSystems() {
-        if (musicController != null) musicController.update();
+    @Override
+    public void resumeGame() {
+        isPaused = false;
+        closeSettingsMenu();
+    }
+
+    @Override
+    public boolean isPaused() {
+        return isPaused;
+    }
+
+    @Override
+    public void gameOver(boolean won) {
+        this.isGameOver = true;
+        this.winOnce = won;
+        this.loseOnce = !won;
+        stopAllMusic();
+    }
+
+    @Override
+    public boolean isGameOver() {
+        return isGameOver;
+    }
+
+    @Override
+    public void spawn() {
         if (sunSpawner != null) sunSpawner.update();
-        if (winLossHandler != null) winLossHandler.update();
-        if (debugHandler != null) debugHandler.update();
     }
 
-    public void openSettingsMenu() {
-        if (isMenuOpen) return;
-        isPaused = true; 
-        int centerX = getWidth() / 2;
-        int centerY = getHeight() / 2;
-        
-        SettingsMenuPanel panel = new SettingsMenuPanel();
-        addObject(panel, centerX, centerY);
-        
-        int panelTopY = centerY - panel.getImage().getHeight() / 2; 
-        
-        addObject(new SliderBar("BGM"), centerX + 40, panelTopY + 120);
-        addObject(new SliderBar("SFX"), centerX + 40, panelTopY + 220);
-        addObject(new SettingsResumeButton(), centerX, centerY + 190); 
-        
-        isMenuOpen = true;
-    }
-    
-    public void closeSettingsMenu() {
-        if (!isMenuOpen) return;
-        removeObjects(getObjects(SettingsMenuPanel.class));
-        removeObjects(getObjects(SliderBar.class));
-        removeObjects(getObjects(SliderKnob.class)); 
-        removeObjects(getObjects(SettingsResumeButton.class));
-        
-        isPaused = false; 
-        isMenuOpen = false;
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.isPlaying = enabled;
     }
 
-    public PlantFactory getPlantFactory() { return PlantFactory.getInstance(); }
-    public UpgradeManager getUpgradeManager() { return upgradeManager; }
-    public SunManager getSunManager() { return sunManager; }
+    @Override
+    public boolean isEnabled() {
+        return isPlaying && !isGameOver && !isPaused;
+    }
 
-    public void increasePlantSlots(int amount) {
-        if (GridManager != null) {
-            GridManager.addBonusSlots(amount);
-            AudioManager.getInstance().playSound(80, false, "achievement.mp3");
+    @Override
+    public void resetSpawner() {
+        if (level != null) {
+            isPlaying = false;
         }
     }
 
-    public boolean tryPlacePlant(int gridX, int gridY, Plant newPlant) {
-        if (newPlant == null || level == null) return false;
-        if (level.choosingCard || !getObjects(CrazyDave.class).isEmpty()) return false;
-        
-        boolean placed = GridManager.placePlant(gridX, gridY, newPlant);
-        if (placed) {
-            PlantCombineHandler.checkAndCombine(this, newPlant);
-        }
-        return placed;
+    @Override
+    public int getRollCost() {
+        return 25;
     }
 
-    public void rollPackets() {
-        if (!getSunManager().hasEnough(25)) return;
+    @Override
+    public boolean canAffordRoll(int cost) {
+        return sunManager.hasEnough(cost);
+    }
+
+    @Override
+    public void updateStore(SeedPacket[] newPackets) {
+        seedbank.updateBank(newPackets);
+    }
+
+    @Override
+    public void rollPackets(int cost) {
+        if (!canAffordRoll(cost)) return;
         
         RupButton.RarityEntry[] pool = rupbutton.getPoolForRoll();
         int total = 0;
@@ -166,7 +161,7 @@ public class PlayScene extends World {
         
         if (total <= 0) return;
         
-        getSunManager().spend(25);
+        sunManager.spend(cost);
         AudioManager.getInstance().playSound(80, false, "achievement.mp3");
         
         SeedPacket[] newBank = new SeedPacket[3];
@@ -183,7 +178,69 @@ public class PlayScene extends World {
                 }
             }
         }
-        seedbank.updateBank(newBank);
+        updateStore(newBank);
+    }
+
+    private void handleKeyboard() {
+        String key = Greenfoot.getKey();
+        if ("escape".equals(key)) {
+            if (!isMenuOpen) openSettingsMenu();
+            else closeSettingsMenu();
+        }
+    }
+
+    private void updateSystems() {
+        if (musicController != null) musicController.update();
+        if (winLossHandler != null) winLossHandler.update();
+        if (debugHandler != null) debugHandler.update();
+    }
+
+    @Override
+    public void openSettingsMenu() {
+        if (isMenuOpen) return;
+        isPaused = true; 
+        int centerX = getWidth() / 2;
+        int centerY = getHeight() / 2;
+        SettingsMenuPanel panel = new SettingsMenuPanel();
+        addObject(panel, centerX, centerY);
+        int panelTopY = centerY - panel.getImage().getHeight() / 2; 
+        addObject(new SliderBar("BGM"), centerX + 40, panelTopY + 120);
+        addObject(new SliderBar("SFX"), centerX + 40, panelTopY + 220);
+        addObject(new SettingsResumeButton(), centerX, centerY + 190); 
+        isMenuOpen = true;
+    }
+    
+    @Override
+    public void closeSettingsMenu() {
+        if (!isMenuOpen) return;
+        removeObjects(getObjects(SettingsMenuPanel.class));
+        removeObjects(getObjects(SliderBar.class));
+        removeObjects(getObjects(SliderKnob.class)); 
+        removeObjects(getObjects(SettingsResumeButton.class));
+        isPaused = false; 
+        isMenuOpen = false;
+    }
+
+    public PlantFactory getPlantFactory() { return PlantFactory.getInstance(); }
+    public UpgradeManager getUpgradeManager() { return upgradeManager; }
+    public SunManager getSunManager() { return sunManager; }
+    public World getRestartWorld() { return restartWorld; }
+
+    public void increasePlantSlots(int amount) {
+        if (GridManager != null) {
+            GridManager.addBonusSlots(amount);
+            AudioManager.getInstance().playSound(80, false, "achievement.mp3");
+        }
+    }
+
+    public boolean tryPlacePlant(int gridX, int gridY, Plant newPlant) {
+        if (newPlant == null || level == null) return false;
+        if (level.choosingCard || !getObjects(CrazyDave.class).isEmpty()) return false;
+        boolean placed = GridManager.placePlant(gridX, gridY, newPlant);
+        if (placed) {
+            PlantCombineHandler.checkAndCombine(this, newPlant);
+        }
+        return placed;
     }
 
     public boolean hasLost() {
@@ -195,8 +252,7 @@ public class PlayScene extends World {
 
     public boolean hasWon() { return level != null && level.hasWon(); }
 
-    public void finishLevel() { this.isGameOver = true; }
-
+    @Override
     public void stopAllMusic() {
         AudioManager.stopBGM();
         if (CYS != null && CYS.isPlaying()) CYS.stop();
@@ -235,10 +291,9 @@ public class PlayScene extends World {
         if (m != null) hitbox.setLocation(m.getX(), m.getY());
     }
 
-    private final int[][] lawnmowerCoords = {{240,180}, {236,240}, {225,295}, {220,360}, {190,420}};
-
     private void prepareLawnmowers() {
-        for (int[] c : lawnmowerCoords) {
+        int[][] coords = {{240,180}, {236,240}, {225,295}, {220,360}, {190,420}};
+        for (int[] c : coords) {
             addObject(new Lawnmower(), c[0], c[1]);
         }
     }
@@ -250,7 +305,6 @@ public class PlayScene extends World {
     private void drawWaveUI() {
         if (level == null) return;
         GreenfootImage canvas = getBackground();
-        
         frameCount++;
         long currentTime = System.currentTimeMillis();
         if (currentTime - lastFPSTime >= 1000) { 
@@ -258,23 +312,18 @@ public class PlayScene extends World {
             frameCount = 0;
             lastFPSTime = currentTime;
         }
-    
-        String waveText = "WAVE " + level.getWaveNumber();
-        String fpsText = "FPS: " + currentFPS;
-        
         canvas.setColor(new Color(0, 0, 0, 160));
         canvas.fillRect(24, 84, 140, 65);
         canvas.setColor(Color.WHITE);
         canvas.drawRect(24, 84, 140, 65);
-        
         canvas.setFont(new Font("Courier New", true, false, 20));
         canvas.setColor(new Color(0, 191, 255));
-        canvas.drawString(waveText, 40, 107);
+        canvas.drawString("WAVE " + level.getWaveNumber(), 40, 107);
         canvas.setColor(Color.GREEN); 
-        canvas.drawString(fpsText, 40, 135); 
+        canvas.drawString("FPS: " + currentFPS, 40, 135); 
     }
-
-    public List<Merger> getActiveMergers() { return activeMergers; }
+    public WaveManager getWaveManager() { return level; }
+    public void finishLevel() { this.isGameOver = true; }
 
     @Override
     public void started() { 

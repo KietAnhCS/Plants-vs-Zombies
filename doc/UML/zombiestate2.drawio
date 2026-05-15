@@ -1,0 +1,170 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
+  <diagram name="Page-1" id="68s27rI4oB3448hqc_Y3">
+    <mxGraphModel dx="1028" dy="611" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-1" value="" style="ellipse;fillColor=strokeColor;" vertex="1" parent="1">
+          <mxGeometry x="573" y="200" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-2" value="WalkingState" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;startSize=25;container=0;collapsible=0;rounded=1;arcSize=14;dropTarget=0;verticalAlign=top;fillColor=#0050ef;fontColor=#ffffff;strokeColor=#001DBC;" vertex="1" parent="1">
+          <mxGeometry x="420" y="264" width="321" height="219" as="geometry" />
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-3" value="" style="ellipse;fillColor=strokeColor;" vertex="1" parent="oxuLSHEIFTM4d6xTPbbn-2">
+          <mxGeometry x="162" y="46" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-4" value="walk()" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="oxuLSHEIFTM4d6xTPbbn-2">
+          <mxGeometry x="43" y="135" width="251" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-5" value="" style="curved=1;startArrow=none;;exitX=0.47;exitY=0.96;entryX=0.5;entryY=-0.01;rounded=0;" edge="1" parent="oxuLSHEIFTM4d6xTPbbn-2" source="oxuLSHEIFTM4d6xTPbbn-3" target="oxuLSHEIFTM4d6xTPbbn-4">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-6" value="EatingState" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;startSize=25;container=0;collapsible=0;rounded=1;arcSize=14;dropTarget=0;verticalAlign=top;fillColor=#0050ef;fontColor=#ffffff;strokeColor=#001DBC;" vertex="1" parent="1">
+          <mxGeometry x="425" y="557" width="311" height="237" as="geometry" />
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-7" value="" style="ellipse;fillColor=strokeColor;" vertex="1" parent="oxuLSHEIFTM4d6xTPbbn-6">
+          <mxGeometry x="156" y="46" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-8" value="update()" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="oxuLSHEIFTM4d6xTPbbn-6">
+          <mxGeometry x="43" y="135" width="241" height="73" as="geometry" />
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-9" value="" style="curved=1;startArrow=none;;exitX=0.52;exitY=0.96;entryX=0.5;entryY=-0.01;rounded=0;" edge="1" parent="oxuLSHEIFTM4d6xTPbbn-6" source="oxuLSHEIFTM4d6xTPbbn-7" target="oxuLSHEIFTM4d6xTPbbn-8">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-10" value="" style="curved=1;startArrow=none;;exitX=0.52;exitY=1;entryX=0.5;entryY=0;rounded=0;" edge="1" parent="1" source="oxuLSHEIFTM4d6xTPbbn-1" target="oxuLSHEIFTM4d6xTPbbn-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-11" value="checkEating() == true" style="curved=1;startArrow=none;;exitX=0.29;exitY=1;entryX=0.28;entryY=0;rounded=0;" edge="1" parent="1" source="oxuLSHEIFTM4d6xTPbbn-2" target="oxuLSHEIFTM4d6xTPbbn-6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="492" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-12" value="checkEating() == false" style="curved=1;startArrow=none;;exitX=0.72;exitY=0;entryX=0.7;entryY=1;rounded=0;" edge="1" parent="1" source="oxuLSHEIFTM4d6xTPbbn-6" target="oxuLSHEIFTM4d6xTPbbn-2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="668" y="520" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-13" value="NutcrackerZombie" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;startSize=25;container=0;collapsible=0;rounded=1;arcSize=14;dropTarget=0;fillColor=#0050ef;fontColor=#ffffff;strokeColor=#001DBC;" vertex="1" parent="1">
+          <mxGeometry x="780" y="280" width="682" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-14" value="" style="ellipse;fillColor=strokeColor;" vertex="1" parent="1">
+          <mxGeometry x="805" y="411" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-15" value="Walking" style="rounded=1;arcSize=20;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="869" y="398" width="71" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-16" value="Eating" style="rounded=1;arcSize=20;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="831" y="656" width="61" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-17" value="ExcavatorZombie" style="swimlane;fontStyle=1;align=center;verticalAlign=middle;startSize=25;container=0;collapsible=0;rounded=1;arcSize=14;dropTarget=0;fillColor=#0050ef;fontColor=#ffffff;strokeColor=#001DBC;" vertex="1" parent="1">
+          <mxGeometry x="795" y="557" width="667" height="185" as="geometry" />
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-18" value="Chopping" style="rounded=1;arcSize=20;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="1113" y="315" width="82" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-19" value="Recharging" style="rounded=1;arcSize=20;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="1343" y="337" width="94" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-20" value="" style="ellipse;fillColor=strokeColor;" vertex="1" parent="1">
+          <mxGeometry x="854" y="592" width="14" height="14" as="geometry" />
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-21" value="ExWalking" style="rounded=1;arcSize=20;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="1053" y="634" width="88" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-22" value="Shoveling" style="rounded=1;arcSize=20;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="1354" y="634" width="84" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-23" value="" style="curved=1;startArrow=none;;exitX=1;exitY=0.5;entryX=0;entryY=0.5;rounded=0;" edge="1" parent="1" source="oxuLSHEIFTM4d6xTPbbn-14" target="oxuLSHEIFTM4d6xTPbbn-15">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-24" value="checkEating()" style="curved=1;startArrow=none;;exitX=1;exitY=0.63;entryX=0.39;entryY=0;rounded=0;" edge="1" parent="1" source="oxuLSHEIFTM4d6xTPbbn-15" target="oxuLSHEIFTM4d6xTPbbn-16">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1014" y="434" />
+              <mxPoint x="1088" y="434" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-25" value="done" style="curved=1;startArrow=none;;exitX=0.37;exitY=0;entryX=1;entryY=0.99;rounded=0;" edge="1" parent="1" source="oxuLSHEIFTM4d6xTPbbn-16" target="oxuLSHEIFTM4d6xTPbbn-15">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1088" y="478" />
+              <mxPoint x="1014" y="478" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-26" value="in range" style="curved=1;startArrow=none;;exitX=0.87;exitY=0;entryX=0;entryY=0.5;rounded=0;" edge="1" parent="1" source="oxuLSHEIFTM4d6xTPbbn-15" target="oxuLSHEIFTM4d6xTPbbn-18">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1014" y="335" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-27" value="chop done" style="curved=1;startArrow=none;;exitX=1;exitY=0.5;entryX=0;entryY=0.28;rounded=0;" edge="1" parent="1" source="oxuLSHEIFTM4d6xTPbbn-18" target="oxuLSHEIFTM4d6xTPbbn-19">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1269" y="335" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-28" value="recharged" style="curved=1;startArrow=none;;exitX=0;exitY=0.93;entryX=1;entryY=0.37;rounded=0;" edge="1" parent="1" source="oxuLSHEIFTM4d6xTPbbn-19" target="oxuLSHEIFTM4d6xTPbbn-15">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1269" y="402" />
+              <mxPoint x="1014" y="402" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-29" value="" style="curved=1;startArrow=none;;exitX=1.01;exitY=0.5;entryX=0;entryY=0;rounded=0;" edge="1" parent="1" source="oxuLSHEIFTM4d6xTPbbn-20" target="oxuLSHEIFTM4d6xTPbbn-21">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="976" y="599" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-30" value="checkEating()" style="curved=1;startArrow=none;;exitX=0;exitY=0.9;entryX=0.99;entryY=0.65;rounded=0;" edge="1" parent="1" source="oxuLSHEIFTM4d6xTPbbn-21" target="oxuLSHEIFTM4d6xTPbbn-16">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="976" y="698" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-31" value="done" style="curved=1;startArrow=none;;exitX=0.99;exitY=0.35;entryX=0;entryY=0.5;rounded=0;" edge="1" parent="1" source="oxuLSHEIFTM4d6xTPbbn-16" target="oxuLSHEIFTM4d6xTPbbn-21">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="976" y="654" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-32" value="canShovel()" style="curved=1;startArrow=none;;exitX=0.81;exitY=0;entryX=-0.01;entryY=0.08;rounded=0;" edge="1" parent="1" source="oxuLSHEIFTM4d6xTPbbn-21" target="oxuLSHEIFTM4d6xTPbbn-22">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1169" y="601" />
+              <mxPoint x="1261" y="601" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="oxuLSHEIFTM4d6xTPbbn-33" value="onShovelFinished()" style="curved=1;startArrow=none;;exitX=-0.01;exitY=0.84;entryX=0.87;entryY=1;rounded=0;" edge="1" parent="1" source="oxuLSHEIFTM4d6xTPbbn-22" target="oxuLSHEIFTM4d6xTPbbn-21">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1261" y="698" />
+              <mxPoint x="1169" y="698" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

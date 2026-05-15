@@ -15,11 +15,18 @@ public class Arena extends World {
     private boolean isMenuOpen = false;
     public static boolean isPaused = false; 
 
-public Arena() {    
+    public Arena() {  
         super(1111, 698, 1, false); 
         
-        setPaintOrder(SettingsResumeButton.class, SliderKnob.class, SliderBar.class, SettingsMenuPanel.class, 
-                      CrazyDave.class, SeedPacket.class, IdleZombie.class);
+        setPaintOrder(
+            SettingsResumeButton.class, 
+            SliderKnob.class, 
+            SliderBar.class, 
+            SettingsMenuPanel.class, 
+            CrazyDave.class, 
+            SeedPacket.class, 
+            IdleZombie.class
+        );
                       
         initComponents();
         refreshBackground();
@@ -39,7 +46,7 @@ public Arena() {
         };
         
         this.seedbank = new SeedBank(bank);
-        this.level = new WaveManager(23500L, LevelConfig.LEVEL_1_DATA, 15000L, true, 2, 2, 5,7,9,10);
+        this.level = new WaveManager(23500L, LevelConfig.LEVEL_1_DATA, 15000L, true, 2, 2, 5, 7, 9, 10);
 
         String[] introScripts = {
             "Greetings, neighbor!\nWelcome to my... uh... GAME!",
@@ -73,30 +80,25 @@ public Arena() {
                 count++;
                 runScrollSequence();
                 break;
+            case READY_TO_PLAY:
+                transitionToPlayScene();
+                break;
         }
     }
 
     public void openSettingsMenu() {
         if (!isMenuOpen) {
             isPaused = true;
-            
             int centerX = getWidth() / 2;
             int centerY = getHeight() / 2;
             
             SettingsMenuPanel panel = new SettingsMenuPanel();
             addObject(panel, centerX, centerY);
             
-            int panelHeight = panel.getImage().getHeight();
-            int panelTopY = centerY - panelHeight / 2; 
+            int panelTopY = centerY - (panel.getImage().getHeight() / 2); 
 
-            int bgmDrawY = 120; 
-            int sfxDrawY = 220; 
-            
-            int bgmAbsY = panelTopY + bgmDrawY;
-            int sfxAbsY = panelTopY + sfxDrawY;
-
-            addObject(new SliderBar("BGM"), centerX + 40, bgmAbsY);
-            addObject(new SliderBar("SFX"), centerX + 40, sfxAbsY);
+            addObject(new SliderBar("BGM"), centerX + 40, panelTopY + 120);
+            addObject(new SliderBar("SFX"), centerX + 40, panelTopY + 220);
             addObject(new SettingsResumeButton(), centerX, centerY + 190); 
             
             isMenuOpen = true;
@@ -128,18 +130,27 @@ public Arena() {
         } else if (count == 450) {
             removeObjects(getObjects(IdleZombie.class));
         } else if (count == 500) {
-            transitionToPlayScene();
+            currentState = GameState.READY_TO_PLAY;
         }
     }
 
     private void applyScroll(int speed) {
         location += speed;
         refreshBackground();
-        for (Actor a : getObjects(Actor.class)) {
-            if (!(a instanceof CrazyDave) && !(a instanceof SettingsMenuPanel) && !(a instanceof SliderBar) && !(a instanceof SliderKnob) && !(a instanceof SettingsResumeButton)) {
+        List<Actor> actors = getObjects(Actor.class);
+        for (Actor a : actors) {
+            if (shouldScroll(a)) {
                 a.setLocation(a.getX() + speed, a.getY());
             }
         }
+    }
+
+    private boolean shouldScroll(Actor a) {
+        return !(a instanceof CrazyDave) && 
+               !(a instanceof SettingsMenuPanel) && 
+               !(a instanceof SliderBar) && 
+               !(a instanceof SliderKnob) && 
+               !(a instanceof SettingsResumeButton);
     }
 
     private void transitionToPlayScene() {

@@ -81,9 +81,10 @@ public class SecretSun extends FallingObject {
             Supplier<Plant> randomPlant = () -> {
                 int r = Greenfoot.getRandomNumber(3); 
                 switch (r) {
-                    case 0: return new Repeater();
-                    case 1: return new Cactus2();
-                    case 2: return new Cactus3();
+                    case 0: return new Peashooter();
+                    case 1: return new Repeater();
+                    case 2: return new Cactus2();
+                    case 3: return new Cactus();
                     default: return new Peashooter();
                 }
             };

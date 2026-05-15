@@ -1,6 +1,6 @@
 import greenfoot.*;
 
-public abstract class Plant extends SpriteAnimator {
+public abstract class Plant extends SpriteAnimator implements IDamageable, IGridObject, IEatable {
     public boolean isDragging = false;
     public boolean opaque = false;
     public boolean isMerging = false;
@@ -147,8 +147,8 @@ public abstract class Plant extends SpriteAnimator {
             return;
         }
         
-        double dx = targetPlant.getExactX() - getExactX();
-        double dy = targetPlant.getExactY() - getExactY();
+        double dx = targetPlant.getX() - getX();
+        double dy = targetPlant.getY() - getY();
         double distance = Math.sqrt(dx * dx + dy * dy);
         
         if (distance <= 15) {
@@ -161,12 +161,13 @@ public abstract class Plant extends SpriteAnimator {
         }
         
         double speed = 15.0;
-        setLocation(getExactX() + (dx / distance) * speed, getExactY() + (dy / distance) * speed);
+        setLocation(getX() + (int)((dx / distance) * speed), getY() + (int)((dy / distance) * speed));
     }
 
     public abstract void update();
     public abstract String getPlantName();
 
+    @Override
     public void hit(int dmg) {
         if (!isLiving() || isDragging || isMerging || state == PlantState.MERGING) return;
         this.hp -= dmg;
@@ -175,6 +176,11 @@ public abstract class Plant extends SpriteAnimator {
             this.hp = 0;
             onDeath();
         }
+    }
+
+    @Override
+    public boolean canBeEatenBy(Zombie zombie) {
+        return isLiving() && !isDragging && !isMerging && state != PlantState.MERGING;
     }
 
     protected void onHit(int dmg) {
@@ -204,7 +210,12 @@ public abstract class Plant extends SpriteAnimator {
     }
 
     public int getXPos() { return currentGridX; }
+    
+    @Override
     public int getYPos() { return currentGridY; }
+    
+    @Override
     public boolean isLiving() { return hp > 0 && getWorld() != null && state != PlantState.DYING; }
+    
     public void setGridPosition(int gx, int gy) { this.currentGridX = gx; this.currentGridY = gy; }
 }

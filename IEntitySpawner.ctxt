@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=IEntitySpawner
+comment1.params=
+comment1.target=void\ spawn()
+comment2.params=enabled
+comment2.target=void\ setEnabled(boolean)
+comment3.params=
+comment3.target=boolean\ isEnabled()
+comment4.params=
+comment4.target=void\ resetSpawner()
+numComments=5
