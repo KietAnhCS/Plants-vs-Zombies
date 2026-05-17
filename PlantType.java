@@ -6,9 +6,9 @@ public enum PlantType {
     REPEATER      (125, PlantDamageType.NORMAL,    50,   200,   1700L, 2),
     GATLING_PEA   (300, PlantDamageType.NORMAL,    50,   200,   800L,  7),
     GATLING_PEA_2 (400, PlantDamageType.FIRE,      50,   200,   2000L, 5),
-    CACTUS        (125, PlantDamageType.NEEDLE,    30,   200,   2400L, 0),
-    CACTUS_2      (250, PlantDamageType.NEEDLE,    30,   200,   1500L, 0),
-    CACTUS_3      (375, PlantDamageType.NEEDLE,    30,   200,   1500L, 0),
+    CACTUS        (125, PlantDamageType.NEEDLE,    30,   200,   1500L, 0),
+    CACTUS_2      (250, PlantDamageType.NEEDLE,    30,   200,   1200L, 0),
+    CACTUS_3      (375, PlantDamageType.NEEDLE,    30,   200,   1000L, 0),
     BONK_CHOY     (175, PlantDamageType.NORMAL,    15,    300,   300L,  0),
     BONK_CHOY_2   (400, PlantDamageType.NORMAL,    15,   500,   200L,  0),
     BONK_CHOY_3   (600, PlantDamageType.NORMAL,    30,   900,   150L,  0);

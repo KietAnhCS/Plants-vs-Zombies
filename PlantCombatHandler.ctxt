@@ -1,7 +1,0 @@
-#BlueJ class context
-comment0.target=PlantCombatHandler
-comment1.params=plant
-comment1.target=PlantCombatHandler(Plant)
-comment2.params=
-comment2.target=void\ die()
-numComments=3

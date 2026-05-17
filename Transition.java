@@ -29,7 +29,6 @@ public class Transition extends Actor
         getImage().setTransparency(0);
     }
 
-    // Constructor 3
     public Transition(boolean fadeOut, World world, String image, int speed) {
     this.fadeSpeed = speed;
     this.world = world;

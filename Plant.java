@@ -15,7 +15,7 @@ public abstract class Plant extends SpriteAnimator implements IDamageable, IGrid
     private PlantEventBus eventBus;
     private PlantInputHandler inputHandler;
     private PlantStateManager stateManager;
-    private PlantCombatHandler combatHandler;
+    private PlantDeathHandler deathHandler;
 
     protected int currentGridX;
     protected int currentGridY;
@@ -104,7 +104,7 @@ public abstract class Plant extends SpriteAnimator implements IDamageable, IGrid
             }
             this.inputHandler = new PlantInputHandler(this);
             this.stateManager = new PlantStateManager(this);
-            this.combatHandler = new PlantCombatHandler(this);
+            this.deathHandler = new PlantDeathHandler(this);
             syncGridPosition();
             if (!isMerging && state != PlantState.MERGING) {
                 scene.addObject(new Dirt(), getX(), getY() + 30);
@@ -194,7 +194,7 @@ public abstract class Plant extends SpriteAnimator implements IDamageable, IGrid
             PlayScene scene = (PlayScene) getWorld();
             if (scene.GridManager != null) scene.GridManager.removePlant(currentGridX, currentGridY);
         }
-        if (combatHandler != null) combatHandler.die();
+        if (deathHandler != null) deathHandler.die();
         if (getWorld() != null) getWorld().removeObject(this);
     }
 
