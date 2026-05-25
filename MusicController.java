@@ -30,12 +30,12 @@ public class MusicController {
         int w = scene.level.getWaveNumber();
         String target;
 
-        if (w <= 2) {
+        if (w <= 1) {
             target = "sans.mp3";
-        } else if (w >= 5) {
-            target = "finalwavemp3.mp3";
+        } else if (w >= 4) {
+            target = "truehero.mp3";
         } else {
-            target = "intro3.mp3";
+            target = "ghost.mp3";
         }
 
         if (!currentBGM.equals(target)) {

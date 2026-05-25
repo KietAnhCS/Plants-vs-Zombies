@@ -53,7 +53,7 @@ public class FallingSun extends FallingObject {
         if (beenClicked) return;
         beenClicked = true;
         AudioManager.getInstance().playSound(80, false, "points.mp3");
-        playScene.getSunManager().add(25);
+        playScene.getSunManager().add(100);
     }
 
     private void flyToCounter(PlayScene playScene) {

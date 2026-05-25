@@ -196,7 +196,7 @@ public class WaveManager extends Actor {
         battlePhase = BattlePhase.PREP;
         phaseStartTime = System.currentTimeMillis();
         currentState = WaveState.PREPARING_NEXT_WAVE;
-        spawnCountdownUI("PREP PHASE");
+        spawnCountdownUI("Deployment Phase:");
         if (isFirstWave) {
             AudioManager.getInstance().playSound(80, false, "awooga.mp3");
             isFirstWave = false;

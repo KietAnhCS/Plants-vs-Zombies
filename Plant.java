@@ -27,6 +27,7 @@ public abstract class Plant extends SpriteAnimator implements IDamageable, IGrid
     public int getMaxHp() { return maxHp; }
     public int getDamage() { return damage; }
     public int getCost() { return cost; }
+    public PlantEventBus getEventBus() { return eventBus; }
 
     public void setHp(int hp) { this.hp = hp; }
     public void setMaxHp(int maxHp) { this.maxHp = maxHp; }

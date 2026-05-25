@@ -1,9 +1,7 @@
 #BlueJ class context
 comment0.target=Random
-comment1.params=
-comment1.target=Random()
+comment1.params=min\ max
+comment1.target=int\ Int(int,\ int)
 comment2.params=min\ max
-comment2.target=int\ Int(int,\ int)
-comment3.params=min\ max
-comment3.target=double\ Double(int,\ int)
-numComments=4
+comment2.target=double\ Double(double,\ double)
+numComments=3

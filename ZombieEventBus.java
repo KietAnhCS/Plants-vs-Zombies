@@ -7,10 +7,6 @@ public class ZombieEventBus {
     public ZombieEventBus() {
         this.listeners = new ArrayList<>();
     }
-
-    /**
-     * + subscribe(IZombieEventListener) : void
-     */
     public void subscribe(IZombieEventListener listener) {
         if (listener != null && !listeners.contains(listener)) {
             listeners.add(listener);

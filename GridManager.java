@@ -1,7 +1,7 @@
 import greenfoot.*;
 import java.util.*;
 
-public class GridManager extends Actor implements IPlantPlacer {
+public class GridManager extends Actor implements IPlantPlacer, IPlantEventListener, IZombieEventListener {
     public Plant[][] Board = new Plant[6][9];
     public int playerLevel = 1;
     private int bonusSlots = 0;
@@ -31,6 +31,51 @@ public class GridManager extends Actor implements IPlantPlacer {
         }
     }
 
+    // ── IPlantEventListener ──────────────────────────────────────
+    @Override
+    public void onPlantDied(Plant plant) {
+        removePlantFromBoard(plant);
+    }
+
+    @Override
+    public void onPlantHit(Plant plant, int damage) {
+        // không cần xử lý gì ở GridManager
+    }
+
+    @Override
+    public void onPlantMerged(Plant source, Plant target) {
+        // xóa source khỏi board khi merge xong
+        removePlantFromBoard(source);
+    }
+
+    @Override
+    public void onPlantStateChanged(Plant plant, PlantState newState) {
+        // không cần xử lý
+    }
+
+    // ── IZombieEventListener ─────────────────────────────────────
+    @Override
+    public void onZombieDied(Zombie zombie) {
+        // không cần xử lý gì ở GridManager
+    }
+
+    @Override
+    public void onZombieHit(Zombie zombie, int damage) {
+        // không cần xử lý gì ở GridManager
+    }
+
+    @Override
+    public void onZombieAteTarget(Zombie zombie, IEatable target) {
+        // không cần xử lý gì ở GridManager
+    }
+
+    @Override
+    public void onZombieStateChanged(Zombie zombie, IZombieState newState) {
+        // không cần xử lý gì ở GridManager
+    }
+
+    // ── Phần còn lại giữ nguyên ──────────────────────────────────
+
     public int getCurrentPlantCount() {
         int count = 0;
         for (int r = 0; r <= 4; r++) {
@@ -47,14 +92,11 @@ public class GridManager extends Actor implements IPlantPlacer {
 
     public boolean canPlace(int x, int y, Plant plant) {
         if (x < 0 || x >= COLS || y < 0 || y >= ROWS) return false;
-
         if (isBattlePhase() && y < 5) {
             return Board[y][x] == plant;
         }
-
         Plant target = Board[y][x];
         if (target != null && target != plant) return false;
-
         if (y <= 4) {
             boolean isAlreadyInCombatZone = false;
             for (int r = 0; r <= 4; r++) {
@@ -75,25 +117,26 @@ public class GridManager extends Actor implements IPlantPlacer {
             returnBackToSafePos(plant);
             return false;
         }
-
         for (int r = 0; r < ROWS; r++) {
             for (int c = 0; c < COLS; c++) {
                 if (Board[r][c] == plant) Board[r][c] = null;
             }
         }
-
         Board[y][x] = plant;
         plant.setGridPosition(x, y);
-        
         int tx = getXCoord(x, y);
         int ty = getYCoord(x, y);
-
         if (plant.getWorld() == null) getWorld().addObject(plant, tx, ty);
         else plant.setLocation(tx, ty);
-
         if (getWorld() instanceof PlayScene) {
             PlantCombineHandler.checkAndCombine((PlayScene) getWorld(), plant);
         }
+        
+        // Subscribe vào EventBus của plant vừa được đặt
+        if (plant.getEventBus() != null) {
+            plant.getEventBus().subscribe(this);
+        }
+        
         return true;
     }
 
@@ -106,14 +149,12 @@ public class GridManager extends Actor implements IPlantPlacer {
                 }
             }
         }
-
         for (int c = 0; c < COLS; c++) {
             if (Board[5][c] == null) {
                 placePlant(c, 5, plant);
                 return;
             }
         }
-        
         if (plant.getWorld() != null) getWorld().removeObject(plant);
     }
 
@@ -123,23 +164,18 @@ public class GridManager extends Actor implements IPlantPlacer {
         canvas.clear();
         blinkTick++;
         drawStatus(canvas);
-
         boolean prep = isPrepOrCountdownPhase();
         Actor dragging = getDraggingActor();
-
         if (dragging != null || prep) {
             drawFullGrid(canvas);
         }
-
         int checkRate = prep ? 5 : 20;
         if (Greenfoot.getRandomNumber(checkRate) == 0) {
             autoCheckAllCombines();
         }
-
         if (prep) {
             drawZombieWarning(canvas);
         }
-
         if (dragging != null) {
             drawGridHighlights(canvas, dragging);
         }
@@ -147,7 +183,6 @@ public class GridManager extends Actor implements IPlantPlacer {
 
     private void autoCheckAllCombines() {
         if (!(getWorld() instanceof PlayScene)) return;
-        
         for (int r = 0; r < 6; r++) {
             for (int c = 0; c < 9; c++) {
                 Plant p = Board[r][c];
@@ -196,17 +231,13 @@ public class GridManager extends Actor implements IPlantPlacer {
         PlayScene scene = (PlayScene) getWorld();
         WaveManager wm = scene.getWaveManager();
         if (wm == null) return;
-
         int nextWave = wm.wave;
         if (nextWave < 0 || nextWave >= wm.levelData.length) return;
-
         String[][] waveData = wm.levelData[nextWave];
         if (waveData == null) return;
-
         boolean blink = (blinkTick / 15) % 2 == 0;
         int alpha = blink ? 210 : 50;
         int targetSize = 65;
-
         for (int r = 0; r < waveData.length && r < ROWS; r++) {
             if (waveData[r] == null || waveData[r].length == 0) continue;
             int count = 0;
@@ -214,22 +245,17 @@ public class GridManager extends Actor implements IPlantPlacer {
                 if (id != null) count++;
             }
             if (count == 0) continue;
-
             int row = clampRow(r);
             int cx = getXCoord(COLS - 1, row);
             int cy = getYCoord(COLS - 1, row);
-
             canvas.setColor(new Color(220, 30, 30, alpha));
             fillHexagon(canvas, cx, cy);
-
             GreenfootImage logoCopy = new GreenfootImage(iuLogo);
             logoCopy.scale(targetSize, targetSize);
             logoCopy.setTransparency(blink ? 80 : 20);
             canvas.drawImage(logoCopy, cx - targetSize / 2, cy - targetSize / 2);
-
             canvas.setColor(new Color(255, 80, 80, Math.min(255, alpha + 45)));
             drawHexagon(canvas, cx, cy);
-
             canvas.setFont(new Font("Courier New", true, false, 13));
             canvas.setColor(new Color(255, 255, 255, Math.min(255, alpha + 45)));
             canvas.drawString("x" + count, cx - 10, cy + 5);
@@ -242,29 +268,22 @@ public class GridManager extends Actor implements IPlantPlacer {
         int[] grid = getGridPos(mouse.getX(), mouse.getY());
         int gx = grid[0], gy = grid[1];
         if (gx < 0 || gy < 0) return;
-
         Plant plant = null;
         if (dragging instanceof Plant) plant = (Plant) dragging;
         else if (dragging instanceof SeedPacket) plant = ((SeedPacket) dragging).getPlant();
-        
         if (plant == null) return;
-
         boolean can = canPlace(gx, gy, plant);
         int cx = getXCoord(gx, gy);
         int cy = getYCoord(gx, gy);
         int targetSize = 65;
-
         canvas.setColor(can ? new Color(0, 100, 255, 180) : new Color(255, 0, 0, 150));
         fillHexagon(canvas, cx, cy);
-
         canvas.setColor(new Color(0, 255, 255));
         drawHexagon(canvas, cx, cy);
-
         GreenfootImage logoCopy = new GreenfootImage(iuLogo);
         logoCopy.scale(targetSize, targetSize);
         logoCopy.setTransparency(60);
         canvas.drawImage(logoCopy, cx - (targetSize / 2), cy - (targetSize / 2));
-
         canvas.setColor(Color.WHITE);
         canvas.drawOval(cx - (targetSize / 2), cy - (targetSize / 2), targetSize, targetSize);
     }
@@ -354,7 +373,7 @@ public class GridManager extends Actor implements IPlantPlacer {
     public int getGridX(int mx, int my) { return getGridPos(mx, my)[0]; }
     public int getGridY(int mx, int my) { return getGridPos(mx, my)[1]; }
     public void addBonusSlots(int amount) { this.bonusSlots += amount; }
-    
+
     public int clampRow(int row) {
         if (row < 0) return 0;
         if (row >= ROWS) return ROWS - 1;
