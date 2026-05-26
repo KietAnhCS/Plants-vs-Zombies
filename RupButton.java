@@ -12,7 +12,7 @@ public class RupButton extends Actor {
 
     private int currentLevel = 1;
     private final int MAX_LEVEL = 10;
-    private final int UPGRADE_COST = 200;
+    private final int UPGRADE_COST = 100;
     private int rollCount = 0;
 
     public RarityEntry[] weightedPool = {
