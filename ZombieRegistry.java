@@ -1,5 +1,5 @@
 public class ZombieRegistry {
-    public static final int    SUN_HP       = 250;
+    public static final int    SUN_HP       = 150;
     public static final int    SUN_DAMAGE   = 0; 
     public static final double SUN_SPEED    = Random.Double(2, 2.5);
     

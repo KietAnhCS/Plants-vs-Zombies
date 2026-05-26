@@ -2,6 +2,10 @@ import greenfoot.*;
 import java.util.List;
 
 public abstract class Zombie extends SpriteAnimator implements IDamageable, IGridObject {
+    
+    protected ZombieEventBus eventBus;
+    
+    
     public ZombieConfig config;
     public PlayScene playScene;
 
@@ -10,7 +14,7 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
     protected double walkSpeed;
     protected boolean isAlive = true;
     protected IZombieState currentState;
-    protected ZombieEventBus eventBus;
+    
 
     public Plant target;
     public boolean eating = false;
