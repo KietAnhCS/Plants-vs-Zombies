@@ -5,7 +5,6 @@ public class PlantCombineHandler {
     public static void checkAndCombine(PlayScene scene, Plant target) {
         if (target == null || scene == null || target.getWorld() == null) return;
 
-        // 1. Lấy danh sách tất cả các con cùng loại đang IDLE
         List<Plant> allPlants = scene.getObjects(Plant.class);
         List<Plant> matches = new ArrayList<>();
         for (Plant p : allPlants) {
@@ -17,13 +16,11 @@ public class PlantCombineHandler {
             }
         }
 
-        // 2. Nếu không đủ 3 con thì nghỉ
         if (matches.size() < 3) return;
 
-        // 3. Kiểm tra điều kiện vị trí và thời gian
-        boolean allInReserve = true; 
+        boolean allInReserve = true;
         for (Plant p : matches) {
-            if (p.getYPos() < 5) { // Có ít nhất 1 con nằm trên sân chiến đấu
+            if (p.getYPos() < 5) {
                 allInReserve = false;
                 break;
             }
@@ -41,11 +38,16 @@ public class PlantCombineHandler {
             for (Plant p : matches) {
                 if (p != target && sources.size() < 2) sources.add(p);
             }
+
             if (sources.size() == 2) {
+                Plant s1 = sources.get(0);
+                Plant s2 = sources.get(1);
+
                 target.setState(PlantState.MERGING);
-                for (Plant s : sources) {
-                    s.setMergingTarget(target);
-                }
+                s1.setMergingTarget(target, s2);
+                s2.setMergingTarget(target, s1);
+
+                scene.addMergeAnimation(s1, s2, target);
             }
         }
     }

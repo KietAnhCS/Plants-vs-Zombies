@@ -5,6 +5,7 @@ public abstract class Plant extends SpriteAnimator implements IDamageable, IGrid
     public boolean opaque = false;
     public boolean isMerging = false;
     protected Plant targetPlant = null;
+    protected Plant mergePartner = null;
 
     private int hp;
     private int maxHp;
@@ -81,12 +82,13 @@ public abstract class Plant extends SpriteAnimator implements IDamageable, IGrid
         scene.removeObject(this);
     }
 
-    public void setMergingTarget(Plant target) {
+    public void setMergingTarget(Plant target, Plant partner) {
         if (target == null || target == this) return;
         this.targetPlant = target;
+        this.mergePartner = partner;
         this.isMerging = true;
         this.setState(PlantState.MERGING);
-
+    
         if (getWorld() instanceof PlayScene) {
             PlayScene scene = (PlayScene) getWorld();
             if (scene.GridManager != null) {
@@ -155,7 +157,7 @@ public abstract class Plant extends SpriteAnimator implements IDamageable, IGrid
         if (distance <= 15) {
             if (getWorld() instanceof PlayScene) {
                 PlayScene scene = (PlayScene) getWorld();
-                scene.addActiveMerger(new Merger(this, targetPlant));
+                scene.addMergeAnimation(this, mergePartner, targetPlant);
             }
             isMerging = false;
             return;

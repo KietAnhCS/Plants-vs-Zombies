@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=PlantCommandInvoker
+comment1.params=cmd
+comment1.target=void\ executeCommand(PlantCommand)
+comment2.params=cmd
+comment2.target=void\ register(PlantCommand)
+comment3.params=
+comment3.target=void\ undoLast()
+comment4.params=
+comment4.target=void\ clear()
+numComments=5

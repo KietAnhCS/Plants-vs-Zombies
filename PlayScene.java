@@ -2,7 +2,8 @@ import greenfoot.*;
 import java.util.*;
 
 public class PlayScene extends World implements ISceneManager, IEntitySpawner, IPlantProvider {
-    private List<Merger> activeMergers = new ArrayList<>();
+    private final PlantCommandInvoker commandInvoker = new PlantCommandInvoker();
+    private final List<MergeAnimationCommand> activeAnimations = new ArrayList<>();
     private long lastFPSTime = System.currentTimeMillis();
     private int frameCount = 0;
     private int currentFPS = 0;
@@ -79,7 +80,7 @@ public class PlayScene extends World implements ISceneManager, IEntitySpawner, I
         
         spawn();
         updateSystems();
-        updateMergers();
+        updateAnimations();
         drawWaveUI();
     }
 
@@ -273,17 +274,24 @@ public class PlayScene extends World implements ISceneManager, IEntitySpawner, I
         );
     }
 
-    private void updateMergers() {
-        Iterator<Merger> it = activeMergers.iterator();
-        while (it.hasNext()) {
-            if (it.next().update()) {
-                it.remove();
-            }
+    private void updateAnimations() {
+        List<MergeAnimationCommand> toRemove = new ArrayList<>();
+        List<MergeAnimationCommand> snapshot = new ArrayList<>(activeAnimations);
+        for (MergeAnimationCommand anim : snapshot) {
+            if (anim.tick()) toRemove.add(anim);
         }
+        activeAnimations.removeAll(toRemove);
     }
 
-    public void addActiveMerger(Merger m) {
-        activeMergers.add(m);
+    public void addMergeAnimation(Plant source1, Plant source2, Plant target) {
+        MergeCommand mergeCmd = new MergeCommand(source1, source2, target);
+        commandInvoker.register(mergeCmd);
+        activeAnimations.add(new MergeAnimationCommand(source1, target, mergeCmd));
+        activeAnimations.add(new MergeAnimationCommand(source2, target, mergeCmd));
+    }
+
+    public void undoLastMerge() {
+        commandInvoker.undoLast();
     }
 
     public void moveHitbox() {

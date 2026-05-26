@@ -6,6 +6,4 @@ comment2.params=
 comment2.target=PlantEventBus\ getEventBus()
 comment3.params=p
 comment3.target=Plant\ getUpgradeResult(Plant)
-comment4.params=target
-comment4.target=Plant\ merge(Plant)
-numComments=5
+numComments=4
