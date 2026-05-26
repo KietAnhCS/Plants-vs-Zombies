@@ -18,11 +18,9 @@ public class HealthBar extends Actor implements IZombieEventListener, IPlantEven
         this.owner = owner;
         this.width = width;
 
-        // Subscribe vào EventBus ngay khi tạo
         if (owner instanceof Zombie) {
             ((Zombie) owner).eventBus.subscribe(this);
         } else if (owner instanceof Plant) {
-            // subscribe sau khi addedToWorld vì eventBus của Plant set sau
         }
     }
 
