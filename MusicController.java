@@ -33,9 +33,9 @@ public class MusicController {
         if (w <= 1) {
             target = "sans.mp3";
         } else if (w >= 4) {
-            target = "truehero.mp3";
-        } else {
             target = "ghost.mp3";
+        } else {
+            target = "intro3.mp3";
         }
 
         if (!currentBGM.equals(target)) {

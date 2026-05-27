@@ -45,9 +45,11 @@ public class BonkChoy3 extends Plant {
 
     private void handleCombat() {
         if (getState() == PlantState.MERGING) return;
+        
+        int myRow = getYPos();
         List<Zombie> targets = getObjectsInRange(50, Zombie.class)
             .stream()
-            .filter(z -> z.getWorld() != null && z.getX() >= getX() - 10)
+            .filter(z -> z.getWorld() != null && z.getYPos() == myRow && z.getX() >= getX() - 10)
             .collect(Collectors.toList());
         if (!targets.isEmpty()) {
             PlantState attackState = (punchCount >= 3) ? PlantState.BONK_KO_PUNCH : PlantState.BONK_PUNCHING;

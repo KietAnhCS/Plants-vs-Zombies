@@ -242,7 +242,7 @@ public class WaveManager extends Actor {
         if (playScene == null) return;
         List<String> toRespawn = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : lawnmowerActivatedWave.entrySet()) {
-            if (wave - entry.getValue() >= 3) {
+            if (wave - entry.getValue() >= 1) {
                 toRespawn.add(entry.getKey());
             }
         }

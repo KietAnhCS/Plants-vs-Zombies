@@ -48,19 +48,18 @@ public class BonkChoy extends Plant {
 
     private void handleCombat() {
         if (getState() == PlantState.MERGING) return;
-
+        
+        int myRow = getYPos();
         List<Zombie> targets = getObjectsInRange(50, Zombie.class)
             .stream()
-            .filter(z -> z.getWorld() != null && z.getX() >= getX() - 10)
-            .sorted(Comparator.comparingInt(Zombie::getX))
+            .filter(z -> z.getWorld() != null && z.getYPos() == myRow && z.getX() >= getX() - 10)
             .collect(Collectors.toList());
-
         if (!targets.isEmpty()) {
-            PlantState attackState = (punchCount >= 9) ? PlantState.BONK_KO_PUNCH : PlantState.BONK_PUNCHING;
+            PlantState attackState = (punchCount >= 3) ? PlantState.BONK_KO_PUNCH : PlantState.BONK_PUNCHING;
             setState(attackState);
             boolean beingEaten = getHp() < getMaxHp();
             int dmg = (attackState == PlantState.BONK_KO_PUNCH ? TYPE.damage * 2 : TYPE.damage) + (beingEaten ? 5 : 0);
-            animate(attackState == PlantState.BONK_KO_PUNCH ? kRight : pRight, 40, true);
+            animate(attackState == PlantState.BONK_KO_PUNCH ? kRight : pRight, 20, true);
             applyDmg(targets, (int) TYPE.shootDelay, dmg, attackState);
         } else {
             setState(PlantState.IDLE);

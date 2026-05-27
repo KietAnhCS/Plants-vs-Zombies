@@ -114,7 +114,8 @@ public abstract class Zombie extends SpriteAnimator implements IDamageable, IGri
         int currentX = getX();
         for (Plant p : myRow) {
             if (p == null || p.getWorld() == null || p.getHp() <= 0) continue;
-            if (currentX - p.getX() < 40 && currentX - p.getX() > 0) {
+            //HITBOX
+            if (currentX - p.getX() < 20 && currentX - p.getX() > 0) {
                 target = p;
                 return true;
             }
